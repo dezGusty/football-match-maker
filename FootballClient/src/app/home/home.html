@@ -1,1 +1,7 @@
-<h2>{{players[0]}}</h2>
+@for (player of this.players; track player ) {
+<div class="player-card">
+    <p>FirstName: {{ player.firstName }}</p>
+    <p>LastName: {{ player.lastName }}</p>
+    <p>Rating: {{ player.rating }}</p>
+</div>
+}

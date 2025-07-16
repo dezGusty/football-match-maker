@@ -1,7 +1,7 @@
 export interface Player {
-    Id?: number;
-    FirstName?: string;
-    LastName?: string;
-    Rating?: number;
-    IsAvailable?: boolean;
+    id?: number;
+    firstName?: string;
+    lastName?: string;
+    rating?: number;
+    isAvailable?: boolean;
 }

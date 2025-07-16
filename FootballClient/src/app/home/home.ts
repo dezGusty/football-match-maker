@@ -1,7 +1,7 @@
- import { Component } from '@angular/core';
- import { inject } from '@angular/core';
- import { PlayerService } from '../player.service';
- import { Player } from '../player.interface';
+import { Component } from '@angular/core';
+import { inject } from '@angular/core';
+import { PlayerService } from '../player.service';
+import { Player } from '../player.interface';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +18,7 @@ export class Home {
   async init() {
     try {
       this.players = await this.PlayerService.getPlayers();
+      console.log(this.players);
     } catch (error) {
       console.error('Error fetching players:', error);
     }

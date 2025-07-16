@@ -5,7 +5,7 @@ namespace Players.Service.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PlayerController : ControllerBase
+    public class PlayersController : ControllerBase
     {
         private readonly List<Player> players = new List<Player>
         {
