@@ -13,9 +13,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Database Context - Using In-Memory Database for development
+// Database Context - Using SQL Server
 builder.Services.AddDbContext<FootballDbContext>(options =>
-    options.UseInMemoryDatabase("FootballDB"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Repository Registration
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
