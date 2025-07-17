@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using FootballAPI.Models;
+using Microsoft.EntityFrameworkCore;
+using FootballAPI.Data;
 
 namespace Players.Service.Controllers
 {
@@ -7,15 +9,17 @@ namespace Players.Service.Controllers
     [Route("api/[controller]")]
     public class PlayersController : ControllerBase
     {
-        private readonly List<Player> players = new List<Player>
-         {
-             new Player { Id = 1, FirstName = "John", LastName = "Doe", Rating = 4.5f, IsAvailable = true },
-             new Player { Id = 2, FirstName = "Jane", LastName = "Smith", Rating = 3.8f, IsAvailable = false },
-             new Player { Id = 3, FirstName = "Mike", LastName = "Johnson", Rating = 4.0f, IsAvailable = true }
-         };
-        [HttpGet]
-        public IActionResult Get()
+        private readonly FootballDbContext _context;
+
+        public PlayersController(FootballDbContext context)
         {
+            _context = context;
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> Get()
+        {
+            var players = await _context.Players.ToListAsync();
             return new JsonResult(players);
         }
     }
