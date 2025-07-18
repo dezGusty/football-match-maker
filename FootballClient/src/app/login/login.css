@@ -1,16 +1,11 @@
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0%;
-  overflow: hidden;
-}
-
 .login-page {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f0f0f0;
+  background-image: url('/assets/backgroundImageLogin.jpg');
+  background-size: cover;
+  background-position: center;
   overflow: hidden;
 }
 
