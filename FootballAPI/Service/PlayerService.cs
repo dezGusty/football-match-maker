@@ -97,5 +97,5 @@ namespace FootballAPI.Service
             };
         }
     }
-    
+
 }
