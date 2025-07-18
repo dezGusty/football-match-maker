@@ -1,0 +1,36 @@
+.players-table {
+  width: 80%;
+  margin: 40px auto;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #e5e5e5;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.players-table th, .players-table td {
+  padding: 14px 18px;
+  text-align: center;
+}
+
+.players-table thead {
+  background: #98b79c;
+  color: #454545;
+}
+
+
+.players-table tbody tr:hover {
+  background: #b5c7b8;
+  transition: background 0.2s;
+}
+
+.available {
+  color: #388e3c;
+  font-weight: bold;
+}
+
+.not-available {
+  color: #d32f2f;
+  font-weight: bold;
+}

@@ -18,7 +18,7 @@ export class Home {
   async init() {
     try {
       this.players = await this.PlayerService.getPlayers();
-      console.log(this.players);
+      console.log("Players fetched successfully:", this.players);
     } catch (error) {
       console.error('Error fetching players:', error);
     }

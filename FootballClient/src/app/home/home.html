@@ -1,7 +1,26 @@
-@for (player of this.players; track player ) {
-<div class="player-card">
-    <p>FirstName: {{ player.firstName }}</p>
-    <p>LastName: {{ player.lastName }}</p>
-    <p>Rating: {{ player.rating }}</p>
-</div>
-}
+<table class="players-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Rating</th>
+      <th>Availability</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (player of this.players; track player) {
+      <tr>
+        <td>{{ player.id }}</td>
+        <td>{{ player.firstName }}</td>
+        <td>{{ player.lastName }}</td>
+        <td>{{ player.rating }}</td>
+        <td>
+          <span class="{{ player.isAvailable ? 'available' : 'not-available' }}">
+            {{ player.isAvailable ? 'Yes' : 'No' }}
+          </span>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
