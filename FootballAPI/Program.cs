@@ -22,13 +22,14 @@ builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<IPlayerMatchHistoryRepository, PlayerMatchHistoryRepository>();
-
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Service Registration
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IPlayerMatchHistoryService, PlayerMatchHistoryService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // CORS Configuration for Angular
 builder.Services.AddCors(options =>
