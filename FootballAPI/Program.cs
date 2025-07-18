@@ -21,11 +21,14 @@ builder.Services.AddDbContext<FootballDbContext>(options =>
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
+builder.Services.AddScoped<IPlayerMatchHistoryRepository, PlayerMatchHistoryRepository>();
+
 
 // Service Registration
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
+builder.Services.AddScoped<IPlayerMatchHistoryService, PlayerMatchHistoryService>();
 
 // CORS Configuration for Angular
 builder.Services.AddCors(options =>

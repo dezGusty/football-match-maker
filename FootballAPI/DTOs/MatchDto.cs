@@ -29,13 +29,5 @@ namespace FootballAPI.DTOs
         public int TeamBGoals { get; set; }
     }
 
-    public class PlayerMatchHistoryDto
-    {
-        public int Id { get; set; }
-        public int PlayerId { get; set; }
-        public PlayerDto Player { get; set; }
-        public int TeamId { get; set; }
-        public float PerformanceRating { get; set; }
-        public DateTime RecordDate { get; set; }
-    }
-} 
+
+}
