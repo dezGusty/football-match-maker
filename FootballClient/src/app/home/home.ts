@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { inject } from '@angular/core';
 import { PlayerService } from '../player.service';
 import { Player } from '../player.interface';
+import { Header } from '../header/header';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [Header],
   templateUrl: './home.html',
-  styleUrl: './home.css'
+  styleUrls: ['./home.css']
 })
 export class Home {
   players: Player[] = [];
