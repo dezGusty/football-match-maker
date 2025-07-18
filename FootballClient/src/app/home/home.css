@@ -25,12 +25,60 @@
   transition: background 0.2s;
 }
 
-.available {
-  color: #388e3c;
-  font-weight: bold;
+
+.action-btn {
+  padding: 6px 16px;
+  margin: 0 4px;
+  border: 2px solid #6a866e;
+  border-radius: 6px;
+  background: #f8f9fa;
+  color: #454545;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
-.not-available {
+.action-btn:hover {
+  background: #b5c7b8;
+  border-color: #3e5c43;
+  color: #222;
+}
+
+.edit-btn {
+  border-color: #6a866e;
+}
+
+.delete-btn {
+  border-color: #d32f2f;
   color: #d32f2f;
-  font-weight: bold;
+}
+
+.delete-btn:hover {
+  background: #fbeaea;
+  border-color: #a31515;
+  color: #a31515;
+}
+
+.save-btn {
+  border-color: #388e3c;
+  color: #388e3c;
+}
+
+.save-btn:hover {
+  background: #e0f2e9;
+  border-color: #388e3c;
+  color: #245c24;
+}
+
+.cancel-btn {
+  border-color: #8d735b;
+  color: #8d735b;
+}
+
+.cancel-btn:hover {
+  background: #f5eee9;
+  border-color: #8d735b;
+  color: #5c4637;
 }

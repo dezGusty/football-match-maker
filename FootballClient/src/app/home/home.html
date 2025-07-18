@@ -7,20 +7,32 @@
       <th>First name</th>
       <th>Last name</th>
       <th>Rating</th>
-      <th>Availability</th>
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
-    @for (player of this.players; track player) {
+    @for (player of this.players; let i = $index; track player) {
       <tr>
-        <td>{{ player.id }}</td>
+        <td>{{ i+1 }}</td>
         <td>{{ player.firstName }}</td>
         <td>{{ player.lastName }}</td>
         <td>{{ player.rating }}</td>
         <td>
-          <span class="{{ player.isAvailable ? 'available' : 'not-available' }}">
-            {{ player.isAvailable ? 'Yes' : 'No' }}
-          </span>
+          @if (editIndex === i) {
+            <button class="action-btn save-btn" title="Save" (click)="clearEditIndex()">
+              Save
+            </button>
+            <button class="action-btn cancel-btn" title="Cancel" (click)="clearEditIndex()">
+              Cancel
+            </button>
+          } @else {
+            <button class="action-btn edit-btn" title="Edit" (click)="setEditIndex(i)">
+              Edit
+            </button>
+            <button class="action-btn delete-btn" title="Delete">
+              Delete
+            </button>
+          }
         </td>
       </tr>
     }

@@ -12,10 +12,13 @@ import { Header } from '../header/header';
 })
 export class Home {
   players: Player[] = [];
+  editIndex: number | null = null;
   private PlayerService = inject(PlayerService);
+
   constructor() {
     this.init();
   }
+
   async init() {
     try {
       this.players = await this.PlayerService.getPlayers();
@@ -23,5 +26,13 @@ export class Home {
     } catch (error) {
       console.error('Error fetching players:', error);
     }
+  }
+
+  setEditIndex(index: number) {
+    this.editIndex = index;
+  }
+
+  clearEditIndex() {
+    this.editIndex = null;
   }
 }
