@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 export class Home {
   players: Player[] = [];
   editIndex: number | null = null;
+  showAddModal = false;
   private PlayerService = inject(PlayerService);
 
   constructor() {
