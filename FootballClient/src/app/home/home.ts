@@ -35,6 +35,11 @@ export class Home {
   };
 
   async addPlayer() {
+
+     if (this.newPlayer.rating <= 0) {
+    alert('Rating must be a positive number.');
+    return;
+  }
     try {
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
       this.players.push(addedPlayer);

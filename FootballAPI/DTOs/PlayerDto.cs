@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace FootballAPI.DTOs
 {
     public class PlayerDto
@@ -15,7 +17,8 @@ namespace FootballAPI.DTOs
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public float Rating { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Rating must be positive.")]
+        public int Rating { get; set; }
 
     }
 
