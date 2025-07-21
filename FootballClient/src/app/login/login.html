@@ -2,11 +2,19 @@
   <div class="login-container">
     <h2>Login</h2>
 
-    <label>Email:</label>
-    <input type="email" placeholder="Introduce your email" />
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <label>Username:</label>
+    <input type="text" 
+           [(ngModel)]="username" 
+           placeholder="Introduce username" />
 
     <label>Password:</label>
-    <input type="password" placeholder="Introduce your password" />
+    <input type="password" 
+           [(ngModel)]="password" 
+           placeholder="Introduce password" />
 
     <button (click)="onLogin()">Login</button>
   </div>
