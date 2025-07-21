@@ -65,21 +65,24 @@
 }
 
 .menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
+  position: fixed;
+  top: 80px;
+  right: -280px;
   background-color: #a4c4a8;
   width: 280px;
   padding: 1.5rem;
-  transform: translateX(100%);
   transition: all 0.3s ease;
   z-index: 5;
   border-bottom-left-radius: 12px;
   box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.2);
+  visibility: hidden;
+  opacity: 0;
 }
 
 .menu.open {
-  transform: translateX(0);
+  right: 0;
+  visibility: visible;
+  opacity: 1;
 }
 
 .menu ul {
@@ -107,7 +110,6 @@
 }
 
 .menu button:hover {
-  background-color: #1d2736;
+  background-color: rgba(0, 0, 0, 0.2);
   transform: translateX(5px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
