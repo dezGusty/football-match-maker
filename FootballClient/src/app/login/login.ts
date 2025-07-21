@@ -22,7 +22,7 @@ export class Login {
   ) {
     // Redirectioneaza catre home daca utilizatorul este deja autentificat
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/home']);
+    this.router.navigate(['/home']);
     }
   }
 
