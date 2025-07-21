@@ -40,10 +40,17 @@
 
 </table>
 
-<div class="add-player-form">
-  <h3>Add New Player</h3>
-  <input type="text" placeholder="First Name" [(ngModel)]="newPlayer.firstName" />
-  <input type="text" placeholder="Last Name" [(ngModel)]="newPlayer.lastName" />
-  <input type="number" placeholder="Rating" [(ngModel)]="newPlayer.rating" />
-  <button (click)="addPlayer()">Add Player</button>
-</div>
+<button class="open-modal-btn" (click)="showAddModal = true">Add New Player</button>
+
+@if (showAddModal) {
+  <div class="modal-backdrop">
+    <div class="modal-content">
+      <button class="close-modal-btn" (click)="showAddModal = false" title="Close">&times;</button>
+      <h3>Add New Player</h3>
+      <input type="text" placeholder="First Name" [(ngModel)]="newPlayer.firstName" />
+      <input type="text" placeholder="Last Name" [(ngModel)]="newPlayer.lastName" />
+      <input type="number" placeholder="Rating" [(ngModel)]="newPlayer.rating" />
+      <button (click)="addPlayer(); showAddModal = false">Add Player</button>
+    </div>
+  </div>
+}
