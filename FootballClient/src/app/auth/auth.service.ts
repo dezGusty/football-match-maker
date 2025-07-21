@@ -12,9 +12,12 @@ export class AuthService {
     // Verifica daca exista un utilizator salvat
     this.isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
 
-    // Adauga event listener pentru inchiderea ferestrei
-    window.addEventListener('beforeunload', () => {
-      this.logout();
+    // Adauga event listener pentru inchiderea paginii
+    window.addEventListener('unload', () => {
+      // Se executa doar la inchiderea paginii, nu si la refresh
+      if (!window.performance.navigation.type) {
+        this.logout();
+      }
     });
   }
 
