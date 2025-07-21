@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { inject } from '@angular/core';
 import { PlayerService } from '../player.service';
 import { Player } from '../player.interface';
@@ -7,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, FormsModule],
+  imports: [Header, FormsModule, CommonModule],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
@@ -51,6 +52,19 @@ export class Home {
     }
   }
 
+  async editPlayer(player: Player) {
+    try {
+      const updatedPlayer = await this.PlayerService.editPlayer(player);
+      const index = this.players.findIndex(p => p.id === updatedPlayer.id);
+      if (index !== -1) {
+        this.players[index] = updatedPlayer;
+      }
+      this.clearEditIndex();
+      console.log('Player updated:', updatedPlayer);
+    } catch (error) {
+      console.error('Error updating player:', error);
+    }
+  }
 
   setEditIndex(index: number) {
     this.editIndex = index;

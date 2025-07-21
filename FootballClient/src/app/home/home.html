@@ -11,31 +11,27 @@
     </tr>
   </thead>
   <tbody>
-    @for (player of this.players; let i = $index; track player) {
-      <tr>
-        <td>{{ i+1 }}</td>
+    <tr *ngFor="let player of players; let i = index">
+      <td>{{ i+1 }}</td>
+      <ng-container *ngIf="editIndex === i; else viewMode">
+        <td><input type="text" [(ngModel)]="player.firstName" /></td>
+        <td><input type="text" [(ngModel)]="player.lastName" /></td>
+        <td><input type="number" [(ngModel)]="player.rating" /></td>
+        <td>
+          <button class="action-btn save-btn" title="Save" (click)="editPlayer(player)">Save</button>
+          <button class="action-btn cancel-btn" title="Cancel" (click)="clearEditIndex()">Cancel</button>
+        </td>
+      </ng-container>
+      <ng-template #viewMode>
         <td>{{ player.firstName }}</td>
         <td>{{ player.lastName }}</td>
         <td>{{ player.rating }}</td>
         <td>
-          @if (editIndex === i) {
-            <button class="action-btn save-btn" title="Save" (click)="clearEditIndex()">
-              Save
-            </button>
-            <button class="action-btn cancel-btn" title="Cancel" (click)="clearEditIndex()">
-              Cancel
-            </button>
-          } @else {
-            <button class="action-btn edit-btn" title="Edit" (click)="setEditIndex(i)">
-              Edit
-            </button>
-            <button class="action-btn delete-btn" title="Delete">
-              Delete
-            </button>
-          }
+          <button class="action-btn edit-btn" title="Edit" (click)="setEditIndex(i)">Edit</button>
+          <button class="action-btn delete-btn" title="Delete">Delete</button>
         </td>
-      </tr>
-    }
+      </ng-template>
+    </tr>
   </tbody>
 
 </table>

@@ -25,6 +25,17 @@ export class PlayerService {
 
     return await response.json();
   }
+  async editPlayer(player: Player): Promise<Player> {
+    const response = await fetch(`${this.url}/${player.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(player)
+    });
 
+    if (!response.ok) {
+      throw new Error('Failed to edit player');
+    }
 
+    return await response.json();
+  }
 }
