@@ -8,7 +8,7 @@ namespace FootballAPI.DTOs
         public float Rating { get; set; }
         public bool IsAvailable { get; set; }
         public int? CurrentTeamId { get; set; }
-       
+
     }
 
     public class CreatePlayerDto
@@ -16,8 +16,7 @@ namespace FootballAPI.DTOs
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public float Rating { get; set; }
-        public bool IsAvailable { get; set; }
-        public int? CurrentTeamId { get; set; }
+
     }
 
     public class UpdatePlayerDto

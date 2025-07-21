@@ -43,8 +43,8 @@ namespace FootballAPI.Service
                 FirstName = createPlayerDto.FirstName,
                 LastName = createPlayerDto.LastName,
                 Rating = createPlayerDto.Rating,
-                IsAvailable = createPlayerDto.IsAvailable,
-                CurrentTeamId = createPlayerDto.CurrentTeamId
+                IsAvailable = true,
+                CurrentTeamId = null
             };
 
             var createdPlayer = await _playerRepository.CreateAsync(player);

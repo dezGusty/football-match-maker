@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Player} from './player.interface';
+import { Player } from './player.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -12,5 +12,19 @@ export class PlayerService {
     const players = await response.json();
     return players;
   }
-  
+  async addPlayer(player: { firstName: string; lastName: string; rating: number }): Promise<Player> {
+    const response = await fetch(this.url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(player)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to add player');
+    }
+
+    return await response.json();
+  }
+
+
 }
