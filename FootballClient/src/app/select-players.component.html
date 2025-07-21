@@ -1,0 +1,38 @@
+<div class="players-container">
+    <div class="column">
+        <div class="column-header">
+            <h3>Unavailable Players</h3>
+            <span class="player-count">{{ unavailablePlayers.length }} Players</span>
+        </div>
+        <ul class="players-list">
+            <li *ngFor="let player of unavailablePlayers" class="player-item">
+                <div class="player-info">
+                    <span>{{ player.firstName }} {{ player.lastName }}</span>
+                    <span class="player-rating">Rating: {{ player.rating }}</span>
+                </div>
+                <button class="select-button" (click)="selectPlayer(player)"
+                    [disabled]="availablePlayers.length >= maxAvailable">
+                    Select
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="column">
+        <div class="column-header">
+            <h3>Available Players</h3>
+            <span class="player-count">{{ availablePlayers.length }}/{{ maxAvailable }}</span>
+        </div>
+        <ul class="players-list">
+            <li *ngFor="let player of availablePlayers" class="player-item">
+                <div class="player-info">
+                    <span>{{ player.firstName }} {{ player.lastName }}</span>
+                    <span class="player-rating">Rating: {{ player.rating }}</span>
+                </div>
+                <button class="select-button" (click)="unselectPlayer(player)" style="background: #dc3545;">
+                    Remove
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>

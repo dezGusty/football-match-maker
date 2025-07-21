@@ -43,7 +43,7 @@ namespace FootballAPI.Service
                 FirstName = createPlayerDto.FirstName,
                 LastName = createPlayerDto.LastName,
                 Rating = createPlayerDto.Rating,
-                IsAvailable = true,
+                IsAvailable = false,
                 CurrentTeamId = null
             };
 
