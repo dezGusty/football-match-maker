@@ -85,20 +85,26 @@
 
 
 .open-modal-btn {
-  margin: 32px auto 0 auto;
-  display: block;
-  padding: 10px 28px;
-  background: #6a866e;
+  position: fixed;
+  bottom: 32px;
+  right: 40px;
+  z-index: 1100;
+  padding: 14px 32px;
+  background: rgba(106, 134, 110, 0.92);
   color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
+  border-radius: 50px;
+  font-size: 1.15rem;
   font-weight: 600;
+  box-shadow: 0 4px 18px rgba(106,134,110,0.18);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, box-shadow 0.2s;
+  backdrop-filter: blur(1px);
 }
+
 .open-modal-btn:hover {
-  background: #3e5c43;
+  background: rgba(62, 92, 67, 0.97);
+  box-shadow: 0 6px 24px rgba(106,134,110,0.28);
 }
 
 .modal-backdrop {
