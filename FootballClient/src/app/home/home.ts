@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 export class Home {
   players: Player[] = [];
   editIndex: number | null = null;
+  editedPlayer: Player | null = null;
   showAddModal = false;
   private PlayerService = inject(PlayerService);
 
@@ -52,12 +53,16 @@ export class Home {
     }
   }
 
-  async editPlayer(player: Player) {
+  async editPlayer() {
+    if (!this.editedPlayer) return;
     try {
-      const updatedPlayer = await this.PlayerService.editPlayer(player);
+      const updatedPlayer = await this.PlayerService.editPlayer(this.editedPlayer);
       const index = this.players.findIndex(p => p.id === updatedPlayer.id);
       if (index !== -1) {
         this.players[index] = updatedPlayer;
+      }
+      if (typeof updatedPlayer.rating === 'number' && updatedPlayer.rating <= 0) {
+        throw new Error('Rating must be a positive number.');
       }
       this.clearEditIndex();
       console.log('Player updated:', updatedPlayer);
@@ -68,9 +73,11 @@ export class Home {
 
   setEditIndex(index: number) {
     this.editIndex = index;
+    this.editedPlayer = { ...this.players[index] };
   }
 
   clearEditIndex() {
     this.editIndex = null;
+    this.editedPlayer = null;
   }
 }

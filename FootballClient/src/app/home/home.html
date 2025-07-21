@@ -14,11 +14,11 @@
     <tr *ngFor="let player of players; let i = index">
       <td>{{ i+1 }}</td>
       <ng-container *ngIf="editIndex === i; else viewMode">
-        <td><input type="text" [(ngModel)]="player.firstName" /></td>
-        <td><input type="text" [(ngModel)]="player.lastName" /></td>
-        <td><input type="number" [(ngModel)]="player.rating" /></td>
+        <td><input type="text" [(ngModel)]="editedPlayer!.firstName" /></td>
+        <td><input type="text" [(ngModel)]="editedPlayer!.lastName" /></td>
+        <td><input type="number" [(ngModel)]="editedPlayer!.rating" /></td>
         <td>
-          <button class="action-btn save-btn" title="Save" (click)="editPlayer(player)">Save</button>
+          <button class="action-btn save-btn" title="Save" (click)="editPlayer()">Save</button>
           <button class="action-btn cancel-btn" title="Cancel" (click)="clearEditIndex()">Cancel</button>
         </td>
       </ng-container>
