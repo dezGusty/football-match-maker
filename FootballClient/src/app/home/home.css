@@ -82,3 +82,54 @@
   border-color: #8d735b;
   color: #5c4637;
 }
+
+.add-player-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  justify-content: center;
+  align-items: center;
+  margin: 32px auto 0 auto;
+  padding: 24px 32px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(106,134,110,0.10);
+  width: 340px;
+}
+
+.add-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #6a866e;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.add-field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 6px;
+}
+
+.add-field label {
+  font-size: 1rem;
+  color: #454545;
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.add-input {
+  padding: 8px 12px;
+  border: 2px solid #b5c7b8;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+
+.add-input:focus {
+  border-color: #388e3c;
+}
