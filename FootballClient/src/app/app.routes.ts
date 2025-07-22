@@ -14,6 +14,10 @@ export const routes: Routes = [
     {
         path: 'select-players',
         loadComponent: () => import('./select-players.component').then(m => m.SelectPlayersComponent)
+    },
+    {
+        path: 'account',
+        loadComponent: () => import('./account/account').then(m => m.Account)
     }
 
 ];

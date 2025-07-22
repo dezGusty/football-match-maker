@@ -1,0 +1,251 @@
+.account-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 80vh;
+  background: linear-gradient(120deg, #e5e5e5 0%, #f8f9fa 100%);
+  padding-top: 48px;
+}
+
+.account-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(106,134,110,0.12);
+  padding: 36px 44px 32px 44px;
+  min-width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.avatar-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #b5c7b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(106,134,110,0.10);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.username {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #454545;
+}
+
+.role-badge {
+  background: #6a866e;
+  color: #fff;
+  padding: 4px 16px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 2px;
+  box-shadow: 0 1px 4px rgba(106,134,110,0.08);
+}
+
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 18px;
+}
+
+.password-form label {
+  font-size: 1rem;
+  color: #6a866e;
+  font-weight: 500;
+}
+
+.password-form input {
+  padding: 10px 12px;
+  border: 2px solid #b5c7b8;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #f8f9fa;
+}
+
+.password-form input:focus {
+  border-color: #6a866e;
+}
+
+.password-form button {
+  margin-top: 8px;
+  padding: 10px 0;
+  background: #6a866e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.password-form button:hover {
+  background: #3e5c43;
+}
+
+.account-fullpage {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
+  background: linear-gradient(120deg, #e5e5e5 0%, #f8f9fa 100%);
+  padding: 0;
+  gap: 0;
+}
+
+.account-avatar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 340px;
+  background: #b5c7b8;
+  height: calc(100vh - 64px);
+  padding-top: 64px;
+}
+
+.avatar-big {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: #6a866e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 140px;
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(106,134,110,0.13);
+  margin-bottom: 0;
+}
+
+.avatar-icon-big {
+  font-size: 140px;
+  line-height: 1;
+}
+
+.account-details-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 64px 48px;
+  background: #fff;
+  min-height: calc(100vh - 64px);
+}
+
+.account-username {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #454545;
+  margin-bottom: 18px;
+}
+
+.account-role-badge {
+  background: #6a866e;
+  color: #fff;
+  padding: 8px 28px;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+  box-shadow: 0 1px 4px rgba(106,134,110,0.08);
+  display: inline-block;
+}
+
+.account-password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.account-password-form label {
+  font-size: 1rem;
+  color: #6a866e;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.account-password-form input {
+  padding: 10px 12px;
+  border: 2px solid #b5c7b8;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #f8f9fa;
+}
+
+.account-password-form input:focus {
+  border-color: #6a866e;
+}
+
+.account-password-form button {
+  margin-top: 12px;
+  padding: 12px 0;
+  background: #6a866e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.account-password-form button:hover {
+  background: #3e5c43;
+}
+
+.logout-btn {
+  margin-top: 36px;
+  padding: 12px 36px;
+  background: #fff;
+  color: #6a866e;
+  border: 2px solid #6a866e;
+  border-radius: 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  box-shadow: 0 2px 8px rgba(106,134,110,0.08);
+}
+
+.logout-btn:hover {
+  background: #6a866e;
+  color: #fff;
+  border-color: #3e5c43;
+}
