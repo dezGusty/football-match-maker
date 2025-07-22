@@ -71,7 +71,7 @@ export class Home {
     }
   }
   // Metodă nouă pentru soft delete
-  // Metodă nouă pentru soft delete
+
   async deletePlayer(playerId: number, playerIndex: number) {
     // Confirmă ștergerea
     const confirmDelete = confirm('Are you sure you want to delete this player?');
@@ -104,5 +104,21 @@ export class Home {
   // Metodă helper pentru a verifica dacă un jucător este enabled
   isPlayerEnabled(player: Player): boolean {
     return player.isEnabled !== false; // true by default dacă nu e setat
+  }
+  // Metodă nouă pentru a reactiva un jucător dezactivat
+  async enablePlayer(playerId: number) {
+    const confirmEnable = confirm('Are you sure you want to reactivate this player?');
+    if (!confirmEnable) return;
+
+    try {
+      const success = await this.PlayerService.enablePlayer(playerId);
+      if (success) {
+        await this.init(); // Reîncarcă lista pentru a afișa statusul actualizat
+        console.log('Player reactivated successfully');
+      }
+    } catch (error) {
+      console.error('Error enabling player:', error);
+      alert('Failed to reactivate player. Please try again.');
+    }
   }
 }

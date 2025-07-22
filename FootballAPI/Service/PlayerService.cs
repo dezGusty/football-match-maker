@@ -78,6 +78,16 @@ namespace FootballAPI.Service
             await _playerRepository.UpdateAsync(existingPlayer);
             return true;
         }
+        public async Task<bool> EnablePlayerAsync(int id)
+        {
+            var existingPlayer = await _playerRepository.GetByIdAsync(id);
+            if (existingPlayer == null)
+                return false;
+
+            existingPlayer.IsEnabled = true; // Reactivează jucătorul
+            await _playerRepository.UpdateAsync(existingPlayer);
+            return true;
+        }
 
         public async Task<bool> HardDeletePlayerAsync(int id)
         {

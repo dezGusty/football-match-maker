@@ -96,5 +96,14 @@ namespace FootballAPI.Controllers
 
             return NoContent();
         }
+         [HttpPatch("{id}/enable")]
+        public async Task<ActionResult> EnablePlayer(int id)
+        {
+            var result = await _playerService.EnablePlayerAsync(id);
+            if (!result)
+                return NotFound($"Player with ID {id} not found.");
+
+            return NoContent();
+        }
     }
 }

@@ -50,4 +50,17 @@ export class PlayerService {
 
     return true;
   }
+
+  async enablePlayer(playerId: number): Promise<boolean> {
+    const response = await fetch(`${this.url}/${playerId}/enable`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to enable player');
+    }
+
+    return true;
+  }
 }

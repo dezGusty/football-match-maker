@@ -40,7 +40,8 @@
             <button class="action-btn delete-btn" title="Delete" (click)="deletePlayer(player.id!, i)">Delete</button>
           </ng-container>
           <ng-container *ngIf="!isPlayerEnabled(player)">
-            <span class="disabled-text">Player deleted</span>
+            <button class="action-btn enable-btn" title="Reactivate Player"
+              (click)="enablePlayer(player.id!)">Reactivate</button>
           </ng-container>
         </td>
       </ng-template>
