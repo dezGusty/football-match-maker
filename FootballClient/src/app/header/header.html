@@ -1,8 +1,11 @@
 <nav class="header-nav">
+  <div class="header-profile" (click)="navigateTo('/account')" title="Account">
+    <span class="material-icons profile-icon">person</span>
+    <span class="profile-username">{{ username }}</span>
+  </div>
   <div class="logo-container">
     <img src="../../assets/logo.png" alt="Football Match Logo" class="logo" />
   </div>
-
   <button class="hamburger" (click)="toggleMenu()" [class.active]="isMenuOpen" aria-label="Toggle menu">
     <span></span>
     <span></span>

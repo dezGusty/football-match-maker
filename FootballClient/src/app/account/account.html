@@ -8,15 +8,19 @@
     <button class="logout-btn">Logout</button>
   </div>
   <div class="account-details-col">
-    <div class="account-username">{{ username }}</div>
-    <div class="account-role-badge">{{ role }}</div>
-    <form class="account-password-form">
-      <label for="new-password">New Password</label>
-      <input id="new-password" type="password" placeholder="Enter new password" [(ngModel)]="newPassword" name="newPassword" />
-      <label for="confirm-password">Confirm Password</label>
-      <input id="confirm-password" type="password" placeholder="Confirm new password" [(ngModel)]="confirmPassword" name="confirmPassword" />
-      <button type="button" (click)="changePassword()">Save Changes</button>
-    </form>
+    @if (user) {
+      <div class="account-username">{{ user.username }}</div>
+      <div class="account-role-badge">{{ user.role }}</div>
+      <form class="account-password-form">
+        <label for="new-password">New Password</label>
+        <input id="new-password" type="password" placeholder="Enter new password" [(ngModel)]="newPassword" name="newPassword" />
+        <label for="confirm-password">Confirm Password</label>
+        <input id="confirm-password" type="password" placeholder="Confirm new password" [(ngModel)]="confirmPassword" name="confirmPassword" />
+        <button type="button" (click)="changePassword()">Save Changes</button>
+      </form>
+    } @else {
+      <div class="loading-message">Loading account details...</div>
+    }
   </div>
 </div>
 
