@@ -16,7 +16,7 @@ namespace FootballAPI.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "MatchId must be greater than 0")]
         public int MatchId { get; set; }
 
-        [Range(0.0f, 10.0f, ErrorMessage = "PerformanceRating trebuie să fie între 0.0 și 10.0")]
+        [Range(0.0f, 10.0f, ErrorMessage = "PerformanceRating must be between 0.0 and 10.0")]
         public float PerformanceRating { get; set; }
     }
 }

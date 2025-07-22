@@ -8,7 +8,7 @@
     padding: 16px 32px;
     font-size: 1.1rem;
     font-weight: 600;
-    box-shadow: 0 4px 16px rgba(56,142,60,0.15);
+    box-shadow: 0 4px 16px rgba(56, 142, 60, 0.15);
     cursor: pointer;
     z-index: 10;
     transition: background 0.2s, box-shadow 0.2s;
@@ -18,7 +18,7 @@
 
 .floating-btn:hover {
     background: #2e7031;
-    box-shadow: 0 6px 24px rgba(56,142,60,0.25);
+    box-shadow: 0 6px 24px rgba(56, 142, 60, 0.25);
 }
 
 .players-container {
@@ -204,7 +204,6 @@
     border-bottom: none;
 }
 
-/* Stilizare simplificată pentru rating */
 .rating-badge {
     color: white;
     padding: 4px 10px;

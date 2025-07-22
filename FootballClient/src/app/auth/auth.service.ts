@@ -7,17 +7,18 @@ import { LoginRequest } from './auth.interface';
 export class AuthService {
   private readonly apiUrl = 'http://localhost:5145/api';
   private isAuthenticated = false;
+  private userId: number | null = null;
 
   constructor() {
-    // Verifica daca exista un utilizator salvat
     this.isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const savedUserId = localStorage.getItem('userId');
+    if (savedUserId) {
+      this.userId = parseInt(savedUserId, 10);
+    }
 
-    // Adauga event listener pentru inchiderea paginii
-    window.addEventListener('unload', () => {
-      // Se executa doar la inchiderea paginii, nu si la refresh
-      if (!window.performance.navigation.type) {
-        this.logout();
-      }
+    // Event listener pentru închiderea ferestrei
+    window.addEventListener('beforeunload', () => {
+      this.logout();
     });
   }
 
@@ -32,11 +33,14 @@ export class AuthService {
       });
 
       if (!response.ok) {
-        throw new Error('Autentificare esuata');
+        throw new Error('Autentificare eșuată');
       }
 
+      const userData = await response.json();
       this.isAuthenticated = true;
+      this.userId = userData.id;
       localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userId', userData.id.toString());
     } catch (error) {
       console.error('Eroare la autentificare:', error);
       throw error;
@@ -45,10 +49,16 @@ export class AuthService {
 
   logout(): void {
     this.isAuthenticated = false;
+    this.userId = null;
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userId');
   }
 
   isLoggedIn(): boolean {
     return this.isAuthenticated;
+  }
+
+  getUserId(): number | null {
+    return this.userId;
   }
 } 

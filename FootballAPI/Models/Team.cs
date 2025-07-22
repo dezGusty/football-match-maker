@@ -14,7 +14,6 @@ namespace FootballAPI.Models
         public virtual ICollection<Player> CurrentPlayers { get; set; } = new List<Player>();
         public virtual ICollection<PlayerMatchHistory> PlayerHistory { get; set; } = new List<PlayerMatchHistory>();
 
-        // Navigații pentru Match-uri (Match.TeamA / TeamB)
         public virtual ICollection<Match> HomeMatches { get; set; } = new List<Match>();
         public virtual ICollection<Match> AwayMatches { get; set; } = new List<Match>();
     }
