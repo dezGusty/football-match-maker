@@ -9,11 +9,12 @@ export const routes: Routes = [
     {
         path: 'home',
         loadComponent: () => import('./home/home').then(m => m.Home),
-        ///canActivate: [authGuard]
+        canActivate: [authGuard]
     },
     {
         path: 'select-players',
-        loadComponent: () => import('./select-players.component').then(m => m.SelectPlayersComponent)
+        loadComponent: () => import('./selectPlayers/select-players.component').then(m => m.SelectPlayersComponent),
+        canActivate: [authGuard]
     }
 
 ];

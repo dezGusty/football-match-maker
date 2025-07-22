@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlayerService } from './player.service';
-import { Player } from './player.interface';
-import { Header } from './header/header';
+import { PlayerService } from '../player.service';
+import { Player } from '../player.interface';
+import { Header } from '../header/header';
 
 @Component({
     selector: 'app-select-players',
@@ -40,7 +40,7 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     get availablePlayers(): Player[] {
-        return this.allPlayers.filter(p => !p.isSelected);
+        return this.allPlayers.filter(p => !p.isSelected && p.isEnabled);
     }
 
     get selectedPlayers(): Player[] {
