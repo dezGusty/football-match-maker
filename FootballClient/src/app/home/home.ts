@@ -39,10 +39,10 @@ export class Home {
 
   async addPlayer() {
 
-     if (this.newPlayer.rating <= 0) {
-    alert('Rating must be a positive number.');
-    return;
-  }
+    if (this.newPlayer.rating <= 0) {
+      alert('Rating must be a positive number.');
+      return;
+    }
     try {
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
       this.players.push(addedPlayer);
@@ -70,6 +70,27 @@ export class Home {
       console.error('Error updating player:', error);
     }
   }
+  // Metodă nouă pentru soft delete
+  // Metodă nouă pentru soft delete
+  async deletePlayer(playerId: number, playerIndex: number) {
+    // Confirmă ștergerea
+    const confirmDelete = confirm('Are you sure you want to delete this player?');
+    if (!confirmDelete) return;
+
+    try {
+      const success = await this.PlayerService.deletePlayer(playerId);
+      if (success) {
+        // Actualizează lista local - jucătorul va fi marcat ca dezactivat
+        // și va afișa "Player{id}" în loc de numele real
+        await this.init(); // Reîncarcă lista pentru a afișa numele actualizat
+        console.log('Player soft deleted successfully');
+      }
+    } catch (error) {
+      console.error('Error deleting player:', error);
+      alert('Failed to delete player. Please try again.');
+    }
+  }
+
 
   setEditIndex(index: number) {
     this.editIndex = index;
@@ -79,5 +100,9 @@ export class Home {
   clearEditIndex() {
     this.editIndex = null;
     this.editedPlayer = null;
+  }
+  // Metodă helper pentru a verifica dacă un jucător este enabled
+  isPlayerEnabled(player: Player): boolean {
+    return player.isEnabled !== false; // true by default dacă nu e setat
   }
 }

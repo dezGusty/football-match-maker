@@ -38,4 +38,16 @@ export class PlayerService {
 
     return await response.json();
   }
+  async deletePlayer(playerId: number): Promise<boolean> {
+    const response = await fetch(`${this.url}/${playerId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete player');
+    }
+
+    return true;
+  }
 }

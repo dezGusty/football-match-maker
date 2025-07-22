@@ -10,6 +10,7 @@ namespace FootballAPI.DTOs
         public float Rating { get; set; }
         public bool IsAvailable { get; set; }
         public int? CurrentTeamId { get; set; }
+        public bool IsEnabled { get; set; }
 
     }
 
@@ -29,5 +30,6 @@ namespace FootballAPI.DTOs
         public float Rating { get; set; }
         public bool IsAvailable { get; set; }
         public int? CurrentTeamId { get; set; }
+        public bool IsEnabled { get; set; }
     }
 }

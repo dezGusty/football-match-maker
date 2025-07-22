@@ -19,6 +19,7 @@ namespace FootballAPI.Models
         public float Rating { get; set; } = 0.0f;
 
         public bool IsAvailable { get; set; } = false;
+        public bool IsEnabled { get; set; } = true;
 
         public int? CurrentTeamId { get; set; }
 

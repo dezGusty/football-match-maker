@@ -44,6 +44,7 @@ namespace FootballAPI.Service
                 LastName = createPlayerDto.LastName,
                 Rating = createPlayerDto.Rating,
                 IsAvailable = false,
+                IsEnabled = true,
                 CurrentTeamId = null
             };
 
@@ -62,12 +63,23 @@ namespace FootballAPI.Service
             existingPlayer.Rating = updatePlayerDto.Rating;
             existingPlayer.IsAvailable = updatePlayerDto.IsAvailable;
             existingPlayer.CurrentTeamId = updatePlayerDto.CurrentTeamId;
-
+            existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
             var updatedPlayer = await _playerRepository.UpdateAsync(existingPlayer);
             return MapToDto(updatedPlayer);
         }
 
         public async Task<bool> DeletePlayerAsync(int id)
+        {
+            var existingPlayer = await _playerRepository.GetByIdAsync(id);
+            if (existingPlayer == null)
+                return false;
+
+            existingPlayer.IsEnabled = false; // Soft delete
+            await _playerRepository.UpdateAsync(existingPlayer);
+            return true;
+        }
+
+        public async Task<bool> HardDeletePlayerAsync(int id)
         {
             return await _playerRepository.DeleteAsync(id);
         }
@@ -85,6 +97,19 @@ namespace FootballAPI.Service
 
         private static PlayerDto MapToDto(Player player)
         {
+            if (!player.IsEnabled)
+            {
+                return new PlayerDto
+                {
+                    Id = player.Id,
+                    FirstName = $"Player{player.Id}",
+                    LastName = "",
+                    Rating = 0.0f,
+                    IsAvailable = false,
+                    CurrentTeamId = null,
+                    IsEnabled = false
+                };
+            }
             return new PlayerDto
             {
                 Id = player.Id,
@@ -93,6 +118,7 @@ namespace FootballAPI.Service
                 Rating = player.Rating,
                 IsAvailable = player.IsAvailable,
                 CurrentTeamId = player.CurrentTeamId,
+                IsEnabled = true
 
             };
         }

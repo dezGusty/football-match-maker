@@ -35,12 +35,28 @@ namespace FootballAPI.Repository
                 .Where(p => p.CurrentTeamId == teamId)
                 .ToListAsync();
         }
+        public async Task<IEnumerable<Player>> GetEnabledPlayersAsync()
+        {
+            // Returnează doar jucătorii enabled
+            return await _context.Players
+                .Where(p => p.IsEnabled)
+                .Include(p => p.CurrentTeam)
+                .ToListAsync();
+        }
 
+        public async Task<IEnumerable<Player>> GetDisabledPlayersAsync()
+        {
+            // Returnează doar jucătorii disabled
+            return await _context.Players
+                .Where(p => !p.IsEnabled)
+                .Include(p => p.CurrentTeam)
+                .ToListAsync();
+        }
         public async Task<IEnumerable<Player>> GetAvailablePlayersAsync()
         {
             return await _context.Players
                 .Include(p => p.CurrentTeam)
-                .Where(p => p.IsAvailable)
+                .Where(p => p.IsAvailable && p.IsEnabled)
                 .ToListAsync();
         }
 
@@ -78,10 +94,11 @@ namespace FootballAPI.Repository
         {
             return await _context.Players
                 .Include(p => p.CurrentTeam)
-                .Where(p => p.FirstName.Contains(searchTerm) || p.LastName.Contains(searchTerm))
+                .Where(p => p.IsEnabled &&
+                   (p.FirstName.Contains(searchTerm) || p.LastName.Contains(searchTerm)))
                 .ToListAsync();
         }
     }
 
-   
+
 }

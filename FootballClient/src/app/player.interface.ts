@@ -4,4 +4,5 @@ export interface Player {
     lastName?: string;
     rating?: number;
     isAvailable?: boolean;
+    isEnabled?: boolean;
 }
