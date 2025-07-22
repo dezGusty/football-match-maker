@@ -20,7 +20,6 @@ export class Login {
     private router: Router,
     private authService: AuthService
   ) {
-    // Redirectioneaza catre home daca utilizatorul este deja autentificat
     if (this.authService.isLoggedIn()) {
     this.router.navigate(['/home']);
     }

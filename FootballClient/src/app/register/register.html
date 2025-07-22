@@ -1,1 +1,19 @@
-<p>register works!</p>
+<div class="register-page">
+  <div class="register-container">
+    <h2>Register</h2>
+
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+    <label>Username:</label>
+    <input type="text" [(ngModel)]="username" placeholder="Introduce username" />
+
+    <label>Password:</label>
+    <input type="password" [(ngModel)]="password" placeholder="Introduce password" />
+
+    <label>Confirm Password:</label>
+    <input type="password" [(ngModel)]="confirmPassword" placeholder="Confirm password" />
+
+    <button (click)="onRegister()">Register</button>
+  </div>
+</div>
