@@ -38,4 +38,8 @@ export class Login {
       console.error('Eroare la autentificare:', error);
     }
   }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
+  }
 }
