@@ -30,7 +30,7 @@ namespace FootballAPI.Service
                 Id = user.Id,
                 Username = user.Username,
                 Role = user.Role,
-                Token = token
+
             };
         }
 
