@@ -1,3 +1,22 @@
+.floating-btn {
+    position:relative;
+    bottom: 0px;
+    background: #388e3c;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(56,142,60,0.15);
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.floating-btn:hover {
+    background: #2e7031;
+    box-shadow: 0 6px 24px rgba(56,142,60,0.25);
+}
 .players-container {
     display: flex;
     justify-content: space-between;
@@ -7,12 +26,19 @@
     margin: 0 auto;
 }
 
-.column {
-    flex: 1;
+ .column {
     background: #ffffff;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 550px;
+    height: 550px;
+    min-width: 0;
+    flex: none;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .column h3 {
@@ -27,8 +53,12 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 600px;
+    flex: 1 1 auto;
+    max-height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .player-item {
@@ -87,10 +117,21 @@
     margin-bottom: 20px;
 }
 
-.player-count {
-    background: #6c757d;
-    color: white;
+ .player-count {
     padding: 4px 12px;
     border-radius: 12px;
     font-size: 0.9rem;
+    background: #6c757d;
+    color: white;
+    transition: background 0.2s, color 0.2s;
+}
+
+.count-red {
+    background: #d32f2f;
+    color: #fff;
+}
+
+.count-green {
+    background: #388e3c;
+    color: #fff;
 }

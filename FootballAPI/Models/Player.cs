@@ -16,6 +16,7 @@ namespace FootballAPI.Models
         [StringLength(50)]
         public string LastName { get; set; }
 
+        [Range(0, 11, ErrorMessage = "Rating must be positive.")]
         public float Rating { get; set; } = 0.0f;
 
         public bool IsAvailable { get; set; } = false;

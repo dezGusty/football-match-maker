@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlayerService } from './player.service';
 import { Player } from './player.interface';
+import { Header } from './header/header';
 
 @Component({
     selector: 'app-select-players',
     standalone: true,
-    imports: [CommonModule],
+    imports: [Header, CommonModule],
     templateUrl: './select-players.component.html',
     styleUrls: ['./select-players.component.css']
 })
@@ -27,6 +28,9 @@ export class SelectPlayersComponent implements OnInit {
             this.loading = true;
             this.error = null;
             this.allPlayers = await this.playerService.getPlayers();
+            for (const player of this.allPlayers) {
+                player.isSelected = false;
+            }
         } catch (error) {
             console.error('Failed to load players:', error);
             this.error = 'Failed to load players. Please try again later.';
@@ -35,47 +39,24 @@ export class SelectPlayersComponent implements OnInit {
         }
     }
 
-    get unavailablePlayers(): Player[] {
-        return this.allPlayers.filter(p => !p.isAvailable);
-    }
-
     get availablePlayers(): Player[] {
-        return this.allPlayers
-            .filter(p => p.isAvailable)
-            .slice(0, this.maxAvailable);
+        return this.allPlayers.filter(p => !p.isSelected);
     }
 
-    async selectPlayer(player: Player) {
-        if (this.availablePlayers.length >= this.maxAvailable) {
+    get selectedPlayers(): Player[] {
+        return this.allPlayers.filter(p => p.isSelected);
+    }
+
+    selectPlayer(player: Player) {
+        if (this.selectedPlayers.length >= this.maxAvailable) {
             alert(`Maximum ${this.maxAvailable} players can be selected.`);
             return;
         }
-
-        try {
-            const updated = await this.playerService.editPlayer({
-                ...player,
-                isAvailable: true
-            });
-
-            this.updatePlayerInList(updated);
-        } catch (error) {
-            console.error('Failed to select player:', error);
-            alert('Failed to select player. Please try again.');
-        }
+        player.isSelected = true;
     }
 
-    async unselectPlayer(player: Player) {
-        try {
-            const updated = await this.playerService.editPlayer({
-                ...player,
-                isAvailable: false
-            });
-
-            this.updatePlayerInList(updated);
-        } catch (error) {
-            console.error('Failed to unselect player:', error);
-            alert('Failed to unselect player. Please try again.');
-        }
+    unselectPlayer(player: Player) {
+        player.isSelected = false;
     }
 
     private updatePlayerInList(updatedPlayer: Player) {
