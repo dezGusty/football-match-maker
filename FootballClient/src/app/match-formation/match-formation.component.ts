@@ -2,6 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Player } from '../player.interface';
 
+interface Position {
+    left: string;
+    top: string;
+}
+
 @Component({
     selector: 'app-match-formation',
     standalone: true,
@@ -13,25 +18,49 @@ export class MatchFormationComponent implements OnInit {
     @Input() team1Players: Player[] = [];
     @Input() team2Players: Player[] = [];
 
-    // Pozițiile pentru 6 jucători pe fiecare parte
-    formation = {
-        team1: [ // Echipa din stânga (roșie)
-            { left: '25%', top: '15%' },
-            { left: '25%', top: '35%' },
-            { left: '25%', top: '55%' },
-            { left: '25%', top: '75%' },
-            { left: '40%', top: '30%' },
-            { left: '40%', top: '60%' }
-        ],
-        team2: [ // Echipa din dreapta (albastră)
-            { left: '75%', top: '15%' },
-            { left: '75%', top: '35%' },
-            { left: '75%', top: '55%' },
-            { left: '75%', top: '75%' },
-            { left: '60%', top: '30%' },
-            { left: '60%', top: '60%' }
-        ]
-    };
+    getTeamPositions(teamSize: number): Position[] {
+        const positions: Position[] = [];
+
+        // Verificăm dacă numărul de jucători este valid (5 sau 6)
+        if (teamSize < 5 || teamSize > 6) {
+            console.warn(`Număr invalid de jucători: ${teamSize}. Se așteaptă 5 sau 6 jucători.`);
+            return positions;
+        }
+
+        if (teamSize === 5) {
+            // Formație 3-2 pentru 5 jucători
+            return [
+                { left: '25%', top: '20%' },  // Primul rând - 3 jucători
+                { left: '25%', top: '50%' },
+                { left: '25%', top: '80%' },
+                { left: '40%', top: '35%' },  // Al doilea rând - 2 jucători
+                { left: '40%', top: '65%' }
+            ];
+        } else {
+            // Formație 4-2 pentru 6 jucători
+            return [
+                { left: '25%', top: '15%' },  // Primul rând - 4 jucători
+                { left: '25%', top: '35%' },
+                { left: '25%', top: '65%' },
+                { left: '25%', top: '85%' },
+                { left: '40%', top: '30%' },  // Al doilea rând - 2 jucători
+                { left: '40%', top: '70%' }
+            ];
+        }
+    }
+
+    getTeam1Positions(): Position[] {
+        return this.getTeamPositions(this.team1Players.length);
+    }
+
+    getTeam2Positions(): Position[] {
+        const positions = this.getTeamPositions(this.team2Players.length);
+        // Ajustăm pozițiile pentru echipa din dreapta
+        return positions.map(pos => ({
+            left: (100 - parseInt(pos.left.replace('%', ''))).toString() + '%',
+            top: pos.top
+        }));
+    }
 
     ngOnInit() {
         // Verificăm dacă avem datele jucătorilor din state
@@ -39,6 +68,14 @@ export class MatchFormationComponent implements OnInit {
         if (navigation) {
             this.team1Players = navigation.team1Players || [];
             this.team2Players = navigation.team2Players || [];
+        }
+
+        // Verificăm dacă numărul de jucători este valid
+        if (this.team1Players.length < 5 || this.team1Players.length > 6) {
+            console.error(`Echipa 1 are un număr invalid de jucători: ${this.team1Players.length}`);
+        }
+        if (this.team2Players.length < 5 || this.team2Players.length > 6) {
+            console.error(`Echipa 2 are un număr invalid de jucători: ${this.team2Players.length}`);
         }
     }
 
