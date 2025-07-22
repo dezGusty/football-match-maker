@@ -211,18 +211,19 @@
 
 .modal-content input[type="text"],
 .modal-content input[type="number"] {
-  padding: 8px 12px;
-  border: 2px solid #b5c7b8;
-  border-radius: 6px;
-  font-size: 15px;
+  padding: 6px 10px;
+  border: 2px solid #6a866e;
+  border-radius: 8px;
+  font-size: 14px;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   background: #fff;
 }
 
 .modal-content input:focus {
-  border-color: #6a866e;
+  border-color: #3e5c43;
+  box-shadow: 0 0 0 3px rgba(106, 134, 110, 0.2);
 }
 
 .modal-content button:not(.close-modal-btn) {
@@ -240,4 +241,23 @@
 
 .modal-content button:not(.close-modal-btn):hover {
   background: #3e5c43;
+}
+
+/* Stiluri pentru câmpurile de editare din tabel */
+.players-table input[type="text"],
+.players-table input[type="number"] {
+  padding: 6px 10px;
+  border: 2px solid #6a866e;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+  width: 90%;
+}
+
+.players-table input:focus {
+  border-color: #3e5c43;
+  box-shadow: 0 0 0 3px rgba(106, 134, 110, 0.2);
 }

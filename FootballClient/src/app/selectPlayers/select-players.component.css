@@ -1,0 +1,137 @@
+.floating-btn {
+    position:relative;
+    bottom: 0px;
+    background: #388e3c;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(56,142,60,0.15);
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.floating-btn:hover {
+    background: #2e7031;
+    box-shadow: 0 6px 24px rgba(56,142,60,0.25);
+}
+.players-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+ .column {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 550px;
+    height: 550px;
+    min-width: 0;
+    flex: none;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.column h3 {
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+    font-size: 1.2rem;
+}
+
+.players-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1 1 auto;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.player-item {
+    background: #f8f9fa;
+    margin: 8px 0;
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.player-item:hover {
+    background: #e9ecef;
+    transform: translateX(2px);
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-rating {
+    background: #007bff;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+
+.select-button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.select-button:hover {
+    background: #218838;
+}
+
+.select-button:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+ .player-count {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    background: #6c757d;
+    color: white;
+    transition: background 0.2s, color 0.2s;
+}
+
+.count-red {
+    background: #d32f2f;
+    color: #fff;
+}
+
+.count-green {
+    background: #388e3c;
+    color: #fff;
+}
