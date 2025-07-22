@@ -231,3 +231,24 @@
 .count-green {
     color: #28a745;
 }
+
+.modal-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.begin-match-btn {
+    padding: 12px 24px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.begin-match-btn:hover {
+    background-color: #218838;
+}

@@ -1,28 +1,14 @@
 import { Routes } from '@angular/router';
+import { Login } from './login/login';
+import { Home } from './home/home';
+import { SelectPlayersComponent } from './selectPlayers/select-players.component';
+import { MatchFormationComponent } from './match-formation/match-formation.component';
 import { authGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
-    {
-        path: '',
-        loadComponent: () => import('./login/login').then(m => m.Login)
-    },
-    {
-        path: 'home',
-        loadComponent: () => import('./home/home').then(m => m.Home),
-        canActivate: [authGuard]
-    },
-    {
-        path: 'select-players',
-        loadComponent: () => import('./selectPlayers/select-players.component').then(m => m.SelectPlayersComponent),
-        canActivate: [authGuard]
-    },
-    {
-        path: 'account',
-        loadComponent: () => import('./account/account').then(m => m.Account)
-    },
-    {
-        path: 'register',
-        loadComponent: () => import('./register/register').then(m => m.Register)
-    }
-
+    { path: '', redirectTo: '/login', pathMatch: 'full' },
+    { path: 'login', component: Login },
+    { path: 'home', component: Home, canActivate: [authGuard] },
+    { path: 'select-players', component: SelectPlayersComponent, canActivate: [authGuard] },
+    { path: 'match-formation', component: MatchFormationComponent, canActivate: [authGuard] }
 ];

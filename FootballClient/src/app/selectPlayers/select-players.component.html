@@ -23,9 +23,8 @@
     <div class="column">
         <div class="column-header">
             <h3>Selected Players</h3>
-            <span class="player-count"
-              [ngClass]="selectedPlayers.length < 10 ? 'count-red' : 'count-green'">
-              {{maxAvailable - selectedPlayers.length }} Players left
+            <span class="player-count" [ngClass]="selectedPlayers.length < 10 ? 'count-red' : 'count-green'">
+                {{maxAvailable - selectedPlayers.length }} Players left
             </span>
         </div>
         <ul class="players-list">
@@ -47,38 +46,41 @@
 
 <!-- Modal simplificat pentru echipe -->
 @if (showTeamsModal) {
-    <div class="modal-overlay">
-        <div class="modal-content">
-            <button class="close-btn" (click)="closeTeamsModal()">&times;</button>
-            <h2>Teams</h2>
-            
-            <div class="teams-grid">
-                <!-- Echipa 1 -->
-                <div class="team">
-                    <h3>Team 1 ({{ team1.averageRating | number:'1.1-1' }})</h3>
-                    <ul>
-                        <li *ngFor="let player of team1.players">
-                            {{ player.firstName }} {{ player.lastName }}
-                            <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
-                                {{ player.rating }}
-                            </span>
-                        </li>
-                    </ul>
-                </div>
+<div class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" (click)="closeTeamsModal()">&times;</button>
+        <h2>Teams</h2>
 
-                <!-- Echipa 2 -->
-                <div class="team">
-                    <h3>Team 2 ({{ team2.averageRating | number:'1.1-1' }})</h3>
-                    <ul>
-                        <li *ngFor="let player of team2.players">
-                            {{ player.firstName }} {{ player.lastName }}
-                            <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
-                                {{ player.rating }}
-                            </span>
-                        </li>
-                    </ul>
-                </div>
+        <div class="teams-grid">
+            <!-- Echipa 1 -->
+            <div class="team">
+                <h3>Team 1 ({{ team1.averageRating | number:'1.1-1' }})</h3>
+                <ul>
+                    <li *ngFor="let player of team1.players">
+                        {{ player.firstName }} {{ player.lastName }}
+                        <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
+                            {{ player.rating }}
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Echipa 2 -->
+            <div class="team">
+                <h3>Team 2 ({{ team2.averageRating | number:'1.1-1' }})</h3>
+                <ul>
+                    <li *ngFor="let player of team2.players">
+                        {{ player.firstName }} {{ player.lastName }}
+                        <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
+                            {{ player.rating }}
+                        </span>
+                    </li>
+                </ul>
             </div>
         </div>
+        <div class="modal-actions">
+            <button class="begin-match-btn" (click)="beginMatch()">Begin Match</button>
+        </div>
     </div>
+</div>
 }
