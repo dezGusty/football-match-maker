@@ -39,6 +39,46 @@
                 </button>
             </li>
         </ul>
-        <button *ngIf="selectedPlayers.length >= 10" class="floating-btn">Finalize Selection</button>
+        <button *ngIf="selectedPlayers.length >= 10" class="floating-btn" (click)="generateTeams()">
+            Finalize Selection
+        </button>
     </div>
 </div>
+
+<!-- Modal simplificat pentru echipe -->
+@if (showTeamsModal) {
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-btn" (click)="closeTeamsModal()">&times;</button>
+            <h2>Teams</h2>
+            
+            <div class="teams-grid">
+                <!-- Echipa 1 -->
+                <div class="team">
+                    <h3>Team 1 ({{ team1.averageRating | number:'1.1-1' }})</h3>
+                    <ul>
+                        <li *ngFor="let player of team1.players">
+                            {{ player.firstName }} {{ player.lastName }}
+                            <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
+                                {{ player.rating }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Echipa 2 -->
+                <div class="team">
+                    <h3>Team 2 ({{ team2.averageRating | number:'1.1-1' }})</h3>
+                    <ul>
+                        <li *ngFor="let player of team2.players">
+                            {{ player.firstName }} {{ player.lastName }}
+                            <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
+                                {{ player.rating }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+}

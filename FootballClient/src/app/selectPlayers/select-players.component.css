@@ -1,5 +1,5 @@
 .floating-btn {
-    position:relative;
+    position: relative;
     bottom: 0px;
     background: #388e3c;
     color: #fff;
@@ -12,11 +12,15 @@
     cursor: pointer;
     z-index: 10;
     transition: background 0.2s, box-shadow 0.2s;
+    margin-top: 20px;
+    width: 100%;
 }
+
 .floating-btn:hover {
     background: #2e7031;
     box-shadow: 0 6px 24px rgba(56,142,60,0.25);
 }
+
 .players-container {
     display: flex;
     justify-content: space-between;
@@ -26,7 +30,7 @@
     margin: 0 auto;
 }
 
- .column {
+.column {
     background: #ffffff;
     padding: 20px;
     border-radius: 12px;
@@ -110,28 +114,121 @@
     cursor: not-allowed;
 }
 
-.column-header {
+/* Stiluri simplificate pentru modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin: 0 0 25px 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 5px;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+.teams-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.team {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.team h3 {
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    font-size: 1.2rem;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.team ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.team li {
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
+    color: #444;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
 }
 
- .player-count {
-    padding: 4px 12px;
+.team li:last-child {
+    border-bottom: none;
+}
+
+/* Stilizare simplificată pentru rating */
+.rating-badge {
+    color: white;
+    padding: 4px 10px;
     border-radius: 12px;
     font-size: 0.9rem;
-    background: #6c757d;
-    color: white;
-    transition: background 0.2s, color 0.2s;
+    font-weight: 500;
+}
+
+.rating-low {
+    background: #dc3545;
+}
+
+.rating-medium {
+    background: #fd7e14;
+}
+
+.rating-high {
+    background: #388e3c;
 }
 
 .count-red {
-    background: #d32f2f;
-    color: #fff;
+    color: #dc3545;
 }
 
 .count-green {
-    background: #388e3c;
-    color: #fff;
+    color: #28a745;
 }
