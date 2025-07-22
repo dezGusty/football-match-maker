@@ -67,8 +67,8 @@
 
 .delete-btn:hover {
   background: #fbeaea;
-  border-color: #a31515;
-  color: #a31515;
+  border-color: #b71c1c;
+  color: #b71c1c;
 }
 
 .save-btn {
@@ -91,6 +91,17 @@
   background: #f5eee9;
   border-color: #8d735b;
   color: #5c4637;
+}
+
+.reactivate-btn {
+  border-color: #388e3c;
+  color: #388e3c;
+}
+
+.reactivate-btn:hover {
+  background: #e8f5e9;
+  border-color: #2e7d32;
+  color: #1b5e20;
 }
 
 /* Stiluri pentru status badge */

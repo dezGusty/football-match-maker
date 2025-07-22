@@ -7,16 +7,18 @@
       <th>First name</th>
       <th>Last name</th>
       <th>Rating</th>
+      <th>Status</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let player of players; let i = index">
+    <tr *ngFor="let player of players; let i = index" [class.disabled-player]="!isPlayerEnabled(player)">
       <td>{{ i+1 }}</td>
-      <ng-container *ngIf="editIndex === i; else viewMode">
+      <ng-container *ngIf="editIndex === i && isPlayerEnabled(player); else viewMode">
         <td><input type="text" [(ngModel)]="editedPlayer!.firstName" /></td>
         <td><input type="text" [(ngModel)]="editedPlayer!.lastName" /></td>
         <td><input type="number" [(ngModel)]="editedPlayer!.rating" min="0" max="10" step="0.1"/></td>
+        <td><span class="status-badge enabled">Active</span></td>
         <td>
           <button class="action-btn save-btn" title="Save" (click)="editPlayer()">Save</button>
           <button class="action-btn cancel-btn" title="Cancel" (click)="clearEditIndex()">Cancel</button>
@@ -27,8 +29,17 @@
         <td>{{ player.lastName }}</td>
         <td>{{ player.rating }}</td>
         <td>
-          <button class="action-btn edit-btn" title="Edit" (click)="setEditIndex(i)">Edit</button>
-          <button class="action-btn delete-btn" title="Delete">Delete</button>
+          <span class="status-badge" [class.enabled]="isPlayerEnabled(player)">
+            {{ isPlayerEnabled(player) ? 'Active' : 'Inactive' }}
+          </span>
+        </td>
+        <td>
+          @if (isPlayerEnabled(player)) {
+            <button class="action-btn edit-btn" title="Edit" (click)="setEditIndex(i)">Edit</button>
+            <button class="action-btn delete-btn" title="Disable" (click)="deletePlayer(player.id!)">Disable</button>
+          } @else {
+            <button class="action-btn reactivate-btn" title="Reactivate" (click)="enablePlayer(player.id!)">Reactivate</button>
+          }
         </td>
       </ng-template>
     </tr>

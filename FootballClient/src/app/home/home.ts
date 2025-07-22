@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { inject } from '@angular/core';
-import { PlayerService } from '../player.service';
-import { Player } from '../player.interface';
 import { Header } from '../header/header';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { PlayerService } from '../player.service';
+import { Player } from '../player.interface';
 
 @Component({
   selector: 'app-home',
@@ -17,20 +16,21 @@ export class Home {
   editIndex: number | null = null;
   editedPlayer: Player | null = null;
   showAddModal = false;
-  private PlayerService = inject(PlayerService);
 
-  constructor() {
-    this.init();
-  }
+  constructor(private PlayerService: PlayerService) {}
 
   async init() {
     try {
       this.players = await this.PlayerService.getPlayers();
-      console.log("Players fetched successfully:", this.players);
     } catch (error) {
       console.error('Error fetching players:', error);
     }
   }
+
+  ngOnInit() {
+    this.init();
+  }
+
   newPlayer = {
     firstName: '',
     lastName: '',
@@ -38,9 +38,8 @@ export class Home {
   };
 
   async addPlayer() {
-
-    if (this.newPlayer.rating <= 0) {
-      alert('Rating must be a positive number.');
+    if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10) {
+      alert('Rating trebuie să fie între 0 și 10.');
       return;
     }
     try {
@@ -53,16 +52,24 @@ export class Home {
     }
   }
 
+  setEditIndex(index: number) {
+    this.editIndex = index;
+    this.editedPlayer = { ...this.players[index] };
+  }
+
   async editPlayer() {
     if (!this.editedPlayer) return;
+    
+    if (typeof this.editedPlayer.rating === 'number' && (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10)) {
+      alert('Rating trebuie să fie între 0 și 10.');
+      return;
+    }
+
     try {
       const updatedPlayer = await this.PlayerService.editPlayer(this.editedPlayer);
       const index = this.players.findIndex(p => p.id === updatedPlayer.id);
       if (index !== -1) {
         this.players[index] = updatedPlayer;
-      }
-      if (typeof updatedPlayer.rating === 'number' && updatedPlayer.rating <= 0) {
-        throw new Error('Rating must be a positive number.');
       }
       this.clearEditIndex();
       console.log('Player updated:', updatedPlayer);
@@ -70,20 +77,16 @@ export class Home {
       console.error('Error updating player:', error);
     }
   }
-  // Metodă nouă pentru soft delete
 
-  async deletePlayer(playerId: number, playerIndex: number) {
-    // Confirmă ștergerea
-    const confirmDelete = confirm('Are you sure you want to delete this player?');
+  async deletePlayer(playerId: number) {
+    const confirmDelete = confirm('Sigur doriți să dezactivați acest jucător?');
     if (!confirmDelete) return;
 
     try {
       const success = await this.PlayerService.deletePlayer(playerId);
       if (success) {
-        // Actualizează lista local - jucătorul va fi marcat ca dezactivat
-        // și va afișa "Player{id}" în loc de numele real
-        await this.init(); // Reîncarcă lista pentru a afișa numele actualizat
-        console.log('Player soft deleted successfully');
+        await this.init(); // Reîncarcă lista pentru a afișa statusul actualizat
+        console.log('Player deleted successfully');
       }
     } catch (error) {
       console.error('Error deleting player:', error);
@@ -91,23 +94,8 @@ export class Home {
     }
   }
 
-
-  setEditIndex(index: number) {
-    this.editIndex = index;
-    this.editedPlayer = { ...this.players[index] };
-  }
-
-  clearEditIndex() {
-    this.editIndex = null;
-    this.editedPlayer = null;
-  }
-  // Metodă helper pentru a verifica dacă un jucător este enabled
-  isPlayerEnabled(player: Player): boolean {
-    return player.isEnabled !== false; // true by default dacă nu e setat
-  }
-  // Metodă nouă pentru a reactiva un jucător dezactivat
   async enablePlayer(playerId: number) {
-    const confirmEnable = confirm('Are you sure you want to reactivate this player?');
+    const confirmEnable = confirm('Sigur doriți să reactivați acest jucător?');
     if (!confirmEnable) return;
 
     try {
@@ -120,5 +108,14 @@ export class Home {
       console.error('Error enabling player:', error);
       alert('Failed to reactivate player. Please try again.');
     }
+  }
+
+  clearEditIndex() {
+    this.editIndex = null;
+    this.editedPlayer = null;
+  }
+
+  isPlayerEnabled(player: Player): boolean {
+    return player.isEnabled !== false;
   }
 }
