@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    [Migration("20250722083055_UpdateRatingPrecisionFIX")]
-    partial class UpdateRatingPrecisionFIX
+    [Migration("20250722092557_prob")]
+    partial class prob
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

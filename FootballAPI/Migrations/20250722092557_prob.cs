@@ -5,11 +5,12 @@
 namespace FootballAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateRatingPrecision : Migration
+    public partial class prob : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+
             migrationBuilder.AlterColumn<decimal>(
                 name: "Rating",
                 table: "Players",
@@ -26,7 +27,6 @@ namespace FootballAPI.Migrations
                 oldClrType: typeof(decimal),
                 oldType: "decimal(3,2)");
         }
-
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
