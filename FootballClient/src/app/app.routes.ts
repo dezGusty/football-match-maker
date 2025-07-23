@@ -18,7 +18,8 @@ export const routes: Routes = [
     },
     {
         path: 'account',
-        loadComponent: () => import('./account/account').then(m => m.Account)
+        loadComponent: () => import('./account/account').then(m => m.Account),
+        canActivate: [authGuard]
     },
     {
         path: 'register',
