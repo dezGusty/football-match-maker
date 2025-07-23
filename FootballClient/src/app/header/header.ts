@@ -28,7 +28,8 @@ export class Header {
         const user = await this.userService.getUserById(userId);
         this.username = user.username;
       }
-    } catch {
+    } catch (error) {
+      console.error('Error loading username:', error);
       this.username = '';
     }
   }

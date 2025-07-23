@@ -9,8 +9,7 @@ export class UserService {
 
   async getUserById(id: number): Promise<User> {
     const response = await fetch(`${this.url}/${id}`, {
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include'
+      headers: { 'Content-Type': 'application/json' }
     });
     if (!response.ok) {
       throw new Error('Failed to fetch user data');
@@ -22,7 +21,6 @@ export class UserService {
     const response = await fetch(`${this.url}/${userId}/change-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
       body: JSON.stringify({
         currentPassword,
         newPassword,
