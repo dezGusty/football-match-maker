@@ -17,7 +17,7 @@
       <ng-container *ngIf="editIndex === i && isPlayerEnabled(player); else viewMode">
         <td><input type="text" [(ngModel)]="editedPlayer!.firstName" /></td>
         <td><input type="text" [(ngModel)]="editedPlayer!.lastName" /></td>
-        <td><input type="number" [(ngModel)]="editedPlayer!.rating" min="0" max="10" step="0.1"/></td>
+        <td><input type="number" [(ngModel)]="editedPlayer!.rating" min="0" max="10" step="0.1" /></td>
         <td><span class="status-badge enabled">Active</span></td>
         <td>
           <button class="action-btn save-btn" title="Save" (click)="editPlayer()">Save</button>
@@ -35,10 +35,11 @@
         </td>
         <td>
           @if (isPlayerEnabled(player)) {
-            <button class="action-btn edit-btn" title="Edit" (click)="setEditIndex(i)">Edit</button>
-            <button class="action-btn delete-btn" title="Disable" (click)="deletePlayer(player.id!)">Disable</button>
+          <button class="action-btn edit-btn" title="Edit" (click)="setEditIndex(i)">Edit</button>
+          <button class="action-btn delete-btn" title="Disable" (click)="deletePlayer(player.id!)">Disable</button>
           } @else {
-            <button class="action-btn reactivate-btn" title="Reactivate" (click)="enablePlayer(player.id!)">Reactivate</button>
+          <button class="action-btn reactivate-btn" title="Reactivate"
+            (click)="enablePlayer(player.id!)">Reactivate</button>
           }
         </td>
       </ng-template>
@@ -50,14 +51,15 @@
 <button class="open-modal-btn" (click)="showAddModal = true">Add New Player</button>
 
 @if (showAddModal) {
-  <div class="modal-backdrop">
-    <div class="modal-content">
-      <button class="close-modal-btn" (click)="showAddModal = false" title="Close">&times;</button>
-      <h3>Add New Player</h3>
-      <input type="text" placeholder="First Name" [(ngModel)]="newPlayer.firstName" />
-      <input type="text" placeholder="Last Name" [(ngModel)]="newPlayer.lastName" />
-      <input type="number" placeholder="Rating" [(ngModel)]="newPlayer.rating" min="0" max="10" step="0.1"/>
-      <button (click)="addPlayer(); showAddModal = false">Add Player</button>
-    </div>
+<div class="modal-backdrop">
+  <div class="modal-content">
+    <button class="close-modal-btn" (click)="showAddModal = false" title="Close">&times;</button>
+    <h3>Add New Player</h3>
+    <input type="text" placeholder="First Name" [(ngModel)]="newPlayer.firstName" />
+    <input type="text" placeholder="Last Name" [(ngModel)]="newPlayer.lastName" />
+    <input type="number" placeholder="Rating" [(ngModel)]="newPlayer.rating" min="0" max="10" step="0.1" />
+    <input type="text" placeholder="Image URL (optional)" [(ngModel)]="newPlayer.imageUrl" />
+    <button (click)="addPlayer(); showAddModal = false">Add Player</button>
   </div>
+</div>
 }

@@ -5,4 +5,5 @@ export interface Player {
     rating?: number;
     isAvailable?: boolean;
     isEnabled?: boolean;
+    imageUrl?: string;
 }

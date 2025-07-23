@@ -17,7 +17,7 @@ export class Home {
   editedPlayer: Player | null = null;
   showAddModal = false;
 
-  constructor(private PlayerService: PlayerService) {}
+  constructor(private PlayerService: PlayerService) { }
 
   async init() {
     try {
@@ -34,7 +34,8 @@ export class Home {
   newPlayer = {
     firstName: '',
     lastName: '',
-    rating: 0
+    rating: 0,
+    imageUrl: ''
   };
 
   async addPlayer() {
@@ -45,7 +46,7 @@ export class Home {
     try {
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
       this.players.push(addedPlayer);
-      this.newPlayer = { firstName: '', lastName: '', rating: 0 };
+      this.newPlayer = { firstName: '', lastName: '', rating: 0, imageUrl: '' };
       console.log('Player added:', addedPlayer);
     } catch (error) {
       console.error('Error adding player:', error);
@@ -59,7 +60,7 @@ export class Home {
 
   async editPlayer() {
     if (!this.editedPlayer) return;
-    
+
     if (typeof this.editedPlayer.rating === 'number' && (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10)) {
       alert('Rating must be between 0 and 10.');
       return;
