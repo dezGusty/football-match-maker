@@ -112,6 +112,22 @@ namespace FootballAPI.Service
             return player != null ? MapToPlayerWithImageDto(player) : null;
         }
 
+        public async Task<IEnumerable<PlayerWithImageDto>> GetAllPlayersWithImagesAsync()
+        {
+            var players = await _playerRepository.GetAllAsync();
+            return players.Select(p => new PlayerWithImageDto
+            {
+                Id = p.Id,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                Rating = p.Rating,
+                IsAvailable = p.IsAvailable,
+                CurrentTeamId = p.CurrentTeamId,
+                IsEnabled = p.IsEnabled,
+                ImageUrl = p.ImageUrl
+            });
+        }
+
         private static PlayerDto MapToDto(Player player)
         {
             if (!player.IsEnabled)

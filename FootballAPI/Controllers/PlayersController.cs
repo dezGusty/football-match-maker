@@ -22,6 +22,13 @@ namespace FootballAPI.Controllers
             return Ok(players);
         }
 
+        [HttpGet("with-images")]
+        public async Task<ActionResult<IEnumerable<PlayerWithImageDto>>> GetAllPlayersWithImages()
+        {
+            var players = await _playerService.GetAllPlayersWithImagesAsync();
+            return Ok(players);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<PlayerDto>> GetPlayer(int id)
         {

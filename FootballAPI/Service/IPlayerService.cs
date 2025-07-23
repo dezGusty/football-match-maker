@@ -16,5 +16,6 @@ namespace FootballAPI.Service
         Task<IEnumerable<PlayerDto>> SearchPlayersByNameAsync(string searchTerm);
         Task<bool> PlayerExistsAsync(int id);
         Task<bool> EnablePlayerAsync(int id);
+        Task<IEnumerable<PlayerWithImageDto>> GetAllPlayersWithImagesAsync();
     }
 }

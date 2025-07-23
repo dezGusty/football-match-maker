@@ -8,11 +8,14 @@ export class PlayerService {
   private readonly url: string = 'http://localhost:5145/api/players';
   constructor() { }
   async getPlayers(): Promise<Player[]> {
-    const response = await fetch(`${this.url}`);
+    const response = await fetch(`${this.url}/with-images`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch players');
+    }
     const players = await response.json();
     return players;
   }
-  async addPlayer(player: { firstName: string; lastName: string; rating: number }): Promise<Player> {
+  async addPlayer(player: { firstName: string; lastName: string; rating: number; imageUrl?: string }): Promise<Player> {
     const response = await fetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -25,6 +28,7 @@ export class PlayerService {
 
     return await response.json();
   }
+
   async editPlayer(player: Player): Promise<Player> {
     const response = await fetch(`${this.url}/${player.id}`, {
       method: 'PUT',
@@ -62,5 +66,14 @@ export class PlayerService {
     }
 
     return true;
+  }
+  async getPlayerWithImage(playerId: number): Promise<Player> {
+    const response = await fetch(`${this.url}/${playerId}/with-image`);
+
+    if (!response.ok) {
+      throw new Error('Failed to get player with image');
+    }
+
+    return await response.json();
   }
 }
