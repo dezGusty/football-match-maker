@@ -15,11 +15,6 @@ export class AuthService {
     if (savedUserId) {
       this.userId = parseInt(savedUserId, 10);
     }
-
-    // Event listener pentru închiderea ferestrei
-    window.addEventListener('beforeunload', () => {
-      this.logout();
-    });
   }
 
   async register(username: string, password: string, role: string = 'Admin'): Promise<void> {
@@ -44,8 +39,14 @@ export class AuthService {
       throw new Error(message);
     }
     const userData = await response.json();
+    const now = new Date().getTime();
+    const expiresAt = now + 10 * 60 * 1000;
+
     this.isAuthenticated = true;
-    this.userId = userData.id;
+      this.userId = userData.id;
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userId', userData.id.toString());
+      localStorage.setItem('authExpiresAt', expiresAt.toString());
 
     } catch (error) {
       console.error('Register error:', error);
@@ -68,10 +69,15 @@ export class AuthService {
       }
 
       const userData = await response.json();
+
+      const now = new Date().getTime();
+      const expiresAt = now + 10 * 60 * 1000;
+
       this.isAuthenticated = true;
       this.userId = userData.id;
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userId', userData.id.toString());
+      localStorage.setItem('authExpiresAt', expiresAt.toString());
     } catch (error) {
       console.error('Eroare la autentificare:', error);
       throw error;
@@ -83,11 +89,21 @@ export class AuthService {
     this.userId = null;
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('userId');
+    localStorage.removeItem('authExpiresAt');
   }
 
   isLoggedIn(): boolean {
-    return this.isAuthenticated;
+  const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+  const expiresAt = parseInt(localStorage.getItem('authExpiresAt') || '0', 10);
+  const now = new Date().getTime();
+
+  if (!isAuth || now > expiresAt) {
+    this.logout();
+    return false;
   }
+
+  return true;
+}
 
   isRegistered(): boolean {
     return localStorage.getItem('isAuthenticated') === 'true';

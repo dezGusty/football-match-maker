@@ -7,9 +7,15 @@ export const authGuard = () => {
   const router = inject(Router);
 
   if (authService.isLoggedIn()) {
+  const expiresAt = parseInt(localStorage.getItem('authExpiresAt') || '0', 10);
+  const now = new Date().getTime();
+
+  if (now < expiresAt) {
     return true;
   }
+}
 
   router.navigate(['/']);
+  authService.logout();
   return false;
 }; 

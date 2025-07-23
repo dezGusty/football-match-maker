@@ -23,8 +23,8 @@ export class Register {
     private router: Router,
     private authService: AuthService
   ) {
-    if (this.authService.isRegistered()) {
-      this.router.navigate(['/home']);
+    if (this.authService.isLoggedIn()) {
+    this.router.navigate(['/login']);
     }
   }
 
