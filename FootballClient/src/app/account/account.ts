@@ -17,6 +17,7 @@ export class Account {
   user: User | null = null;
   newPassword = '';
   confirmPassword = '';
+  currentPassword = '';
 
   constructor(
     private userService: UserService,
@@ -37,8 +38,22 @@ export class Account {
     }
   }
 
-  changePassword() {
-    // Implement password change logic here
+  async changePassword() {
+    if (!this.user) return;
+    try {
+      const message = await this.userService.changePassword(
+        this.user.id,
+        this.currentPassword,
+        this.newPassword,
+        this.confirmPassword
+      );
+      alert(message);
+      this.currentPassword = '';
+      this.newPassword = '';
+      this.confirmPassword = '';
+    } catch (error: any) {
+      alert(error.message || 'Password change failed');
+    }
   }
 
   logout() {

@@ -12,6 +12,8 @@
       <div class="account-username">{{ user.username }}</div>
       <div class="account-role-badge">{{ user.role }}</div>
       <form class="account-password-form">
+        <label for="current-password">Current Password</label>
+        <input id="current-password" type="password" placeholder="Enter current password" [(ngModel)]="currentPassword" name="currentPassword" />
         <label for="new-password">New Password</label>
         <input id="new-password" type="password" placeholder="Enter new password" [(ngModel)]="newPassword" name="newPassword" />
         <label for="confirm-password">Confirm Password</label>

@@ -17,4 +17,22 @@ export class UserService {
     }
     return await response.json() as User;
   }
+
+  async changePassword(userId: number, currentPassword: string, newPassword: string, confirmPassword: string): Promise<string> {
+    const response = await fetch(`${this.url}/${userId}/change-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+        confirmPassword
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to change password');
+    }
+    return result.message || 'Password changed successfully';
+  }
 }
