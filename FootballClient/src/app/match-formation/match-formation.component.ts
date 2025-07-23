@@ -83,4 +83,50 @@ export class MatchFormationComponent implements OnInit {
         if (!player) return 'N/A';
         return `${player.firstName} ${player.lastName}`;
     }
-} 
+
+    getPlayerFirstName(player: Player | undefined): string {
+        if (!player || !player.firstName) return 'N/A';
+        return player.firstName;
+    }
+
+    getPlayerLastName(player: Player | undefined): string {
+        if (!player || !player.lastName) return '';
+        return player.lastName;
+    }
+
+    getPlayerImage(player: Player | undefined): string {
+        if (!player || !player.imageUrl) {
+            // Imaginea default pentru jucători fără poză
+            return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNjY2NjY2MiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDAgNSAyMVYyMkMxIDIyIDIzIDIyIDIzIDIyVjIxQzIzIDE3LjEzNDAgMTkuODY2IDE0IDEyIDE0WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cjwvc3ZnPgo=';
+        }
+        return player.imageUrl;
+    }
+
+    onImageError(event: any) {
+        // În cazul în care imaginea nu se poate încărca, folosim imaginea default
+        event.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNjY2NjY2MiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA4IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDAgNSAyMVYyMkMxIDIyIDIzIDIyIDIzIDIyVjIxQzIzIDE3LjEzNDAgMTkuODY2IDE0IDEyIDE0WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cjwvc3ZnPgo=';
+    }
+
+    getStarArray(rating: number): string[] {
+        const stars: string[] = [];
+        const fullStars = Math.floor(rating / 2); // Rating 10 = 5 stele, rating 8 = 4 stele
+        const hasHalfStar = (rating % 2) >= 1; // Dacă rating-ul are .5 sau mai mult, adaugă jumătate de stea
+
+        // Adaugă stelele pline
+        for (let i = 0; i < fullStars; i++) {
+            stars.push('full');
+        }
+
+        // Adaugă jumătatea de stea dacă este cazul
+        if (hasHalfStar && fullStars < 5) {
+            stars.push('half');
+        }
+
+        // Completează cu stele goale până la 5
+        while (stars.length < 5) {
+            stars.push('empty');
+        }
+
+        return stars;
+    }
+}

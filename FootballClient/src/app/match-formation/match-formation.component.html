@@ -3,8 +3,23 @@
     <div class="team team1">
         <div *ngFor="let pos of getTeam1Positions(); let i = index" class="player" [style.left]="pos.left"
             [style.top]="pos.top">
-            <div class="player-dot team1-color">
-                <span class="player-name">{{getPlayerName(team1Players[i])}}</span>
+            <div class="player-card">
+                <div class="jersey team1-jersey">
+                    <img [src]="getPlayerImage(team1Players[i])" 
+                         [alt]="getPlayerName(team1Players[i])"
+                         class="player-image"
+                         (error)="onImageError($event)">
+                    <div class="player-name">
+                        <div>{{getPlayerFirstName(team1Players[i])}}</div>
+                        <div>{{getPlayerLastName(team1Players[i])}}</div>
+                    </div>
+                </div>
+                <div class="player-rating">
+                    <span *ngFor="let star of getStarArray(team1Players[i]?.rating || 0); let starIndex = index" 
+                          class="star" 
+                          [class.full]="star === 'full'"
+                          [class.half]="star === 'half'"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -13,8 +28,23 @@
     <div class="team team2">
         <div *ngFor="let pos of getTeam2Positions(); let i = index" class="player" [style.left]="pos.left"
             [style.top]="pos.top">
-            <div class="player-dot team2-color">
-                <span class="player-name">{{getPlayerName(team2Players[i])}}</span>
+            <div class="player-card">
+                <div class="jersey team2-jersey">
+                    <img [src]="getPlayerImage(team2Players[i])" 
+                         [alt]="getPlayerName(team2Players[i])"
+                         class="player-image"
+                         (error)="onImageError($event)">
+                    <div class="player-name">
+                        <div>{{getPlayerFirstName(team2Players[i])}}</div>
+                        <div>{{getPlayerLastName(team2Players[i])}}</div>
+                    </div>
+                </div>
+                <div class="player-rating">
+                    <span *ngFor="let star of getStarArray(team2Players[i]?.rating || 0); let starIndex = index" 
+                          class="star" 
+                          [class.full]="star === 'full'"
+                          [class.half]="star === 'half'"></span>
+                </div>
             </div>
         </div>
     </div>
