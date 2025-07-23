@@ -53,6 +53,36 @@
     font-size: 1.2rem;
 }
 
+/* Stiluri pentru search box */
+.search-container {
+    margin: 0 auto 15px auto;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.15s ease-in-out;
+    background: #f8f9fa;
+    text-align: center;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    background: white;
+}
+
+.search-input::placeholder {
+    color: #6c757d;
+}
+
 .players-list {
     list-style: none;
     padding: 0;

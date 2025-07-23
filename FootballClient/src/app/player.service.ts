@@ -12,7 +12,7 @@ export class PlayerService {
     const players = await response.json();
     return players;
   }
-  async addPlayer(player: { firstName: string; lastName: string; rating: number; imageUrl?: string }): Promise<Player> {
+  async addPlayer(player: { firstName: string; lastName: string; rating: number }): Promise<Player> {
     const response = await fetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
