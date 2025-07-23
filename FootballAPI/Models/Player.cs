@@ -27,6 +27,9 @@ namespace FootballAPI.Models
         [ForeignKey("CurrentTeamId")]
         public virtual Team CurrentTeam { get; set; }
 
+        [StringLength(500)]
+        public string? ImageUrl { get; set; }
+
         public virtual ICollection<PlayerMatchHistory> MatchHistory { get; set; } = new List<PlayerMatchHistory>();
     }
 }

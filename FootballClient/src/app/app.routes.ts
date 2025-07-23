@@ -23,6 +23,10 @@ export const routes: Routes = [
     {
         path: 'register',
         loadComponent: () => import('./register/register').then(m => m.Register)
+    },
+    {
+        path: 'match-formation',
+        loadComponent: () => import('./match-formation/match-formation.component').then(m => m.MatchFormationComponent),
+        canActivate: [authGuard]
     }
-
 ];

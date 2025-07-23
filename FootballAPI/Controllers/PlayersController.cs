@@ -31,6 +31,15 @@ namespace FootballAPI.Controllers
 
             return Ok(player);
         }
+        [HttpGet("{id}/with-image")]
+        public async Task<ActionResult<PlayerWithImageDto>> GetPlayerWithImage(int id)
+        {
+            var player = await _playerService.GetPlayerWithImageByIdAsync(id);
+            if (player == null)
+                return NotFound($"Player with ID {id} not found.");
+
+            return Ok(player);
+        }
 
         [HttpGet("team/{teamId}")]
         public async Task<ActionResult<IEnumerable<PlayerDto>>> GetPlayersByTeam(int teamId)
@@ -96,7 +105,7 @@ namespace FootballAPI.Controllers
 
             return NoContent();
         }
-         [HttpPatch("{id}/enable")]
+        [HttpPatch("{id}/enable")]
         public async Task<ActionResult> EnablePlayer(int id)
         {
             var result = await _playerService.EnablePlayerAsync(id);

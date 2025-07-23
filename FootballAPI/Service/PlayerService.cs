@@ -43,6 +43,7 @@ namespace FootballAPI.Service
                 FirstName = createPlayerDto.FirstName,
                 LastName = createPlayerDto.LastName,
                 Rating = createPlayerDto.Rating,
+                ImageUrl = createPlayerDto.ImageUrl,
                 IsAvailable = false,
                 IsEnabled = true,
                 CurrentTeamId = null
@@ -64,6 +65,7 @@ namespace FootballAPI.Service
             existingPlayer.IsAvailable = updatePlayerDto.IsAvailable;
             existingPlayer.CurrentTeamId = updatePlayerDto.CurrentTeamId;
             existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
+            existingPlayer.ImageUrl = updatePlayerDto.ImageUrl;
             var updatedPlayer = await _playerRepository.UpdateAsync(existingPlayer);
             return MapToDto(updatedPlayer);
         }
@@ -104,6 +106,11 @@ namespace FootballAPI.Service
         {
             return await _playerRepository.ExistsAsync(id);
         }
+        public async Task<PlayerWithImageDto?> GetPlayerWithImageByIdAsync(int id)
+        {
+            var player = await _playerRepository.GetByIdAsync(id);
+            return player != null ? MapToPlayerWithImageDto(player) : null;
+        }
 
         private static PlayerDto MapToDto(Player player)
         {
@@ -130,6 +137,34 @@ namespace FootballAPI.Service
                 CurrentTeamId = player.CurrentTeamId,
                 IsEnabled = true
 
+            };
+        }
+        private static PlayerWithImageDto MapToPlayerWithImageDto(Player player)
+        {
+            if (!player.IsEnabled)
+            {
+                return new PlayerWithImageDto
+                {
+                    Id = player.Id,
+                    FirstName = $"Player{player.Id}",
+                    LastName = "",
+                    Rating = 0.0f,
+                    IsAvailable = false,
+                    CurrentTeamId = null,
+                    IsEnabled = false,
+                    ImageUrl = null
+                };
+            }
+            return new PlayerWithImageDto
+            {
+                Id = player.Id,
+                FirstName = player.FirstName,
+                LastName = player.LastName,
+                Rating = player.Rating,
+                IsAvailable = player.IsAvailable,
+                CurrentTeamId = player.CurrentTeamId,
+                IsEnabled = true,
+                ImageUrl = player.ImageUrl
             };
         }
     }
