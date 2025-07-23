@@ -13,6 +13,6 @@ namespace FootballAPI.DTOs
         public string Password { get; set; }
 
         [StringLength(50, ErrorMessage = "Role cannot exceed 50 characters")]
-        public string Role { get; set; } = "User";
+        public string Role { get; set; } = "Admin";
     }
 }

@@ -48,7 +48,7 @@ export class SelectPlayersComponent implements OnInit {
             this.error = null;
             this.allPlayers = await this.playerService.getPlayers();
             for (const player of this.allPlayers) {
-                player.isSelected = false;
+                player.isAvailable = false;
             }
         } catch (error) {
             console.error('Failed to load players:', error);
@@ -59,11 +59,11 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     get availablePlayers(): Player[] {
-        return this.allPlayers.filter(p => !p.isSelected && p.isEnabled);
+        return this.allPlayers.filter(p => p.isEnabled);
     }
 
     get selectedPlayers(): Player[] {
-        return this.allPlayers.filter(p => p.isSelected);
+        return this.allPlayers.filter(p => p.isAvailable);
     }
 
     selectPlayer(player: Player) {
@@ -71,11 +71,13 @@ export class SelectPlayersComponent implements OnInit {
             alert(`Maximum ${this.maxAvailable} players can be selected.`);
             return;
         }
-        player.isSelected = true;
+        player.isAvailable = true;
+        player.isEnabled = false;
     }
 
     unselectPlayer(player: Player) {
-        player.isSelected = false;
+        player.isEnabled = true;
+        player.isAvailable = false;
     }
 
     private updatePlayerInList(updatedPlayer: Player) {

@@ -43,6 +43,10 @@ export class AuthService {
       }
       throw new Error(message);
     }
+    const userData = await response.json();
+    this.isAuthenticated = true;
+    this.userId = userData.id;
+
     } catch (error) {
       console.error('Register error:', error);
       throw error;
