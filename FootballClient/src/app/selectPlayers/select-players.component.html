@@ -2,12 +2,17 @@
 
 <div class="players-container">
     <div class="column">
-        <div class="column-header">
-            <h3>Available Players</h3>
-            <span class="player-count">{{ availablePlayers.length }} Players</span>
+        <h3>Available Players</h3>
+        <div class="search-container">
+            <input 
+                type="text" 
+                [(ngModel)]="searchTerm" 
+                placeholder="Caută jucători..." 
+                class="search-input"
+            />
         </div>
         <ul class="players-list">
-            <li *ngFor="let player of availablePlayers" class="player-item">
+            <li *ngFor="let player of filteredAvailablePlayers" class="player-item">
                 <div class="player-info">
                     <span>{{ player.firstName }} {{ player.lastName }}</span>
                     <span class="player-rating">Rating: {{ player.rating }}</span>
@@ -21,12 +26,7 @@
     </div>
 
     <div class="column">
-        <div class="column-header">
-            <h3>Selected Players</h3>
-            <span class="player-count" [ngClass]="selectedPlayers.length < 10 ? 'count-red' : 'count-green'">
-                {{maxAvailable - selectedPlayers.length }} Players left
-            </span>
-        </div>
+        <h3>Selected Players</h3>
         <ul class="players-list">
             <li *ngFor="let player of selectedPlayers" class="player-item">
                 <div class="player-info">
