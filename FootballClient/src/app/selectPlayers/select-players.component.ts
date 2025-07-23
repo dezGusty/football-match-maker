@@ -43,23 +43,21 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     async loadPlayers() {
-        try {
-            this.loading = true;
-            this.error = null;
-            this.allPlayers = await this.playerService.getPlayers();
-            for (const player of this.allPlayers) {
-                player.isAvailable = false;
-            }
-        } catch (error) {
-            console.error('Failed to load players:', error);
-            this.error = 'Failed to load players. Please try again later.';
-        } finally {
-            this.loading = false;
-        }
+    try {
+        this.loading = true;
+        this.error = null;
+        this.allPlayers = await this.playerService.getPlayers();
+        this.restoreSelectedPlayers();
+    } catch (error) {
+        console.error('Failed to load players:', error);
+        this.error = 'Failed to load players. Please try again later.';
+    } finally {
+        this.loading = false;
     }
+}
 
     get availablePlayers(): Player[] {
-        return this.allPlayers.filter(p => p.isEnabled);
+        return this.allPlayers.filter(p => p.isEnabled && !p.isAvailable);
     }
 
     get selectedPlayers(): Player[] {
@@ -67,24 +65,34 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     selectPlayer(player: Player) {
-        if (this.selectedPlayers.length >= this.maxAvailable) {
-            alert(`Maximum ${this.maxAvailable} players can be selected.`);
-            return;
-        }
-        player.isAvailable = true;
-        player.isEnabled = false;
+    if (this.selectedPlayers.length >= this.maxAvailable) {
+        alert(`Maximum ${this.maxAvailable} players can be selected.`);
+        return;
     }
+    player.isAvailable = true;
+    this.saveSelectedPlayers();
+}
 
     unselectPlayer(player: Player) {
-        player.isEnabled = true;
         player.isAvailable = false;
+        this.saveSelectedPlayers();
     }
 
-    private updatePlayerInList(updatedPlayer: Player) {
-        this.allPlayers = this.allPlayers.map(p =>
-            p.id === updatedPlayer.id ? updatedPlayer : p
-        );
+    private saveSelectedPlayers() {
+        const selectedIds = this.selectedPlayers.map(p => p.id);
+        localStorage.setItem('selectedPlayerIds', JSON.stringify(selectedIds));
     }
+
+    private restoreSelectedPlayers() {
+        const saved = localStorage.getItem('selectedPlayerIds');
+        if (!saved) return;
+
+        const selectedIds: number[] = JSON.parse(saved);
+        this.allPlayers.forEach(player => {
+          player.isAvailable = selectedIds.includes(player.id!);
+    });
+    }
+
 
     generateTeams() {
         const players = [...this.selectedPlayers];

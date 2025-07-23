@@ -41,6 +41,18 @@ export class Register {
     return;
   }
 
+  if(this.password.length < 6) {
+    this.errorMessage = 'Password must be at least 6 characters long!';
+    this.successMessage = '';
+    return;
+  }
+
+  if(this.username.length < 3) {
+    this.errorMessage = 'Username must be at least 3 characters long!';
+    this.successMessage = '';
+    return;
+  }
+
   try {
     await this.authService.register(this.username, this.password, this.role);
     await this.authService.login({ username: this.username, password: this.password });
