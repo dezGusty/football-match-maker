@@ -1,17 +1,22 @@
 .football-field {
     width: 1200px;
     height: 700px;
-    background-color: #4CAF50;
-    background-image:
-        linear-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
-    background-size: 50px 50px;
     position: relative;
-    border: 4px solid white;
-    border-radius: 10px;
     margin: 20px auto;
     overflow: hidden;
+    border: 4px solid white;
+    border-radius: 10px;
+
+    /* === Fundalul terenului de fotbal === */
+    background-image:
+        url('http://localhost:5145/images/football_field.jpg'),
+        linear-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+    background-size: cover, 50px 50px, 50px 50px;
+    background-position: center;
+    background-repeat: no-repeat, repeat, repeat;
 }
+
 
 /* Linia de centru */
 .football-field::before {
@@ -58,8 +63,8 @@
 }
 
 .player-card {
-    width: 120px;
-    height: 140px;
+    width: 90px;
+    height: 120px;
     position: relative;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -71,63 +76,95 @@
     filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
 }
 
+/* ===== TRICOU CU MÂNECI REALISTE ===== */
 .jersey {
     width: 100%;
     height: 90px;
     position: relative;
-    border-radius: 15px 15px 25px 25px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border: 3px solid white;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    justify-content: flex-start;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 2px solid white;
+    border-radius: 6px 6px 0 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+
+
+
 .team1-jersey {
-    background: linear-gradient(145deg, #ff4444 0%, #cc3333 100%);
+    /* ===== FOLOSEȘTE IMAGINEA TRICOULUI ROȘU ===== */
+    background-image: url('http://localhost:5145/images/red_tshirt.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Fallback dacă imaginea nu se încarcă */
+    background-color: #e53e3e;
 }
 
 .team2-jersey {
-    background: linear-gradient(145deg, #4444ff 0%, #3333cc 100%);
+    /* ===== FOLOSEȘTE IMAGINEA TRICOULUI ALBASTRU ===== */
+    background-image: url('http://localhost:5145/images/blue_tshirt.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Fallback dacă imaginea nu se încarcă */
+    background-color: #3182ce;
 }
 
 .player-image {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     border: 2px solid white;
     object-fit: cover;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     background-color: rgba(255, 255, 255, 0.2);
+    z-index: 3;
+    position: relative;
 }
 
 .player-name {
     color: white;
-    font-size: 11px;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    font-size: 9px;
+    font-weight: 900;
+    text-shadow:
+        1px 1px 2px rgba(0, 0, 0, 0.8),
+        -1px -1px 2px rgba(0, 0, 0, 0.8),
+        1px -1px 2px rgba(0, 0, 0, 0.8),
+        -1px 1px 2px rgba(0, 0, 0, 0.8);
     text-align: center;
-    line-height: 1.1;
-    max-width: 90%;
+    line-height: 1.0;
+    max-width: 85%;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    z-index: 3;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
 .player-rating {
-    margin-top: 5px;
+    margin-top: 6px;
     display: flex;
     justify-content: center;
-    gap: 2px;
+    gap: 1px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 2px 6px;
+    border-radius: 8px;
+    backdrop-filter: blur(2px);
 }
 
 .star {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     position: relative;
     display: inline-block;
 }
@@ -136,8 +173,8 @@
     content: '★';
     position: absolute;
     left: 0;
-    color: #ddd;
-    font-size: 12px;
+    color: #666;
+    font-size: 10px;
 }
 
 .star::after {
@@ -145,7 +182,7 @@
     position: absolute;
     left: 0;
     color: #ffd700;
-    font-size: 12px;
+    font-size: 10px;
     width: 0%;
     overflow: hidden;
     transition: width 0.3s ease;
@@ -157,28 +194,4 @@
 
 .star.half::after {
     width: 50%;
-}
-
-.jersey::before {
-    content: '';
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 15px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 8px 8px 0 0;
-}
-
-.jersey::after {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 30px;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
 }
