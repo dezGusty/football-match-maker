@@ -110,6 +110,17 @@ export class SelectPlayersComponent implements OnInit {
         });
     }
 
+    private clearSelectedPlayers() {
+        // Ștergem din localStorage
+        localStorage.removeItem('selectedPlayerIds');
+        
+        // Resetăm starea jucătorilor
+        this.allPlayers.forEach(player => {
+            player.isAvailable = false;
+            player.isEnabled = true;
+        });
+    }
+
     generateTeams() {
         const players = [...this.selectedPlayers];
 
@@ -166,6 +177,10 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     beginMatch() {
+        // Ștergem jucătorii selectați înainte de a începe meciul
+        this.clearSelectedPlayers();
+        
+        // Navigăm către pagina de meci
         this.router.navigate(['/match-formation'], {
             state: {
                 team1Players: this.team1.players,
