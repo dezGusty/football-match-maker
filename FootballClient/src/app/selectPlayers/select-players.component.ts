@@ -49,9 +49,7 @@ export class SelectPlayersComponent implements OnInit {
             this.loading = true;
             this.error = null;
             this.allPlayers = await this.playerService.getPlayers();
-            for (const player of this.allPlayers) {
-                player.isAvailable = false;
-            }
+            this.restoreSelectedPlayers();
         } catch (error) {
             console.error('Failed to load players:', error);
             this.error = 'Failed to load players. Please try again later.';
@@ -61,7 +59,7 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     get availablePlayers(): Player[] {
-        return this.allPlayers.filter(p => p.isEnabled);
+        return this.allPlayers.filter(p => p.isEnabled && !p.isAvailable);
     }
 
     get filteredAvailablePlayers(): Player[] {
@@ -82,17 +80,34 @@ export class SelectPlayersComponent implements OnInit {
         }
         player.isAvailable = true;
         player.isEnabled = false;
+        this.saveSelectedPlayers();
     }
 
     unselectPlayer(player: Player) {
         player.isEnabled = true;
         player.isAvailable = false;
+        this.saveSelectedPlayers();
     }
 
-    private updatePlayerInList(updatedPlayer: Player) {
-        this.allPlayers = this.allPlayers.map(p =>
-            p.id === updatedPlayer.id ? updatedPlayer : p
-        );
+    private saveSelectedPlayers() {
+        const selectedIds = this.selectedPlayers.map(p => p.id);
+        localStorage.setItem('selectedPlayerIds', JSON.stringify(selectedIds));
+    }
+
+    private restoreSelectedPlayers() {
+        const saved = localStorage.getItem('selectedPlayerIds');
+        if (!saved) return;
+
+        const selectedIds: number[] = JSON.parse(saved);
+        this.allPlayers.forEach(player => {
+            if (selectedIds.includes(player.id!)) {
+                player.isAvailable = true;
+                player.isEnabled = false;
+            } else {
+                player.isAvailable = false;
+                player.isEnabled = true;
+            }
+        });
     }
 
     generateTeams() {
