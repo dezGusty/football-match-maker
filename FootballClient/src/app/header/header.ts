@@ -41,4 +41,10 @@ export class Header {
     this.router.navigate([route]);
     this.isMenuOpen = false;
   }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/']);
+    this.isMenuOpen = false;
+  }
 }
