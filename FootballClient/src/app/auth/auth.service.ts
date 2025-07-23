@@ -22,6 +22,33 @@ export class AuthService {
     });
   }
 
+  async register(username: string, password: string, role: string = 'Admin'): Promise<void> {
+    try {
+      const response = await fetch(`${this.apiUrl}/user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password, role })
+      });
+
+      if (!response.ok) {
+      const text = await response.text();
+      let message = 'Registration failed';
+      try {
+        const error = JSON.parse(text);
+        message = error.message || message;
+      } catch (_) {
+        // leave default message
+      }
+      throw new Error(message);
+    }
+    } catch (error) {
+      console.error('Register error:', error);
+      throw error;
+    }
+  }
+
   async login(credentials: LoginRequest): Promise<void> {
     try {
       const response = await fetch(`${this.apiUrl}/user/authenticate`, {
@@ -56,6 +83,10 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return this.isAuthenticated;
+  }
+
+  isRegistered(): boolean {
+    return localStorage.getItem('isAuthenticated') === 'true';
   }
 
   getUserId(): number | null {

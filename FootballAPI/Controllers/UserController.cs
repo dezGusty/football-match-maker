@@ -31,7 +31,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting all users");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -47,7 +47,7 @@ namespace FootballAPI.Controllers
 
                 if (user == null)
                 {
-                    return NotFound($"User cu ID {id} nu a fost găsit.");
+                    return NotFound($"User with ID {id} was not found.");
                 }
 
                 return Ok(user);
@@ -55,7 +55,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting user by ID: {Id}", id);
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -71,7 +71,7 @@ namespace FootballAPI.Controllers
 
                 if (user == null)
                 {
-                    return NotFound($"User cu username '{username}' nu a fost găsit.");
+                    return NotFound($"User with username '{username}' was not found.");
                 }
 
                 return Ok(user);
@@ -79,7 +79,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting user by username: {Username}", username);
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -97,7 +97,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting users by role: {Role}", role);
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -126,7 +126,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating user");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -147,7 +147,7 @@ namespace FootballAPI.Controllers
 
                 if (updatedUser == null)
                 {
-                    return NotFound($"User cu ID {id} nu a fost găsit.");
+                    return NotFound($"User with ID {id} was not found.");
                 }
 
                 return Ok(updatedUser);
@@ -160,7 +160,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating user");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -176,7 +176,7 @@ namespace FootballAPI.Controllers
 
                 if (!deleted)
                 {
-                    return NotFound($"User cu ID {id} nu a fost găsit.");
+                    return NotFound($"User with ID {id} was not found.");
                 }
 
                 return NoContent();
@@ -184,7 +184,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting user");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -205,7 +205,7 @@ namespace FootballAPI.Controllers
 
                 if (userResponse == null)
                 {
-                    return Unauthorized("Username sau password incorect.");
+                    return Unauthorized("Incorrect username or password.");
                 }
 
                 return Ok(userResponse);
@@ -213,7 +213,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error authenticating user");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -234,7 +234,7 @@ namespace FootballAPI.Controllers
 
                 if (!success)
                 {
-                    return NotFound($"User cu ID {id} nu a fost găsit.");
+                    return NotFound($"User with ID {id} was not found.");
                 }
 
                 return Ok(new { message = "Password changed successfully" });
@@ -247,7 +247,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error changing password");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -265,7 +265,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error checking username existence");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
     }

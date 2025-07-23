@@ -39,7 +39,7 @@ export class Home {
 
   async addPlayer() {
     if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10) {
-      alert('Rating trebuie să fie între 0 și 10.');
+      alert('Rating must be between 0 and 10.');
       return;
     }
     try {
@@ -61,7 +61,7 @@ export class Home {
     if (!this.editedPlayer) return;
     
     if (typeof this.editedPlayer.rating === 'number' && (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10)) {
-      alert('Rating trebuie să fie între 0 și 10.');
+      alert('Rating must be between 0 and 10.');
       return;
     }
 
@@ -79,7 +79,7 @@ export class Home {
   }
 
   async deletePlayer(playerId: number) {
-    const confirmDelete = confirm('Sigur doriți să dezactivați acest jucător?');
+    const confirmDelete = confirm('Are you sure ?');
     if (!confirmDelete) return;
 
     try {
@@ -95,7 +95,7 @@ export class Home {
   }
 
   async enablePlayer(playerId: number) {
-    const confirmEnable = confirm('Sigur doriți să reactivați acest jucător?');
+    const confirmEnable = confirm('Are you sure?');
     if (!confirmEnable) return;
 
     try {

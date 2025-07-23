@@ -60,7 +60,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error occurred while creating PlayerMatchHistory. InnerException: {InnerException}", ex.InnerException?.Message);
-                return StatusCode(500, $"Eroare internă: {ex.Message}. Inner: {ex.InnerException?.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}. Inner: {ex.InnerException?.Message}");
             }
         }
 
@@ -78,7 +78,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting all PlayerMatchHistory");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -94,7 +94,7 @@ namespace FootballAPI.Controllers
 
                 if (playerMatchHistory == null)
                 {
-                    return NotFound($"PlayerMatchHistory cu ID {id} nu a fost găsit.");
+                    return NotFound($"PlayerMatchHistory with ID {id} was not found.");
                 }
 
                 return Ok(playerMatchHistory);
@@ -102,7 +102,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting PlayerMatchHistory by ID: {Id}", id);
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -120,7 +120,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting PlayerMatchHistory by PlayerId: {PlayerId}", playerId);
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -138,7 +138,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting PlayerMatchHistory by TeamId: {TeamId}", teamId);
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -156,7 +156,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting PlayerMatchHistory by MatchId: {MatchId}", matchId);
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -186,7 +186,7 @@ namespace FootballAPI.Controllers
 
                 if (updatedPlayerMatchHistory == null)
                 {
-                    return NotFound($"PlayerMatchHistory cu ID {id} nu a fost găsit.");
+                    return NotFound($"PlayerMatchHistory with ID {id} was not found.");
                 }
 
                 return Ok(updatedPlayerMatchHistory);
@@ -199,7 +199,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating PlayerMatchHistory");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -215,7 +215,7 @@ namespace FootballAPI.Controllers
 
                 if (!deleted)
                 {
-                    return NotFound($"PlayerMatchHistory cu ID {id} nu a fost găsit.");
+                    return NotFound($"PlayerMatchHistory with ID {id} was not found.");
                 }
 
                 return NoContent();
@@ -223,7 +223,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting PlayerMatchHistory");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -241,7 +241,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting average performance rating");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -259,7 +259,7 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting top performances");
-                return StatusCode(500, $"Eroare internă: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
     }

@@ -33,7 +33,7 @@ export class Login {
       });
       this.router.navigate(['/home']);
     } catch (error) {
-      this.errorMessage = 'Username sau parola incorecte';
+      this.errorMessage = 'Incorrect username or password';
       console.error('Eroare la autentificare:', error);
     }
   }
