@@ -5,6 +5,7 @@ import { Header } from '../header/header';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../auth/auth.service';
 import { User } from '../models/user.interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-account',
@@ -19,7 +20,8 @@ export class Account {
 
   constructor(
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
     this.loadUser();
   }
@@ -37,5 +39,10 @@ export class Account {
 
   changePassword() {
     // Implement password change logic here
+  }
+
+  logout() {
+    this.router.navigate(['/']);
+    this.authService.logout();
   }
 }
