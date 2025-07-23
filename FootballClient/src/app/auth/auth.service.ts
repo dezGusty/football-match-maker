@@ -40,7 +40,7 @@ export class AuthService {
     }
     const userData = await response.json();
     const now = new Date().getTime();
-    const expiresAt = now + 10 * 60 * 1000;
+    const expiresAt = now + 60 * 60 * 1000;
 
     this.isAuthenticated = true;
       this.userId = userData.id;
@@ -71,7 +71,7 @@ export class AuthService {
       const userData = await response.json();
 
       const now = new Date().getTime();
-      const expiresAt = now + 10 * 60 * 1000;
+      const expiresAt = now + 60 * 60 * 1000;
 
       this.isAuthenticated = true;
       this.userId = userData.id;
