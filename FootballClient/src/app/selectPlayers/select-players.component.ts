@@ -79,10 +79,12 @@ export class SelectPlayersComponent implements OnInit {
             return;
         }
         player.isAvailable = true;
+        player.isEnabled = false;
         this.saveSelectedPlayers();
     }
 
     unselectPlayer(player: Player) {
+        player.isEnabled = true;
         player.isAvailable = false;
         this.saveSelectedPlayers();
     }
@@ -100,19 +102,20 @@ export class SelectPlayersComponent implements OnInit {
         this.allPlayers.forEach(player => {
             if (selectedIds.includes(player.id!)) {
                 player.isAvailable = true;
+                player.isEnabled = false;
             } else {
                 player.isAvailable = false;
+                player.isEnabled = true;
             }
         });
     }
 
     private clearSelectedPlayers() {
-        // Ștergem din localStorage
         localStorage.removeItem('selectedPlayerIds');
         
-        // Resetăm starea jucătorilor
         this.allPlayers.forEach(player => {
             player.isAvailable = false;
+            player.isEnabled = true;
         });
     }
 
@@ -127,12 +130,16 @@ export class SelectPlayersComponent implements OnInit {
         let team1Rating = 0;
         let team2Rating = 0;
 
-        // Distribuim toți jucătorii în afară de ultimul dacă avem număr impar
+        // Calculăm dimensiunea optimă pentru fiecare echipă
+        const totalPlayers = players.length;
         const playersToDistribute = players.length % 2 === 0 ? players : players.slice(0, -1);
+        const team1Size = Math.ceil(playersToDistribute.length / 2);
+        const team2Size = playersToDistribute.length - team1Size;
 
         // Distribuim jucătorii alternativ între echipe, începând cu cei mai buni
-        playersToDistribute.forEach((player) => {
-            if (team1Rating <= team2Rating) {
+        playersToDistribute.forEach((player, index) => {
+            // Verificăm dacă echipele au atins dimensiunea maximă
+            if (team1Players.length < team1Size && (team2Players.length === team2Size || team1Rating <= team2Rating)) {
                 team1Players.push(player);
                 team1Rating += player.rating || 0;
             } else {
