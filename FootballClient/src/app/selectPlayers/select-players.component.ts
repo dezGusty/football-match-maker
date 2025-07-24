@@ -6,6 +6,7 @@ import { Header } from '../header/header';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TeamService } from '../team.service';
+import { MatchService } from '../match.service';
 
 interface Team {
     players: Player[];
@@ -36,6 +37,7 @@ export class SelectPlayersComponent implements OnInit {
     constructor(
         private playerService: PlayerService,
         private teamService: TeamService,
+        private matchService: MatchService,
         private router: Router
     ) { }
 
@@ -192,6 +194,10 @@ export class SelectPlayersComponent implements OnInit {
             const teamA = await this.teamService.createTeam(`Team A ${timestamp}`);
             const teamB = await this.teamService.createTeam(`Team B ${timestamp}`);
 
+            // Create a match with the current date
+            const currentDate = new Date();
+            const match = await this.matchService.createMatch(teamA.id, teamB.id, currentDate);
+
             this.clearSelectedPlayers();
 
             this.router.navigate(['/match-formation'], {
@@ -199,12 +205,13 @@ export class SelectPlayersComponent implements OnInit {
                     team1Players: this.team1.players,
                     team2Players: this.team2.players,
                     teamAId: teamA.id,
-                    teamBId: teamB.id
+                    teamBId: teamB.id,
+                    matchId: match.id
                 }
             });
         } catch (error) {
-            console.error('Failed to create teams:', error);
-            this.error = 'Failed to create teams. Please try again.';
+            console.error('Failed to create teams or match:', error);
+            this.error = 'Failed to create teams or match. Please try again.';
         }
     }
 
