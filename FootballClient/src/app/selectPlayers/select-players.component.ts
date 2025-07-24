@@ -5,6 +5,7 @@ import { Player } from '../player.interface';
 import { Header } from '../header/header';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TeamService } from '../team.service';
 
 interface Team {
     players: Player[];
@@ -34,6 +35,7 @@ export class SelectPlayersComponent implements OnInit {
 
     constructor(
         private playerService: PlayerService,
+        private teamService: TeamService,
         private router: Router
     ) { }
 
@@ -183,15 +185,27 @@ export class SelectPlayersComponent implements OnInit {
         this.showTeamsModal = false;
     }
 
-    beginMatch() {
-        this.clearSelectedPlayers();
+    async beginMatch() {
+        try {
+            const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(-6);
+            // Create Team A and Team B in the database
+            const teamA = await this.teamService.createTeam(`Team A ${timestamp}`);
+            const teamB = await this.teamService.createTeam(`Team B ${timestamp}`);
 
-        this.router.navigate(['/match-formation'], {
-            state: {
-                team1Players: this.team1.players,
-                team2Players: this.team2.players
-            }
-        });
+            this.clearSelectedPlayers();
+
+            this.router.navigate(['/match-formation'], {
+                state: {
+                    team1Players: this.team1.players,
+                    team2Players: this.team2.players,
+                    teamAId: teamA.id,
+                    teamBId: teamB.id
+                }
+            });
+        } catch (error) {
+            console.error('Failed to create teams:', error);
+            this.error = 'Failed to create teams. Please try again.';
+        }
     }
 
     validateMatchDay() {
