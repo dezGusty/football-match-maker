@@ -34,6 +34,23 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
+        /// <summary>
+        /// Obține toți utilizatorii cu imagine
+        /// </summary>
+        [HttpGet("with-image")]
+        public async Task<ActionResult<IEnumerable<UserWithImageDto>>> GetAllUsersWithImage()
+        {
+            try
+            {
+                var users = await _userService.GetAllUsersWithImageAsync();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all users with image");
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
 
         /// <summary>
         /// Obține un utilizator după ID
@@ -55,6 +72,29 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting user by ID: {Id}", id);
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
+        /// <summary>
+        /// Obține un utilizator cu imagine după ID
+        /// </summary>
+        [HttpGet("{id}/with-image")]
+        public async Task<ActionResult<UserWithImageDto>> GetUserWithImageById(int id)
+        {
+            try
+            {
+                var user = await _userService.GetUserWithImageByIdAsync(id);
+
+                if (user == null)
+                {
+                    return NotFound($"User with ID {id} was not found.");
+                }
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting user with image by ID: {Id}", id);
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
@@ -82,6 +122,29 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
+        /// <summary>
+        /// Obține un utilizator cu imagine după username
+        /// </summary>
+        [HttpGet("username/{username}/with-image")]
+        public async Task<ActionResult<UserWithImageDto>> GetUserWithImageByUsername(string username)
+        {
+            try
+            {
+                var user = await _userService.GetUserWithImageByUsernameAsync(username);
+
+                if (user == null)
+                {
+                    return NotFound($"User with username '{username}' was not found.");
+                }
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting user with image by username: {Username}", username);
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
 
         /// <summary>
         /// Obține utilizatorii după rol
@@ -97,6 +160,23 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting users by role: {Role}", role);
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
+        /// <summary>
+        /// Obține utilizatorii cu imagine după rol
+        /// </summary>
+        [HttpGet("role/{role}/with-image")]
+        public async Task<ActionResult<IEnumerable<UserWithImageDto>>> GetUsersWithImageByRole(string role)
+        {
+            try
+            {
+                var users = await _userService.GetUsersWithImageByRoleAsync(role);
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting users with image by role: {Role}", role);
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }

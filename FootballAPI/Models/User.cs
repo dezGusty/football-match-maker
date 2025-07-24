@@ -17,5 +17,8 @@ namespace FootballAPI.Models
 
         [StringLength(50)]
         public string Role { get; set; }
+
+        [StringLength(500)]
+        public string? ImageUrl { get; set; }
     }
 }

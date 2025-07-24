@@ -10,5 +10,8 @@ namespace FootballAPI.DTOs
 
         [StringLength(50, ErrorMessage = "Role cannot exceed 50 characters")]
         public string Role { get; set; }
+
+        [StringLength(500)]
+        public string? ImageUrl { get; set; }
     }
 }
