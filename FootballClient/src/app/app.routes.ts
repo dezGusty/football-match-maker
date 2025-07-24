@@ -29,5 +29,10 @@ export const routes: Routes = [
         path: 'match-formation',
         loadComponent: () => import('./match-formation/match-formation.component').then(m => m.MatchFormationComponent),
         canActivate: [authGuard]
+    },
+    {
+        path: 'matches-history',
+        loadComponent: () => import('./matches-history/matches-history').then(m => m.MatchesHistory),
+        canActivate: [authGuard]
     }
 ];

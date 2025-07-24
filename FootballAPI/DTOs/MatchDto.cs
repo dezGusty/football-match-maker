@@ -18,6 +18,8 @@ namespace FootballAPI.DTOs
         public DateTime MatchDate { get; set; }
         public int TeamAId { get; set; }
         public int TeamBId { get; set; }
+        public int TeamAGoals { get; set; }
+        public int TeamBGoals { get; set; }
     }
 
     public class UpdateMatchDto

@@ -1,0 +1,22 @@
+<app-header></app-header>
+
+<table class="matches-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Date</th>
+      <th>First Team</th>
+      <th>Second Team</th>
+      <th>Score</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let match of matches; let i = index">
+    <td>{{ i + 1}}</td>
+    <td>{{ match.matchDate | date: 'MMM d, y, HH:mm' }}</td>
+    <td>{{ match.teamAName }}</td>
+    <td>{{ match.teamBName }}</td>
+    <td>{{ match.scoreA }} - {{ match.scoreB }}</td>
+  </tr>
+</tbody>
+</table>

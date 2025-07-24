@@ -21,8 +21,8 @@ namespace FootballAPI.Models
         [ForeignKey("TeamBId")]
         public virtual Team TeamB { get; set; }
 
-        public int TeamAGoals { get; set; } = 0;
-        public int TeamBGoals { get; set; } = 0;
+        public int TeamAGoals { get; set; }
+        public int TeamBGoals { get; set; } 
 
         public virtual ICollection<PlayerMatchHistory> PlayerHistory { get; set; } = new List<PlayerMatchHistory>();
     }

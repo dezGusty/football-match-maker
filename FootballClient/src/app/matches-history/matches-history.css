@@ -1,0 +1,20 @@
+.matches-table {
+  width: 80%;
+  margin: 40px auto;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #e5e5e5;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.matches-table th, .matches-table td {
+  padding: 14px 18px;
+  text-align: center;
+}
+
+.matches-table thead {
+  background: #98b79c;
+  color: #454545;
+}
