@@ -29,6 +29,20 @@ export class PlayerService {
     return await response.json();
   }
 
+  async updatePlayer(playerId: number, updateData: Partial<Player>): Promise<Player> {
+    const response = await fetch(`${this.url}/${playerId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updateData)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update player');
+    }
+
+    return await response.json();
+  }
+
   async editPlayer(player: Player): Promise<Player> {
     const response = await fetch(`${this.url}/${player.id}`, {
       method: 'PUT',

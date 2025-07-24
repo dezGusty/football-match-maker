@@ -7,4 +7,5 @@ export interface Player {
     isEnabled?: boolean;
     isSelected?: boolean;
     imageUrl?: string;
+    currentTeamId?: number | null;
 }

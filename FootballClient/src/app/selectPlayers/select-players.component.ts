@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TeamService } from '../team.service';
 import { MatchService } from '../match.service';
+import { PlayerMatchHistoryService } from '../player-match-history.service';
 
 interface Team {
     players: Player[];
@@ -38,6 +39,7 @@ export class SelectPlayersComponent implements OnInit {
         private playerService: PlayerService,
         private teamService: TeamService,
         private matchService: MatchService,
+        private playerMatchHistoryService: PlayerMatchHistoryService,
         private router: Router
     ) { }
 
@@ -194,9 +196,63 @@ export class SelectPlayersComponent implements OnInit {
             const teamA = await this.teamService.createTeam(`Team A ${timestamp}`);
             const teamB = await this.teamService.createTeam(`Team B ${timestamp}`);
 
+            // Update players with their new team IDs
+            const updatePromises: Promise<any>[] = [];
+
+            // Update Team A players
+            for (const player of this.team1.players) {
+                updatePromises.push(
+                    this.playerService.updatePlayer(player.id!, {
+                        ...player,
+                        currentTeamId: teamA.id
+                    })
+                );
+            }
+
+            // Update Team B players
+            for (const player of this.team2.players) {
+                updatePromises.push(
+                    this.playerService.updatePlayer(player.id!, {
+                        ...player,
+                        currentTeamId: teamB.id
+                    })
+                );
+            }
+
+            // Wait for all player updates to complete
+            await Promise.all(updatePromises);
+
             // Create a match with the current date
             const currentDate = new Date();
             const match = await this.matchService.createMatch(teamA.id, teamB.id, currentDate);
+
+            // Create player match history records
+            const historyPromises: Promise<any>[] = [];
+
+            // Create records for Team A players
+            for (const player of this.team1.players) {
+                historyPromises.push(
+                    this.playerMatchHistoryService.createPlayerMatchHistory(
+                        player.id!,
+                        teamA.id,
+                        match.id
+                    )
+                );
+            }
+
+            // Create records for Team B players
+            for (const player of this.team2.players) {
+                historyPromises.push(
+                    this.playerMatchHistoryService.createPlayerMatchHistory(
+                        player.id!,
+                        teamB.id,
+                        match.id
+                    )
+                );
+            }
+
+            // Wait for all history records to be created
+            await Promise.all(historyPromises);
 
             this.clearSelectedPlayers();
 
@@ -210,8 +266,8 @@ export class SelectPlayersComponent implements OnInit {
                 }
             });
         } catch (error) {
-            console.error('Failed to create teams or match:', error);
-            this.error = 'Failed to create teams or match. Please try again.';
+            console.error('Failed to create teams, match, or player history:', error);
+            this.error = 'Failed to create teams, match, or player history. Please try again.';
         }
     }
 
