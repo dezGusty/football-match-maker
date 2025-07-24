@@ -25,8 +25,8 @@
         </td>
       </ng-container>
       <ng-template #viewMode>
-        <td>{{ player.firstName }}</td>
-        <td>{{ player.lastName }}</td>
+        <td>{{ isPlayerEnabled(player) ? player.firstName : (player.firstName | slice:0:3) }}</td>
+        <td>{{ isPlayerEnabled(player) ? player.lastName : (player.lastName | slice:0:3) }}</td>
         <td>{{ player.rating }}</td>
         <td>
           <span class="status-badge" [class.enabled]="isPlayerEnabled(player)">
