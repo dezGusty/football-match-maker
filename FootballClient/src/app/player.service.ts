@@ -90,4 +90,128 @@ export class PlayerService {
 
     return await response.json();
   }
+  // Noi metode pentru gestionarea disponibilității jucătorilor
+  async setPlayerAvailable(playerId: number): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.url}/${playerId}/set-available`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to set player available');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error setting player available:', error);
+      return false;
+    }
+  }
+
+  async setPlayerUnavailable(playerId: number): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.url}/${playerId}/set-unavailable`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to set player unavailable');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error setting player unavailable:', error);
+      return false;
+    }
+  }
+
+  async setMultiplePlayersAvailable(playerIds: number[]): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.url}/set-multiple-available`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(playerIds)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to set multiple players available');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error setting multiple players available:', error);
+      return false;
+    }
+  }
+
+  async setMultiplePlayersUnavailable(playerIds: number[]): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.url}/set-multiple-unavailable`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(playerIds)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to set multiple players unavailable');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error setting multiple players unavailable:', error);
+      return false;
+    }
+  }
+
+  async clearAllAvailablePlayers(): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.url}/clear-all-available`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to clear all available players');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error clearing all available players:', error);
+      return false;
+    }
+  }
+
+  async getAvailablePlayers(): Promise<Player[]> {
+    try {
+      const response = await fetch(`${this.url}/available`);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch available players');
+      }
+
+      const players = await response.json();
+      return players;
+    } catch (error) {
+      console.error('Error fetching available players:', error);
+      throw error;
+    }
+  }
+
+  async searchPlayers(searchTerm: string): Promise<Player[]> {
+    try {
+      const response = await fetch(`${this.url}/search?searchTerm=${encodeURIComponent(searchTerm)}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to search players');
+      }
+
+      const players = await response.json();
+      return players;
+    } catch (error) {
+      console.error('Error searching players:', error);
+      throw error;
+    }
+  }
 }

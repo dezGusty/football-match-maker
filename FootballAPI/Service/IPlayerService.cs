@@ -17,5 +17,10 @@ namespace FootballAPI.Service
         Task<bool> PlayerExistsAsync(int id);
         Task<bool> EnablePlayerAsync(int id);
         Task<IEnumerable<PlayerWithImageDto>> GetAllPlayersWithImagesAsync();
+        Task<bool> SetPlayerAvailableAsync(int playerId);
+        Task<bool> SetPlayerUnavailableAsync(int playerId);
+        Task<bool> SetMultiplePlayersAvailableAsync(int[] playerIds);
+        Task<bool> SetMultiplePlayersUnavailableAsync(int[] playerIds);
+        Task<bool> ClearAllAvailablePlayersAsync();
     }
 }

@@ -127,6 +127,88 @@ namespace FootballAPI.Service
                 ImageUrl = p.ImageUrl
             });
         }
+        // Noi metode pentru gestionarea disponibilității jucătorilor
+        public async Task<bool> SetPlayerAvailableAsync(int playerId)
+        {
+            var player = await _playerRepository.GetByIdAsync(playerId);
+            if (player == null || !player.IsEnabled)
+                return false;
+
+            player.IsAvailable = true;
+            await _playerRepository.UpdateAsync(player);
+            return true;
+        }
+
+        public async Task<bool> SetPlayerUnavailableAsync(int playerId)
+        {
+            var player = await _playerRepository.GetByIdAsync(playerId);
+            if (player == null)
+                return false;
+
+            player.IsAvailable = false;
+            await _playerRepository.UpdateAsync(player);
+            return true;
+        }
+
+        public async Task<bool> SetMultiplePlayersAvailableAsync(int[] playerIds)
+        {
+            try
+            {
+                foreach (var playerId in playerIds)
+                {
+                    var player = await _playerRepository.GetByIdAsync(playerId);
+                    if (player != null && player.IsEnabled)
+                    {
+                        player.IsAvailable = true;
+                        await _playerRepository.UpdateAsync(player);
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> SetMultiplePlayersUnavailableAsync(int[] playerIds)
+        {
+            try
+            {
+                foreach (var playerId in playerIds)
+                {
+                    var player = await _playerRepository.GetByIdAsync(playerId);
+                    if (player != null)
+                    {
+                        player.IsAvailable = false;
+                        await _playerRepository.UpdateAsync(player);
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> ClearAllAvailablePlayersAsync()
+        {
+            try
+            {
+                var availablePlayers = await _playerRepository.GetAvailablePlayersAsync();
+                foreach (var player in availablePlayers)
+                {
+                    player.IsAvailable = false;
+                    await _playerRepository.UpdateAsync(player);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         private static PlayerDto MapToDto(Player player)
         {

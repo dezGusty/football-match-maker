@@ -121,5 +121,95 @@ namespace FootballAPI.Controllers
 
             return NoContent();
         }
+        [HttpPatch("{id}/set-available")]
+        public async Task<ActionResult> SetPlayerAvailable(int id)
+        {
+            try
+            {
+                var result = await _playerService.SetPlayerAvailableAsync(id);
+                if (!result)
+                    return NotFound($"Player with ID {id} not found or is disabled.");
+
+                return Ok(new { message = "Player set as available successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error setting player available: {ex.Message}");
+            }
+        }
+
+        [HttpPatch("{id}/set-unavailable")]
+        public async Task<ActionResult> SetPlayerUnavailable(int id)
+        {
+            try
+            {
+                var result = await _playerService.SetPlayerUnavailableAsync(id);
+                if (!result)
+                    return NotFound($"Player with ID {id} not found.");
+
+                return Ok(new { message = "Player set as unavailable successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error setting player unavailable: {ex.Message}");
+            }
+        }
+
+        [HttpPatch("set-multiple-available")]
+        public async Task<ActionResult> SetMultiplePlayersAvailable([FromBody] int[] playerIds)
+        {
+            try
+            {
+                if (playerIds == null || playerIds.Length == 0)
+                    return BadRequest("Player IDs array cannot be empty.");
+
+                var result = await _playerService.SetMultiplePlayersAvailableAsync(playerIds);
+                if (!result)
+                    return BadRequest("Failed to set players as available.");
+
+                return Ok(new { message = $"{playerIds.Length} players set as available successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error setting multiple players available: {ex.Message}");
+            }
+        }
+
+        [HttpPatch("set-multiple-unavailable")]
+        public async Task<ActionResult> SetMultiplePlayersUnavailable([FromBody] int[] playerIds)
+        {
+            try
+            {
+                if (playerIds == null || playerIds.Length == 0)
+                    return BadRequest("Player IDs array cannot be empty.");
+
+                var result = await _playerService.SetMultiplePlayersUnavailableAsync(playerIds);
+                if (!result)
+                    return BadRequest("Failed to set players as unavailable.");
+
+                return Ok(new { message = $"{playerIds.Length} players set as unavailable successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error setting multiple players unavailable: {ex.Message}");
+            }
+        }
+
+        [HttpPatch("clear-all-available")]
+        public async Task<ActionResult> ClearAllAvailablePlayers()
+        {
+            try
+            {
+                var result = await _playerService.ClearAllAvailablePlayersAsync();
+                if (!result)
+                    return BadRequest("Failed to clear available players.");
+
+                return Ok(new { message = "All players set as unavailable successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error clearing available players: {ex.Message}");
+            }
+        }
     }
 }
