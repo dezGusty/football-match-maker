@@ -25,7 +25,6 @@
   transition: background 0.2s;
 }
 
-/* Stiluri pentru jucătorii dezactivați */
 .players-table tbody tr.disabled-player {
   background: #f5f5f5;
   color: #888;
@@ -104,7 +103,6 @@
   color: #1b5e20;
 }
 
-/* Stiluri pentru status badge */
 .status-badge {
   padding: 4px 12px;
   border-radius: 12px;
@@ -243,7 +241,6 @@
   background: #3e5c43;
 }
 
-/* Stiluri pentru câmpurile de editare din tabel */
 .players-table input[type="text"],
 .players-table input[type="number"] {
   padding: 6px 10px;

@@ -52,7 +52,6 @@
     </div>
 </div>
 
-<!-- Modal simplificat pentru echipe -->
 @if (showTeamsModal) {
 <div class="modal-overlay">
     <div class="modal-content">
@@ -60,7 +59,6 @@
         <h2>Teams</h2>
 
         <div class="teams-grid">
-            <!-- Echipa 1 -->
             <div class="team">
                 <h3>Team 1 ({{ team1.players.length }} players - {{ team1.averageRating | number:'1.1-1' }})</h3>
                 <ul>
@@ -73,7 +71,6 @@
                 </ul>
             </div>
 
-            <!-- Echipa 2 -->
             <div class="team">
                 <h3>Team 2 ({{ team2.players.length }} players - {{ team2.averageRating | number:'1.1-1' }})</h3>
                 <ul>
@@ -86,8 +83,25 @@
                 </ul>
             </div>
         </div>
+
+        <div class="day-selector">
+  <label for="matchDate">Select Match Day:</label>
+  <input 
+    type="date" 
+    id="matchDate"
+    [(ngModel)]="matchDate"
+    (change)="validateMatchDay()"
+    [min]="minDate"
+    class="search-input"
+  />
+  <span *ngIf="matchDayError" style="color: red; font-size: 0.85rem;">
+    You can only select a Tuesday or Thursday.
+  </span>
+</div>
+
+
         <div class="modal-actions">
-            <button class="begin-match-btn" (click)="beginMatch()">Begin Match</button>
+            <button class="begin-match-btn" (click)="beginMatch()" [disabled]="!matchDate || matchDayError">Begin Match</button>
         </div>
     </div>
 </div>

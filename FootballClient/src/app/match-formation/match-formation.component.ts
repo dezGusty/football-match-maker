@@ -21,7 +21,6 @@ export class MatchFormationComponent implements OnInit {
     getTeamPositions(teamSize: number): Position[] {
         const positions: Position[] = [];
 
-        // Verificăm dacă numărul de jucători este valid (5 sau 6)
         if (teamSize < 5 || teamSize > 6) {
             console.warn(`Număr invalid de jucători: ${teamSize}. Se așteaptă 5 sau 6 jucători.`);
             return positions;
@@ -63,14 +62,12 @@ export class MatchFormationComponent implements OnInit {
     }
 
     ngOnInit() {
-        // Verificăm dacă avem datele jucătorilor din state
         const navigation = window.history.state;
         if (navigation) {
             this.team1Players = navigation.team1Players || [];
             this.team2Players = navigation.team2Players || [];
         }
 
-        // Verificăm dacă numărul de jucători este valid
         if (this.team1Players.length < 5 || this.team1Players.length > 6) {
             console.error(`Echipa 1 are un număr invalid de jucători: ${this.team1Players.length}`);
         }
@@ -96,7 +93,6 @@ export class MatchFormationComponent implements OnInit {
 
     getPlayerImage(player: Player | undefined): string {
         if (!player || !player.imageUrl) {
-            // Imaginea default pentru jucători fără poză
             return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNjY2NjY2MiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDAgNSAyMVYyMkMxIDIyIDIzIDIyIDIzIDIyVjIxQzIzIDE3LjEzNDAgMTkuODY2IDE0IDEyIDE0WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cjwvc3ZnPgo=';
         }
         return player.imageUrl;
@@ -104,31 +100,26 @@ export class MatchFormationComponent implements OnInit {
 
     onImageError(event: any) {
         console.log('Image failed to load:', event.target.src);
-        // În cazul în care imaginea nu se poate încărca, folosim imaginea default
         event.target.src = this.getDefaultImage();
     }
 
     private getDefaultImage(): string {
-        // Imaginea default pentru jucători fără poză
         return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNjY2NjY2MiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDAgNSAyMVYyMkMxIDIyIDIzIDIyIDIzIDIyVjIxQzIzIDE3LjEzNDAgMTkuODY2IDE0IDEyIDE0WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cjwvc3ZnPgo=';
     }
 
     getStarArray(rating: number): string[] {
         const stars: string[] = [];
-        const fullStars = Math.floor(rating / 2); // Rating 10 = 5 stele, rating 8 = 4 stele
-        const hasHalfStar = (rating % 2) >= 1; // Dacă rating-ul are .5 sau mai mult, adaugă jumătate de stea
+        const fullStars = Math.floor(rating / 2);
+        const hasHalfStar = (rating % 2) >= 1;
 
-        // Adaugă stelele pline
         for (let i = 0; i < fullStars; i++) {
             stars.push('full');
         }
 
-        // Adaugă jumătatea de stea dacă este cazul
         if (hasHalfStar && fullStars < 5) {
             stars.push('half');
         }
 
-        // Completează cu stele goale până la 5
         while (stars.length < 5) {
             stars.push('empty');
         }

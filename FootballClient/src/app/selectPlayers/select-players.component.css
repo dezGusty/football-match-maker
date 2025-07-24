@@ -60,7 +60,6 @@
     border: none;
 }
 
-/* Stiluri pentru search box */
 .search-container {
     margin: 0 auto 15px auto;
     width: 80%;
@@ -151,7 +150,6 @@
     cursor: not-allowed;
 }
 
-/* Stiluri simplificate pentru modal */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -301,4 +299,16 @@
 
 .count-success {
     color: #28a745;
+}
+
+.day-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.day-selector label {
+  font-weight: 500;
+  white-space: nowrap;
 }

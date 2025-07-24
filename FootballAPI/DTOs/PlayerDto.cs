@@ -7,7 +7,7 @@ namespace FootballAPI.DTOs
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [Range(0.0f, 10.0f, ErrorMessage = "Rating trebuie să fie între 0.0 și 10.0")]
+        [Range(0.0f, 10.0f, ErrorMessage = "Rating must be between 0.0 and 10.0")]
         public float Rating { get; set; }
         public bool IsAvailable { get; set; }
         public int? CurrentTeamId { get; set; }
@@ -19,7 +19,7 @@ namespace FootballAPI.DTOs
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [Range(0.0f, 10.0f, ErrorMessage = "Rating trebuie să fie între 0.0 și 10.0")]
+        [Range(0.0f, 10.0f, ErrorMessage = "Rating must be between 0.0 and 10.0")]
         public float Rating { get; set; }
         public bool IsAvailable { get; set; }
         public int? CurrentTeamId { get; set; }
@@ -31,7 +31,7 @@ namespace FootballAPI.DTOs
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [Range(0.0f, 10.0f, ErrorMessage = "Rating trebuie să fie între 0.0 și 10.0")]
+        [Range(0.0f, 10.0f, ErrorMessage = "Rating msut be between 0.0 and 10.0")]
         public float Rating { get; set; }
         public string? ImageUrl { get; set; }
     }
@@ -40,7 +40,7 @@ namespace FootballAPI.DTOs
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [Range(0.0f, 10.0f, ErrorMessage = "Rating trebuie să fie între 0.0 și 10.0")]
+        [Range(0.0f, 10.0f, ErrorMessage = "Rating must be between 0.0 and 10.0")]
         public float Rating { get; set; }
         public bool IsAvailable { get; set; }
         public int? CurrentTeamId { get; set; }

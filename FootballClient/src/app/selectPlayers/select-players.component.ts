@@ -27,6 +27,10 @@ export class SelectPlayersComponent implements OnInit {
     team1: Team = { players: [], averageRating: 0 };
     team2: Team = { players: [], averageRating: 0 };
     searchTerm: string = '';
+    matchDate: string = '';
+    matchDayError: boolean = false;
+    minDate: string = '';
+ 
 
     constructor(
         private playerService: PlayerService,
@@ -35,6 +39,7 @@ export class SelectPlayersComponent implements OnInit {
 
     ngOnInit() {
         this.loadPlayers();
+        this.setMinDateToday();
     }
 
     getRatingCategory(rating: number | undefined): string {
@@ -43,6 +48,12 @@ export class SelectPlayersComponent implements OnInit {
         if (rating <= 8) return 'medium';
         return 'high';
     }
+
+    setMinDateToday() {
+  const today = new Date();
+  this.minDate = today.toISOString().split('T')[0];
+}
+
 
     async loadPlayers() {
         try {
@@ -122,7 +133,6 @@ export class SelectPlayersComponent implements OnInit {
     generateTeams() {
         const players = [...this.selectedPlayers];
 
-        // Sortăm jucătorii după rating în ordine descrescătoare
         players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
 
         const team1Players: Player[] = [];
@@ -130,15 +140,12 @@ export class SelectPlayersComponent implements OnInit {
         let team1Rating = 0;
         let team2Rating = 0;
 
-        // Calculăm dimensiunea optimă pentru fiecare echipă
         const totalPlayers = players.length;
         const playersToDistribute = players.length % 2 === 0 ? players : players.slice(0, -1);
         const team1Size = Math.ceil(playersToDistribute.length / 2);
         const team2Size = playersToDistribute.length - team1Size;
 
-        // Distribuim jucătorii alternativ între echipe, începând cu cei mai buni
         playersToDistribute.forEach((player, index) => {
-            // Verificăm dacă echipele au atins dimensiunea maximă
             if (team1Players.length < team1Size && (team2Players.length === team2Size || team1Rating <= team2Rating)) {
                 team1Players.push(player);
                 team1Rating += player.rating || 0;
@@ -148,8 +155,6 @@ export class SelectPlayersComponent implements OnInit {
             }
         });
 
-        // Dacă avem un număr impar de jucători, adăugăm ultimul jucător (cel mai slab)
-        // la echipa cu scorul total mai mare
         if (players.length % 2 !== 0) {
             const lastPlayer = players[players.length - 1];
             if (team1Rating >= team2Rating) {
@@ -179,10 +184,8 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     beginMatch() {
-        // Ștergem jucătorii selectați înainte de a începe meciul
         this.clearSelectedPlayers();
-        
-        // Navigăm către pagina de meci
+
         this.router.navigate(['/match-formation'], {
             state: {
                 team1Players: this.team1.players,
@@ -190,4 +193,22 @@ export class SelectPlayersComponent implements OnInit {
             }
         });
     }
+
+    validateMatchDay() {
+  if (!this.matchDate) return;
+
+  const selected = new Date(this.matchDate);
+  const day = selected.getDay();
+
+  const isTuesday = day === 2;
+  const isThursday = day === 4;
+
+  if (isTuesday || isThursday) {
+    this.matchDayError = false;
+  } else {
+    this.matchDayError = true;
+    this.matchDate = '';
+  }
+}
+
 }

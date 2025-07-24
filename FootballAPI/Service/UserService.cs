@@ -70,7 +70,6 @@ namespace FootballAPI.Service
 
         public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto)
         {
-            // Check if username already exists
             if (await _userRepository.UsernameExistsAsync(createUserDto.Username))
             {
                 throw new ArgumentException($"Username '{createUserDto.Username}' already exists.");
@@ -79,7 +78,7 @@ namespace FootballAPI.Service
             var user = new User
             {
                 Username = createUserDto.Username,
-                Password = createUserDto.Password, // Stored as plain text
+                Password = createUserDto.Password,
                 Role = createUserDto.Role ?? "User"
             };
 
@@ -93,7 +92,6 @@ namespace FootballAPI.Service
             if (existingUser == null)
                 return null;
 
-            // Check if username already exists for another user
             if (await _userRepository.UsernameExistsAsync(updateUserDto.Username, id))
             {
                 throw new ArgumentException($"Username '{updateUserDto.Username}' already exists.");
@@ -118,8 +116,6 @@ namespace FootballAPI.Service
             if (user == null)
                 return null;
 
-            // Here you would generate a JWT token if using authentication
-            // For now, we'll return without token
             return MapToResponseDto(user);
         }
 
@@ -129,7 +125,6 @@ namespace FootballAPI.Service
             if (user == null)
                 return false;
 
-            // Verify current password
             if (user.Password != changePasswordDto.CurrentPassword)
                 throw new ArgumentException("Current password is incorrect.");
 

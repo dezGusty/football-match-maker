@@ -18,9 +18,6 @@ namespace FootballAPI.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Creează o nouă înregistrare în istoric
-        /// </summary>
         [HttpPost]
         public async Task<ActionResult<PlayerMatchHistoryDto>> CreatePlayerMatchHistory([FromBody] CreatePlayerMatchHistoryDto createDto)
         {
@@ -64,9 +61,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Obține toate înregistrările din istoricul meciurilor
-        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PlayerMatchHistoryDto>>> GetAllPlayerMatchHistory()
         {
@@ -82,9 +76,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Obține o înregistrare din istoric după ID
-        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<PlayerMatchHistoryDto>> GetPlayerMatchHistoryById(int id)
         {
@@ -106,9 +97,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Obține istoricul unui jucător specific
-        /// </summary>
         [HttpGet("player/{playerId}")]
         public async Task<ActionResult<IEnumerable<PlayerMatchHistoryDto>>> GetPlayerMatchHistoryByPlayerId(int playerId)
         {
@@ -124,9 +112,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Obține istoricul unei echipe specifice
-        /// </summary>
         [HttpGet("team/{teamId}")]
         public async Task<ActionResult<IEnumerable<PlayerMatchHistoryDto>>> GetPlayerMatchHistoryByTeamId(int teamId)
         {
@@ -142,9 +127,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Obține istoricul unui meci specific
-        /// </summary>
         [HttpGet("match/{matchId}")]
         public async Task<ActionResult<IEnumerable<PlayerMatchHistoryDto>>> GetPlayerMatchHistoryByMatchId(int matchId)
         {
@@ -160,9 +142,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Actualizează o înregistrare din istoric
-        /// </summary>
         [HttpPut("{id}")]
         public async Task<ActionResult<PlayerMatchHistoryDto>> UpdatePlayerMatchHistory(int id, [FromBody] UpdatePlayerMatchHistoryDto updateDto)
         {
@@ -203,9 +182,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Șterge o înregistrare din istoric
-        /// </summary>
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePlayerMatchHistory(int id)
         {
@@ -227,9 +203,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Obține media ratingului de performanță pentru un jucător
-        /// </summary>
         [HttpGet("player/{playerId}/average-rating")]
         public async Task<ActionResult<float>> GetAveragePerformanceRating(int playerId)
         {
@@ -245,9 +218,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Obține top performanțe
-        /// </summary>
         [HttpGet("top-performances")]
         public async Task<ActionResult<IEnumerable<PlayerMatchHistoryDto>>> GetTopPerformances(int count = 10)
         {

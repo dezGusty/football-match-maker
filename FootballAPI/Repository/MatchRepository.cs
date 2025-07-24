@@ -70,14 +70,14 @@ namespace FootballAPI.Repository
         {
             _context.Matches.Add(match);
             await _context.SaveChangesAsync();
-            return await GetByIdAsync(match.Id); // Return full match with all includes
+            return await GetByIdAsync(match.Id);
         }
 
         public async Task<Match> UpdateAsync(Match match)
         {
             _context.Entry(match).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            return await GetByIdAsync(match.Id); // Return full match with all includes
+            return await GetByIdAsync(match.Id);
         }
 
         public async Task<bool> DeleteAsync(int id)

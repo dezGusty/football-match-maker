@@ -1,5 +1,4 @@
 <div class="football-field">
-    <!-- Team 1 (Left - Red) -->
     <div class="team team1">
         <div *ngFor="let pos of getTeam1Positions(); let i = index" class="player" [style.left]="pos.left"
             [style.top]="pos.top">
@@ -20,7 +19,6 @@
         </div>
     </div>
 
-    <!-- Team 2 (Right - Blue) -->
     <div class="team team2">
         <div *ngFor="let pos of getTeam2Positions(); let i = index" class="player" [style.left]="pos.left"
             [style.top]="pos.top">

@@ -76,7 +76,7 @@ namespace FootballAPI.Service
             if (existingPlayer == null)
                 return false;
 
-            existingPlayer.IsEnabled = false; // Soft delete
+            existingPlayer.IsEnabled = false;
             await _playerRepository.UpdateAsync(existingPlayer);
             return true;
         }
@@ -86,7 +86,7 @@ namespace FootballAPI.Service
             if (existingPlayer == null)
                 return false;
 
-            existingPlayer.IsEnabled = true; // Reactivează jucătorul
+            existingPlayer.IsEnabled = true;
             await _playerRepository.UpdateAsync(existingPlayer);
             return true;
         }

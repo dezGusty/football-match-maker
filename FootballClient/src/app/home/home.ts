@@ -86,7 +86,7 @@ export class Home {
     try {
       const success = await this.PlayerService.deletePlayer(playerId);
       if (success) {
-        await this.init(); // Reîncarcă lista pentru a afișa statusul actualizat
+        await this.init();
         console.log('Player deleted successfully');
       }
     } catch (error) {
@@ -102,7 +102,7 @@ export class Home {
     try {
       const success = await this.PlayerService.enablePlayer(playerId);
       if (success) {
-        await this.init(); // Reîncarcă lista pentru a afișa statusul actualizat
+        await this.init();
         console.log('Player reactivated successfully');
       }
     } catch (error) {

@@ -17,9 +17,6 @@ namespace FootballAPI.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Obține toți utilizatorii
-        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
         {
@@ -34,9 +31,7 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
-        /// <summary>
-        /// Obține toți utilizatorii cu imagine
-        /// </summary>
+
         [HttpGet("with-image")]
         public async Task<ActionResult<IEnumerable<UserWithImageDto>>> GetAllUsersWithImage()
         {
@@ -52,9 +47,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Obține un utilizator după ID
-        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
@@ -75,9 +67,7 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
-        /// <summary>
-        /// Obține un utilizator cu imagine după ID
-        /// </summary>
+
         [HttpGet("{id}/with-image")]
         public async Task<ActionResult<UserWithImageDto>> GetUserWithImageById(int id)
         {
@@ -99,9 +89,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Obține un utilizator după username
-        /// </summary>
         [HttpGet("username/{username}")]
         public async Task<ActionResult<UserDto>> GetUserByUsername(string username)
         {
@@ -122,9 +109,7 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
-        /// <summary>
-        /// Obține un utilizator cu imagine după username
-        /// </summary>
+
         [HttpGet("username/{username}/with-image")]
         public async Task<ActionResult<UserWithImageDto>> GetUserWithImageByUsername(string username)
         {
@@ -146,9 +131,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Obține utilizatorii după rol
-        /// </summary>
         [HttpGet("role/{role}")]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersByRole(string role)
         {
@@ -163,9 +145,7 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
-        /// <summary>
-        /// Obține utilizatorii cu imagine după rol
-        /// </summary>
+
         [HttpGet("role/{role}/with-image")]
         public async Task<ActionResult<IEnumerable<UserWithImageDto>>> GetUsersWithImageByRole(string role)
         {
@@ -181,9 +161,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Creează un nou utilizator
-        /// </summary>
         [HttpPost]
         public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto createUserDto)
         {
@@ -210,9 +187,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Actualizează un utilizator
-        /// </summary>
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
         {
@@ -244,9 +218,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Șterge un utilizator
-        /// </summary>
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(int id)
         {
@@ -268,9 +239,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Autentificare utilizator
-        /// </summary>
         [HttpPost("authenticate")]
         public async Task<ActionResult<UserResponseDto>> Authenticate([FromBody] LoginDto loginDto)
         {
@@ -297,9 +265,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Schimbă parola unui utilizator
-        /// </summary>
         [HttpPost("{id}/change-password")]
         public async Task<ActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto changePasswordDto)
         {
@@ -331,9 +296,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Verifică dacă un username există
-        /// </summary>
         [HttpGet("check-username/{username}")]
         public async Task<ActionResult<bool>> CheckUsernameExists(string username)
         {

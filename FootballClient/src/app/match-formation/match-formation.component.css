@@ -7,7 +7,6 @@
     border: 4px solid white;
     border-radius: 10px;
 
-    /* === Fundalul terenului de fotbal === */
     background-image:
         url('http://localhost:5145/images/football_field.jpg'),
         linear-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
@@ -17,8 +16,6 @@
     background-repeat: no-repeat, repeat, repeat;
 }
 
-
-/* Linia de centru */
 .football-field::before {
     content: '';
     position: absolute;
@@ -29,7 +26,6 @@
     background-color: rgba(255, 255, 255, 0.8);
 }
 
-/* Cercul din centru */
 .football-field::after {
     content: '';
     position: absolute;
@@ -76,7 +72,6 @@
     filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
 }
 
-/* ===== TRICOU CU MÂNECI REALISTE ===== */
 .jersey {
     width: 100%;
     height: 90px;
@@ -97,22 +92,18 @@
 
 
 .team1-jersey {
-    /* ===== FOLOSEȘTE IMAGINEA TRICOULUI ROȘU ===== */
     background-image: url('http://localhost:5145/images/red_tshirt.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /* Fallback dacă imaginea nu se încarcă */
     background-color: #e53e3e;
 }
 
 .team2-jersey {
-    /* ===== FOLOSEȘTE IMAGINEA TRICOULUI ALBASTRU ===== */
     background-image: url('http://localhost:5145/images/blue_tshirt.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /* Fallback dacă imaginea nu se încarcă */
     background-color: #3182ce;
 }
 

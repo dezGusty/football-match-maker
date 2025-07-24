@@ -34,7 +34,7 @@ export class AuthService {
         const error = JSON.parse(text);
         message = error.message || message;
       } catch (_) {
-        // leave default message
+        
       }
       throw new Error(message);
     }
@@ -65,7 +65,7 @@ export class AuthService {
       });
 
       if (!response.ok) {
-        throw new Error('Autentificare eșuată');
+        throw new Error('Failed to login. Please check your credentials.');
       }
 
       const userData = await response.json();
@@ -79,7 +79,7 @@ export class AuthService {
       localStorage.setItem('userId', userData.id.toString());
       localStorage.setItem('authExpiresAt', expiresAt.toString());
     } catch (error) {
-      console.error('Eroare la autentificare:', error);
+      console.error('Failed to login:', error);
       throw error;
     }
   }

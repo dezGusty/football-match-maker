@@ -37,7 +37,6 @@ namespace FootballAPI.Repository
         }
         public async Task<IEnumerable<Player>> GetEnabledPlayersAsync()
         {
-            // Returnează doar jucătorii enabled
             return await _context.Players
                 .Where(p => p.IsEnabled)
                 .Include(p => p.CurrentTeam)
@@ -46,7 +45,6 @@ namespace FootballAPI.Repository
 
         public async Task<IEnumerable<Player>> GetDisabledPlayersAsync()
         {
-            // Returnează doar jucătorii disabled
             return await _context.Players
                 .Where(p => !p.IsEnabled)
                 .Include(p => p.CurrentTeam)
