@@ -31,7 +31,7 @@ export class Account {
     try {
       const userId = this.authService.getUserId();
       if (userId) {
-        this.user = await this.userService.getUserById(userId);
+        this.user = await this.userService.getUserWithImageById(userId);
       }
     } catch (error) {
       console.error('Failed to load user:', error);

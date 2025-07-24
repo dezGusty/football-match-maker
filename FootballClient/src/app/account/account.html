@@ -3,26 +3,32 @@
 <div class="account-fullpage">
   <div class="account-avatar-col">
     <div class="avatar-big">
+      @if (user?.imageUrl) {
+      <img [src]="user?.imageUrl || ''" alt="User profile" class="user-profile-image">
+      } @else {
       <span class="material-icons avatar-icon-big">person</span>
+      }
     </div>
     <button class="logout-btn" (click)="logout()">Logout</button>
   </div>
   <div class="account-details-col">
     @if (user) {
-      <div class="account-username">{{ user.username }}</div>
-      <div class="account-role-badge">{{ user.role }}</div>
-      <form class="account-password-form">
-        <label for="current-password">Current Password</label>
-        <input id="current-password" type="password" placeholder="Enter current password" [(ngModel)]="currentPassword" name="currentPassword" />
-        <label for="new-password">New Password</label>
-        <input id="new-password" type="password" placeholder="Enter new password" [(ngModel)]="newPassword" name="newPassword" />
-        <label for="confirm-password">Confirm Password</label>
-        <input id="confirm-password" type="password" placeholder="Confirm new password" [(ngModel)]="confirmPassword" name="confirmPassword" />
-        <button type="button" (click)="changePassword()">Save Changes</button>
-      </form>
+    <div class="account-username">{{ user.username }}</div>
+    <div class="account-role-badge">{{ user.role }}</div>
+    <form class="account-password-form">
+      <label for="current-password">Current Password</label>
+      <input id="current-password" type="password" placeholder="Enter current password" [(ngModel)]="currentPassword"
+        name="currentPassword" />
+      <label for="new-password">New Password</label>
+      <input id="new-password" type="password" placeholder="Enter new password" [(ngModel)]="newPassword"
+        name="newPassword" />
+      <label for="confirm-password">Confirm Password</label>
+      <input id="confirm-password" type="password" placeholder="Confirm new password" [(ngModel)]="confirmPassword"
+        name="confirmPassword" />
+      <button type="button" (click)="changePassword()">Save Changes</button>
+    </form>
     } @else {
-      <div class="loading-message">Loading account details...</div>
+    <div class="loading-message">Loading account details...</div>
     }
   </div>
 </div>
-

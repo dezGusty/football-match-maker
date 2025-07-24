@@ -4,6 +4,7 @@ using FootballAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250724074550_AddImageUrlToAdmin1")]
+    partial class AddImageUrlToAdmin1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,7 +229,7 @@ namespace FootballAPI.Migrations
                         new
                         {
                             Id = 1,
-                            ImageUrl = "http://localhost:5145/images/admin.jpg",
+                            ImageUrl = "/images/admin.jpg",
                             Password = "parola123",
                             Role = "Admin",
                             Username = "admin"

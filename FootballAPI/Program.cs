@@ -58,8 +58,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
+else 
+{
+    app.UseHttpsRedirection();
+}
 
 // Use CORS - UPDATED TO ALLOW ALL IN DEVELOPMENT
 if (app.Environment.IsDevelopment())

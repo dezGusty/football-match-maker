@@ -108,7 +108,7 @@ namespace FootballAPI.Data
 
 
             modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Username = "admin", Password = "parola123", Role = "Admin" }
+                new User { Id = 1, Username = "admin", Password = "parola123", Role = "Admin", ImageUrl = "http://localhost:5145/images/admin.jpg" }
             );
         }
     }

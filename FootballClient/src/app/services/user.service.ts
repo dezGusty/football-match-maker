@@ -17,6 +17,16 @@ export class UserService {
     return await response.json() as User;
   }
 
+  async getUserWithImageById(id: number): Promise<User> {
+    const response = await fetch(`${this.url}/${id}/with-image`, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch user data');
+    }
+    return await response.json() as User;
+  }
+
   async changePassword(userId: number, currentPassword: string, newPassword: string, confirmPassword: string): Promise<string> {
     const response = await fetch(`${this.url}/${userId}/change-password`, {
       method: 'POST',
