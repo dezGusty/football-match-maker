@@ -33,7 +33,7 @@ export class SelectPlayersComponent implements OnInit {
     matchDate: string = '';
     matchDayError: boolean = false;
     minDate: string = '';
- 
+
 
     constructor(
         private playerService: PlayerService,
@@ -56,9 +56,9 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     setMinDateToday() {
-  const today = new Date();
-  this.minDate = today.toISOString().split('T')[0];
-}
+        const today = new Date();
+        this.minDate = today.toISOString().split('T')[0];
+    }
 
 
     async loadPlayers() {
@@ -80,8 +80,8 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     get filteredAvailablePlayers(): Player[] {
-        return this.availablePlayers.filter(player => 
-            this.searchTerm === '' || 
+        return this.availablePlayers.filter(player =>
+            this.searchTerm === '' ||
             `${player.firstName} ${player.lastName}`.toLowerCase().includes(this.searchTerm.toLowerCase())
         );
     }
@@ -129,7 +129,7 @@ export class SelectPlayersComponent implements OnInit {
 
     private clearSelectedPlayers() {
         localStorage.removeItem('selectedPlayerIds');
-        
+
         this.allPlayers.forEach(player => {
             player.isAvailable = false;
             player.isEnabled = true;
@@ -192,35 +192,14 @@ export class SelectPlayersComponent implements OnInit {
     async beginMatch() {
         try {
             const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(-6);
+
+            // Set all selected players as unavailable first
+            const allSelectedPlayerIds = [...this.team1.players, ...this.team2.players].map(p => p.id!);
+            await this.playerService.setMultiplePlayersUnavailable(allSelectedPlayerIds);
+
             // Create Team A and Team B in the database
             const teamA = await this.teamService.createTeam(`Team A ${timestamp}`);
             const teamB = await this.teamService.createTeam(`Team B ${timestamp}`);
-
-            // Update players with their new team IDs
-            const updatePromises: Promise<any>[] = [];
-
-            // Update Team A players
-            for (const player of this.team1.players) {
-                updatePromises.push(
-                    this.playerService.updatePlayer(player.id!, {
-                        ...player,
-                        currentTeamId: teamA.id
-                    })
-                );
-            }
-
-            // Update Team B players
-            for (const player of this.team2.players) {
-                updatePromises.push(
-                    this.playerService.updatePlayer(player.id!, {
-                        ...player,
-                        currentTeamId: teamB.id
-                    })
-                );
-            }
-
-            // Wait for all player updates to complete
-            await Promise.all(updatePromises);
 
             // Create a match with the current date
             const currentDate = new Date();
@@ -272,20 +251,20 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     validateMatchDay() {
-  if (!this.matchDate) return;
+        if (!this.matchDate) return;
 
-  const selected = new Date(this.matchDate);
-  const day = selected.getDay();
+        const selected = new Date(this.matchDate);
+        const day = selected.getDay();
 
-  const isTuesday = day === 2;
-  const isThursday = day === 4;
+        const isTuesday = day === 2;
+        const isThursday = day === 4;
 
-  if (isTuesday || isThursday) {
-    this.matchDayError = false;
-  } else {
-    this.matchDayError = true;
-    this.matchDate = '';
-  }
-}
+        if (isTuesday || isThursday) {
+            this.matchDayError = false;
+        } else {
+            this.matchDayError = true;
+            this.matchDate = '';
+        }
+    }
 
 }
