@@ -163,5 +163,15 @@ namespace FootballAPI.Service
             var users = await _userRepository.GetUsersByRoleAsync(role);
             return users.Select(MapToWithImageDto);
         }
+        public async Task<UserDto?> UpdateUserProfileImageAsync(int id, string imageUrl)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+                return null;
+
+            user.ImageUrl = imageUrl;
+            var updatedUser = await _userRepository.UpdateAsync(user);
+            return MapToDto(updatedUser);
+        }
     }
 }

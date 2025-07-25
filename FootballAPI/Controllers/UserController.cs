@@ -310,5 +310,27 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
+
+        [HttpPut("{id}/profile-image")]
+        public async Task<IActionResult> UpdateProfileImage(int id, [FromBody] UpdateProfileImageDto dto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var updatedUser = await _userService.UpdateUserProfileImageAsync(id, dto.ImageUrl);
+
+                if (updatedUser == null)
+                    return NotFound($"User with ID {id} was not found.");
+
+                return Ok(updatedUser);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
+
     }
 }

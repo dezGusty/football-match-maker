@@ -20,5 +20,6 @@ namespace FootballAPI.Service
         Task<IEnumerable<UserWithImageDto>> GetUsersWithImageByRoleAsync(string role);
         Task<bool> UsernameExistsAsync(string username);
         Task<bool> UsernameExistsAsync(string username, int excludeUserId);
+        Task<UserDto?> UpdateUserProfileImageAsync(int id, string imageUrl);
     }
 }

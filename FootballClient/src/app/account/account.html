@@ -4,7 +4,7 @@
   <div class="account-avatar-col">
     <div class="avatar-big">
       @if (user?.imageUrl) {
-        <img [src]="user?.imageUrl" alt="User profile" class="user-profile-image" />
+        <img [src]="showImageSelector && selectedImage ? selectedImage : user?.imageUrl" alt="User profile" class="user-profile-image" />
       } @else {
         <span class="material-icons avatar-icon-big">person</span>
       }

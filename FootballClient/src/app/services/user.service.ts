@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { User } from '../models/user.interface';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private readonly url = 'http://localhost:5145/api/user';
+
+  constructor(private http: HttpClient) {}
 
   async getUserById(id: number): Promise<User> {
     const response = await fetch(`${this.url}/${id}`, {
@@ -45,10 +48,14 @@ export class UserService {
   }
 
   async updateUserImage(userId: number, imageUrl: string): Promise<void> {
-    await fetch(`${this.url}/${userId}`, {
+    const response = await fetch(`http://localhost:5145/api/user/${userId}/profile-image`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ imageUrl })
     });
+    if (!response.ok) {
+      const result = await response.json();
+      throw new Error(result.message || 'Failed to update profile image');
+    }
   }
 }

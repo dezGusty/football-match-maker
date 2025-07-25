@@ -80,9 +80,10 @@ export class Account {
     try {
       await this.userService.updateUserImage(this.user.id, this.selectedImage);
       this.user.imageUrl = this.selectedImage;
+      this.showImageSelector = false;
       alert('Profile image updated!');
-    } catch (err) {
-      alert('Failed to update image!');
+    } catch (err: any) {
+      alert(err.message || 'Failed to update image!');
     }
   }
 
