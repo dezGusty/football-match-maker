@@ -58,7 +58,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-else 
+else
 {
     app.UseHttpsRedirection();
 }
@@ -73,7 +73,8 @@ else
     app.UseCors("AllowAngularApp");
 }
 
-// Configure static files for images
+app.UseStaticFiles();
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(

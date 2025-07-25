@@ -43,4 +43,12 @@ export class UserService {
     }
     return result.message || 'Password changed successfully';
   }
+
+  async updateUserImage(userId: number, imageUrl: string): Promise<void> {
+    await fetch(`${this.url}/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageUrl })
+    });
+  }
 }

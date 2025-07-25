@@ -256,3 +256,107 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+.profile-image-edit {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-image-edit select {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #b5c7b8;
+}
+
+.profile-image-edit button {
+  padding: 6px 18px;
+  border-radius: 6px;
+  background: #6a866e;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.profile-image-edit button:disabled {
+  background: #b5c7b8;
+  cursor: not-allowed;
+}
+
+.change-image-btn {
+  margin: 18px 0 8px 0;
+  padding: 8px 18px;
+  background: #6a866e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.change-image-btn:hover {
+  background: #55705a;
+}
+
+.profile-image-selector {
+  margin: 10px 0 18px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.image-options {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.image-option {
+  border: 2px solid transparent;
+  border-radius: 50%;
+  padding: 2px;
+  background: none;
+  cursor: pointer;
+  transition: border 0.2s;
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-option.selected,
+.image-option:hover {
+  border: 2px solid #6a866e;
+  background: #e5ede7;
+}
+
+.image-option img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.save-image-btn {
+  margin-top: 8px;
+  padding: 8px 22px;
+  background: #6a866e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-image-btn:disabled {
+  background: #b5c7b8;
+  cursor: not-allowed;
+}

@@ -4,11 +4,40 @@
   <div class="account-avatar-col">
     <div class="avatar-big">
       @if (user?.imageUrl) {
-      <img [src]="user?.imageUrl || ''" alt="User profile" class="user-profile-image">
+        <img [src]="user?.imageUrl" alt="User profile" class="user-profile-image" />
       } @else {
-      <span class="material-icons avatar-icon-big">person</span>
+        <span class="material-icons avatar-icon-big">person</span>
       }
     </div>
+
+    <button class="change-image-btn" (click)="showImageSelector = !showImageSelector">
+      Change Profile Picture
+    </button>
+
+    @if (showImageSelector) {
+      <div class="profile-image-selector">
+        @if (images.length > 0) {
+          <div class="image-options">
+            @for (img of images; track img) {
+              <button
+                class="image-option"
+                [class.selected]="selectedImage === img"
+                (click)="selectedImage = img"
+                type="button"
+              >
+                <img [src]="img" alt="profile option" />
+              </button>
+            }
+          </div>
+        } @else {
+          <div>No images available.</div>
+        }
+        <button (click)="updateProfileImage()" [disabled]="!selectedImage" class="save-image-btn">
+          Save Image
+        </button>
+      </div>
+    }
+
     <button class="logout-btn" (click)="logout()">Logout</button>
   </div>
   <div class="account-details-col">

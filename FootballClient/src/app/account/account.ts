@@ -6,6 +6,7 @@ import { UserService } from '../services/user.service';
 import { AuthService } from '../auth/auth.service';
 import { User } from '../models/user.interface';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-account',
@@ -18,13 +19,18 @@ export class Account {
   newPassword = '';
   confirmPassword = '';
   currentPassword = '';
+  images: string[] = [];
+  selectedImage: string = '';
+  showImageSelector =false;
 
   constructor(
     private userService: UserService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {
     this.loadUser();
+    this.loadImages();
   }
 
   async loadUser() {
@@ -33,9 +39,22 @@ export class Account {
       if (userId) {
         this.user = await this.userService.getUserWithImageById(userId);
       }
+      if (this.user?.imageUrl) {
+        this.selectedImage = this.user.imageUrl;
+      }
     } catch (error) {
       console.error('Failed to load user:', error);
     }
+  }
+
+  loadImages() {
+    this.http.get<string[]>('http://localhost:5145/api/images').subscribe({
+      next: (imgs) => {
+        this.images = imgs;
+        console.log('Loaded images:', this.images); // vezi dacă e gol sau nu
+      },
+      error: () => this.images = []
+    });
   }
 
   async changePassword() {
@@ -53,6 +72,17 @@ export class Account {
       this.confirmPassword = '';
     } catch (error: any) {
       alert(error.message || 'Password change failed');
+    }
+  }
+
+  async updateProfileImage() {
+    if (!this.user || !this.selectedImage) return;
+    try {
+      await this.userService.updateUserImage(this.user.id, this.selectedImage);
+      this.user.imageUrl = this.selectedImage;
+      alert('Profile image updated!');
+    } catch (err) {
+      alert('Failed to update image!');
     }
   }
 
