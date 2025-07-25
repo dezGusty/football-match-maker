@@ -1,4 +1,5 @@
 using FootballAPI.DTOs;
+using FootballAPI.Repository;
 
 namespace FootballAPI.Service
 {
@@ -6,7 +7,6 @@ namespace FootballAPI.Service
     {
         Task<IEnumerable<MatchDto>> GetAllMatchesAsync();
         Task<MatchDto> GetMatchByIdAsync(int id);
-        
         Task<MatchDto> CreateMatchAsync(CreateMatchDto createMatchDto);
         Task<MatchDto> UpdateMatchAsync(int id, UpdateMatchDto updateMatchDto);
         Task<bool> DeleteMatchAsync(int id);

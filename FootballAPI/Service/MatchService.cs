@@ -1,16 +1,23 @@
 using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Repository;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FootballAPI.Service
 {
     public class MatchService : IMatchService
     {
         private readonly IMatchRepository _matchRepository;
+        private readonly IPlayerMatchHistoryRepository _playerMatchHistoryRepository;
+        private readonly IPlayerRepository _playerRepository;
 
-        public MatchService(IMatchRepository matchRepository)
+        public MatchService(IMatchRepository matchRepository, IPlayerMatchHistoryRepository playerMatchHistoryRepository, IPlayerRepository playerRepository)
         {
             _matchRepository = matchRepository;
+            _playerMatchHistoryRepository = playerMatchHistoryRepository;
+            _playerRepository = playerRepository;
         }
 
         private MatchDto MapToDto(Match match)
@@ -115,6 +122,32 @@ namespace FootballAPI.Service
             var existingMatch = await _matchRepository.GetByIdAsync(id);
             if (existingMatch == null)
                 return null;
+
+            var playerMatchHistories = await _playerMatchHistoryRepository.GetByMatchIdAsync(id);
+
+            bool isTeamAWinner = updateMatchDto.TeamAGoals > updateMatchDto.TeamBGoals;
+            bool isDraw = updateMatchDto.TeamAGoals == updateMatchDto.TeamBGoals;
+
+            foreach (var history in playerMatchHistories)
+            {
+                var player = await _playerRepository.GetByIdAsync(history.PlayerId);
+                if (player != null)
+                {
+                    if (!isDraw)
+                    {
+                        bool isPlayerInTeamA = history.TeamId == updateMatchDto.TeamAId;
+                        bool isPlayerInWinningTeam = (isTeamAWinner && isPlayerInTeamA) || (!isTeamAWinner && !isPlayerInTeamA);
+
+                        player.Rating += isPlayerInWinningTeam ? 0.5f : -0.5f;
+
+                        player.Rating = Math.Max(0, Math.Min(10, player.Rating));
+                        await _playerRepository.UpdateAsync(player);
+
+                        history.PerformanceRating = player.Rating;
+                        await _playerMatchHistoryRepository.UpdateAsync(history);
+                    }
+                }
+            }
 
             existingMatch.MatchDate = updateMatchDto.MatchDate;
             existingMatch.TeamAId = updateMatchDto.TeamAId;
