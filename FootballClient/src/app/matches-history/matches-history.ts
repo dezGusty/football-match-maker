@@ -52,11 +52,11 @@ async openPlayersModal(match: Match) {
 
     this.selectedTeamAPlayers = match.playerHistory
       .filter(p => p.teamId === match.teamAId && p.player)
-      .map(p => `${p.player.firstName} ${p.player.lastName}`);
+      .map(p => `${p.player.firstName} ${p.player.lastName} ${p.player.rating}`);
 
     this.selectedTeamBPlayers = match.playerHistory
       .filter(p => p.teamId === match.teamBId && p.player)
-      .map(p => `${p.player.firstName} ${p.player.lastName}`);
+      .map(p => `${p.player.firstName} ${p.player.lastName} ${p.player.rating}`);
 
     this.modalOpen = true;
   } catch (error) {
@@ -72,7 +72,7 @@ closeModal() {
     if (!match || !teamId) return [];
     return match.playerHistory
       .filter(ph => ph.teamId === teamId && ph.player)
-      .map(ph => `${ph.player.firstName} ${ph.player.lastName}`);
+      .map(ph => `${ph.player.firstName} ${ph.player.lastName} ${ph.player.rating}`);
   }
 }
 
