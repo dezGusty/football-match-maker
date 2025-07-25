@@ -69,5 +69,4 @@ export class MatchService {
     .filter(ph => ph.teamId === teamId && ph.player)
     .map(ph => `${ph.player.firstName} ${ph.player.lastName}`);
 }
-
 }

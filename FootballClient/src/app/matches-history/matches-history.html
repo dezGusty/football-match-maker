@@ -39,7 +39,7 @@
       </div>
 
       <div class="team-section">
-        <h3 style="text-align: start;">{{ selectedMatch?.teamBName }}</h3>
+        <h3>{{ selectedMatch?.teamBName }}</h3>
         <ul>
           <li *ngFor="let player of getPlayers(selectedMatch, selectedMatch?.teamBId)">
             {{ player }}

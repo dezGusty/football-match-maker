@@ -60,7 +60,8 @@
 
         <div class="teams-grid">
             <div class="team">
-                <h3>Team 1 ({{ team1.players.length }} players - {{ team1.averageRating | number:'1.1-1' }})</h3>
+                <input type="text" [(ngModel)]="team1Name" class="team-name-input" />
+                <h3>({{ team1.players.length }} players - {{ team1.averageRating | number:'1.1-1' }})</h3>
                 <ul>
                     <li *ngFor="let player of team1.players">
                         {{ player.firstName }} {{ player.lastName }}
@@ -72,7 +73,8 @@
             </div>
 
             <div class="team">
-                <h3>Team 2 ({{ team2.players.length }} players - {{ team2.averageRating | number:'1.1-1' }})</h3>
+                <input type="text" [(ngModel)]="team2Name" class="team-name-input" />
+                <h3>({{ team2.players.length }} players - {{ team2.averageRating | number:'1.1-1' }})</h3>
                 <ul>
                     <li *ngFor="let player of team2.players">
                         {{ player.firstName }} {{ player.lastName }}

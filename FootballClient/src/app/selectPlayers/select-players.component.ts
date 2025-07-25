@@ -29,6 +29,8 @@ export class SelectPlayersComponent implements OnInit {
     showTeamsModal = false;
     team1: Team = { players: [], averageRating: 0 };
     team2: Team = { players: [], averageRating: 0 };
+    team1Name: string = '';
+    team2Name: string = '';
     searchTerm: string = '';
     matchDate: string = '';
     matchDayError: boolean = false;
@@ -146,6 +148,7 @@ export class SelectPlayersComponent implements OnInit {
         let team1Rating = 0;
         let team2Rating = 0;
 
+
         const totalPlayers = players.length;
         const playersToDistribute = players.length % 2 === 0 ? players : players.slice(0, -1);
         const team1Size = Math.ceil(playersToDistribute.length / 2);
@@ -174,7 +177,7 @@ export class SelectPlayersComponent implements OnInit {
 
         this.team1 = {
             players: team1Players,
-            averageRating: team1Rating / team1Players.length
+            averageRating: team1Rating / team1Players.length,
         };
 
         this.team2 = {
@@ -182,6 +185,8 @@ export class SelectPlayersComponent implements OnInit {
             averageRating: team2Rating / team2Players.length
         };
 
+        this.team1Name = 'Team 1';
+        this.team2Name = 'Team 2';
         this.showTeamsModal = true;
     }
 
@@ -191,24 +196,24 @@ export class SelectPlayersComponent implements OnInit {
 
     async beginMatch() {
         try {
+
+            if (!this.areTeamNamesValid()) {
+        alert("Team names must be different and cannot be empty.");
+        return;
+    }
             const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(-6);
 
-            // Set all selected players as unavailable first
             const allSelectedPlayerIds = [...this.team1.players, ...this.team2.players].map(p => p.id!);
             await this.playerService.setMultiplePlayersUnavailable(allSelectedPlayerIds);
 
-            // Create Team A and Team B in the database
-            const teamA = await this.teamService.createTeam(`Team A ${timestamp}`);
-            const teamB = await this.teamService.createTeam(`Team B ${timestamp}`);
+            const teamA = await this.teamService.createTeam(this.team1Name || 'Team A');
+            const teamB = await this.teamService.createTeam(this.team2Name || 'Team B');
 
-            // Create a match with the current date
             const currentDate = new Date();
             const match = await this.matchService.createMatch(teamA.id, teamB.id, currentDate);
 
-            // Create player match history records
             const historyPromises: Promise<any>[] = [];
 
-            // Create records for Team A players
             for (const player of this.team1.players) {
                 historyPromises.push(
                     this.playerMatchHistoryService.createPlayerMatchHistory(
@@ -219,7 +224,6 @@ export class SelectPlayersComponent implements OnInit {
                 );
             }
 
-            // Create records for Team B players
             for (const player of this.team2.players) {
                 historyPromises.push(
                     this.playerMatchHistoryService.createPlayerMatchHistory(
@@ -230,7 +234,6 @@ export class SelectPlayersComponent implements OnInit {
                 );
             }
 
-            // Wait for all history records to be created
             await Promise.all(historyPromises);
 
             this.clearSelectedPlayers();
@@ -267,4 +270,9 @@ export class SelectPlayersComponent implements OnInit {
         }
     }
 
+    areTeamNamesValid(): boolean {
+  return this.team1Name.trim() !== '' 
+      && this.team2Name.trim() !== '' 
+      && this.team1Name.trim().toLowerCase() !== this.team2Name.trim().toLowerCase();
+}
 }

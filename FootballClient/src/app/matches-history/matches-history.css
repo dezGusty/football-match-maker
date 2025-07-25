@@ -85,13 +85,13 @@ button:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* aliniere verticală */
+  justify-content: center;
   text-align: center;
 }
 
 .team-section h3 {
   margin-top: 0;
-  margin-bottom: 12px; /* mai puțin spațiu jos */
+  margin-bottom: 12px;
   font-size: 18px;
 }
 
@@ -103,5 +103,5 @@ button:hover {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  align-items: center; /* aliniere pe mijloc */
+  align-items: center;
 }
