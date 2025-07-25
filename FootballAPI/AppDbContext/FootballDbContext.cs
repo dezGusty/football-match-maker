@@ -57,8 +57,7 @@ namespace FootballAPI.Data
                 .HasIndex(p => new { p.FirstName, p.LastName });
 
             modelBuilder.Entity<Team>()
-                .HasIndex(t => t.Name)
-                .IsUnique();
+                .HasIndex(t => t.Name);
 
             modelBuilder.Entity<Match>()
                 .HasIndex(m => m.MatchDate);
