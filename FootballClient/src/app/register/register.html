@@ -2,8 +2,12 @@
   <div class="register-container">
     <h2>Register</h2>
 
-    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+    @if (errorMessage) {
+      <div class="error-message">{{ errorMessage }}</div>
+    }
+    @if (successMessage) {
+      <div class="success-message">{{ successMessage }}</div>
+    }
 
     <label>Username:</label>
     <input type="text" [(ngModel)]="username" placeholder="Introduce username" />
@@ -15,5 +19,10 @@
     <input type="password" [(ngModel)]="confirmPassword" placeholder="Confirm password" />
 
     <button (click)="onRegister()">Register</button>
+
+    <h6 class="login-prompt" style="margin-top: 10px; text-align: center; color: #222;">
+      Already have an account?
+      <a (click)="goToLogin()" class="login-link" style="color: #1976d2; text-decoration: underline; cursor: pointer; margin-left: 4px;">Login now.</a>
+    </h6>
   </div>
 </div>

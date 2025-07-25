@@ -69,4 +69,8 @@ export class Register {
     this.successMessage = '';
   }
 }
+
+goToLogin() {
+  this.router.navigate(['/login']);
+}
 }
