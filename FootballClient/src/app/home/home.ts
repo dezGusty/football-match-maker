@@ -7,6 +7,7 @@ import { Player } from '../player.interface';
 
 @Component({
   selector: 'app-home',
+  standalone: true,
   imports: [Header, FormsModule, CommonModule],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
@@ -16,6 +17,8 @@ export class Home {
   editIndex: number | null = null;
   editedPlayer: Player | null = null;
   showAddModal = false;
+  selectedFile: File | null = null;
+  selectedFileName: string = '';
 
   constructor(private PlayerService: PlayerService) { }
 
@@ -38,15 +41,54 @@ export class Home {
     imageUrl: ''
   };
 
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      this.selectedFileName = file.name;
+    }
+  }
+
+  async uploadImage(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('http://localhost:5145/api/images/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to upload image');
+    }
+
+    const result = await response.json();
+    return result.imageUrl;
+  }
+
   async addPlayer() {
     if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10) {
       alert('Rating must be between 0 and 10.');
       return;
     }
+
     try {
+      // Upload image if selected
+      if (this.selectedFile) {
+        try {
+          const imageUrl = await this.uploadImage(this.selectedFile);
+          this.newPlayer.imageUrl = imageUrl;
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          alert('Failed to upload image. Player will be added without an image.');
+        }
+      }
+
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
       this.players.push(addedPlayer);
       this.newPlayer = { firstName: '', lastName: '', rating: 0, imageUrl: '' };
+      this.selectedFile = null;
+      this.selectedFileName = '';
       console.log('Player added:', addedPlayer);
     } catch (error) {
       console.error('Error adding player:', error);
