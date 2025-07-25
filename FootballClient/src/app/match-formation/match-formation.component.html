@@ -1,3 +1,15 @@
+<!-- Score Table -->
+<div class="score-container">
+    <div class="score-table">
+        <div class="team-name">{{team1Name}}</div>
+        <input type="number" [(ngModel)]="scoreA" min="0" class="score-input">
+        <span class="score-separator">-</span>
+        <input type="number" [(ngModel)]="scoreB" min="0" class="score-input">
+        <div class="team-name">{{team2Name}}</div>
+    </div>
+    <button class="finalize-button" (click)="finalizeMatch()">Finalizare Meci</button>
+</div>
+
 <div class="football-field">
     <div class="team team1">
         <div *ngFor="let pos of getTeam1Positions(); let i = index" class="player" [style.left]="pos.left"
