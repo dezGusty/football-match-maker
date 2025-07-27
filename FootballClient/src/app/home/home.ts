@@ -14,6 +14,8 @@ import { Player } from '../player.interface';
 })
 export class Home {
   players: Player[] = [];
+  filteredPlayers: Player[] = [];
+  searchTerm: string = '';
   editIndex: number | null = null;
   editedPlayer: Player | null = null;
   showAddModal = false;
@@ -25,6 +27,7 @@ export class Home {
   async init() {
     try {
       this.players = await this.PlayerService.getPlayers();
+      this.filterPlayers();
     } catch (error) {
       console.error('Error fetching players:', error);
     }
@@ -32,6 +35,23 @@ export class Home {
 
   ngOnInit() {
     this.init();
+  }
+
+  filterPlayers() {
+    this.filteredPlayers = this.players.filter(player => {
+      const isActive = this.isPlayerEnabled(player);
+      const searchTerms = this.searchTerm.toLowerCase().trim().split(' ');
+      const fullName = `${player.firstName || ''} ${player.lastName || ''}`.toLowerCase();
+      
+      const matchesSearch = this.searchTerm.trim() === '' || 
+        searchTerms.every(term => fullName.includes(term));
+      
+      return isActive && matchesSearch;
+    });
+  }
+
+  onSearchChange() {
+    this.filterPlayers();
   }
 
   newPlayer = {
@@ -113,6 +133,7 @@ export class Home {
       const index = this.players.findIndex(p => p.id === updatedPlayer.id);
       if (index !== -1) {
         this.players[index] = updatedPlayer;
+        this.filterPlayers(); // Refiltrăm lista după editare
       }
       this.clearEditIndex();
       console.log('Player updated:', updatedPlayer);
@@ -129,6 +150,7 @@ export class Home {
       const success = await this.PlayerService.deletePlayer(playerId);
       if (success) {
         await this.init();
+        this.filterPlayers(); // Refiltrăm lista după ștergere
         console.log('Player deleted successfully');
       }
     } catch (error) {
@@ -145,6 +167,7 @@ export class Home {
       const success = await this.PlayerService.enablePlayer(playerId);
       if (success) {
         await this.init();
+        this.filterPlayers(); // Refiltrăm lista după activare
         console.log('Player reactivated successfully');
       }
     } catch (error) {

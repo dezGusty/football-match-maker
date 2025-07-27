@@ -65,13 +65,11 @@ export class MatchService {
   }
 
   async updateMatch(matchId: number, updateData: { teamAGoals: number, teamBGoals: number }): Promise<Match> {
-    // First get the current match data
     const currentMatch = await this.getMatchById(matchId);
     if (!currentMatch) {
       throw new Error('Match not found');
     }
 
-    // Prepare the update data with all required fields
     const updateMatchDto = {
       matchDate: currentMatch.matchDate,
       teamAId: currentMatch.teamAId,

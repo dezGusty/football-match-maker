@@ -1,5 +1,15 @@
 <app-header></app-header>
 
+<div class="search-container">
+  <input 
+    type="text" 
+    [(ngModel)]="searchTerm" 
+    (ngModelChange)="onSearchChange()" 
+    placeholder="Search player..." 
+    class="search-input"
+  >
+</div>
+
 <table class="players-table">
   <thead>
     <tr>
@@ -12,7 +22,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let player of players; let i = index" [class.disabled-player]="!isPlayerEnabled(player)">
+    <tr *ngFor="let player of (searchTerm.trim() ? filteredPlayers : players); let i = index" [class.disabled-player]="!isPlayerEnabled(player)">
       <td>{{ i+1 }}</td>
       <ng-container *ngIf="editIndex === i && isPlayerEnabled(player); else viewMode">
         <td><input type="text" [(ngModel)]="editedPlayer!.firstName" /></td>
