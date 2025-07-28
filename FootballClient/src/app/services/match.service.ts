@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Match } from './match.interface';
+import { Match } from '../models/match.interface';
 
 @Injectable({
   providedIn: 'root'

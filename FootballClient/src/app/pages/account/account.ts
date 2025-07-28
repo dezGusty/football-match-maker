@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Header } from '../header/header';
-import { UserService } from '../services/user.service';
-import { AuthService } from '../auth/auth.service';
-import { User } from '../models/user.interface';
+import { Header } from '../../components/header/header';
+import { UserService } from '../../services/user.service';
+import { AuthService } from '../../components/auth/auth.service';
+import { User } from '../../models/user.interface';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 

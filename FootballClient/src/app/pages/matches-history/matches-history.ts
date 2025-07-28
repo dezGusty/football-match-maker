@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { Header } from "../header/header";
-import { MatchService } from '../match.service';
-import { Match } from '../match.interface';
+import { Header } from "../../components/header/header";
+import { MatchService } from '../../services/match.service';
+import { Match } from '../../models/match.interface';
 import { DatePipe } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlayerHistory } from '../player-history.interface';
-import { Player } from '../player.interface';
+import { PlayerHistory } from '../../models/player-history.interface';
+import { Player } from '../../models/player.interface';
 
 @Component({
   selector: 'app-matches-history',

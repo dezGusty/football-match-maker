@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Player } from '../player.interface';
-import { MatchService } from '../match.service';
+import { Player } from '../../models/player.interface';
+import { MatchService } from '../../services/match.service';
 
 interface Position {
     left: string;

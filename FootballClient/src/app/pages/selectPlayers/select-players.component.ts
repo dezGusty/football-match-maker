@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlayerService } from '../player.service';
-import { Player } from '../player.interface';
-import { Header } from '../header/header';
+import { PlayerService } from '../../services/player.service';
+import { Player } from '../../models/player.interface';
+import { Header } from '../../components/header/header';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TeamService } from '../team.service';
-import { MatchService } from '../match.service';
-import { PlayerMatchHistoryService } from '../player-match-history.service';
+import { TeamService } from '../../services/team.service';
+import { MatchService } from '../../services/match.service';
+import { PlayerMatchHistoryService } from '../../services/player-match-history.service';
 
 interface Team {
     players: Player[];

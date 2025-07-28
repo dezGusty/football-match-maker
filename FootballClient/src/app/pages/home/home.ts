@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { Header } from '../header/header';
+import { Header } from '../../components/header/header';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { PlayerService } from '../player.service';
-import { Player } from '../player.interface';
+import { PlayerService } from '../../services/player.service';
+import { Player } from '../../models/player.interface';
 
 @Component({
   selector: 'app-home',
