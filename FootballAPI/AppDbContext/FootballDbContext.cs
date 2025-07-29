@@ -66,6 +66,10 @@ namespace FootballAPI.Data
                 .HasIndex(u => u.Username)
                 .IsUnique();
 
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
             modelBuilder.Entity<Player>()
                 .Property(p => p.Rating)
                 .HasColumnType("decimal(4,2)");
@@ -107,7 +111,7 @@ namespace FootballAPI.Data
 
 
             modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Username = "admin", Password = "parola123", Role = "Admin", ImageUrl = "http://localhost:5145/images/admin.jpg" }
+                new User { Id = 1, Username = "admin", Password = "parola123", Role = "Admin", Email="admin@gmail.com", ImageUrl = "http://localhost:5145/images/admin.jpg" }
             );
         }
     }

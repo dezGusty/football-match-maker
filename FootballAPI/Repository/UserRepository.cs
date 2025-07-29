@@ -32,6 +32,12 @@ namespace FootballAPI.Repository
                 .FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
         }
 
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            return await _context.Set<User>()
+                .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+        }
+
         public async Task<IEnumerable<User>> GetUsersByRoleAsync(string role)
         {
             return await _context.Set<User>()

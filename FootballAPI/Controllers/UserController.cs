@@ -110,6 +110,27 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [HttpGet("email/{email}")]
+        public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
+        {
+            try
+            {
+                var user = await _userService.GetUserByEmailAsync(email);
+
+                if (user == null)
+                {
+                    return NotFound($"User with email '{email}' was not found.");
+                }
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting user by email: {Email}", email);
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
+
         [HttpGet("username/{username}/with-image")]
         public async Task<ActionResult<UserWithImageDto>> GetUserWithImageByUsername(string username)
         {

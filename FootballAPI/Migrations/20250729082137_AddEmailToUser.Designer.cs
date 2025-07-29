@@ -4,6 +4,7 @@ using FootballAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250729082137_AddEmailToUser")]
+    partial class AddEmailToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,11 +198,6 @@ namespace FootballAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -219,12 +217,17 @@ namespace FootballAPI.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("Email")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("nvarchar(100)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("Username")
                         .IsUnique();
 
-                    b.HasIndex("Username")
+                    b.HasIndex("Email")
                         .IsUnique();
 
                     b.ToTable("Users");
@@ -233,11 +236,11 @@ namespace FootballAPI.Migrations
                         new
                         {
                             Id = 1,
-                            Email = "admin@gmail.com",
                             ImageUrl = "http://localhost:5145/images/admin.jpg",
                             Password = "parola123",
                             Role = "Admin",
-                            Username = "admin"
+                            Username = "admin",
+                            Email = "admin@gmail.com"
                         });
                 });
 

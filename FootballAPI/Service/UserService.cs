@@ -19,7 +19,8 @@ namespace FootballAPI.Service
             {
                 Id = user.Id,
                 Username = user.Username,
-                Role = user.Role
+                Role = user.Role,
+                Email = user.Email
             };
         }
 
@@ -62,6 +63,11 @@ namespace FootballAPI.Service
             return user == null ? null : MapToDto(user);
         }
 
+        public async Task<UserDto?> GetUserByEmailAsync(string email)
+        {
+            var user = await _userRepository.GetByEmailAsync(email);
+            return user == null ? null : MapToDto(user);
+        }
         public async Task<IEnumerable<UserDto>> GetUsersByRoleAsync(string role)
         {
             var users = await _userRepository.GetUsersByRoleAsync(role);
@@ -79,7 +85,8 @@ namespace FootballAPI.Service
             {
                 Username = createUserDto.Username,
                 Password = createUserDto.Password,
-                Role = createUserDto.Role ?? "User"
+                Role = createUserDto.Role ?? "User",
+                Email = createUserDto.Email,
             };
 
             var createdUser = await _userRepository.CreateAsync(user);
@@ -99,6 +106,7 @@ namespace FootballAPI.Service
 
             existingUser.Username = updateUserDto.Username;
             existingUser.Role = updateUserDto.Role ?? existingUser.Role;
+            existingUser.Email = updateUserDto.Email ?? existingUser.Email;
 
             var updatedUser = await _userRepository.UpdateAsync(existingUser);
             return MapToDto(updatedUser);
