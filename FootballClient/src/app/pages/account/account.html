@@ -44,6 +44,28 @@
     @if (user) {
     <div class="account-username">{{ user.username }}</div>
     <div class="account-role-badge">{{ user.role }}</div>
+
+        <div class="future-matches-section">
+      <h3>Scheduled Matches</h3>
+      @if (futureMatches.length > 0) {
+        <div class="future-matches-list">
+          @for (match of futureMatches; track match.id) {
+            <div class="future-match-item">
+              <div class="match-info">
+                <div class="match-teams">{{ match.teamAName }} vs {{ match.teamBName }}</div>
+                <div class="match-date">{{ match.matchDate | date:'dd/MM/yyyy' }}</div>
+              </div>
+              <button class="begin-scheduled-match-btn" (click)="beginScheduledMatch(match)">
+                Begin Match
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="no-matches">No scheduled matches</div>
+      }
+    </div>
+    
     <form class="account-password-form">
       <label for="current-password">Current Password</label>
       <input id="current-password" type="password" placeholder="Enter current password" [(ngModel)]="currentPassword"

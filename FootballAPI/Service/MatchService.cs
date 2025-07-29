@@ -27,9 +27,9 @@ namespace FootballAPI.Service
                 Id = match.Id,
                 MatchDate = match.MatchDate,
                 TeamAId = match.TeamAId,
-                TeamA = match.TeamA != null ? new TeamDto 
-                { 
-                    Id = match.TeamA.Id, 
+                TeamA = match.TeamA != null ? new TeamDto
+                {
+                    Id = match.TeamA.Id,
                     Name = match.TeamA.Name,
                     CurrentPlayers = match.TeamA.CurrentPlayers?.Select(p => new PlayerDto
                     {
@@ -42,9 +42,9 @@ namespace FootballAPI.Service
                     }).ToList()
                 } : null,
                 TeamBId = match.TeamBId,
-                TeamB = match.TeamB != null ? new TeamDto 
-                { 
-                    Id = match.TeamB.Id, 
+                TeamB = match.TeamB != null ? new TeamDto
+                {
+                    Id = match.TeamB.Id,
                     Name = match.TeamB.Name,
                     CurrentPlayers = match.TeamB.CurrentPlayers?.Select(p => new PlayerDto
                     {
@@ -163,5 +163,12 @@ namespace FootballAPI.Service
         {
             return await _matchRepository.DeleteAsync(id);
         }
+        public async Task<IEnumerable<MatchDto>> GetFutureMatchesAsync()
+        {
+            var currentDate = DateTime.Now.Date;
+            var matches = await _matchRepository.GetAllAsync();
+            var futureMatches = matches.Where(m => m.MatchDate.Date > currentDate);
+            return futureMatches.Select(MapToDto);
+        }
     }
-} 
+}

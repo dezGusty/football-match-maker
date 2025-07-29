@@ -57,9 +57,9 @@ export class SelectPlayersComponent implements OnInit {
 
         if (currentDay <= 2) {
             daysToAdd = 2 - currentDay;
-        } else if (currentDay <= 4) { 
-            daysToAdd = 4 - currentDay; 
-        } else { 
+        } else if (currentDay <= 4) {
+            daysToAdd = 4 - currentDay;
+        } else {
             daysToAdd = 9 - currentDay;
         }
 
@@ -205,11 +205,11 @@ export class SelectPlayersComponent implements OnInit {
 
         this.team1Name = 'Team 1';
         this.team2Name = 'Team 2';
-        
+
         // Set the next Tuesday/Thursday date when opening the modal
         const nextMatchDate = this.getNextTuesdayOrThursday();
         this.matchDate = nextMatchDate.toISOString().split('T')[0];
-        
+
         this.showTeamsModal = true;
     }
 
@@ -221,9 +221,9 @@ export class SelectPlayersComponent implements OnInit {
         try {
 
             if (!this.areTeamNamesValid()) {
-        alert("Team names must be different and cannot be empty.");
-        return;
-    }
+                alert("Team names must be different and cannot be empty.");
+                return;
+            }
             const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(-6);
 
             const allSelectedPlayerIds = [...this.team1.players, ...this.team2.players].map(p => p.id!);
@@ -275,6 +275,60 @@ export class SelectPlayersComponent implements OnInit {
             this.error = 'Failed to create teams, match, or player history. Please try again.';
         }
     }
+    async scheduleMatch() {
+        try {
+            if (!this.areTeamNamesValid()) {
+                alert("Team names must be different and cannot be empty.");
+                return;
+            }
+
+            if (!this.matchDate || this.matchDayError) {
+                alert("Please select a valid match date (Tuesday or Thursday).");
+                return;
+            }
+
+            // Creez echipele
+            const teamA = await this.teamService.createTeam(this.team1Name || 'Team A');
+            const teamB = await this.teamService.createTeam(this.team2Name || 'Team B');
+
+            // Creez meciul cu data programată
+            const selectedDate = new Date(this.matchDate);
+            const match = await this.matchService.createMatch(teamA.id, teamB.id, selectedDate);
+
+            // Salvez jucătorii în PlayerMatchHistory pentru meciul programat
+            const historyPromises: Promise<any>[] = [];
+
+            for (const player of this.team1.players) {
+                historyPromises.push(
+                    this.playerMatchHistoryService.createPlayerMatchHistory(
+                        player.id!,
+                        teamA.id,
+                        match.id
+                    )
+                );
+            }
+
+            for (const player of this.team2.players) {
+                historyPromises.push(
+                    this.playerMatchHistoryService.createPlayerMatchHistory(
+                        player.id!,
+                        teamB.id,
+                        match.id
+                    )
+                );
+            }
+
+            await Promise.all(historyPromises);
+
+            // NU clear selected players - rămân disponibili pentru meciul programat
+            alert(`Match scheduled successfully for ${this.matchDate}!`);
+            this.closeTeamsModal();
+
+        } catch (error) {
+            console.error('Failed to schedule match:', error);
+            this.error = 'Failed to schedule match. Please try again.';
+        }
+    }
 
     validateMatchDay() {
         if (!this.matchDate) return;
@@ -294,8 +348,8 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     areTeamNamesValid(): boolean {
-  return this.team1Name.trim() !== '' 
-      && this.team2Name.trim() !== '' 
-      && this.team1Name.trim().toLowerCase() !== this.team2Name.trim().toLowerCase();
-}
+        return this.team1Name.trim() !== ''
+            && this.team2Name.trim() !== ''
+            && this.team1Name.trim().toLowerCase() !== this.team2Name.trim().toLowerCase();
+    }
 }

@@ -88,5 +88,18 @@ namespace FootballAPI.Controllers
 
             return NoContent();
         }
+        [HttpGet("future")]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetFutureMatches()
+        {
+            try
+            {
+                var futureMatches = await _matchService.GetFutureMatchesAsync();
+                return Ok(futureMatches);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error getting future matches: {ex.Message}");
+            }
+        }
     }
-} 
+}

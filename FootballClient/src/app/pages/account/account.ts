@@ -7,6 +7,9 @@ import { AuthService } from '../../components/auth/auth.service';
 import { User } from '../../models/user.interface';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { MatchService } from '../../services/match.service';
+import { PlayerService } from '../../services/player.service';
+import { Match } from '../../models/match.interface';
 
 @Component({
   selector: 'app-account',
@@ -21,16 +24,20 @@ export class Account {
   currentPassword = '';
   images: string[] = [];
   selectedImage: string = '';
-  showImageSelector =false;
+  showImageSelector = false;
+  futureMatches: Match[] = [];
 
   constructor(
     private userService: UserService,
     private authService: AuthService,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private matchService: MatchService,
+    private playerService: PlayerService
   ) {
     this.loadUser();
     this.loadImages();
+    this.loadFutureMatches();
   }
 
   async loadUser() {
@@ -44,6 +51,30 @@ export class Account {
       }
     } catch (error) {
       console.error('Failed to load user:', error);
+    }
+  }
+
+  async loadFutureMatches() {
+    try {
+      this.futureMatches = await this.matchService.getFutureMatches();
+    } catch (error) {
+      console.error('Failed to load future matches:', error);
+    }
+  }
+
+  async beginScheduledMatch(match: Match) {
+    try {
+      // Obțin jucătorii pentru meciul programat
+      const playerIds = await this.matchService.getPlayersForScheduledMatch(match.id!);
+
+      // Setez jucătorii ca disponibili
+      await this.playerService.setMultiplePlayersAvailable(playerIds);
+
+      // Redirecționez la select-players
+      this.router.navigate(['/select-players']);
+    } catch (error) {
+      console.error('Failed to begin scheduled match:', error);
+      alert('Failed to begin scheduled match. Please try again.');
     }
   }
 

@@ -104,6 +104,7 @@
 
         <div class="modal-actions">
             <button class="begin-match-btn" (click)="beginMatch()" [disabled]="!matchDate || matchDayError">Begin Match</button>
+            <button class="begin-match-btn" (click)="scheduleMatch()" [disabled]="!matchDate || matchDayError" style="background: #6a866e; margin-left: 10px;">Schedule Match</button>
         </div>
     </div>
 </div>

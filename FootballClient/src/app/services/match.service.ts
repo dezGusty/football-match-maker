@@ -15,6 +15,7 @@ export class MatchService {
       throw new Error('Failed to fetch matches');
     }
 
+
     const rawMatches = await response.json();
 
     const matches: Match[] = rawMatches.map((m: any) => ({
@@ -29,7 +30,51 @@ export class MatchService {
 
     return matches;
   }
+  async getFutureMatches(): Promise<Match[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/matches/future`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch future matches: ${errorText}`);
+      }
+
+      const rawMatches = await response.json();
+
+      const matches: Match[] = rawMatches.map((m: any) => ({
+        id: m.id,
+        matchDate: m.matchDate,
+        teamAId: m.teamAId,
+        teamBId: m.teamBId,
+        teamAName: m.teamA ? m.teamA.name : 'Team A',
+        teamBName: m.teamB ? m.teamB.name : 'Team B',
+        scoreA: m.teamAGoals,
+        scoreB: m.teamBGoals,
+        playerHistory: m.playerHistory || []
+      }));
+
+      return matches;
+    } catch (error) {
+      console.error('Error fetching future matches:', error);
+      throw error;
+    }
+  }
+
+  async getPlayersForScheduledMatch(matchId: number): Promise<number[]> {
+    const response = await fetch(`${this.baseUrl}/playermatchhistory/match/${matchId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch players for scheduled match');
+    }
+
+    const playerHistory = await response.json();
+    return playerHistory.map((ph: any) => ph.playerId);
+  }
   async getTeamById(teamId: number): Promise<string> {
     const response = await fetch(`${this.baseUrl}/teams/${teamId}`);
     if (!response.ok) {

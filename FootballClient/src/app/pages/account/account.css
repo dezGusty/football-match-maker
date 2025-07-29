@@ -360,3 +360,84 @@
   background: #b5c7b8;
   cursor: not-allowed;
 }
+
+.future-matches-section {
+  margin-bottom: 36px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.future-matches-section h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #454545;
+  margin-bottom: 18px;
+  border-bottom: 2px solid #b5c7b8;
+  padding-bottom: 8px;
+}
+
+.future-matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.future-match-item {
+  background: #f8f9fa;
+  border: 2px solid #b5c7b8;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.future-match-item:hover {
+  border-color: #6a866e;
+  background: #e5ede7;
+}
+
+.match-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.match-teams {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #454545;
+}
+
+.match-date {
+  font-size: 0.95rem;
+  color: #6a866e;
+  font-weight: 500;
+}
+
+.begin-scheduled-match-btn {
+  padding: 8px 16px;
+  background: #6a866e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.begin-scheduled-match-btn:hover {
+  background: #55705a;
+}
+
+.no-matches {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px dashed #b5c7b8;
+}

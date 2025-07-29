@@ -12,5 +12,6 @@ namespace FootballAPI.Service
         Task<bool> DeleteMatchAsync(int id);
         Task<IEnumerable<MatchDto>> GetMatchesByDateRangeAsync(DateTime startDate, DateTime endDate);
         Task<IEnumerable<MatchDto>> GetMatchesByTeamIdAsync(int teamId);
+        Task<IEnumerable<MatchDto>> GetFutureMatchesAsync();
     }
 }
