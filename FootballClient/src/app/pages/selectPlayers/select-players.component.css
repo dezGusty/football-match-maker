@@ -189,36 +189,46 @@
     transform: none;
 }
 
-.modal-overlay {
+.modal {
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    animation: modalBackgroundFadeIn 0.2s ease;
+}
+
+@keyframes modalBackgroundFadeIn {
+    from {
+        background-color: rgba(0, 0, 0, 0);
+    }
+    to {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
 }
 
 .modal-content {
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    width: 80%;
-    max-width: 800px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
     position: relative;
-    box-shadow: 0 4px 12px rgba(164, 196, 168, 0.3);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: modalFadeIn 0.3s ease;
     border: 2px solid rgba(164, 196, 168, 0.4);
-    animation: modalFadeIn 0.2s ease;
-    will-change: transform, opacity;
 }
 
 @keyframes modalFadeIn {
     from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -237,39 +247,34 @@
 
 .close-btn {
     position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #f8f9fa;
-    border: 2px solid rgba(164, 196, 168, 0.3);
-    font-size: 20px;
+    top: 0;
+    right: 0;
+    border: none;
+    background: none;
+    font-size: 24px;
     cursor: pointer;
-    color: #2c3e50;
-    padding: 6px 10px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    color: #666;
+    padding: 5px 10px;
+    z-index: 2;
 }
 
 .close-btn:hover {
-    background: #e9ecef;
-    border-color: rgba(164, 196, 168, 0.5);
+    color: #333;
 }
 
-.teams-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.teams-container {
+    display: flex;
+    justify-content: space-between;
     gap: 20px;
     margin-top: 20px;
 }
 
 .team {
-    background: #f8f9fa;
+    flex: 1;
     padding: 20px;
-    border-radius: 12px;
-    border: 2px solid rgba(164, 196, 168, 0.3);
-    transition: border-color 0.2s ease;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid rgba(164, 196, 168, 0.4);
 }
 
 .team:hover {
@@ -277,13 +282,10 @@
 }
 
 .team h3 {
-    margin: 0 0 15px 0;
+    margin-top: 0;
+    margin-bottom: 15px;
     color: #2c3e50;
-    font-size: 1.1rem;
-    font-weight: 700;
-    padding-bottom: 10px;
-    border-bottom: 2px solid rgba(164, 196, 168, 0.3);
-    letter-spacing: 0.3px;
+    text-align: center;
 }
 
 .team ul {
@@ -418,20 +420,101 @@
 }
 
 .team-name-input {
-    width: 95%;
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 12px;
-    padding: 8px 12px;
-    border: 2px solid rgba(164, 196, 168, 0.4);
-    border-radius: 8px;
-    text-align: center;
-    background: white;
-    color: #2c3e50;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
 }
 
 .team-name-input:focus {
     border-color: rgba(164, 196, 168, 0.7);
     outline: none;
     box-shadow: 0 0 0 3px rgba(164, 196, 168, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;  /* Adăugat pentru poziționare relativă */
+    padding-top: 30px;  /* Adăugat spațiu pentru butonul de închidere */
+}
+
+.variant-navigation {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.variant-navigation button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.variant-navigation button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.variant-navigation button:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+.variant-navigation span {
+    font-size: 14px;
+    color: #666;
+}
+
+.player-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.player-item {
+    background: white;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-info {
+    flex: 1;
+}
+
+.player-name {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.player-rating {
+    color: #666;
+    font-size: 14px;
+}
+
+.modal-content {
+    min-width: 800px;
+    max-width: 1200px;
+}
+
+.team-stats {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
 }

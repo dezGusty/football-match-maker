@@ -7,12 +7,7 @@
             <span class="player-count">{{ filteredAvailablePlayers.length }} Players</span>
         </div>
         <div class="search-container">
-            <input 
-                type="text" 
-                [(ngModel)]="searchTerm" 
-                placeholder="Search player..." 
-                class="search-input"
-            />
+            <input type="text" [(ngModel)]="searchTerm" placeholder="Search player..." class="search-input" />
         </div>
         <ul class="players-list">
             <li *ngFor="let player of filteredAvailablePlayers" class="player-item">
@@ -53,12 +48,23 @@
 </div>
 
 @if (showTeamsModal) {
-<div class="modal-overlay">
+<div class="modal" *ngIf="showTeamsModal">
     <div class="modal-content">
         <button class="close-btn" (click)="closeTeamsModal()">&times;</button>
-        <h2>Teams</h2>
+        <div class="modal-header">
+            <h2>Generated teams</h2>
+            <div class="variant-navigation">
+                <button (click)="previousVariant()" [disabled]="currentVariantIndex === 0">
+                    ← Previous option
+                </button>
+                <span>Option {{ currentVariantIndex + 1 }} of {{ teamVariants.length }}</span>
+                <button (click)="nextVariant()" [disabled]="currentVariantIndex === teamVariants.length - 1">
+                    Next option →
+                </button>
+            </div>
+        </div>
 
-        <div class="teams-grid">
+        <div class="teams-container">
             <div class="team">
                 <input type="text" [(ngModel)]="team1Name" class="team-name-input" />
                 <h3>({{ team1.players.length }} players - {{ team1.averageRating | number:'1.1-1' }})</h3>
@@ -87,19 +93,13 @@
         </div>
 
         <div class="day-selector">
-  <label for="matchDate">Select Match Day:</label>
-  <input 
-    type="date" 
-    id="matchDate"
-    [(ngModel)]="matchDate"
-    (change)="validateMatchDay()"
-    [min]="minDate"
-    class="search-input"
-  />
-  <span *ngIf="matchDayError" style="color: red; font-size: 0.85rem;">
-    You can only select a Tuesday or Thursday.
-  </span>
-</div>
+            <label for="matchDate">Select Match Day:</label>
+            <input type="date" id="matchDate" [(ngModel)]="matchDate" (change)="validateMatchDay()" [min]="minDate"
+                class="search-input" />
+            <span *ngIf="matchDayError" style="color: red; font-size: 0.85rem;">
+                You can only select a Tuesday or Thursday.
+            </span>
+        </div>
 
 
         <div class="modal-actions">
