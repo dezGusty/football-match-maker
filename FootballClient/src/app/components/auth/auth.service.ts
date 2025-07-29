@@ -17,14 +17,14 @@ export class AuthService {
     }
   }
 
-  async register(username: string, password: string, role: string = 'Admin'): Promise<void> {
+  async register(email: string, password: string, role: string = 'Admin'): Promise<void> {
     try {
       const response = await fetch(`${this.apiUrl}/user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password, role })
+        body: JSON.stringify({ email, password, role })
       });
 
       if (!response.ok) {

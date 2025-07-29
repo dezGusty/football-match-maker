@@ -88,9 +88,9 @@ namespace FootballAPI.Repository
                 .AnyAsync(u => u.Username.ToLower() == username.ToLower() && u.Id != excludeUserId);
         }
 
-        public async Task<User> AuthenticateAsync(string username, string password)
+        public async Task<User> AuthenticateAsync(string email, string password)
         {
-            var user = await GetByUsernameAsync(username);
+            var user = await GetByEmailAsync(email);
 
             if (user == null || user.Password != password)
                 return null;

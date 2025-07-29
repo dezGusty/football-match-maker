@@ -14,7 +14,7 @@ namespace FootballAPI.Repository
         Task<bool> ExistsAsync(int id);
         Task<bool> UsernameExistsAsync(string username);
         Task<bool> UsernameExistsAsync(string username, int excludeUserId);
-        Task<User> AuthenticateAsync(string username, string password);
+        Task<User> AuthenticateAsync(string email, string password);
         Task<bool> ChangePasswordAsync(int userId, string newPassword);
         Task<IEnumerable<User>> GetUsersByRoleAsync(string role);
     }

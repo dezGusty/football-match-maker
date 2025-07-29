@@ -29,7 +29,7 @@ namespace FootballAPI.Service
             return new UserResponseDto
             {
                 Id = user.Id,
-                Username = user.Username,
+                Email = user.Email,
                 Role = user.Role,
 
             };
@@ -119,7 +119,7 @@ namespace FootballAPI.Service
 
         public async Task<UserResponseDto> AuthenticateAsync(LoginDto loginDto)
         {
-            var user = await _userRepository.AuthenticateAsync(loginDto.Username, loginDto.Password);
+            var user = await _userRepository.AuthenticateAsync(loginDto.Email, loginDto.Password);
 
             if (user == null)
                 return null;

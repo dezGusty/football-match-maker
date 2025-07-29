@@ -12,7 +12,7 @@ import { AuthService } from '../../components/auth/auth.service';
   styleUrls: ['./login.css']
 })
 export class Login {
-  username: string = '';
+  email: string = '';
   password: string = '';
   errorMessage: string = '';
 
@@ -28,7 +28,7 @@ export class Login {
   async onLogin() {
     try {
       await this.authService.login({
-        username: this.username,
+        email: this.email,
         password: this.password
       });
       this.router.navigate(['/home']);

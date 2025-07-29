@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 })
 export class Register {
   username: string = '';
+  email: string = '';
   password: string = '';
   confirmPassword: string = '';
   role: string = 'Admin';
@@ -55,7 +56,7 @@ export class Register {
 
   try {
     await this.authService.register(this.username, this.password, this.role);
-    await this.authService.login({ username: this.username, password: this.password });
+    await this.authService.login({ email: this.email, password: this.password });
 
     this.successMessage = 'Registration successful!';
     this.errorMessage = '';
