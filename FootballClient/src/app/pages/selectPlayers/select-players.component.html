@@ -96,18 +96,15 @@
 
         <div class="day-selector">
             <label for="matchDate">Select Match Day:</label>
-            <input type="date" id="matchDate" [(ngModel)]="matchDate" (change)="validateMatchDay()" [min]="minDate"
+            <input type="date" id="matchDate" [(ngModel)]="matchDate" [min]="minDate"
                 class="search-input" />
-            <span *ngIf="matchDayError" style="color: red; font-size: 0.85rem;">
-                You can only select a Tuesday or Thursday.
-            </span>
         </div>
 
 
         <div class="modal-actions">
-            <button class="begin-match-btn" (click)="beginMatch()" [disabled]="!matchDate || matchDayError">Begin
+            <button class="begin-match-btn" (click)="beginMatch()">Begin
                 Match</button>
-            <button class="begin-match-btn" (click)="scheduleMatch()" [disabled]="!matchDate || matchDayError"
+            <button class="begin-match-btn" (click)="scheduleMatch()"
                 style="background: #6a866e; margin-left: 10px;">Schedule Match</button>
         </div>
     </div>

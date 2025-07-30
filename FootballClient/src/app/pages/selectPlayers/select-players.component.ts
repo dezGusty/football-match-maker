@@ -58,21 +58,6 @@ export class SelectPlayersComponent implements OnInit {
         this.setMinDateToday();
     }
 
-    private getNextTuesdayOrThursday(): Date {
-        const today = new Date();
-        let daysToAdd = 0;
-        const currentDay = today.getDay();
-        if (currentDay <= 2) {
-            daysToAdd = 2 - currentDay;
-        } else if (currentDay <= 4) {
-            daysToAdd = 4 - currentDay;
-        } else {
-            daysToAdd = 9 - currentDay;
-        }
-        const nextDate = new Date(today);
-        nextDate.setDate(today.getDate() + daysToAdd);
-        return nextDate;
-    }
 
     getRatingCategory(rating: number | undefined): string {
         if (!rating) return 'low';
@@ -158,8 +143,7 @@ export class SelectPlayersComponent implements OnInit {
         this.generateSingleTeamVariant(players);
         this.team1Name = 'Team 1';
         this.team2Name = 'Team 2';
-        const nextMatchDate = this.getNextTuesdayOrThursday();
-        this.matchDate = nextMatchDate.toISOString().split('T')[0];
+        this.setMinDateToday();
         this.showTeamsModal = true;
     }
 
@@ -466,19 +450,6 @@ export class SelectPlayersComponent implements OnInit {
         } catch (error) {
             console.error('Failed to schedule match:', error);
             this.error = 'Failed to schedule match. Please try again.';
-        }
-    }
-    validateMatchDay() {
-        if (!this.matchDate) return;
-        const selected = new Date(this.matchDate);
-        const day = selected.getDay();
-        const isTuesday = day === 2;
-        const isThursday = day === 4;
-        if (isTuesday || isThursday) {
-            this.matchDayError = false;
-        } else {
-            this.matchDayError = true;
-            this.matchDate = '';
         }
     }
     areTeamNamesValid(): boolean {
