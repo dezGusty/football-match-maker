@@ -16,7 +16,7 @@ namespace FootballAPI.Models
         [StringLength(50)]
         public string LastName { get; set; }
 
-        [Range(0.0f, 10.0f, ErrorMessage = "Rating must be between 0.0 and 10.0")]
+        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
         public float Rating { get; set; } = 0.0f;
 
         public bool IsAvailable { get; set; } = false;

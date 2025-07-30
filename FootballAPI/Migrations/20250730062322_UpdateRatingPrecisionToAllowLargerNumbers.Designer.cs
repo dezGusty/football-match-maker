@@ -4,6 +4,7 @@ using FootballAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250730062322_UpdateRatingPrecisionToAllowLargerNumbers")]
+    partial class UpdateRatingPrecisionToAllowLargerNumbers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,8 +90,8 @@ namespace FootballAPI.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<double>("Rating")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(8,2)");
 
                     b.HasKey("Id");
 
@@ -107,7 +110,7 @@ namespace FootballAPI.Migrations
                             IsAvailable = true,
                             IsEnabled = true,
                             LastName = "Popescu",
-                            Rating = 8.5
+                            Rating = 8.5m
                         },
                         new
                         {
@@ -117,7 +120,7 @@ namespace FootballAPI.Migrations
                             IsAvailable = true,
                             IsEnabled = true,
                             LastName = "Ionescu",
-                            Rating = 7.8000001907348633
+                            Rating = 7.8m
                         });
                 });
 
@@ -132,8 +135,8 @@ namespace FootballAPI.Migrations
                     b.Property<int>("MatchId")
                         .HasColumnType("int");
 
-                    b.Property<double>("PerformanceRating")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PerformanceRating")
+                        .HasColumnType("decimal(8,2)");
 
                     b.Property<int>("PlayerId")
                         .HasColumnType("int");

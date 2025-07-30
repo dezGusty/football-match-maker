@@ -87,8 +87,8 @@ export class Home {
   }
 
   async addPlayer() {
-    if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10) {
-      alert('Rating must be between 0 and 10.');
+    if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10000) {
+      alert('Rating must be between 0 and 10000.');
       return;
     }
 
@@ -123,8 +123,8 @@ export class Home {
   async editPlayer() {
     if (!this.editedPlayer) return;
 
-    if (typeof this.editedPlayer.rating === 'number' && (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10)) {
-      alert('Rating must be between 0 and 10.');
+    if (typeof this.editedPlayer.rating === 'number' && (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10000)) {
+      alert('Rating must be between 0 and 10000.');
       return;
     }
 

@@ -72,11 +72,11 @@ namespace FootballAPI.Data
 
             modelBuilder.Entity<Player>()
                 .Property(p => p.Rating)
-                .HasColumnType("decimal(4,2)");
+                .HasColumnType("float");
 
             modelBuilder.Entity<PlayerMatchHistory>()
                 .Property(pmh => pmh.PerformanceRating)
-                .HasColumnType("decimal(4,2)");
+                .HasColumnType("float");
 
             SeedData(modelBuilder);
         }
