@@ -23,12 +23,6 @@ interface Team {
     lowCount: number;
 }
 
-interface TeamVariant {
-    team1: Team;
-    team2: Team;
-    ratingDifference: number;
-}
-
 @Component({
     selector: 'app-select-players',
     standalone: true,
@@ -50,8 +44,6 @@ export class SelectPlayersComponent implements OnInit {
     matchDate: string = '';
     matchDayError: boolean = false;
     minDate: string = '';
-    teamVariants: TeamVariant[] = [];
-    currentVariantIndex: number = 0;
 
     constructor(
         private playerService: PlayerService,
@@ -163,94 +155,227 @@ export class SelectPlayersComponent implements OnInit {
 
     generateTeams() {
         const players = [...this.selectedPlayers];
-        this.teamVariants = [];
-        for (let variant = 0; variant < 5; variant++) {
-            const shuffledPlayers = this.shufflePlayers(players);
-            for (let attempt = 0; attempt < 3; attempt++) {
-                const team1Players: Player[] = [];
-                const team2Players: Player[] = [];
-                const totalPlayers = shuffledPlayers.length;
-                const isEvenTotal = totalPlayers % 2 === 0;
-                const targetSize1 = isEvenTotal ? totalPlayers / 2 : Math.ceil(totalPlayers / 2);
-                const targetSize2 = isEvenTotal ? totalPlayers / 2 : Math.floor(totalPlayers / 2);
-                if (attempt === 0) {
-                    const sortedByRating = [...shuffledPlayers].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-                    for (let i = 0; i < sortedByRating.length; i++) {
-                        if (i % 2 === 0 && team1Players.length < targetSize1) {
-                            team1Players.push(sortedByRating[i]);
-                        } else if (team2Players.length < targetSize2) {
-                            team2Players.push(sortedByRating[i]);
-                        } else {
-                            team1Players.push(sortedByRating[i]);
-                        }
-                    }
-                } else if (attempt === 1) {
-                    const playerPairs = this.createPlayerPairs(shuffledPlayers);
-                    playerPairs.forEach(pair => {
-                        if (Math.random() < 0.5 && team1Players.length < targetSize1) {
-                            team1Players.push(pair[0]);
-                            if (pair[1] && team2Players.length < targetSize2) {
-                                team2Players.push(pair[1]);
-                            }
-                        } else if (team2Players.length < targetSize2) {
-                            team2Players.push(pair[0]);
-                            if (pair[1] && team1Players.length < targetSize1) {
-                                team1Players.push(pair[1]);
-                            }
-                        }
-                    });
-                } else {
-                    const randomizedPlayers = this.shufflePlayers(shuffledPlayers);
-                    randomizedPlayers.forEach(player => {
-                        const team1Avg = team1Players.length > 0 ? this.calculateTeamAverage(team1Players) : 0;
-                        const team2Avg = team2Players.length > 0 ? this.calculateTeamAverage(team2Players) : 0;
-                        if ((team1Avg <= team2Avg && team1Players.length < targetSize1) || team2Players.length >= targetSize2) {
-                            team1Players.push(player);
-                        } else {
-                            team2Players.push(player);
-                        }
-                    });
-                }
-                while (team1Players.length > targetSize1) {
-                    team2Players.push(team1Players.pop()!);
-                }
-                while (team2Players.length > targetSize2) {
-                    team1Players.push(team2Players.pop()!);
-                }
-                while (team1Players.length + team2Players.length < totalPlayers) {
-                    if (team1Players.length < targetSize1) {
-                        team1Players.push(shuffledPlayers.find(p => !team1Players.includes(p) && !team2Players.includes(p))!);
-                    } else {
-                        team2Players.push(shuffledPlayers.find(p => !team1Players.includes(p) && !team2Players.includes(p))!);
-                    }
-                }
-                team1Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-                team2Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-                for (let i = 0; i < 3; i++) {
-                    if (!this.optimizeTeams(team1Players, team2Players)) break;
-                }
-                const team1Stats = this.calculateTeamStats(team1Players);
-                const team2Stats = this.calculateTeamStats(team2Players);
-                const ratingDifference = Math.abs(team1Stats.averageRating - team2Stats.averageRating);
-                this.teamVariants.push({
-                    team1: team1Stats,
-                    team2: team2Stats,
-                    ratingDifference: ratingDifference
-                });
-            }
-        }
-        this.teamVariants = this.filterUniqueCombinations(this.teamVariants);
-        this.teamVariants.forEach(variant => {
-            variant.team1.players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-            variant.team2.players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        });
-        this.currentVariantIndex = 0;
-        this.setCurrentVariant();
+        this.generateSingleTeamVariant(players);
         this.team1Name = 'Team 1';
         this.team2Name = 'Team 2';
         const nextMatchDate = this.getNextTuesdayOrThursday();
         this.matchDate = nextMatchDate.toISOString().split('T')[0];
         this.showTeamsModal = true;
+    }
+
+    private generateSingleTeamVariant(players: Player[]) {
+        const shuffledPlayers = this.shufflePlayers(players);
+        const team1Players: Player[] = [];
+        const team2Players: Player[] = [];
+
+        const totalPlayers = shuffledPlayers.length;
+        const isEvenTotal = totalPlayers % 2 === 0;
+        const targetSize1 = isEvenTotal ? totalPlayers / 2 : Math.ceil(totalPlayers / 2);
+        const targetSize2 = isEvenTotal ? totalPlayers / 2 : Math.floor(totalPlayers / 2);
+
+        // Use balanced distribution strategy
+        const sortedByRating = [...shuffledPlayers].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        for (let i = 0; i < sortedByRating.length; i++) {
+            if (i % 2 === 0 && team1Players.length < targetSize1) {
+                team1Players.push(sortedByRating[i]);
+            } else if (team2Players.length < targetSize2) {
+                team2Players.push(sortedByRating[i]);
+            } else {
+                team1Players.push(sortedByRating[i]);
+            }
+        }
+
+        // Ensure correct team sizes
+        while (team1Players.length > targetSize1) {
+            team2Players.push(team1Players.pop()!);
+        }
+        while (team2Players.length > targetSize2) {
+            team1Players.push(team2Players.pop()!);
+        }
+
+        // Sort players by rating and optimize teams
+        team1Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        team2Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
+        for (let i = 0; i < 3; i++) {
+            if (!this.optimizeTeams(team1Players, team2Players)) break;
+        }
+
+        // Calculate team stats
+        const team1Stats = this.calculateTeamStats(team1Players);
+        const team2Stats = this.calculateTeamStats(team2Players);
+
+        // Set the teams directly
+        this.team1 = {
+            ...team1Stats,
+            players: team1Stats.players.map(p => ({ ...p, locked: false }))
+        };
+        this.team2 = {
+            ...team2Stats,
+            players: team2Stats.players.map(p => ({ ...p, locked: false }))
+        };
+
+        this.restoreLockedPlayers();
+    }
+
+    shuffleTeams() {
+        // Save current locked player IDs to preserve them
+        this.saveLockedPlayers();
+        
+        // Get locked players and their current teams
+        const lockedTeam1Players = this.team1.players.filter(p => p.locked);
+        const lockedTeam2Players = this.team2.players.filter(p => p.locked);
+        
+        // Get unlocked players from both teams
+        const unlockedPlayers = [
+            ...this.team1.players.filter(p => !p.locked),
+            ...this.team2.players.filter(p => !p.locked)
+        ];
+
+        // Calculate how many more players each team needs
+        const totalPlayers = this.team1.players.length + this.team2.players.length;
+        const isEvenTotal = totalPlayers % 2 === 0;
+        const targetSize1 = isEvenTotal ? totalPlayers / 2 : Math.ceil(totalPlayers / 2);
+        const targetSize2 = isEvenTotal ? totalPlayers / 2 : Math.floor(totalPlayers / 2);
+        
+        const team1NeededPlayers = targetSize1 - lockedTeam1Players.length;
+        const team2NeededPlayers = targetSize2 - lockedTeam2Players.length;
+
+        // If no unlocked players to shuffle, return early
+        if (unlockedPlayers.length === 0) {
+            return;
+        }
+
+        // Shuffle the unlocked players multiple times for better randomization
+        let shuffledUnlocked = this.shufflePlayers(unlockedPlayers);
+        shuffledUnlocked = this.shufflePlayers(shuffledUnlocked);
+        shuffledUnlocked = this.shufflePlayers(shuffledUnlocked);
+        
+        // Redistribute unlocked players using different strategies randomly
+        const newTeam1Unlocked: Player[] = [];
+        const newTeam2Unlocked: Player[] = [];
+        
+        // Choose random distribution strategy
+        const strategy = Math.floor(Math.random() * 3);
+        
+        if (strategy === 0) {
+            // Strategy 1: Alternating by rating
+            const sortedUnlocked = [...shuffledUnlocked].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            for (let i = 0; i < sortedUnlocked.length; i++) {
+                if (i % 2 === 0 && newTeam1Unlocked.length < team1NeededPlayers) {
+                    newTeam1Unlocked.push(sortedUnlocked[i]);
+                } else if (newTeam2Unlocked.length < team2NeededPlayers) {
+                    newTeam2Unlocked.push(sortedUnlocked[i]);
+                } else {
+                    newTeam1Unlocked.push(sortedUnlocked[i]);
+                }
+            }
+        } else if (strategy === 1) {
+            // Strategy 2: Random assignment with balance checking
+            shuffledUnlocked.forEach(player => {
+                const team1Avg = newTeam1Unlocked.length > 0 ? 
+                    newTeam1Unlocked.reduce((sum, p) => sum + (p.rating || 0), 0) / newTeam1Unlocked.length : 0;
+                const team2Avg = newTeam2Unlocked.length > 0 ? 
+                    newTeam2Unlocked.reduce((sum, p) => sum + (p.rating || 0), 0) / newTeam2Unlocked.length : 0;
+                
+                if ((team1Avg <= team2Avg && newTeam1Unlocked.length < team1NeededPlayers) || 
+                    newTeam2Unlocked.length >= team2NeededPlayers) {
+                    newTeam1Unlocked.push(player);
+                } else {
+                    newTeam2Unlocked.push(player);
+                }
+            });
+        } else {
+            // Strategy 3: Pure random assignment
+            shuffledUnlocked.forEach(player => {
+                if (Math.random() < 0.5 && newTeam1Unlocked.length < team1NeededPlayers) {
+                    newTeam1Unlocked.push(player);
+                } else if (newTeam2Unlocked.length < team2NeededPlayers) {
+                    newTeam2Unlocked.push(player);
+                } else {
+                    newTeam1Unlocked.push(player);
+                }
+            });
+        }
+
+        // Ensure correct team sizes for unlocked players
+        while (newTeam1Unlocked.length > team1NeededPlayers && newTeam2Unlocked.length < team2NeededPlayers) {
+            newTeam2Unlocked.push(newTeam1Unlocked.pop()!);
+        }
+        while (newTeam2Unlocked.length > team2NeededPlayers && newTeam1Unlocked.length < team1NeededPlayers) {
+            newTeam1Unlocked.push(newTeam2Unlocked.pop()!);
+        }
+
+        // Combine locked and newly assigned unlocked players
+        const finalTeam1Players = [...lockedTeam1Players, ...newTeam1Unlocked];
+        const finalTeam2Players = [...lockedTeam2Players, ...newTeam2Unlocked];
+
+        // Sort by rating and optimize
+        finalTeam1Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        finalTeam2Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
+        // Try to optimize teams while respecting locked players
+        for (let i = 0; i < 3; i++) {
+            if (!this.optimizeTeamsWithLocks(finalTeam1Players, finalTeam2Players)) break;
+        }
+
+        // Update team stats and reset locked status for new players
+        this.team1 = this.calculateTeamStats(finalTeam1Players);
+        this.team2 = this.calculateTeamStats(finalTeam2Players);
+
+        // Restore locked status only for previously locked players
+        this.restoreLockedPlayers();
+    }    private optimizeTeamsWithLocks(team1Players: Player[], team2Players: Player[]): boolean {
+        const team1Avg = this.calculateTeamAverage(team1Players);
+        const team2Avg = this.calculateTeamAverage(team2Players);
+
+        const weakerTeam = team1Avg < team2Avg ? team1Players : team2Players;
+        const strongerTeam = team1Avg < team2Avg ? team2Players : team1Players;
+
+        // Find the best swap between unlocked players only
+        let bestSwap = null;
+        let bestImprovementDiff = 0;
+        const currentDiff = Math.abs(team1Avg - team2Avg);
+
+        for (let i = 0; i < strongerTeam.length; i++) {
+            for (let j = 0; j < weakerTeam.length; j++) {
+                const strongerPlayer = strongerTeam[i];
+                const weakerPlayer = weakerTeam[j];
+
+                // Only swap if both players are unlocked
+                if (strongerPlayer.locked || weakerPlayer.locked) continue;
+
+                const strongerPlayerRating = strongerPlayer.rating || 0;
+                const weakerPlayerRating = weakerPlayer.rating || 0;
+                const ratingDifference = weakerPlayerRating - strongerPlayerRating;
+
+                const newStrongerTeamRating = team1Avg < team2Avg ?
+                    team2Avg + ratingDifference / strongerTeam.length :
+                    team1Avg + ratingDifference / strongerTeam.length;
+                const newWeakerTeamRating = team1Avg < team2Avg ?
+                    team1Avg - ratingDifference / weakerTeam.length :
+                    team2Avg - ratingDifference / weakerTeam.length;
+
+                const newDiff = Math.abs(newStrongerTeamRating - newWeakerTeamRating);
+
+                if (newDiff < currentDiff) {
+                    const improvement = currentDiff - newDiff;
+                    if (improvement > bestImprovementDiff) {
+                        bestImprovementDiff = improvement;
+                        bestSwap = { strongerIndex: i, weakerIndex: j };
+                    }
+                }
+            }
+        }
+
+        if (bestSwap) {
+            const tempPlayer = strongerTeam[bestSwap.strongerIndex];
+            strongerTeam[bestSwap.strongerIndex] = weakerTeam[bestSwap.weakerIndex];
+            weakerTeam[bestSwap.weakerIndex] = tempPlayer;
+            return true;
+        }
+
+        return false;
     }
 
     closeTeamsModal() {
@@ -363,9 +488,12 @@ export class SelectPlayersComponent implements OnInit {
     }
     private shufflePlayers(players: Player[]): Player[] {
         const shuffled = [...players];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        // Fisher-Yates shuffle algorithm with multiple passes for better randomization
+        for (let pass = 0; pass < 3; pass++) {
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
         }
         return shuffled;
     }
@@ -384,35 +512,6 @@ export class SelectPlayersComponent implements OnInit {
             [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
         }
         return pairs;
-    }
-    private filterUniqueCombinations(variants: TeamVariant[]): TeamVariant[] {
-        variants.sort((a, b) => a.ratingDifference - b.ratingDifference);
-        const uniqueCombinations = new Set<string>();
-        const filteredVariants: TeamVariant[] = [];
-        variants.forEach(variant => {
-            const team1Players = variant.team1.players.map(p => p.id).sort().join(',');
-            const team2Players = variant.team2.players.map(p => p.id).sort().join(',');
-            const combinationKey = `${team1Players}|${team2Players}`;
-            if (!uniqueCombinations.has(combinationKey)) {
-                uniqueCombinations.add(combinationKey);
-                filteredVariants.push(variant);
-            }
-        });
-        return filteredVariants.slice(0, 5);
-    }
-    setCurrentVariant() {
-        const variant = this.teamVariants[this.currentVariantIndex];
-        this.team1 = {
-            ...variant.team1,
-            players: variant.team1.players.map(p => ({ ...p, locked: p.locked ?? false }))
-        };
-        this.team2 = {
-            ...variant.team2,
-            players: variant.team2.players.map(p => ({ ...p, locked: p.locked ?? false }))
-        };
-        this.team1Name = this.team1Name || 'Team 1';
-        this.team2Name = this.team2Name || 'Team 2';
-        this.restoreLockedPlayers();
     }
 
     toggleLock(player: Player) {
@@ -437,19 +536,6 @@ export class SelectPlayersComponent implements OnInit {
                 player.locked = lockedIds.includes(player.id!);
             });
         });
-    }
-
-    nextVariant() {
-        if (this.currentVariantIndex < this.teamVariants.length - 1) {
-            this.currentVariantIndex++;
-            this.setCurrentVariant();
-        }
-    }
-    previousVariant() {
-        if (this.currentVariantIndex > 0) {
-            this.currentVariantIndex--;
-            this.setCurrentVariant();
-        }
     }
     private calculateTeamAverage(team: Player[]): number {
         return team.reduce((sum, p) => sum + (p.rating || 0), 0) / team.length;
