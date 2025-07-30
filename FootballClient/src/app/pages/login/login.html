@@ -6,13 +6,13 @@
       {{ errorMessage }}
     </div>
 
-    <label>Username:</label>
-    <input type="text" 
-           [(ngModel)]="email" 
-           name="username"
-           #usernameInput
-           (keydown.enter)="$event.preventDefault(); passwordInput.focus()"
-           placeholder="Introduce username" />
+   <label>Email:</label>
+<input type="email" 
+       [(ngModel)]="email" 
+       name="email"
+       #emailInput
+       (keydown.enter)="$event.preventDefault(); passwordInput.focus()"
+       placeholder="Introduce email" />
 
     <label>Password:</label>
     <input type="password" 
