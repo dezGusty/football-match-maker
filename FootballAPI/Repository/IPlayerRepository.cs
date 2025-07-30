@@ -10,6 +10,7 @@ namespace FootballAPI.Repository
         Task<Player?> GetByIdAsync(int id);
         Task<IEnumerable<Player>> GetByTeamIdAsync(int teamId);
         Task<IEnumerable<Player>> GetAvailablePlayersAsync();
+        Task<Player?> GetPlayerByEmailAsync(string email);
         Task<Player> CreateAsync(Player player);
         Task<Player> UpdateAsync(Player player);
         Task<bool> DeleteAsync(int id);
