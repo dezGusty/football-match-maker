@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LoginRequest } from './auth.interface';
+import { UserRole } from '../../models/user-role.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class AuthService {
     }
   }
 
-  async register(email: string, password: string, role: string = 'Admin'): Promise<void> {
+  async register(email: string, password: string, role: UserRole = UserRole.ADMIN): Promise<void> {
     try {
       const response = await fetch(`${this.apiUrl}/user`, {
         method: 'POST',
@@ -112,4 +113,4 @@ export class AuthService {
   getUserId(): number | null {
     return this.userId;
   }
-} 
+}

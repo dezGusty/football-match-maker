@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FootballAPI.Models
 {
@@ -19,8 +20,8 @@ namespace FootballAPI.Models
         [StringLength(255)]
         public string Password { get; set; }
 
-        [StringLength(50)]
-        public string Role { get; set; }
+        [Required]
+        public UserRole Role { get; set; }
 
         [StringLength(500)]
         public string? ImageUrl { get; set; }

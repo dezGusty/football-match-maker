@@ -94,6 +94,11 @@ namespace FootballAPI.Data
                 .Property(pmh => pmh.PerformanceRating)
                 .HasColumnType("float");
 
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasConversion<int>()
+                .IsRequired();
+
             SeedData(modelBuilder);
         }
 
@@ -126,9 +131,6 @@ namespace FootballAPI.Data
             );
 
 
-            modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Username = "admin", Password = "parola123", Role = "Admin", Email = "admin@gmail.com", ImageUrl = "http://localhost:5145/images/admin.jpg" }
-            );
         }
     }
 }
