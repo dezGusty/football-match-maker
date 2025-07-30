@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    [Migration("20250730083704_AddEmailToPlayer")]
-    partial class AddEmailToPlayer
+    [Migration("20250730080152_RemoveIdFromPlayerOrganiser")]
+    partial class RemoveIdFromPlayerOrganiser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,9 +69,6 @@ namespace FootballAPI.Migrations
 
                     b.Property<int?>("CurrentTeamId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()

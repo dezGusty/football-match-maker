@@ -67,9 +67,6 @@ namespace FootballAPI.Migrations
                     b.Property<int?>("CurrentTeamId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)

@@ -58,13 +58,6 @@ namespace FootballAPI.Repository
                 .ToListAsync();
         }
 
-        public async Task<Player?> GetPlayerByEmailAsync(string email)
-        {
-            return await _context.Players
-                .Include(p => p.CurrentTeam)
-                .FirstOrDefaultAsync(p => p.Email == email);
-        }
-
         public async Task<Player> CreateAsync(Player player)
         {
             _context.Players.Add(player);

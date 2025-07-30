@@ -31,7 +31,5 @@ namespace FootballAPI.Models
         public string? ImageUrl { get; set; }
 
         public virtual ICollection<PlayerMatchHistory> MatchHistory { get; set; } = new List<PlayerMatchHistory>();
-
-        public string? Email { get; set; }
     }
 }
