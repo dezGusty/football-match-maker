@@ -10,38 +10,6 @@
     <button class="finalize-button" (click)="finalizeMatch()">Finalizare Meci</button>
 </div>
 
-@if (showFinalizeModal) {
-<div class="modal-backdrop">
-  <div class="modal-content finalize-modal">
-    <button class="close-modal-btn" (click)="closeFinalizeModal()" title="Închide">&times;</button>
-    <h3>Finalizează meciul</h3>
-    <div class="teams-container">
-      <div class="team-section">
-        <h4>{{ team1Name }}</h4>
-        <ul>
-          <li *ngFor="let player of team1Players">
-            <span class="lock-icon">🔒</span>
-            {{ getPlayerFirstName(player) }} {{ getPlayerLastName(player) }}
-          </li>
-        </ul>
-      </div>
-      <div class="team-section">
-        <h4>{{ team2Name }}</h4>
-        <ul>
-          <li *ngFor="let player of team2Players">
-            <span class="lock-icon">🔒</span>
-            {{ getPlayerFirstName(player) }} {{ getPlayerLastName(player) }}
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="confirm-btn" (click)="confirmFinalizeMatch()">Confirmă și finalizează</button>
-    </div>
-  </div>
-</div>
-}
-
 <div class="football-field">
     <div class="team team1">
         <div *ngFor="let pos of getTeam1Positions(); let i = index" class="player" [style.left]="pos.left"
