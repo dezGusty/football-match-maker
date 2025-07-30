@@ -128,12 +128,10 @@ export class SelectPlayersComponent implements OnInit {
             return;
         }
         player.isAvailable = true;
-        player.isEnabled = false;
         this.saveSelectedPlayers();
     }
 
     unselectPlayer(player: Player) {
-        player.isEnabled = true;
         player.isAvailable = false;
         this.saveSelectedPlayers();
     }
@@ -150,10 +148,8 @@ export class SelectPlayersComponent implements OnInit {
         this.allPlayers.forEach(player => {
             if (selectedIds.includes(player.id!)) {
                 player.isAvailable = true;
-                player.isEnabled = false;
             } else {
                 player.isAvailable = false;
-                player.isEnabled = true;
             }
         });
     }
@@ -162,7 +158,6 @@ export class SelectPlayersComponent implements OnInit {
         localStorage.removeItem('selectedPlayerIds');
         this.allPlayers.forEach(player => {
             player.isAvailable = false;
-            player.isEnabled = true;
         });
     }
 
