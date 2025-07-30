@@ -85,11 +85,11 @@ namespace FootballAPI.Service
             {
                 Username = createUserDto.Username,
                 Password = createUserDto.Password,
-                Role = createUserDto.Role,
+                Role = createUserDto.Role, // poate fi 0 dacă nu e trimis
                 Email = createUserDto.Email,
             };
 
-            if (user.Role == 0)
+            if (!Enum.IsDefined(typeof(UserRole), user.Role))
                 user.Role = UserRole.ADMIN;
 
             var createdUser = await _userRepository.CreateAsync(user);

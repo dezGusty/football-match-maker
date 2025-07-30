@@ -20,7 +20,7 @@ export class Register {
   role: UserRole = UserRole.ADMIN; // default
   errorMessage: string = '';
   successMessage: string = '';
-  UserRole = UserRole; 
+  UserRole = UserRole;
 
   constructor(
     private router: Router,
@@ -32,7 +32,7 @@ export class Register {
   }
 
   async onRegister() {
-    if (!this.username || !this.password || !this.confirmPassword) {
+    if (!this.username || !this.email || !this.password || !this.confirmPassword) {
       this.errorMessage = 'Complete all fields!';
       this.successMessage = '';
       return;
@@ -57,11 +57,12 @@ export class Register {
     }
 
     try {
-      await this.authService.register(this.email, this.password, this.role);
+      await this.authService.register(this.email, this.username, this.password, this.role);
       this.successMessage = 'Registration successful!';
       this.errorMessage = '';
       this.router.navigate(['/home']);
       this.username = '';
+      this.email = '';
       this.password = '';
       this.confirmPassword = '';
     } catch (error: any) {
