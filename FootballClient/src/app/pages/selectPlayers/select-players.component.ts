@@ -44,6 +44,8 @@ export class SelectPlayersComponent implements OnInit {
     matchDate: string = '';
     matchDayError: boolean = false;
     minDate: string = '';
+    selectedPlayerTeam1: Player | null = null;
+    selectedPlayerTeam2: Player | null = null;
 
     constructor(
         private playerService: PlayerService,
@@ -205,11 +207,11 @@ export class SelectPlayersComponent implements OnInit {
     shuffleTeams() {
         // Save current locked player IDs to preserve them
         this.saveLockedPlayers();
-        
+
         // Get locked players and their current teams
         const lockedTeam1Players = this.team1.players.filter(p => p.locked);
         const lockedTeam2Players = this.team2.players.filter(p => p.locked);
-        
+
         // Get unlocked players from both teams
         const unlockedPlayers = [
             ...this.team1.players.filter(p => !p.locked),
@@ -221,7 +223,7 @@ export class SelectPlayersComponent implements OnInit {
         const isEvenTotal = totalPlayers % 2 === 0;
         const targetSize1 = isEvenTotal ? totalPlayers / 2 : Math.ceil(totalPlayers / 2);
         const targetSize2 = isEvenTotal ? totalPlayers / 2 : Math.floor(totalPlayers / 2);
-        
+
         const team1NeededPlayers = targetSize1 - lockedTeam1Players.length;
         const team2NeededPlayers = targetSize2 - lockedTeam2Players.length;
 
@@ -234,14 +236,14 @@ export class SelectPlayersComponent implements OnInit {
         let shuffledUnlocked = this.shufflePlayers(unlockedPlayers);
         shuffledUnlocked = this.shufflePlayers(shuffledUnlocked);
         shuffledUnlocked = this.shufflePlayers(shuffledUnlocked);
-        
+
         // Redistribute unlocked players using different strategies randomly
         const newTeam1Unlocked: Player[] = [];
         const newTeam2Unlocked: Player[] = [];
-        
+
         // Choose random distribution strategy
         const strategy = Math.floor(Math.random() * 3);
-        
+
         if (strategy === 0) {
             // Strategy 1: Alternating by rating
             const sortedUnlocked = [...shuffledUnlocked].sort((a, b) => (b.rating || 0) - (a.rating || 0));
@@ -257,12 +259,12 @@ export class SelectPlayersComponent implements OnInit {
         } else if (strategy === 1) {
             // Strategy 2: Random assignment with balance checking
             shuffledUnlocked.forEach(player => {
-                const team1Avg = newTeam1Unlocked.length > 0 ? 
+                const team1Avg = newTeam1Unlocked.length > 0 ?
                     newTeam1Unlocked.reduce((sum, p) => sum + (p.rating || 0), 0) / newTeam1Unlocked.length : 0;
-                const team2Avg = newTeam2Unlocked.length > 0 ? 
+                const team2Avg = newTeam2Unlocked.length > 0 ?
                     newTeam2Unlocked.reduce((sum, p) => sum + (p.rating || 0), 0) / newTeam2Unlocked.length : 0;
-                
-                if ((team1Avg <= team2Avg && newTeam1Unlocked.length < team1NeededPlayers) || 
+
+                if ((team1Avg <= team2Avg && newTeam1Unlocked.length < team1NeededPlayers) ||
                     newTeam2Unlocked.length >= team2NeededPlayers) {
                     newTeam1Unlocked.push(player);
                 } else {
@@ -309,7 +311,7 @@ export class SelectPlayersComponent implements OnInit {
 
         // Restore locked status only for previously locked players
         this.restoreLockedPlayers();
-    }    private optimizeTeamsWithLocks(team1Players: Player[], team2Players: Player[]): boolean {
+    } private optimizeTeamsWithLocks(team1Players: Player[], team2Players: Player[]): boolean {
         const team1Avg = this.calculateTeamAverage(team1Players);
         const team2Avg = this.calculateTeamAverage(team2Players);
 
@@ -487,6 +489,39 @@ export class SelectPlayersComponent implements OnInit {
 
     toggleLock(player: Player) {
         player.locked = !player.locked;
+        this.saveLockedPlayers();
+    }
+
+    movePlayerToOtherTeam(player: Player, fromTeam: 'team1' | 'team2') {
+        if (fromTeam === 'team1') {
+            // Move from team1 to team2
+            const playerIndex = this.team1.players.findIndex(p => p.id === player.id);
+            if (playerIndex !== -1) {
+                const movedPlayer = this.team1.players.splice(playerIndex, 1)[0];
+                // Remove locked status when moving
+                movedPlayer.locked = false;
+                this.team2.players.push(movedPlayer);
+            }
+        } else {
+            // Move from team2 to team1
+            const playerIndex = this.team2.players.findIndex(p => p.id === player.id);
+            if (playerIndex !== -1) {
+                const movedPlayer = this.team2.players.splice(playerIndex, 1)[0];
+                // Remove locked status when moving
+                movedPlayer.locked = false;
+                this.team1.players.push(movedPlayer);
+            }
+        }
+
+        // Sort teams by rating after move
+        this.team1.players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        this.team2.players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
+        // Recalculate team stats
+        this.team1 = this.calculateTeamStats(this.team1.players);
+        this.team2 = this.calculateTeamStats(this.team2.players);
+
+        // Update locked players storage
         this.saveLockedPlayers();
     }
 

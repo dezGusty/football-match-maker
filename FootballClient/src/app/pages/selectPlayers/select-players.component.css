@@ -274,7 +274,7 @@
 .team {
     flex: 1;
     padding: 20px;
-    background-color: #f8f9fa;
+    background-color: transparent;
     border-radius: 8px;
     border: 1px solid rgba(164, 196, 168, 0.4);
 }
@@ -542,4 +542,71 @@
     filter: brightness(1.3);
     transform: scale(1.2);
     cursor: pointer;
+}
+
+/* Styles for player team items with move functionality */
+.player-team-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    margin: 6px 0;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    border: 1px solid rgba(164, 196, 168, 0.3);
+    transition: all 0.2s ease;
+}
+
+.player-team-item:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(164, 196, 168, 0.5);
+    box-shadow: 0 2px 8px rgba(164, 196, 168, 0.2);
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 60px;
+}
+
+.player-info-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.move-btn {
+    background: transparent;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 32px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.move-btn:hover:not(:disabled) {
+    background: transparent;
+    transform: scale(1.1);
+    box-shadow: 0 2px 6px rgba(56, 142, 60, 0.3);
+}
+
+.move-btn:disabled {
+    background: transparent;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.move-btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
 }

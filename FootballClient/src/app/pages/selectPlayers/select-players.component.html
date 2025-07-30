@@ -63,15 +63,24 @@
                 <input type="text" [(ngModel)]="team1Name" class="team-name-input" />
                 <h3>({{ team1.players.length }} players - {{ team1.averageRating | number:'1.1-1' }})</h3>
                 <ul>
-                    <li *ngFor="let player of team1.players">
-                        <span class="lock-icon" [class.unlocked]="!player.locked" (click)="toggleLock(player)"
-                            style="cursor:pointer;">
-                            {{ player.locked ? '🔒' : '🔓' }}
-                        </span>
-                        <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
-                        <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
-                            {{ player.rating }}
-                        </span>
+                    <li *ngFor="let player of team1.players" class="player-team-item">
+                        <div class="player-controls">
+                            <span class="lock-icon" [class.unlocked]="!player.locked" (click)="toggleLock(player)"
+                                style="cursor:pointer;" title="{{ player.locked ? 'Unlock player' : 'Lock player' }}">
+                                {{ player.locked ? '🔒' : '🔓' }}
+                            </span>
+                            <button class="move-btn" (click)="movePlayerToOtherTeam(player, 'team1')"
+                                title="Move to Team 2" [disabled]="player.locked">
+                                ➡️
+                            </button>
+                        </div>
+                        <div class="player-info-team">
+                            <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName
+                                }}</span>
+                            <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
+                                {{ player.rating }}
+                            </span>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -80,15 +89,24 @@
                 <input type="text" [(ngModel)]="team2Name" class="team-name-input" />
                 <h3>({{ team2.players.length }} players - {{ team2.averageRating | number:'1.1-1' }})</h3>
                 <ul>
-                    <li *ngFor="let player of team2.players">
-                        <span class="lock-icon" [class.unlocked]="!player.locked" (click)="toggleLock(player)"
-                            style="cursor:pointer;">
-                            {{ player.locked ? '🔒' : '🔓' }}
-                        </span>
-                        <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
-                        <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
-                            {{ player.rating }}
-                        </span>
+                    <li *ngFor="let player of team2.players" class="player-team-item">
+                        <div class="player-controls">
+                            <button class="move-btn" (click)="movePlayerToOtherTeam(player, 'team2')"
+                                title="Move to Team 1" [disabled]="player.locked">
+                                ⬅️
+                            </button>
+                            <span class="lock-icon" [class.unlocked]="!player.locked" (click)="toggleLock(player)"
+                                style="cursor:pointer;" title="{{ player.locked ? 'Unlock player' : 'Lock player' }}">
+                                {{ player.locked ? '🔒' : '🔓' }}
+                            </span>
+                        </div>
+                        <div class="player-info-team">
+                            <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName
+                                }}</span>
+                            <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
+                                {{ player.rating }}
+                            </span>
+                        </div>
                     </li>
                 </ul>
             </div>
