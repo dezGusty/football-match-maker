@@ -12,7 +12,7 @@
         <ul class="players-list">
             <li *ngFor="let player of filteredAvailablePlayers" class="player-item">
                 <div class="player-info">
-                    <span>{{ player.firstName }} {{ player.lastName }}</span>
+                    <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
                     <span class="player-rating">Rating: {{ player.rating }}</span>
                 </div>
                 <button class="select-button" (click)="selectPlayer(player)"
@@ -70,7 +70,10 @@
                 <h3>({{ team1.players.length }} players - {{ team1.averageRating | number:'1.1-1' }})</h3>
                 <ul>
                     <li *ngFor="let player of team1.players">
-                        {{ player.firstName }} {{ player.lastName }}
+                        <span class="lock-icon" [class.unlocked]="!player.locked" (click)="toggleLock(player)" style="cursor:pointer;">
+                            {{ player.locked ? '🔒' : '🔓' }}
+                        </span>
+                        <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
                         <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
                             {{ player.rating }}
                         </span>
@@ -83,7 +86,10 @@
                 <h3>({{ team2.players.length }} players - {{ team2.averageRating | number:'1.1-1' }})</h3>
                 <ul>
                     <li *ngFor="let player of team2.players">
-                        {{ player.firstName }} {{ player.lastName }}
+                        <span class="lock-icon" [class.unlocked]="!player.locked" (click)="toggleLock(player)" style="cursor:pointer;">
+                            {{ player.locked ? '🔒' : '🔓' }}
+                        </span>
+                        <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
                         <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
                             {{ player.rating }}
                         </span>

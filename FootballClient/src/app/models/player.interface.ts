@@ -8,4 +8,5 @@ export interface Player {
     isSelected?: boolean;
     imageUrl?: string;
     currentTeamId?: number | null;
+    locked?: boolean;
 }

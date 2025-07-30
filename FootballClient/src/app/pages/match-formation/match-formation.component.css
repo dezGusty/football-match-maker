@@ -251,3 +251,65 @@
 .finalize-button:active {
     transform: translateY(1px);
 }
+
+/* Modal finalize match */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-content.finalize-modal {
+  background: #fff;
+  border-radius: 10px;
+  padding: 32px 24px 24px 24px;
+  min-width: 320px;
+  max-width: 90vw;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  position: relative;
+}
+.close-modal-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+}
+.teams-container {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  margin: 24px 0 12px 0;
+}
+.team-section ul {
+  list-style: none;
+  padding: 0;
+}
+.lock-icon {
+  margin-right: 8px;
+  color: #888;
+  font-size: 1.2em;
+}
+.modal-actions {
+  text-align: center;
+  margin-top: 18px;
+}
+.confirm-btn {
+  background: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.confirm-btn:hover {
+  background: #388e3c;
+}

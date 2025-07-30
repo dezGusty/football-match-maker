@@ -28,6 +28,7 @@ export class MatchFormationComponent implements OnInit {
     teamAId?: number;
     teamBId?: number;
     private maxRating: number = 0;
+    showFinalizeModal: boolean = false;
 
     constructor(
         private matchService: MatchService,
@@ -94,7 +95,11 @@ export class MatchFormationComponent implements OnInit {
         }));
     }
 
-    async finalizeMatch() {
+    finalizeMatch() {
+        this.showFinalizeModal = true;
+    }
+
+    async confirmFinalizeMatch() {
         if (this.matchId) {
             try {
                 await this.matchService.updateMatch(this.matchId, {
@@ -107,6 +112,10 @@ export class MatchFormationComponent implements OnInit {
                 // You could add user feedback here
             }
         }
+    }
+
+    closeFinalizeModal() {
+        this.showFinalizeModal = false;
     }
 
     async ngOnInit() {

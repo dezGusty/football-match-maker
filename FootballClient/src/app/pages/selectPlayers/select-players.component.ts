@@ -406,12 +406,44 @@ export class SelectPlayersComponent implements OnInit {
         return filteredVariants.slice(0, 5);
     }
     setCurrentVariant() {
-        if (this.teamVariants.length > 0) {
-            const variant = this.teamVariants[this.currentVariantIndex];
-            this.team1 = variant.team1;
-            this.team2 = variant.team2;
-        }
+        const variant = this.teamVariants[this.currentVariantIndex];
+        this.team1 = {
+            ...variant.team1,
+            players: variant.team1.players.map(p => ({ ...p, locked: p.locked ?? false }))
+        };
+        this.team2 = {
+            ...variant.team2,
+            players: variant.team2.players.map(p => ({ ...p, locked: p.locked ?? false }))
+        };
+        this.team1Name = this.team1Name || 'Team 1';
+        this.team2Name = this.team2Name || 'Team 2';
+        this.restoreLockedPlayers();
     }
+
+    toggleLock(player: Player) {
+        player.locked = !player.locked;
+        this.saveLockedPlayers();
+    }
+
+    saveLockedPlayers() {
+        const lockedIds = [
+            ...this.team1.players.filter(p => p.locked).map(p => p.id),
+            ...this.team2.players.filter(p => p.locked).map(p => p.id)
+        ];
+        localStorage.setItem('lockedPlayerIds', JSON.stringify(lockedIds));
+    }
+
+    restoreLockedPlayers() {
+        const saved = localStorage.getItem('lockedPlayerIds');
+        if (!saved) return;
+        const lockedIds: number[] = JSON.parse(saved);
+        [this.team1, this.team2].forEach(team => {
+            team.players.forEach(player => {
+                player.locked = lockedIds.includes(player.id!);
+            });
+        });
+    }
+
     nextVariant() {
         if (this.currentVariantIndex < this.teamVariants.length - 1) {
             this.currentVariantIndex++;

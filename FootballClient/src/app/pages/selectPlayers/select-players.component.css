@@ -518,3 +518,23 @@
     font-size: 14px;
     color: #666;
 }
+
+.lock-icon {
+  margin-right: 8px;
+  color: #e74c3c;
+  font-size: 1.2em;
+  vertical-align: middle;
+}
+.lock-icon.unlocked {
+  color: #2ecc40;
+  font-size: 1.2em;
+}
+.player-locked {
+  color: #aaa;
+  font-style: italic;
+}
+.lock-icon:hover {
+  filter: brightness(1.3);
+  transform: scale(1.2);
+  cursor: pointer;
+}
