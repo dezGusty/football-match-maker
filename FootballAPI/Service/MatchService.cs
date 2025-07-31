@@ -138,9 +138,15 @@ namespace FootballAPI.Service
                         bool isPlayerInTeamA = history.TeamId == updateMatchDto.TeamAId;
                         bool isPlayerInWinningTeam = (isTeamAWinner && isPlayerInTeamA) || (!isTeamAWinner && !isPlayerInTeamA);
 
-                        player.Rating += isPlayerInWinningTeam ? 0.5f : -0.5f;
+                        float baseRatingChange = isPlayerInWinningTeam ? 0.05f : -0.05f;
 
-                        player.Rating = Math.Max(0, Math.Min(10, player.Rating));
+                        int goalDifference = Math.Abs(updateMatchDto.TeamAGoals - updateMatchDto.TeamBGoals);
+                        float goalDifferenceBonus = goalDifference * 0.02f;
+
+                        float totalRatingChange = baseRatingChange + (isPlayerInWinningTeam ? goalDifferenceBonus : -goalDifferenceBonus);
+
+                        player.Rating += totalRatingChange;
+
                         await _playerRepository.UpdateAsync(player);
 
                         history.PerformanceRating = player.Rating;

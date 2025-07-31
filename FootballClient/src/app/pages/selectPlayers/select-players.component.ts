@@ -311,7 +311,8 @@ export class SelectPlayersComponent implements OnInit {
 
         // Restore locked status only for previously locked players
         this.restoreLockedPlayers();
-    } private optimizeTeamsWithLocks(team1Players: Player[], team2Players: Player[]): boolean {
+    }
+    private optimizeTeamsWithLocks(team1Players: Player[], team2Players: Player[]): boolean {
         const team1Avg = this.calculateTeamAverage(team1Players);
         const team2Avg = this.calculateTeamAverage(team2Players);
 
