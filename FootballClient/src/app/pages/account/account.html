@@ -3,9 +3,11 @@
 <div class="account-fullpage">
   <div class="account-avatar-col">
     <div class="avatar-big">
-      @if (user?.imageUrl) {
-        <img [src]="showImageSelector && selectedImage ? selectedImage : user?.imageUrl" alt="User profile" class="user-profile-image" />
-      } @else {
+      @if (selectedImage) {
+        <img [src]="selectedImage" alt="User profile" class="user-profile-image" />
+      } @else if (user?.imageUrl) {
+        <img [src]="user?.imageUrl" alt="User profile" class="user-profile-image" />
+        } @else {
         <span class="material-icons avatar-icon-big">person</span>
       }
     </div>
@@ -22,7 +24,7 @@
               <button
                 class="image-option"
                 [class.selected]="selectedImage === img"
-                (click)="selectedImage = img"
+                (click)="selectImage(img)"
                 type="button"
               >
                 <img [src]="img" alt="profile option" />
