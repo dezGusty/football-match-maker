@@ -31,6 +31,11 @@ interface Team {
     styleUrls: ['./select-players.component.css']
 })
 export class SelectPlayersComponent implements OnInit {
+    // Carousel properties
+    currentSlide = 1;
+    selectedDate: string | null = null;
+
+    // Existing properties
     allPlayers: Player[] = [];
     maxAvailable = 12;
     loading = false;
@@ -60,7 +65,48 @@ export class SelectPlayersComponent implements OnInit {
         this.setMinDateToday();
     }
 
+    // Carousel methods
+    goToSlide(slideNumber: number) {
+        if (slideNumber === 2 && !this.selectedDate) {
+            alert('Please select a date first!');
+            return;
+        }
+        this.currentSlide = slideNumber;
+    }
 
+    goToNextSlide() {
+        if (this.currentSlide === 1 && this.selectedDate) {
+            this.currentSlide = 2;
+        }
+    }
+
+    goToPreviousSlide() {
+        if (this.currentSlide === 2) {
+            this.currentSlide = 1;
+        }
+    }
+
+    validateDate() {
+        if (this.matchDate) {
+            this.selectedDate = this.matchDate;
+        } else {
+            this.selectedDate = null;
+        }
+    }
+
+    getFormattedDate(): string {
+        if (!this.selectedDate) return 'No date selected';
+
+        const date = new Date(this.selectedDate);
+        return date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    // Existing methods
     getRatingCategory(rating: number | undefined): string {
         if (!rating) return 'low';
         if (rating <= 5) return 'low';
@@ -71,6 +117,11 @@ export class SelectPlayersComponent implements OnInit {
     setMinDateToday() {
         const today = new Date();
         this.minDate = today.toISOString().split('T')[0];
+        // Set matchDate to today by default if not set
+        if (!this.matchDate) {
+            this.matchDate = this.minDate;
+            this.selectedDate = this.minDate;
+        }
     }
 
     async loadPlayers() {
@@ -141,11 +192,16 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     generateTeams() {
+        if (!this.selectedDate) {
+            alert('Please select a date first!');
+            this.goToSlide(1);
+            return;
+        }
+
         const players = [...this.selectedPlayers];
         this.generateSingleTeamVariant(players);
         this.team1Name = 'Team 1';
         this.team2Name = 'Team 2';
-        this.setMinDateToday();
         this.showTeamsModal = true;
     }
 
@@ -312,6 +368,7 @@ export class SelectPlayersComponent implements OnInit {
         // Restore locked status only for previously locked players
         this.restoreLockedPlayers();
     }
+
     private optimizeTeamsWithLocks(team1Players: Player[], team2Players: Player[]): boolean {
         const team1Avg = this.calculateTeamAverage(team1Players);
         const team2Avg = this.calculateTeamAverage(team2Players);
@@ -375,14 +432,20 @@ export class SelectPlayersComponent implements OnInit {
                 alert("Team names must be different and cannot be empty.");
                 return;
             }
-            const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(-6);
+
+            if (!this.selectedDate) {
+                alert("Please select a match date first.");
+                return;
+            }
+
             const allSelectedPlayerIds = [...this.team1.players, ...this.team2.players].map(p => p.id!);
             await this.playerService.setMultiplePlayersUnavailable(allSelectedPlayerIds);
             const teamA = await this.teamService.createTeam(this.team1Name || 'Team A');
             const teamB = await this.teamService.createTeam(this.team2Name || 'Team B');
-            const currentDate = new Date();
-            const match = await this.matchService.createMatch(teamA.id, teamB.id, currentDate);
+            const selectedDateObj = new Date(this.selectedDate);
+            const match = await this.matchService.createMatch(teamA.id, teamB.id, selectedDateObj);
             const historyPromises: Promise<any>[] = [];
+
             for (const player of this.team1.players) {
                 historyPromises.push(
                     this.playerMatchHistoryService.createPlayerMatchHistory(
@@ -392,6 +455,7 @@ export class SelectPlayersComponent implements OnInit {
                     )
                 );
             }
+
             for (const player of this.team2.players) {
                 historyPromises.push(
                     this.playerMatchHistoryService.createPlayerMatchHistory(
@@ -401,6 +465,7 @@ export class SelectPlayersComponent implements OnInit {
                     )
                 );
             }
+
             await Promise.all(historyPromises);
             this.clearSelectedPlayers();
             this.router.navigate(['/match-formation'], {
@@ -417,14 +482,16 @@ export class SelectPlayersComponent implements OnInit {
             this.error = 'Failed to create teams, match, or player history. Please try again.';
         }
     }
+
     async scheduleMatch() {
         try {
             if (!this.areTeamNamesValid()) {
                 alert("Team names must be different and cannot be empty.");
                 return;
             }
-            if (!this.matchDate || this.matchDayError) {
-                alert("Please select a valid match date (Tuesday or Thursday).");
+
+            if (!this.selectedDate) {
+                alert("Please select a match date first.");
                 return;
             }
 
@@ -434,8 +501,8 @@ export class SelectPlayersComponent implements OnInit {
                 this.teamService.createTeam(this.team2Name || 'Team B')
             ]);
 
-            const selectedDate = new Date(this.matchDate);
-            const match = await this.matchService.createMatch(teamA.id, teamB.id, selectedDate);
+            const selectedDateObj = new Date(this.selectedDate);
+            const match = await this.matchService.createMatch(teamA.id, teamB.id, selectedDateObj);
 
             // Create all player histories in parallel for better performance
             const allHistoryPromises = [
@@ -448,18 +515,20 @@ export class SelectPlayersComponent implements OnInit {
             ];
 
             await Promise.all(allHistoryPromises);
-            alert(`Match scheduled successfully for ${this.matchDate}!`);
+            alert(`Match scheduled successfully for ${this.getFormattedDate()}!`);
             this.closeTeamsModal();
         } catch (error) {
             console.error('Failed to schedule match:', error);
             this.error = 'Failed to schedule match. Please try again.';
         }
     }
+
     areTeamNamesValid(): boolean {
         return this.team1Name.trim() !== ''
             && this.team2Name.trim() !== ''
             && this.team1Name.trim().toLowerCase() !== this.team2Name.trim().toLowerCase();
     }
+
     private shufflePlayers(players: Player[]): Player[] {
         const shuffled = [...players];
         // Fisher-Yates shuffle algorithm with multiple passes for better randomization
@@ -470,22 +539,6 @@ export class SelectPlayersComponent implements OnInit {
             }
         }
         return shuffled;
-    }
-    private createPlayerPairs(players: Player[]): Player[][] {
-        const sortedPlayers = [...players].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        const pairs: Player[][] = [];
-        for (let i = 0; i < sortedPlayers.length; i += 2) {
-            if (i + 1 < sortedPlayers.length) {
-                pairs.push([sortedPlayers[i], sortedPlayers[i + 1]]);
-            } else {
-                pairs.push([sortedPlayers[i]]);
-            }
-        }
-        for (let i = pairs.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
-        }
-        return pairs;
     }
 
     toggleLock(player: Player) {
@@ -544,18 +597,22 @@ export class SelectPlayersComponent implements OnInit {
             });
         });
     }
+
     private calculateTeamAverage(team: Player[]): number {
         return team.reduce((sum, p) => sum + (p.rating || 0), 0) / team.length;
     }
+
     private findWeakestPlayer(team: Player[]): Player {
         return team.reduce((min, p) => (p.rating || 0) < (min.rating || 0) ? p : min, team[0]);
     }
+
     private optimizeTeams(team1Players: Player[], team2Players: Player[]): boolean {
         const team1Avg = this.calculateTeamAverage(team1Players);
         const team2Avg = this.calculateTeamAverage(team2Players);
         const weakerTeam = team1Avg < team2Avg ? team1Players : team2Players;
         const strongerTeam = team1Avg < team2Avg ? team2Players : team1Players;
         const weakestPlayer = this.findWeakestPlayer(weakerTeam);
+
         if ((weakestPlayer.rating || 0) < (this.calculateTeamAverage(weakerTeam) - 2)) {
             const swap = this.findBestSwap(strongerTeam, weakerTeam, weakestPlayer);
             if (swap) {
@@ -567,6 +624,7 @@ export class SelectPlayersComponent implements OnInit {
         }
         return false;
     }
+
     private calculateTeamStats(teamPlayers: Player[]): Team {
         return {
             players: teamPlayers,
@@ -576,6 +634,7 @@ export class SelectPlayersComponent implements OnInit {
             lowCount: teamPlayers.filter(p => (p.rating || 0) < 4).length
         };
     }
+
     private findBestSwap(sourceTeam: Player[], targetTeam: Player[], weakPlayer: Player) {
         let bestSwap = null;
         let bestImprovementDiff = 0;
