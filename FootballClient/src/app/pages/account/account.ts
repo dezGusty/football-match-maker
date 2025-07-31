@@ -37,7 +37,7 @@ export class Account {
   showUsernameForm = false;
 
   images: string[] = [];
-  selectedImage: string = '';
+  selectedImage: string = ''; // la început e gol
   showImageSelector = false;
   futureMatches: Match[] = [];
 
@@ -181,4 +181,6 @@ export class Account {
   }
 
   UserRole = UserRole;
+
 }
+
