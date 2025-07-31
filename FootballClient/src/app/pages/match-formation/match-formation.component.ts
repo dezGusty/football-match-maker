@@ -28,6 +28,7 @@ export class MatchFormationComponent implements OnInit {
     teamAId?: number;
     teamBId?: number;
     private maxRating: number = 0;
+    showRatingModal: boolean = false;
 
     constructor(
         private matchService: MatchService,
@@ -60,22 +61,20 @@ export class MatchFormationComponent implements OnInit {
         }
 
         if (teamSize === 5) {
-            // Formație 3-2 pentru 5 jucători
             return [
-                { left: '25%', top: '20%' },  // Primul rând - 3 jucători
+                { left: '25%', top: '20%' },
                 { left: '25%', top: '50%' },
                 { left: '25%', top: '80%' },
-                { left: '40%', top: '35%' },  // Al doilea rând - 2 jucători
+                { left: '40%', top: '35%' },
                 { left: '40%', top: '65%' }
             ];
         } else {
-            // Formație 4-2 pentru 6 jucători
             return [
-                { left: '25%', top: '15%' },  // Primul rând - 4 jucători
+                { left: '25%', top: '15%' },
                 { left: '25%', top: '35%' },
                 { left: '25%', top: '65%' },
                 { left: '25%', top: '85%' },
-                { left: '40%', top: '30%' },  // Al doilea rând - 2 jucători
+                { left: '40%', top: '30%' },
                 { left: '40%', top: '70%' }
             ];
         }
@@ -95,18 +94,58 @@ export class MatchFormationComponent implements OnInit {
     }
 
     async finalizeMatch() {
+        // Show the rating preview modal instead of finalizing immediately
+        this.showRatingModal = true;
+    }
+
+    async confirmFinalize() {
         if (this.matchId) {
             try {
                 await this.matchService.updateMatch(this.matchId, {
                     teamAGoals: this.scoreA,
                     teamBGoals: this.scoreB
                 });
+                this.showRatingModal = false;
                 this.router.navigate(['/matches-history']);
             } catch (error) {
                 console.error('Error updating match:', error);
                 // You could add user feedback here
             }
         }
+    }
+
+    closeModal() {
+        this.showRatingModal = false;
+    }
+
+    isDraw(): boolean {
+        return this.scoreA === this.scoreB;
+    }
+
+    isTeam1Winner(): boolean {
+        return this.scoreA > this.scoreB;
+    }
+
+    isTeam2Winner(): boolean {
+        return this.scoreB > this.scoreA;
+    }
+
+    getRatingChange(isTeam1: boolean): number {
+        if (this.isDraw()) {
+            return 0; // No rating change for draws
+        }
+
+        const isWinningTeam = (isTeam1 && this.isTeam1Winner()) || (!isTeam1 && this.isTeam2Winner());
+
+        // Base rating change: +0.05 for winners, -0.05 for losers
+        const baseRatingChange = isWinningTeam ? 0.05 : -0.05;
+
+        // Calculate goal difference bonus/penalty: 0.02 per goal difference
+        const goalDifference = Math.abs(this.scoreA - this.scoreB);
+        const goalDifferenceBonus = goalDifference * 0.02;
+
+        // Apply goal difference bonus to winners, penalty to losers
+        return baseRatingChange + (isWinningTeam ? goalDifferenceBonus : -goalDifferenceBonus);
     }
 
     async ngOnInit() {

@@ -7,7 +7,7 @@
         <input type="number" [(ngModel)]="scoreB" min="0" class="score-input">
         <div class="team-name">{{team2Name}}</div>
     </div>
-    <button class="finalize-button" (click)="finalizeMatch()">Finalizare Meci</button>
+    <button class="finalize-button" (click)="finalizeMatch()">Preview Rating Changes</button>
 </div>
 
 <div class="football-field">
@@ -47,6 +47,77 @@
                         class="star" [class.full]="star === 'full'" [class.half]="star === 'half'"></span>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rating Preview Modal -->
+<div *ngIf="showRatingModal" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Preview Rating Changes</h2>
+            <button class="close-btn" (click)="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="rating-preview">
+                <div class="teams-container">
+                    <div class="team-section">
+                        <h3>{{team1Name}} {{isDraw() ? '(Draw)' : (isTeam1Winner() ? '(Winners)' :
+                            '(Losers)')}}</h3>
+                        <div class="players-list">
+                            <div *ngFor="let player of team1Players" class="player-rating-item">
+                                <div class="player-info">
+                                    <img [src]="getPlayerImage(player)" [alt]="getPlayerName(player)"
+                                        class="player-avatar">
+                                    <span class="player-name">{{getPlayerName(player)}}</span>
+                                </div>
+                                <div class="rating-change">
+                                    <span class="current-rating">{{(player.rating || 0).toFixed(2)}}</span>
+                                    <span class="arrow">→</span>
+                                    <span class="new-rating" [class.positive]="getRatingChange(true) > 0"
+                                        [class.negative]="getRatingChange(true) < 0">
+                                        {{((player.rating || 0) + getRatingChange(true)).toFixed(2)}}
+                                    </span>
+                                    <span class="change-amount" [class.positive]="getRatingChange(true) > 0"
+                                        [class.negative]="getRatingChange(true) < 0">
+                                        ({{getRatingChange(true) > 0 ? '+' : ''}}{{getRatingChange(true).toFixed(2)}})
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="team-section">
+                        <h3>{{team2Name}} {{isDraw() ? '(Draw)' : (isTeam2Winner() ? '(Winners)' :
+                            '(Losers)')}}</h3>
+                        <div class="players-list">
+                            <div *ngFor="let player of team2Players" class="player-rating-item">
+                                <div class="player-info">
+                                    <img [src]="getPlayerImage(player)" [alt]="getPlayerName(player)"
+                                        class="player-avatar">
+                                    <span class="player-name">{{getPlayerName(player)}}</span>
+                                </div>
+                                <div class="rating-change">
+                                    <span class="current-rating">{{(player.rating || 0).toFixed(2)}}</span>
+                                    <span class="arrow">→</span>
+                                    <span class="new-rating" [class.positive]="getRatingChange(false) > 0"
+                                        [class.negative]="getRatingChange(false) < 0">
+                                        {{((player.rating || 0) + getRatingChange(false)).toFixed(2)}}
+                                    </span>
+                                    <span class="change-amount" [class.positive]="getRatingChange(false) > 0"
+                                        [class.negative]="getRatingChange(false) < 0">
+                                        ({{getRatingChange(false) > 0 ? '+' : ''}}{{getRatingChange(false).toFixed(2)}})
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+            <button class="btn-confirm" (click)="confirmFinalize()">Confirm changes</button>
         </div>
     </div>
 </div>
