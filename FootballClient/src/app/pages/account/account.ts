@@ -24,7 +24,7 @@ export class Account {
   confirmPassword = '';
   currentPassword = '';
   images: string[] = [];
-  selectedImage: string = '';
+  selectedImage: string = ''; // la început e gol
   showImageSelector = false;
   futureMatches: Match[] = [];
 
@@ -128,4 +128,8 @@ export class Account {
     return UserRole[role];
   }
   UserRole = UserRole;
+
+  selectImage(img: string) {
+    this.selectedImage = img;
+  }
 }
