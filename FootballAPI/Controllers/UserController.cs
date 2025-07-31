@@ -353,6 +353,38 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
+        // Adaugă acest endpoint în UserController.cs
+
+[HttpPost("{id}/change-username")]
+public async Task<ActionResult> ChangeUsername(int id, [FromBody] ChangeUsernameDto changeUsernameDto)
+{
+    try
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var success = await _userService.ChangeUsernameAsync(id, changeUsernameDto);
+
+        if (!success)
+        {
+            return NotFound($"User with ID {id} was not found.");
+        }
+
+        return Ok(new { message = "Username changed successfully" });
+    }
+    catch (ArgumentException ex)
+    {
+        _logger.LogWarning(ex, "Validation error changing username");
+        return BadRequest(new { message = ex.Message });
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error changing username");
+        return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+    }
+}
 
     }
 }
