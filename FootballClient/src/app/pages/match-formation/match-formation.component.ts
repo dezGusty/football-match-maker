@@ -10,7 +10,6 @@ interface Position {
     top: string;
 }
 //test branch
-//v2
 @Component({
     selector: 'app-match-formation',
     standalone: true,
