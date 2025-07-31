@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Player } from '../../models/player.interface';
 import { MatchService } from '../../services/match.service';
+import { PlayerService } from '../../services/player.service';
 
 interface Position {
     left: string;
@@ -30,8 +31,12 @@ export class MatchFormationComponent implements OnInit {
     private maxRating: number = 0;
     showRatingModal: boolean = false;
 
+    // Manual rating adjustments for each player
+    manualAdjustments: Map<number, number> = new Map();
+
     constructor(
         private matchService: MatchService,
+        private playerService: PlayerService,
         private router: Router
     ) { }
 
@@ -101,14 +106,62 @@ export class MatchFormationComponent implements OnInit {
     async confirmFinalize() {
         if (this.matchId) {
             try {
-                await this.matchService.updateMatch(this.matchId, {
-                    teamAGoals: this.scoreA,
-                    teamBGoals: this.scoreB
-                });
+                // Apply rating changes to all players
+                const allPlayerUpdates = [];
+
+                // Update team1 players
+                for (const player of this.team1Players) {
+                    if (player.id) {
+                        const newRating = this.getFinalRating(player, true);
+                        // Send all required fields for UpdatePlayerDto
+                        const updateData = {
+                            firstName: player.firstName,
+                            lastName: player.lastName,
+                            rating: newRating,
+                            isAvailable: player.isAvailable ?? true,
+                            currentTeamId: player.currentTeamId,
+                            isEnabled: player.isEnabled ?? true,
+                            imageUrl: player.imageUrl
+                        };
+                        allPlayerUpdates.push(
+                            this.playerService.updatePlayer(player.id, updateData)
+                        );
+                    }
+                }
+
+                // Update team2 players
+                for (const player of this.team2Players) {
+                    if (player.id) {
+                        const newRating = this.getFinalRating(player, false);
+                        // Send all required fields for UpdatePlayerDto
+                        const updateData = {
+                            firstName: player.firstName,
+                            lastName: player.lastName,
+                            rating: newRating,
+                            isAvailable: player.isAvailable ?? true,
+                            currentTeamId: player.currentTeamId,
+                            isEnabled: player.isEnabled ?? true,
+                            imageUrl: player.imageUrl
+                        };
+                        allPlayerUpdates.push(
+                            this.playerService.updatePlayer(player.id, updateData)
+                        );
+                    }
+                }
+
+                // Update match score and all player ratings
+                await Promise.all([
+                    this.matchService.updateMatch(this.matchId, {
+                        teamAGoals: this.scoreA,
+                        teamBGoals: this.scoreB
+                    }),
+                    ...allPlayerUpdates
+                ]);
+
                 this.showRatingModal = false;
                 this.router.navigate(['/matches-history']);
             } catch (error) {
-                console.error('Error updating match:', error);
+                console.error('Error updating match and ratings:', error);
                 // You could add user feedback here
             }
         }
@@ -146,6 +199,39 @@ export class MatchFormationComponent implements OnInit {
 
         // Apply goal difference bonus to winners, penalty to losers
         return baseRatingChange + (isWinningTeam ? goalDifferenceBonus : -goalDifferenceBonus);
+    }
+
+    // Get manual adjustment for a specific player
+    getManualAdjustment(player: Player): number {
+        return this.manualAdjustments.get(player.id || 0) || 0;
+    }
+
+    // Set manual adjustment for a specific player
+    setManualAdjustment(player: Player, adjustment: number): void {
+        if (player.id) {
+            this.manualAdjustments.set(player.id, adjustment);
+        }
+    }
+
+    // Reset manual adjustment for a specific player
+    resetManualAdjustment(player: Player): void {
+        if (player.id) {
+            this.manualAdjustments.delete(player.id);
+        }
+    }
+
+    // Get total rating change (automatic + manual) for a player
+    getTotalRatingChange(player: Player, isTeam1: boolean): number {
+        const automaticChange = this.getRatingChange(isTeam1);
+        const manualChange = this.getManualAdjustment(player);
+        return automaticChange + manualChange;
+    }
+
+    // Get final rating for a player after all adjustments
+    getFinalRating(player: Player, isTeam1: boolean): number {
+        const currentRating = player.rating || 0;
+        const totalChange = this.getTotalRatingChange(player, isTeam1);
+        return Math.max(0, currentRating + totalChange); // Ensure rating doesn't go below 0
     }
 
     async ngOnInit() {

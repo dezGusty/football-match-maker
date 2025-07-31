@@ -71,17 +71,22 @@
                                         class="player-avatar">
                                     <span class="player-name">{{getPlayerName(player)}}</span>
                                 </div>
-                                <div class="rating-change">
-                                    <span class="current-rating">{{(player.rating || 0).toFixed(2)}}</span>
-                                    <span class="arrow">→</span>
-                                    <span class="new-rating" [class.positive]="getRatingChange(true) > 0"
-                                        [class.negative]="getRatingChange(true) < 0">
-                                        {{((player.rating || 0) + getRatingChange(true)).toFixed(2)}}
-                                    </span>
-                                    <span class="change-amount" [class.positive]="getRatingChange(true) > 0"
-                                        [class.negative]="getRatingChange(true) < 0">
-                                        ({{getRatingChange(true) > 0 ? '+' : ''}}{{getRatingChange(true).toFixed(2)}})
-                                    </span>
+                                <div class="manual-rating-container">
+                                    <div class="rating-display">
+                                        <span>{{(player.rating || 0).toFixed(2)}} → {{getFinalRating(player,
+                                            true).toFixed(2)}}</span>
+                                        <span [class.positive]="getTotalRatingChange(player, true) > 0"
+                                            [class.negative]="getTotalRatingChange(player, true) < 0">
+                                            ({{getTotalRatingChange(player, true) > 0 ? '+' :
+                                            ''}}{{getTotalRatingChange(player, true).toFixed(2)}})
+                                        </span>
+                                    </div>
+                                    <div class="manual-rating-input">
+                                        <input type="number" class="rating-adjustment-input"
+                                            [value]="getManualAdjustment(player)"
+                                            (input)="setManualAdjustment(player, +$any($event.target).value)" step="0.1"
+                                            placeholder="0">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -97,17 +102,22 @@
                                         class="player-avatar">
                                     <span class="player-name">{{getPlayerName(player)}}</span>
                                 </div>
-                                <div class="rating-change">
-                                    <span class="current-rating">{{(player.rating || 0).toFixed(2)}}</span>
-                                    <span class="arrow">→</span>
-                                    <span class="new-rating" [class.positive]="getRatingChange(false) > 0"
-                                        [class.negative]="getRatingChange(false) < 0">
-                                        {{((player.rating || 0) + getRatingChange(false)).toFixed(2)}}
-                                    </span>
-                                    <span class="change-amount" [class.positive]="getRatingChange(false) > 0"
-                                        [class.negative]="getRatingChange(false) < 0">
-                                        ({{getRatingChange(false) > 0 ? '+' : ''}}{{getRatingChange(false).toFixed(2)}})
-                                    </span>
+                                <div class="manual-rating-container">
+                                    <div class="rating-display">
+                                        <span>{{(player.rating || 0).toFixed(2)}} → {{getFinalRating(player,
+                                            false).toFixed(2)}}</span>
+                                        <span [class.positive]="getTotalRatingChange(player, false) > 0"
+                                            [class.negative]="getTotalRatingChange(player, false) < 0">
+                                            ({{getTotalRatingChange(player, false) > 0 ? '+' :
+                                            ''}}{{getTotalRatingChange(player, false).toFixed(2)}})
+                                        </span>
+                                    </div>
+                                    <div class="manual-rating-input">
+                                        <input type="number" class="rating-adjustment-input"
+                                            [value]="getManualAdjustment(player)"
+                                            (input)="setManualAdjustment(player, +$any($event.target).value)" step="0.1"
+                                            placeholder="0">
+                                    </div>
                                 </div>
                             </div>
                         </div>

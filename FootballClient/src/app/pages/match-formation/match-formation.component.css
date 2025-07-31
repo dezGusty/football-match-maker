@@ -266,10 +266,11 @@
 .modal-content {
     background: white;
     border-radius: 8px;
-    max-width: 900px;
-    width: 90%;
-    max-height: 80vh;
+    max-width: 1000px;
+    width: 95%;
+    max-height: 85vh;
     overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .modal-header {
@@ -321,15 +322,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px;
-    background: #f5f5f5;
-    border-radius: 4px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.player-rating-item:hover {
+    background: #f1f3f4;
+    border-color: #dee2e6;
 }
 
 .player-info {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex: 0 0 auto;
 }
 
 .player-avatar {
@@ -349,12 +358,48 @@
     font-size: 16px;
 }
 
+.manual-rating-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+    flex: 1;
+}
+
+.rating-display {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+}
+
+.manual-rating-input {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.rating-adjustment-input {
+    width: 70px;
+    height: 24px;
+    padding: 0 4px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.rating-adjustment-input:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
 .positive {
-    color: green;
+    color: #28a745;
 }
 
 .negative {
-    color: red;
+    color: #dc3545;
 }
 
 .modal-footer {
@@ -381,4 +426,39 @@
 .btn-confirm {
     background: #4CAF50;
     color: white;
+}
+
+/* Responsive Design for Manual Rating Inputs */
+@media (max-width: 768px) {
+    .modal-content {
+        max-width: 95%;
+        width: 95%;
+        margin: 10px;
+    }
+
+    .teams-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .player-rating-item {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        text-align: center;
+    }
+
+    .player-info {
+        justify-content: center;
+    }
+
+    .manual-rating-container {
+        justify-content: center;
+        width: 100%;
+        gap: 15px;
+    }
+
+    .rating-display {
+        justify-content: center;
+    }
 }
