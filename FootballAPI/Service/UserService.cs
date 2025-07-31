@@ -68,7 +68,7 @@ namespace FootballAPI.Service
             var user = await _userRepository.GetByEmailAsync(email);
             return user == null ? null : MapToDto(user);
         }
-        public async Task<IEnumerable<UserDto>> GetUsersByRoleAsync(string role)
+        public async Task<IEnumerable<UserDto>> GetUsersByRoleAsync(UserRole role)
         {
             var users = await _userRepository.GetUsersByRoleAsync(role);
             return users.Select(MapToDto);
@@ -85,9 +85,12 @@ namespace FootballAPI.Service
             {
                 Username = createUserDto.Username,
                 Password = createUserDto.Password,
-                Role = createUserDto.Role ?? "User",
+                Role = createUserDto.Role, // poate fi 0 dacă nu e trimis
                 Email = createUserDto.Email,
             };
+
+            if (!Enum.IsDefined(typeof(UserRole), user.Role))
+                user.Role = UserRole.ADMIN;
 
             var createdUser = await _userRepository.CreateAsync(user);
             return MapToDto(createdUser);
@@ -96,8 +99,6 @@ namespace FootballAPI.Service
         public async Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updateUserDto)
         {
             var existingUser = await _userRepository.GetByIdAsync(id);
-            if (existingUser == null)
-                return null;
 
             if (await _userRepository.UsernameExistsAsync(updateUserDto.Username, id))
             {
@@ -105,8 +106,9 @@ namespace FootballAPI.Service
             }
 
             existingUser.Username = updateUserDto.Username;
-            existingUser.Role = updateUserDto.Role ?? existingUser.Role;
-            existingUser.Email = updateUserDto.Email ?? existingUser.Email;
+            // Fix: updateUserDto.Role nu poate fi null, e enum, deci folosește direct valoarea
+            existingUser.Role = updateUserDto.Role;
+            existingUser.Email = updateUserDto.Email;
 
             var updatedUser = await _userRepository.UpdateAsync(existingUser);
             return MapToDto(updatedUser);
@@ -166,10 +168,10 @@ namespace FootballAPI.Service
             var user = await _userRepository.GetByUsernameAsync(username);
             return user == null ? null : MapToWithImageDto(user);
         }
-        public async Task<IEnumerable<UserWithImageDto>> GetUsersWithImageByRoleAsync(string role)
+        public async Task<IEnumerable<UserWithImageDto>> GetUsersWithImageByRoleAsync(UserRole role)
         {
-            var users = await _userRepository.GetUsersByRoleAsync(role);
-            return users.Select(MapToWithImageDto);
+            var users = await _userRepository.GetAllAsync();
+            return users.Where(u => u.Role == role).Select(MapToWithImageDto);
         }
         public async Task<UserDto?> UpdateUserProfileImageAsync(int id, string imageUrl)
         {

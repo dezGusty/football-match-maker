@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { MatchService } from '../../services/match.service';
 import { PlayerService } from '../../services/player.service';
 import { Match } from '../../models/match.interface';
+import { UserRole } from '../../models/user-role.enum';
 
 @Component({
   selector: 'app-account',
@@ -122,4 +123,9 @@ export class Account {
     this.router.navigate(['/']);
     this.authService.logout();
   }
+
+  getRoleString(role: UserRole): string {
+    return UserRole[role];
+  }
+  UserRole = UserRole;
 }

@@ -43,7 +43,7 @@
   <div class="account-details-col">
     @if (user) {
     <div class="account-username">{{ user.username }}</div>
-    <div class="account-role-badge">{{ user.role }}</div>
+    <div class="account-role-badge">{{ getRoleString(user.role) }}</div>
 
         <div class="future-matches-section">
       <h3>Scheduled Matches</h3>

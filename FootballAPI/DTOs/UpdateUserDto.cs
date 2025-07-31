@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FootballAPI.Models;
 
 namespace FootballAPI.DTOs
 {
@@ -12,8 +13,8 @@ namespace FootballAPI.DTOs
         [StringLength(100, MinimumLength = 5, ErrorMessage = "Email is not valid")]
         public string Email { get; set; }
 
-        [StringLength(50, ErrorMessage = "Role cannot exceed 50 characters")]
-        public string Role { get; set; }
+        [Required]
+        public UserRole Role { get; set; }
 
         [StringLength(500)]
         public string? ImageUrl { get; set; }

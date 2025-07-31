@@ -42,10 +42,10 @@ export class Home {
       const isActive = this.isPlayerEnabled(player);
       const searchTerms = this.searchTerm.toLowerCase().trim().split(' ');
       const fullName = `${player.firstName || ''} ${player.lastName || ''}`.toLowerCase();
-      
-      const matchesSearch = this.searchTerm.trim() === '' || 
+
+      const matchesSearch = this.searchTerm.trim() === '' ||
         searchTerms.every(term => fullName.includes(term));
-      
+
       return isActive && matchesSearch;
     });
   }
@@ -87,8 +87,8 @@ export class Home {
   }
 
   async addPlayer() {
-    if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10) {
-      alert('Rating must be between 0 and 10.');
+    if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10000) {
+      alert('Rating must be between 0 and 10000.');
       return;
     }
 
@@ -123,8 +123,8 @@ export class Home {
   async editPlayer() {
     if (!this.editedPlayer) return;
 
-    if (typeof this.editedPlayer.rating === 'number' && (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10)) {
-      alert('Rating must be between 0 and 10.');
+    if (typeof this.editedPlayer.rating === 'number' && (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10000)) {
+      alert('Rating must be between 0 and 10000.');
       return;
     }
 
@@ -149,8 +149,15 @@ export class Home {
     try {
       const success = await this.PlayerService.deletePlayer(playerId);
       if (success) {
-        await this.init();
-        this.filterPlayers(); // Refiltrăm lista după ștergere
+        // ✅ NU reîncărca toți jucătorii, doar modifică local
+        const playerIndex = this.players.findIndex(p => p.id === playerId);
+        if (playerIndex !== -1) {
+          this.players[playerIndex].isEnabled = false;
+          // Păstrează imaginea originală în memorie pentru match-formation
+          // this.players[playerIndex].imageUrl rămâne neschimbat
+        }
+
+        this.filterPlayers(); // Refiltrează lista (va ascunde jucătorii disabled)
         console.log('Player deleted successfully');
       }
     } catch (error) {
@@ -166,8 +173,13 @@ export class Home {
     try {
       const success = await this.PlayerService.enablePlayer(playerId);
       if (success) {
-        await this.init();
-        this.filterPlayers(); // Refiltrăm lista după activare
+        // ✅ Modifică doar local
+        const playerIndex = this.players.findIndex(p => p.id === playerId);
+        if (playerIndex !== -1) {
+          this.players[playerIndex].isEnabled = true;
+        }
+
+        this.filterPlayers(); // Refiltrează lista
         console.log('Player reactivated successfully');
       }
     } catch (error) {
@@ -175,7 +187,6 @@ export class Home {
       alert('Failed to reactivate player. Please try again.');
     }
   }
-
   clearEditIndex() {
     this.editIndex = null;
     this.editedPlayer = null;

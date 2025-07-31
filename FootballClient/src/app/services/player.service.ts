@@ -6,7 +6,17 @@ import { Player } from '../models/player.interface';
 })
 export class PlayerService {
   private readonly url: string = 'http://localhost:5145/api/players';
+  private readonly MAX_RATING = 10000;
+  private readonly MIN_RATING = 0;
+
   constructor() { }
+
+  private validateRating(rating: number): void {
+    if (rating < this.MIN_RATING || rating > this.MAX_RATING) {
+      throw new Error(`Rating must be between ${this.MIN_RATING} and ${this.MAX_RATING}`);
+    }
+  }
+
   async getPlayers(): Promise<Player[]> {
     const response = await fetch(`${this.url}/with-images`);
     if (!response.ok) {
@@ -15,7 +25,10 @@ export class PlayerService {
     const players = await response.json();
     return players;
   }
+
   async addPlayer(player: { firstName: string; lastName: string; rating: number; imageUrl?: string }): Promise<Player> {
+    this.validateRating(player.rating);
+
     const response = await fetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -30,6 +43,10 @@ export class PlayerService {
   }
 
   async updatePlayer(playerId: number, updateData: Partial<Player>): Promise<Player> {
+    if (updateData.rating !== undefined) {
+      this.validateRating(updateData.rating);
+    }
+
     const response = await fetch(`${this.url}/${playerId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -44,6 +61,10 @@ export class PlayerService {
   }
 
   async editPlayer(player: Player): Promise<Player> {
+    if (player.rating !== undefined) {
+      this.validateRating(player.rating);
+    }
+
     const response = await fetch(`${this.url}/${player.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LoginRequest } from './auth.interface';
+import { UserRole } from '../../models/user-role.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -17,32 +18,36 @@ export class AuthService {
     }
   }
 
-  async register(email: string, password: string, role: string = 'Admin'): Promise<void> {
+  async register(email: string, username: string, password: string, role: UserRole): Promise<void> {
     try {
+      const payload = {
+        email,
+        username,
+        password,
+        role
+      };
       const response = await fetch(`${this.apiUrl}/user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, role })
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
-      const text = await response.text();
-      let message = 'Registration failed';
-      try {
-        const error = JSON.parse(text);
-        message = error.message || message;
-      } catch (_) {
-        
+        const text = await response.text();
+        let message = 'Registration failed';
+        try {
+          const error = JSON.parse(text);
+          message = error.message || message;
+        } catch (_) { }
+        throw new Error(message);
       }
-      throw new Error(message);
-    }
-    const userData = await response.json();
-    const now = new Date().getTime();
-    const expiresAt = now + 60 * 60 * 1000;
+      const userData = await response.json();
+      const now = new Date().getTime();
+      const expiresAt = now + 60 * 60 * 1000;
 
-    this.isAuthenticated = true;
+      this.isAuthenticated = true;
       this.userId = userData.id;
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userId', userData.id.toString());
@@ -112,4 +117,4 @@ export class AuthService {
   getUserId(): number | null {
     return this.userId;
   }
-} 
+}

@@ -12,6 +12,7 @@ namespace FootballAPI.Data
         public DbSet<Match> Matches { get; set; }
         public DbSet<PlayerMatchHistory> PlayerMatchHistory { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<PlayerOrganiser> PlayerOrganisers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,6 +54,21 @@ namespace FootballAPI.Data
                 .HasForeignKey(pmh => pmh.MatchId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<PlayerOrganiser>()
+                .HasOne(po => po.Organiser)
+                .WithMany()
+                .HasForeignKey(po => po.OrganiserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PlayerOrganiser>()
+                .HasOne(po => po.Player)
+                .WithMany()
+                .HasForeignKey(po => po.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PlayerOrganiser>()
+                .HasKey(po => new { po.OrganiserId, po.PlayerId });
+
             modelBuilder.Entity<Player>()
                 .HasIndex(p => new { p.FirstName, p.LastName });
 
@@ -72,11 +88,16 @@ namespace FootballAPI.Data
 
             modelBuilder.Entity<Player>()
                 .Property(p => p.Rating)
-                .HasColumnType("decimal(4,2)");
+                .HasColumnType("float");
 
             modelBuilder.Entity<PlayerMatchHistory>()
                 .Property(pmh => pmh.PerformanceRating)
-                .HasColumnType("decimal(4,2)");
+                .HasColumnType("float");
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasConversion<int>()
+                .IsRequired();
 
             SeedData(modelBuilder);
         }
@@ -110,9 +131,6 @@ namespace FootballAPI.Data
             );
 
 
-            modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Username = "admin", Password = "parola123", Role = "Admin", Email="admin@gmail.com", ImageUrl = "http://localhost:5145/images/admin.jpg" }
-            );
         }
     }
 }

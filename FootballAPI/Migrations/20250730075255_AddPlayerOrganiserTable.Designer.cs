@@ -4,6 +4,7 @@ using FootballAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250730075255_AddPlayerOrganiserTable")]
+    partial class AddPlayerOrganiserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,13 +160,21 @@ namespace FootballAPI.Migrations
 
             modelBuilder.Entity("FootballAPI.Models.PlayerOrganiser", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("OrganiserId")
                         .HasColumnType("int");
 
                     b.Property<int>("PlayerId")
                         .HasColumnType("int");
 
-                    b.HasKey("OrganiserId", "PlayerId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganiserId");
 
                     b.HasIndex("PlayerId");
 
@@ -224,8 +235,10 @@ namespace FootballAPI.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -241,6 +254,17 @@ namespace FootballAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "admin@gmail.com",
+                            ImageUrl = "http://localhost:5145/images/admin.jpg",
+                            Password = "parola123",
+                            Role = "Admin",
+                            Username = "admin"
+                        });
                 });
 
             modelBuilder.Entity("FootballAPI.Models.Match", b =>

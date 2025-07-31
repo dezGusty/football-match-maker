@@ -1,4 +1,5 @@
 using FootballAPI.DTOs;
+using FootballAPI.Models;
 using FootballAPI.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -153,7 +154,7 @@ namespace FootballAPI.Controllers
         }
 
         [HttpGet("role/{role}")]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersByRole(string role)
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersByRole(UserRole role)
         {
             try
             {
@@ -168,7 +169,7 @@ namespace FootballAPI.Controllers
         }
 
         [HttpGet("role/{role}/with-image")]
-        public async Task<ActionResult<IEnumerable<UserWithImageDto>>> GetUsersWithImageByRole(string role)
+        public async Task<ActionResult<IEnumerable<UserWithImageDto>>> GetUsersWithImageByRole(UserRole role)
         {
             try
             {

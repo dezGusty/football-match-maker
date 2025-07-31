@@ -9,7 +9,8 @@ interface Position {
     left: string;
     top: string;
 }
-
+//test branch
+//v2
 @Component({
     selector: 'app-match-formation',
     standalone: true,
@@ -27,6 +28,7 @@ export class MatchFormationComponent implements OnInit {
     team2Name: string = 'Loading...';
     teamAId?: number;
     teamBId?: number;
+    private maxRating: number = 0;
 
     constructor(
         private matchService: MatchService,
@@ -117,6 +119,10 @@ export class MatchFormationComponent implements OnInit {
             this.teamAId = navigation.teamAId;
             this.teamBId = navigation.teamBId;
 
+            // Calculate max rating from all players
+            const allPlayers = [...this.team1Players, ...this.team2Players];
+            this.maxRating = Math.max(...allPlayers.map(p => p?.rating || 0));
+
             // Load team names after we have the IDs
             await this.loadTeamNames();
         }
@@ -162,17 +168,26 @@ export class MatchFormationComponent implements OnInit {
 
     getStarArray(rating: number): string[] {
         const stars: string[] = [];
-        const fullStars = Math.floor(rating / 2);
-        const hasHalfStar = (rating % 2) >= 1;
 
-        for (let i = 0; i < fullStars; i++) {
+        // If maxRating is 0, use a default scale of 10
+        const effectiveMaxRating = this.maxRating || 10;
+
+        // Scale the rating relative to maxRating (5 stars maximum)
+        const scaledRating = (rating / effectiveMaxRating) * 10;
+        const fullStars = Math.floor(scaledRating / 2);
+        const hasHalfStar = (scaledRating % 2) >= 1;
+
+        // Add full stars
+        for (let i = 0; i < fullStars && i < 5; i++) {
             stars.push('full');
         }
 
-        if (hasHalfStar && fullStars < 5) {
+        // Add half star if applicable
+        if (hasHalfStar && stars.length < 5) {
             stars.push('half');
         }
 
+        // Fill remaining with empty stars
         while (stars.length < 5) {
             stars.push('empty');
         }
