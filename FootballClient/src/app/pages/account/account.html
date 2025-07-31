@@ -47,7 +47,7 @@
     <div class="account-username">{{ user.username }}</div>
     <div class="account-role-badge">{{ getRoleString(user.role) }}</div>
 
-        <div class="future-matches-section">
+    <div class="future-matches-section">
       <h3>Scheduled Matches</h3>
       @if (futureMatches.length > 0) {
         <div class="future-matches-list">
@@ -67,19 +67,52 @@
         <div class="no-matches">No scheduled matches</div>
       }
     </div>
-    
-    <form class="account-password-form">
-      <label for="current-password">Current Password</label>
-      <input id="current-password" type="password" placeholder="Enter current password" [(ngModel)]="currentPassword"
-        name="currentPassword" />
-      <label for="new-password">New Password</label>
-      <input id="new-password" type="password" placeholder="Enter new password" [(ngModel)]="newPassword"
-        name="newPassword" />
-      <label for="confirm-password">Confirm Password</label>
-      <input id="confirm-password" type="password" placeholder="Confirm new password" [(ngModel)]="confirmPassword"
-        name="confirmPassword" />
-      <button type="button" (click)="changePassword()">Save Changes</button>
-    </form>
+
+    <!-- Toggle Buttons -->
+    <div class="settings-toggles">
+      <button 
+        class="toggle-btn" 
+        [class.active]="showPasswordForm"
+        (click)="togglePasswordForm()">
+        Change Password
+      </button>
+      <button 
+        class="toggle-btn" 
+        [class.active]="showUsernameForm"
+        (click)="toggleUsernameForm()">
+        Change Username
+      </button>
+    </div>
+
+    <!-- Password Form -->
+    @if (showPasswordForm) {
+      <form class="account-password-form">
+        <label for="current-password">Current Password</label>
+        <input id="current-password" type="password" placeholder="Enter current password" [(ngModel)]="currentPassword"
+          name="currentPassword" />
+        <label for="new-password">New Password</label>
+        <input id="new-password" type="password" placeholder="Enter new password" [(ngModel)]="newPassword"
+          name="newPassword" />
+        <label for="confirm-password">Confirm Password</label>
+        <input id="confirm-password" type="password" placeholder="Confirm new password" [(ngModel)]="confirmPassword"
+          name="confirmPassword" />
+        <button type="button" (click)="changePassword()">Save Changes</button>
+      </form>
+    }
+
+    <!-- Username Form -->
+    @if (showUsernameForm) {
+      <form class="account-password-form">
+        <label for="new-username">New Username</label>
+        <input id="new-username" type="text" placeholder="Enter new username" [(ngModel)]="newUsername"
+          name="newUsername" />
+        <label for="username-password">Password (for confirmation)</label>
+        <input id="username-password" type="password" placeholder="Enter your password" [(ngModel)]="usernamePassword"
+          name="usernamePassword" />
+        <button type="button" (click)="changeUsername()">Save Username</button>
+      </form>
+    }
+
     } @else {
     <div class="loading-message">Loading account details...</div>
     }

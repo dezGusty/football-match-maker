@@ -441,3 +441,39 @@
   border-radius: 8px;
   border: 1px dashed #b5c7b8;
 }
+
+/* Adaugă aceste stiluri în account.css */
+
+.settings-toggles {
+  display: flex;
+  gap: 12px;
+  margin: 24px 0 18px 0;
+  width: 100%;
+  max-width: 340px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 10px 16px;
+  background: #f8f9fa;
+  color: #6a866e;
+  border: 2px solid #b5c7b8;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.toggle-btn:hover {
+  background: #e5ede7;
+  border-color: #6a866e;
+}
+
+.toggle-btn.active {
+  background: #6a866e;
+  color: #fff;
+  border-color: #3e5c43;
+  box-shadow: 0 2px 8px rgba(106, 134, 110, 0.15);
+}
