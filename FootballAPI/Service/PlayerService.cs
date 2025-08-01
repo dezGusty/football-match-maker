@@ -6,10 +6,17 @@ namespace FootballAPI.Service
     public class PlayerService : IPlayerService
     {
         private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPasswordGeneratorService _passwordGeneratorService;
 
-        public PlayerService(IPlayerRepository playerRepository)
+        public PlayerService(
+            IPlayerRepository playerRepository,
+            IUserRepository userRepository,
+            IPasswordGeneratorService passwordGeneratorService)
         {
             _playerRepository = playerRepository;
+            _userRepository = userRepository;
+            _passwordGeneratorService = passwordGeneratorService;
         }
 
         public async Task<IEnumerable<PlayerDto>> GetAllPlayersAsync()
@@ -36,20 +43,40 @@ namespace FootballAPI.Service
             return players.Select(MapToDto);
         }
 
-        public async Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto createPlayerDto)
+        public async Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto dto)
         {
+            var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
+            if (existingUser == null)
+            {
+                var password = _passwordGeneratorService.Generate();
+                var user = new User
+                {
+                    Email = dto.Email,
+                    Username = dto.FirstName + dto.LastName,
+                    Password = password,
+                    Role = UserRole.PLAYER,
+                    ImageUrl = dto.ImageUrl
+                };
+                await _userRepository.CreateAsync(user);
+            }
+
+            var existingPlayer = (await _playerRepository.GetAllAsync())
+                .FirstOrDefault(p => p.Email == dto.Email);
+            if (existingPlayer != null)
+                throw new InvalidOperationException("Player with this email already exists.");
+
             var player = new Player
             {
-                FirstName = createPlayerDto.FirstName,
-                LastName = createPlayerDto.LastName,
-                Rating = createPlayerDto.Rating,
-                ImageUrl = createPlayerDto.ImageUrl,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Rating = dto.Rating,
+                Email = dto.Email,
                 IsAvailable = false,
                 IsEnabled = true,
-                CurrentTeamId = null
+                ImageUrl = dto.ImageUrl
             };
-
             var createdPlayer = await _playerRepository.CreateAsync(player);
+
             return MapToDto(createdPlayer);
         }
 
@@ -80,6 +107,7 @@ namespace FootballAPI.Service
             await _playerRepository.UpdateAsync(existingPlayer);
             return true;
         }
+
         public async Task<bool> EnablePlayerAsync(int id)
         {
             var existingPlayer = await _playerRepository.GetByIdAsync(id);
@@ -106,28 +134,8 @@ namespace FootballAPI.Service
         {
             return await _playerRepository.ExistsAsync(id);
         }
-        public async Task<PlayerWithImageDto?> GetPlayerWithImageByIdAsync(int id)
-        {
-            var player = await _playerRepository.GetByIdAsync(id);
-            return player != null ? MapToPlayerWithImageDto(player) : null;
-        }
 
-        public async Task<IEnumerable<PlayerWithImageDto>> GetAllPlayersWithImagesAsync()
-        {
-            var players = await _playerRepository.GetAllAsync();
-            return players.Select(p => new PlayerWithImageDto
-            {
-                Id = p.Id,
-                FirstName = p.FirstName,
-                LastName = p.LastName,
-                Rating = p.Rating,
-                IsAvailable = p.IsAvailable,
-                CurrentTeamId = p.CurrentTeamId,
-                IsEnabled = p.IsEnabled,
-                ImageUrl = p.ImageUrl
-            });
-        }
-        // Noi metode pentru gestionarea disponibilității jucătorilor
+        // Disponibilitate
         public async Task<bool> SetPlayerAvailableAsync(int playerId)
         {
             var player = await _playerRepository.GetByIdAsync(playerId);
@@ -210,59 +218,20 @@ namespace FootballAPI.Service
             }
         }
 
+        // Mapping unic pentru PlayerDto (include ImageUrl)
         private static PlayerDto MapToDto(Player player)
         {
-            if (!player.IsEnabled)
-            {
-                return new PlayerDto
-                {
-                    Id = player.Id,
-                    FirstName = $"Player{player.Id}",
-                    LastName = "",
-                    Rating = 0.0f,
-                    IsAvailable = false,
-                    CurrentTeamId = null,
-                    IsEnabled = false
-                };
-            }
             return new PlayerDto
             {
                 Id = player.Id,
-                FirstName = player.FirstName,
-                LastName = player.LastName,
-                Rating = player.Rating,
-                IsAvailable = player.IsAvailable,
-                CurrentTeamId = player.CurrentTeamId,
-                IsEnabled = true
-
-            };
-        }
-        private static PlayerWithImageDto MapToPlayerWithImageDto(Player player)
-        {
-            if (!player.IsEnabled)
-            {
-                return new PlayerWithImageDto
-                {
-                    Id = player.Id,
-                    FirstName = $"Player{player.Id}",
-                    LastName = "",
-                    Rating = 0.0f,
-                    IsAvailable = false,
-                    CurrentTeamId = null,
-                    IsEnabled = false,
-                    ImageUrl = null
-                };
-            }
-            return new PlayerWithImageDto
-            {
-                Id = player.Id,
-                FirstName = player.FirstName,
-                LastName = player.LastName,
-                Rating = player.Rating,
-                IsAvailable = player.IsAvailable,
-                CurrentTeamId = player.CurrentTeamId,
-                IsEnabled = true,
-                ImageUrl = player.ImageUrl
+                FirstName = player.IsEnabled ? player.FirstName : $"Player{player.Id}",
+                LastName = player.IsEnabled ? player.LastName : "",
+                Rating = player.IsEnabled ? player.Rating : 0.0f,
+                Email = player.Email,
+                IsAvailable = player.IsEnabled ? player.IsAvailable : false,
+                CurrentTeamId = player.IsEnabled ? player.CurrentTeamId : null,
+                IsEnabled = player.IsEnabled,
+                ImageUrl = !string.IsNullOrEmpty(player.ImageUrl) ? player.ImageUrl : null
             };
         }
     }

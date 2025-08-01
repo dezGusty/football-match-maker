@@ -7,10 +7,12 @@ namespace FootballAPI.Service
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IPlayerRepository _playerRepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IPlayerRepository playerRepository)
         {
             _userRepository = userRepository;
+            _playerRepository = playerRepository;
         }
 
         private UserDto MapToDto(User user)
@@ -74,25 +76,33 @@ namespace FootballAPI.Service
             return users.Select(MapToDto);
         }
 
-        public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto)
+        public async Task<UserDto> CreateUserAsync(CreateUserDto dto)
         {
-            if (await _userRepository.UsernameExistsAsync(createUserDto.Username))
-            {
-                throw new ArgumentException($"Username '{createUserDto.Username}' already exists.");
-            }
-
             var user = new User
             {
-                Username = createUserDto.Username,
-                Password = createUserDto.Password,
-                Role = createUserDto.Role, // poate fi 0 dacă nu e trimis
-                Email = createUserDto.Email,
+                Email = dto.Email,
+                Username = dto.Username,
+                Password = dto.Password,
+                Role = dto.Role,
+                ImageUrl = dto.ImageUrl
             };
-
-            if (!Enum.IsDefined(typeof(UserRole), user.Role))
-                user.Role = UserRole.ADMIN;
-
             var createdUser = await _userRepository.CreateAsync(user);
+
+            if (user.Role == UserRole.PLAYER)
+            {
+                var player = new Player
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Rating = dto.Rating ?? 0,
+                    Email = dto.Email,
+                    IsAvailable = false,
+                    IsEnabled = true,
+                    ImageUrl = dto.ImageUrl
+                };
+                await _playerRepository.CreateAsync(player);
+            }
+
             return MapToDto(createdUser);
         }
 

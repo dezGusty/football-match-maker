@@ -188,24 +188,12 @@ namespace FootballAPI.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var createdUser = await _userService.CreateUserAsync(createUserDto);
-                return CreatedAtAction(nameof(GetUserById),
-                    new { id = createdUser.Id }, createdUser);
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "Validation error creating user");
-                return BadRequest(ex.Message);
+                var user = await _userService.CreateUserAsync(createUserDto);
+                return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating user");
-                return StatusCode(500, $"Internal error: {ex.Message}");
+                return BadRequest($"Error registering user: {ex.Message}");
             }
         }
 
