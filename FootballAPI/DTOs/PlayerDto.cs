@@ -47,4 +47,19 @@ namespace FootballAPI.DTOs
         public bool IsEnabled { get; set; }
         public string? ImageUrl { get; set; }
     }
+    public class UpdatePlayerRatingDto
+    {
+        public float RatingChange { get; set; }
+    }
+
+    public class PlayerRatingUpdateDto
+    {
+        public int PlayerId { get; set; }
+        public float RatingChange { get; set; }
+    }
+
+    public class UpdateMultipleRatingsDto
+    {
+        public List<PlayerRatingUpdateDto> PlayerRatingUpdates { get; set; } = new List<PlayerRatingUpdateDto>();
+    }
 }

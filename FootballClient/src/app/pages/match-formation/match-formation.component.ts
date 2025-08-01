@@ -104,21 +104,58 @@ export class MatchFormationComponent implements OnInit {
     }
 
     async confirmFinalize() {
-        if (this.matchId) {
-            try {
-                // Trimite DOAR update la meci, backendul se ocupă de rating și isAvailable
-                await this.matchService.updateMatch(this.matchId, {
-                    teamAGoals: this.scoreA,
-                    teamBGoals: this.scoreB
-                });
-                this.showRatingModal = false;
-                this.router.navigate(['/matches-history']);
-            } catch (error) {
-                console.error('Error updating match:', error);
-                // Poți adăuga feedback pentru utilizator aici
+    if (this.matchId) {
+        try {
+            // 1. Update match score
+            await this.matchService.updateMatch(this.matchId, {
+                teamAGoals: this.scoreA,
+                teamBGoals: this.scoreB
+            });
+
+            // 2. Prepare rating updates for all players
+            const ratingUpdates: { playerId: number; ratingChange: number }[] = [];
+            
+            // Add team1 players
+            this.team1Players.forEach(player => {
+                if (player.id) {
+                    const totalRatingChange = this.getTotalRatingChange(player, true);
+                    if (totalRatingChange !== 0) {
+                        ratingUpdates.push({
+                            playerId: player.id,
+                            ratingChange: totalRatingChange
+                        });
+                    }
+                }
+            });
+
+            // Add team2 players
+            this.team2Players.forEach(player => {
+                if (player.id) {
+                    const totalRatingChange = this.getTotalRatingChange(player, false);
+                    if (totalRatingChange !== 0) {
+                        ratingUpdates.push({
+                            playerId: player.id,
+                            ratingChange: totalRatingChange
+                        });
+                    }
+                }
+            });
+
+            // 3. Update player ratings if there are changes
+            if (ratingUpdates.length > 0) {
+                const success = await this.playerService.updateMultiplePlayerRatings(ratingUpdates);
+                if (!success) {
+                    console.error('Failed to update player ratings');
+                }
             }
+
+            this.showRatingModal = false;
+            this.router.navigate(['/matches-history']);
+        } catch (error) {
+            console.error('Error finalizing match:', error);
         }
     }
+}
 
     closeModal() {
         this.showRatingModal = false;
