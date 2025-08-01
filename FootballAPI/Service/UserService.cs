@@ -85,12 +85,18 @@ namespace FootballAPI.Service
             {
                 Username = createUserDto.Username,
                 Password = createUserDto.Password,
-                Role = createUserDto.Role, // poate fi 0 dacă nu e trimis
+                Role = createUserDto.Role,
                 Email = createUserDto.Email,
             };
 
             if (!Enum.IsDefined(typeof(UserRole), user.Role))
                 user.Role = UserRole.ADMIN;
+            
+            string pattern = @"^[^@\s]+@(?:gmail\.com|yahoo\.com)$";
+            if (!System.Text.RegularExpressions.Regex.IsMatch(user.Email, pattern))
+            {
+                throw new ArgumentException("Email must be a Gmail or Yahoo email address.");
+            }
 
             var createdUser = await _userRepository.CreateAsync(user);
             return MapToDto(createdUser);
