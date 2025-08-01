@@ -31,7 +31,20 @@
 
     <h6 class="register-prompt" style="margin-top: 10px; text-align: center; color: #222;">
       Forgotten your password?
-      <a (click)="forgotPassword()" style="color: #1976d2; text-decoration: underline; cursor: pointer; margin-left: 4px;">Click here.</a>
+      <a (click)="openForgotPasswordModal()" style="color: #1976d2; text-decoration: underline; cursor: pointer; margin-left: 4px;">Click here.</a>
     </h6>
   </form>
+</div>
+
+<div class="modal-backdrop" *ngIf="showForgotPasswordModal">
+  <div class="modal-content">
+    <h3>Resetare parolă</h3>
+    <p>Introdu adresa de email pentru a primi o nouă parolă:</p>
+    <input type="email" [(ngModel)]="forgotEmail" placeholder="Email" />
+
+    <div class="modal-buttons">
+      <button (click)="forgotPassword()">OK</button>
+      <button class="cancel" (click)="closeForgotPasswordModal()">Anulează</button>
+    </div>
+  </div>
 </div>

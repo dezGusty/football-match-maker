@@ -26,6 +26,18 @@ export class Login {
     }
   }
 
+  showForgotPasswordModal = false;
+forgotEmail = '';
+
+openForgotPasswordModal() {
+  this.forgotEmail = '';
+  this.showForgotPasswordModal = true;
+}
+
+closeForgotPasswordModal() {
+  this.showForgotPasswordModal = false;
+}
+
   async onLogin() {
     try {
       await this.authService.login({
@@ -44,11 +56,7 @@ export class Login {
   }
 
 forgotPassword() {
-  if (!this.email) {
-    this.errorMessage = 'Te rog introdu adresa de email.';
-    return;
-  }
-
+  this.email = this.forgotEmail;
   this.authService.forgotPassword(this.email)
     .subscribe({
       next: () => alert('Email trimis cu succes! Verifică inbox-ul.'),
@@ -57,6 +65,9 @@ forgotPassword() {
         this.errorMessage = 'A apărut o eroare la trimiterea email-ului.';
       }
     });
+  this.forgotEmail = '';
+  this.email = '';
+  this.closeForgotPasswordModal();
 }
 
 }
