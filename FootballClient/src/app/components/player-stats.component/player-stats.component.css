@@ -1,0 +1,71 @@
+.player-stats {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.stat-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(164, 196, 168, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(164, 196, 168, 0.2);
+}
+
+.stat-label {
+  font-size: 1rem;
+  margin-right: 2px;
+}
+
+.stat-icons {
+  display: flex;
+  gap: 2px;
+}
+
+.stat-icon {
+  font-size: 0.8rem;
+  opacity: 0.3;
+  transition: all 0.2s ease;
+  filter: grayscale(1);
+}
+
+.stat-icon.active {
+  opacity: 1;
+  filter: grayscale(0);
+  transform: scale(1.1);
+}
+
+.stat-icon.speed.active {
+  text-shadow: 0 0 4px #ff6b00;
+}
+
+.stat-icon.stamina.active {
+  text-shadow: 0 0 4px #e91e63;
+}
+
+.stat-icon.errors.active {
+  text-shadow: 0 0 4px #f44336;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .player-stats {
+    gap: 8px;
+  }
+  
+  .stat-group {
+    padding: 2px 6px;
+  }
+  
+  .stat-label {
+    font-size: 0.9rem;
+  }
+  
+  .stat-icon {
+    font-size: 0.7rem;
+  }
+}

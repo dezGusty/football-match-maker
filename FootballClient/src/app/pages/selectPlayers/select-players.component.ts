@@ -8,6 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { TeamService } from '../../services/team.service';
 import { MatchService } from '../../services/match.service';
 import { PlayerMatchHistoryService } from '../../services/player-match-history.service';
+// Update the path below to the correct location of player-stats.component.ts
+import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
 
 interface PlayerCategory {
     high: Player[];
@@ -26,7 +28,7 @@ interface Team {
 @Component({
     selector: 'app-select-players',
     standalone: true,
-    imports: [Header, CommonModule, FormsModule],
+    imports: [Header, CommonModule, FormsModule, PlayerStatsComponent],
     templateUrl: './select-players.component.html',
     styleUrls: ['./select-players.component.css']
 })
@@ -426,83 +428,81 @@ export class SelectPlayersComponent implements OnInit {
         this.showTeamsModal = false;
     }
 
- // Adaugă această metodă în clasa SelectPlayersComponent
-private isCurrentDate(selectedDate: string): boolean {
-    const today = new Date();
-    const selected = new Date(selectedDate);
-    
-    // Resetăm timpul la 00:00:00 pentru comparația zilei
-    today.setHours(0, 0, 0, 0);
-    selected.setHours(0, 0, 0, 0);
-    
-    return today.getTime() === selected.getTime();
-}
+    // Adaugă această metodă în clasa SelectPlayersComponent
+    private isCurrentDate(selectedDate: string): boolean {
+        const today = new Date();
+        const selected = new Date(selectedDate);
 
-// Modifică metoda beginMatch existentă
-async beginMatch() {
-    try {
-        if (!this.areTeamNamesValid()) {
-            alert("Team names must be different and cannot be empty.");
-            return;
-        }
+        // Resetăm timpul la 00:00:00 pentru comparația zilei
+        today.setHours(0, 0, 0, 0);
+        selected.setHours(0, 0, 0, 0);
 
-        if (!this.selectedDate) {
-            alert("Please select a match date first.");
-            return;
-        }
-
-        // VALIDARE NOUĂ: Verifică dacă data selectată este data curentă
-        if (!this.isCurrentDate(this.selectedDate)) {
-            alert("Meciul poate fi început doar în data curentă! Pentru alte date, folosește opțiunea 'Schedule Match'.");
-            return;
-        }
-
-        const allSelectedPlayerIds = [...this.team1.players, ...this.team2.players].map(p => p.id!);
-        await this.playerService.setMultiplePlayersUnavailable(allSelectedPlayerIds);
-        const teamA = await this.teamService.createTeam(this.team1Name || 'Team A');
-        const teamB = await this.teamService.createTeam(this.team2Name || 'Team B');
-        const selectedDateObj = new Date(this.selectedDate);
-        const match = await this.matchService.createMatch(teamA.id, teamB.id, selectedDateObj);
-        const historyPromises: Promise<any>[] = [];
-
-        for (const player of this.team1.players) {
-            historyPromises.push(
-                this.playerMatchHistoryService.createPlayerMatchHistory(
-                    player.id!,
-                    teamA.id,
-                    match.id
-                )
-            );
-        }
-
-        for (const player of this.team2.players) {
-            historyPromises.push(
-                this.playerMatchHistoryService.createPlayerMatchHistory(
-                    player.id!,
-                    teamB.id,
-                    match.id
-                )
-            );
-        }
-
-        await Promise.all(historyPromises);
-        this.clearSelectedPlayers();
-        this.router.navigate(['/match-formation'], {
-            state: {
-                team1Players: this.team1.players,
-                team2Players: this.team2.players,
-                teamAId: teamA.id,
-                teamBId: teamB.id,
-                matchId: match.id
-            }
-        });
-    } catch (error) {
-        console.error('Failed to create teams, match, or player history:', error);
-        this.error = 'Failed to create teams, match, or player history. Please try again.';
+        return today.getTime() === selected.getTime();
     }
-}
 
+    // Modifică metoda beginMatch existentă
+    async beginMatch() {
+        try {
+            if (!this.areTeamNamesValid()) {
+                alert("Team names must be different and cannot be empty.");
+                return;
+            }
 
+            if (!this.selectedDate) {
+                alert("Please select a match date first.");
+                return;
+            }
+
+            // VALIDARE NOUĂ: Verifică dacă data selectată este data curentă
+            if (!this.isCurrentDate(this.selectedDate)) {
+                alert("Meciul poate fi început doar în data curentă! Pentru alte date, folosește opțiunea 'Schedule Match'.");
+                return;
+            }
+
+            const allSelectedPlayerIds = [...this.team1.players, ...this.team2.players].map(p => p.id!);
+            await this.playerService.setMultiplePlayersUnavailable(allSelectedPlayerIds);
+            const teamA = await this.teamService.createTeam(this.team1Name || 'Team A');
+            const teamB = await this.teamService.createTeam(this.team2Name || 'Team B');
+            const selectedDateObj = new Date(this.selectedDate);
+            const match = await this.matchService.createMatch(teamA.id, teamB.id, selectedDateObj);
+            const historyPromises: Promise<any>[] = [];
+
+            for (const player of this.team1.players) {
+                historyPromises.push(
+                    this.playerMatchHistoryService.createPlayerMatchHistory(
+                        player.id!,
+                        teamA.id,
+                        match.id
+                    )
+                );
+            }
+
+            for (const player of this.team2.players) {
+                historyPromises.push(
+                    this.playerMatchHistoryService.createPlayerMatchHistory(
+                        player.id!,
+                        teamB.id,
+                        match.id
+                    )
+                );
+            }
+
+            await Promise.all(historyPromises);
+            this.clearSelectedPlayers();
+            this.router.navigate(['/match-formation'], {
+                state: {
+                    team1Players: this.team1.players,
+                    team2Players: this.team2.players,
+                    teamAId: teamA.id,
+                    teamBId: teamB.id,
+                    matchId: match.id
+                }
+            });
+        } catch (error) {
+            console.error('Failed to create teams, match, or player history:', error);
+            this.error = 'Failed to create teams, match, or player history. Please try again.';
+        }
+    }
 
     async scheduleMatch() {
         try {

@@ -1,13 +1,8 @@
 <app-header></app-header>
 
 <div class="search-container">
-  <input 
-    type="text" 
-    [(ngModel)]="searchTerm" 
-    (ngModelChange)="onSearchChange()" 
-    placeholder="Search player..." 
-    class="search-input"
-  >
+  <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" placeholder="Search player..."
+    class="search-input">
 </div>
 
 <table class="players-table">
@@ -17,17 +12,47 @@
       <th>First name</th>
       <th>Last name</th>
       <th>Rating</th>
+      <th>Individual Stats</th>
       <th>Status</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let player of (searchTerm.trim() ? filteredPlayers : players); let i = index" [class.disabled-player]="!isPlayerEnabled(player)">
+    <tr *ngFor="let player of (searchTerm.trim() ? filteredPlayers : players); let i = index"
+      [class.disabled-player]="!isPlayerEnabled(player)">
       <td>{{ i+1 }}</td>
       <ng-container *ngIf="editIndex === i && isPlayerEnabled(player); else viewMode">
         <td><input type="text" [(ngModel)]="editedPlayer!.firstName" /></td>
         <td><input type="text" [(ngModel)]="editedPlayer!.lastName" /></td>
         <td><input type="number" [(ngModel)]="editedPlayer!.rating" min="0" max="10000" step="0.1" /></td>
+        <td>
+          <div class="edit-stats">
+            <div class="stat-edit-group">
+              <label>Speed:</label>
+              <select [(ngModel)]="editedPlayer!.speed">
+                <option value="1">Low</option>
+                <option value="2">Medium</option>
+                <option value="3">High</option>
+              </select>
+            </div>
+            <div class="stat-edit-group">
+              <label>Stamina:</label>
+              <select [(ngModel)]="editedPlayer!.stamina">
+                <option value="1">Low</option>
+                <option value="2">Medium</option>
+                <option value="3">High</option>
+              </select>
+            </div>
+            <div class="stat-edit-group">
+              <label>Errors:</label>
+              <select [(ngModel)]="editedPlayer!.errors">
+                <option value="1">Low</option>
+                <option value="2">Medium</option>
+                <option value="3">High</option>
+              </select>
+            </div>
+          </div>
+        </td>
         <td><span class="status-badge enabled">Active</span></td>
         <td>
           <button class="action-btn save-btn" title="Save" (click)="editPlayer()">Save</button>
@@ -38,6 +63,10 @@
         <td>{{ isPlayerEnabled(player) ? player.firstName : (player.firstName | slice:0:3) }}</td>
         <td>{{ isPlayerEnabled(player) ? player.lastName : (player.lastName | slice:0:3) }}</td>
         <td>{{ player.rating }}</td>
+        <td>
+          <app-player-stats [speed]="player.speed || 2" [stamina]="player.stamina || 2" [errors]="player.errors || 2">
+          </app-player-stats>
+        </td>
         <td>
           <span class="status-badge" [class.enabled]="isPlayerEnabled(player)">
             {{ isPlayerEnabled(player) ? 'Active' : 'Inactive' }}
@@ -55,7 +84,6 @@
       </ng-template>
     </tr>
   </tbody>
-
 </table>
 
 <button class="open-modal-btn" (click)="showAddModal = true">Add New Player</button>
@@ -68,6 +96,36 @@
     <input type="text" placeholder="First Name" [(ngModel)]="newPlayer.firstName" />
     <input type="text" placeholder="Last Name" [(ngModel)]="newPlayer.lastName" />
     <input type="number" placeholder="Rating" [(ngModel)]="newPlayer.rating" min="0" max="10000" step="0.1" />
+
+    <!-- Individual Stats Controls -->
+    <div class="stats-controls">
+      <h4>Individual Stats</h4>
+      <div class="stat-control-group">
+        <label>Speed:</label>
+        <select [(ngModel)]="newPlayer.speed">
+          <option value="1">Low ⚡</option>
+          <option value="2" selected>Medium ⚡⚡</option>
+          <option value="3">High ⚡⚡⚡</option>
+        </select>
+      </div>
+      <div class="stat-control-group">
+        <label>Stamina:</label>
+        <select [(ngModel)]="newPlayer.stamina">
+          <option value="1">Low 💪</option>
+          <option value="2" selected>Medium 💪💪</option>
+          <option value="3">High 💪💪💪</option>
+        </select>
+      </div>
+      <div class="stat-control-group">
+        <label>Error Rate:</label>
+        <select [(ngModel)]="newPlayer.errors">
+          <option value="1">Low ❌ (Few errors)</option>
+          <option value="2" selected>Medium ❌❌</option>
+          <option value="3">High ❌❌❌ (Many errors)</option>
+        </select>
+      </div>
+    </div>
+
     <div class="file-upload">
       <label for="imageUpload" class="file-upload-label">
         <span>Choose Image</span>
