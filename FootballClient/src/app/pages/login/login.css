@@ -100,44 +100,78 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6); /* ușor mai întunecat pentru contrast */
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 999; /* peste restul */
 }
 
 .modal-content {
-  background: white;
-  color: black;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 400px;
+  background: rgba(255, 255, 255, 0.1); /* transparent */
+  backdrop-filter: blur(14px); /* blur ca la login */
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #e0e0e0; /* text albicios */
+  font-family: 'Poppins', sans-serif;
   width: 90%;
+  max-width: 350px;
+  animation: fadeIn 0.3s ease;
 }
 
 .modal-content h3 {
   margin-top: 0;
+  text-align: center;
+  font-weight: 600;
+  font-size: 20px;
+  color: #f0f0f0;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.modal-content input {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.85);
+  color: #333;
+  font-size: 14px;
 }
 
 .modal-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 15px;
 }
 
 .modal-buttons button {
-  padding: 8px 12px;
+  padding: 10px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .modal-buttons button.cancel {
-  background: #ccc;
+  background: linear-gradient(to right, #777, #555);
+  color: white;
 }
 
 .modal-buttons button:not(.cancel) {
-  background: #1976d2;
+  background: linear-gradient(to right, #4b4b4b, #2c2c2c);
   color: white;
+}
+
+.modal-buttons button:hover {
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
