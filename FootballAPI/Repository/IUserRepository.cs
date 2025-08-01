@@ -1,4 +1,5 @@
 using FootballAPI.Models;
+using FootballAPI.DTOs;
 
 namespace FootballAPI.Repository
 {

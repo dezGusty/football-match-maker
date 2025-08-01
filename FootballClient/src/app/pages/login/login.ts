@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../components/auth/auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -41,4 +42,21 @@ export class Login {
   goToRegister() {
     this.router.navigate(['/register']);
   }
+
+forgotPassword() {
+  if (!this.email) {
+    this.errorMessage = 'Te rog introdu adresa de email.';
+    return;
+  }
+
+  this.authService.forgotPassword(this.email)
+    .subscribe({
+      next: () => alert('Email trimis cu succes! Verifică inbox-ul.'),
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = 'A apărut o eroare la trimiterea email-ului.';
+      }
+    });
+}
+
 }

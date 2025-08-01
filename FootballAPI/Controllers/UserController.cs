@@ -2,6 +2,7 @@ using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Service;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 
 namespace FootballAPI.Controllers
 {
@@ -353,6 +354,21 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
+
+        [HttpPost("update-forgot-password")]
+public async Task<IActionResult> UpdateForgotPassword([FromBody] ForgottenPasswordDto dto)
+{
+    if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
+    var success = await _userService.UpdateUserPasswordAsync(dto.Email);
+
+    if (!success)
+        return NotFound("User not found or email sending failed.");
+
+    return Ok(new { message = "Password updated and email sent successfully" });
+}
+
 
     }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LoginRequest } from './auth.interface';
 import { UserRole } from '../../models/user-role.enum';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +10,10 @@ export class AuthService {
   private readonly apiUrl = 'http://localhost:5145/api';
   private isAuthenticated = false;
   private userId: number | null = null;
+  errorMessage: string = '';
+  email: string = '';
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     const savedUserId = localStorage.getItem('userId');
     if (savedUserId) {
@@ -117,4 +120,12 @@ export class AuthService {
   getUserId(): number | null {
     return this.userId;
   }
+
+forgotPassword(email: string) {
+  if (!email) {
+    throw new Error('Te rog introdu adresa de email.');
+  }
+
+  return this.http.post(`${this.apiUrl}/user/update-forgot-password`, { email });
+}
 }
