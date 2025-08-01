@@ -58,4 +58,21 @@ export class UserService {
       throw new Error(result.message || 'Failed to update profile image');
     }
   }
+  
+
+async changeUsername(userId: number, newUsername: string, password: string): Promise<string> {
+  const response = await fetch(`${this.url}/${userId}/change-username`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      newUsername,
+      password
+    })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.message || 'Failed to change username');
+  }
+  return result.message || 'Username changed successfully';
+}
 }

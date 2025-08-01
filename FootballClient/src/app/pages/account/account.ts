@@ -1,3 +1,5 @@
+// Înlocuiește componentul account.ts cu această versiune actualizată:
+
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,11 +22,22 @@ import { UserRole } from '../../models/user-role.enum';
 })
 export class Account {
   user: User | null = null;
+
+  // Password change fields
   newPassword = '';
   confirmPassword = '';
   currentPassword = '';
+
+  // Username change fields
+  newUsername = '';
+  usernamePassword = '';
+
+  // Toggle states
+  showPasswordForm = false;
+  showUsernameForm = false;
+
   images: string[] = [];
-  selectedImage: string = '';
+  selectedImage: string = ''; // la început e gol
   showImageSelector = false;
   futureMatches: Match[] = [];
 
@@ -65,13 +78,8 @@ export class Account {
 
   async beginScheduledMatch(match: Match) {
     try {
-      // Obțin jucătorii pentru meciul programat
       const playerIds = await this.matchService.getPlayersForScheduledMatch(match.id!);
-
-      // Setez jucătorii ca disponibili
       await this.playerService.setMultiplePlayersAvailable(playerIds);
-
-      // Redirecționez la select-players
       this.router.navigate(['/select-players']);
     } catch (error) {
       console.error('Failed to begin scheduled match:', error);
@@ -83,10 +91,37 @@ export class Account {
     this.http.get<string[]>('http://localhost:5145/api/images').subscribe({
       next: (imgs) => {
         this.images = imgs;
-        console.log('Loaded images:', this.images); // vezi dacă e gol sau nu
+        console.log('Loaded images:', this.images);
       },
       error: () => this.images = []
     });
+  }
+
+  togglePasswordForm() {
+    this.showPasswordForm = !this.showPasswordForm;
+    if (this.showPasswordForm) {
+      this.showUsernameForm = false;
+    }
+    this.resetForms();
+  }
+
+  toggleUsernameForm() {
+    this.showUsernameForm = !this.showUsernameForm;
+    if (this.showUsernameForm) {
+      this.showPasswordForm = false;
+    }
+    this.resetForms();
+  }
+
+  resetForms() {
+    // Reset password form
+    this.currentPassword = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
+
+    // Reset username form
+    this.newUsername = '';
+    this.usernamePassword = '';
   }
 
   async changePassword() {
@@ -99,11 +134,28 @@ export class Account {
         this.confirmPassword
       );
       alert(message);
-      this.currentPassword = '';
-      this.newPassword = '';
-      this.confirmPassword = '';
+      this.resetForms();
+      this.showPasswordForm = false;
     } catch (error: any) {
       alert(error.message || 'Password change failed');
+    }
+  }
+
+  async changeUsername() {
+    if (!this.user) return;
+    try {
+      const message = await this.userService.changeUsername(
+        this.user.id,
+        this.newUsername,
+        this.usernamePassword
+      );
+      alert(message);
+      // Actualizează user-ul local
+      this.user.username = this.newUsername;
+      this.resetForms();
+      this.showUsernameForm = false;
+    } catch (error: any) {
+      alert(error.message || 'Username change failed');
     }
   }
 
@@ -127,5 +179,8 @@ export class Account {
   getRoleString(role: UserRole): string {
     return UserRole[role];
   }
+
   UserRole = UserRole;
+
 }
+

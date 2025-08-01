@@ -23,18 +23,12 @@ export class AuthService {
 
   async register(email: string, username: string, password: string, role: UserRole): Promise<void> {
     try {
-      const payload = {
-        email,
-        username,
-        password,
-        role
-      };
       const response = await fetch(`${this.apiUrl}/user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ email, username, password, role })
       });
 
       if (!response.ok) {
