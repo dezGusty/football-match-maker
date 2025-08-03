@@ -104,68 +104,58 @@ export class MatchFormationComponent implements OnInit {
     }
 
     async confirmFinalize() {
-        if (this.matchId) {
-            try {
-                // Apply rating changes to all players
-                const allPlayerUpdates = [];
+    if (this.matchId) {
+        try {
+            // 1. Update match score
+            await this.matchService.updateMatch(this.matchId, {
+                teamAGoals: this.scoreA,
+                teamBGoals: this.scoreB
+            });
 
-                // Update team1 players
-                for (const player of this.team1Players) {
-                    if (player.id) {
-                        const newRating = this.getFinalRating(player, true);
-                        // Send all required fields for UpdatePlayerDto
-                        const updateData = {
-                            firstName: player.firstName,
-                            lastName: player.lastName,
-                            rating: newRating,
-                            isAvailable: player.isAvailable ?? true,
-                            currentTeamId: player.currentTeamId,
-                            isEnabled: player.isEnabled ?? true,
-                            imageUrl: player.imageUrl
-                        };
-                        allPlayerUpdates.push(
-                            this.playerService.updatePlayer(player.id, updateData)
-                        );
+            // 2. Prepare rating updates for all players
+            const ratingUpdates: { playerId: number; ratingChange: number }[] = [];
+            
+            // Add team1 players
+            this.team1Players.forEach(player => {
+                if (player.id) {
+                    const totalRatingChange = this.getTotalRatingChange(player, true);
+                    if (totalRatingChange !== 0) {
+                        ratingUpdates.push({
+                            playerId: player.id,
+                            ratingChange: totalRatingChange
+                        });
                     }
                 }
+            });
 
-                // Update team2 players
-                for (const player of this.team2Players) {
-                    if (player.id) {
-                        const newRating = this.getFinalRating(player, false);
-                        // Send all required fields for UpdatePlayerDto
-                        const updateData = {
-                            firstName: player.firstName,
-                            lastName: player.lastName,
-                            rating: newRating,
-                            isAvailable: player.isAvailable ?? true,
-                            currentTeamId: player.currentTeamId,
-                            isEnabled: player.isEnabled ?? true,
-                            imageUrl: player.imageUrl
-                        };
-                        allPlayerUpdates.push(
-                            this.playerService.updatePlayer(player.id, updateData)
-                        );
+            // Add team2 players
+            this.team2Players.forEach(player => {
+                if (player.id) {
+                    const totalRatingChange = this.getTotalRatingChange(player, false);
+                    if (totalRatingChange !== 0) {
+                        ratingUpdates.push({
+                            playerId: player.id,
+                            ratingChange: totalRatingChange
+                        });
                     }
                 }
+            });
 
-                // Update match score and all player ratings
-                await Promise.all([
-                    this.matchService.updateMatch(this.matchId, {
-                        teamAGoals: this.scoreA,
-                        teamBGoals: this.scoreB
-                    }),
-                    ...allPlayerUpdates
-                ]);
-
-                this.showRatingModal = false;
-                this.router.navigate(['/matches-history']);
-            } catch (error) {
-                console.error('Error updating match and ratings:', error);
-                // You could add user feedback here
+            // 3. Update player ratings if there are changes
+            if (ratingUpdates.length > 0) {
+                const success = await this.playerService.updateMultiplePlayerRatings(ratingUpdates);
+                if (!success) {
+                    console.error('Failed to update player ratings');
+                }
             }
+
+            this.showRatingModal = false;
+            this.router.navigate(['/matches-history']);
+        } catch (error) {
+            console.error('Error finalizing match:', error);
         }
     }
+}
 
     closeModal() {
         this.showRatingModal = false;

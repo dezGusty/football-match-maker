@@ -265,6 +265,51 @@ namespace FootballAPI.Service
                 ImageUrl = player.ImageUrl
             };
         }
+        // Adaugă aceste metode în PlayerService.cs
+
+        public async Task<bool> UpdatePlayerRatingAsync(int playerId, float ratingChange)
+        {
+            try
+            {
+                var player = await _playerRepository.GetByIdAsync(playerId);
+                if (player == null || !player.IsEnabled)
+                    return false;
+
+                // Calculate new rating and ensure it stays within bounds
+                var newRating = Math.Max(0.0f, Math.Min(10000.0f, player.Rating + ratingChange));
+                player.Rating = newRating;
+
+                await _playerRepository.UpdateAsync(player);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates)
+        {
+            try
+            {
+                foreach (var update in playerRatingUpdates)
+                {
+                    var player = await _playerRepository.GetByIdAsync(update.PlayerId);
+                    if (player != null && player.IsEnabled)
+                    {
+                        // Calculate new rating and ensure it stays within bounds
+                        var newRating = Math.Max(0.0f, Math.Min(10000.0f, player.Rating + update.RatingChange));
+                        player.Rating = newRating;
+                        await _playerRepository.UpdateAsync(player);
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 
 }
