@@ -155,6 +155,17 @@ namespace FootballAPI.Service
                 }
             }
 
+            foreach (var history in playerMatchHistories)
+            {
+                var player = await _playerRepository.GetByIdAsync(history.PlayerId);
+                if (player != null)
+                {
+                    // Setează jucătorul ca indisponibil după meci
+                    player.IsAvailable = false;
+                    await _playerRepository.UpdateAsync(player);
+                }
+            }
+
             existingMatch.MatchDate = updateMatchDto.MatchDate;
             existingMatch.TeamAId = updateMatchDto.TeamAId;
             existingMatch.TeamBId = updateMatchDto.TeamBId;

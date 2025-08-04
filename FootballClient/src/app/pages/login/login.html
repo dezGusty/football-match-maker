@@ -38,13 +38,13 @@
 
 <div class="modal-backdrop" *ngIf="showForgotPasswordModal">
   <div class="modal-content">
-    <h3>Resetare parolă</h3>
-    <p>Introdu adresa de email pentru a primi o nouă parolă:</p>
+    <h3>Reset password</h3>
+    <p>Introduce your email address:</p>
     <input type="email" [(ngModel)]="forgotEmail" placeholder="Email" />
 
     <div class="modal-buttons">
       <button (click)="forgotPassword()">OK</button>
-      <button class="cancel" (click)="closeForgotPasswordModal()">Anulează</button>
+      <button class="cancel" (click)="closeForgotPasswordModal()">Cancel</button>
     </div>
   </div>
 </div>

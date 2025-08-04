@@ -87,4 +87,19 @@ namespace FootballAPI.DTOs
         [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
         public int Errors { get; set; }
     }
+    public class UpdatePlayerRatingDto
+    {
+        public float RatingChange { get; set; }
+    }
+
+    public class PlayerRatingUpdateDto
+    {
+        public int PlayerId { get; set; }
+        public float RatingChange { get; set; }
+    }
+
+    public class UpdateMultipleRatingsDto
+    {
+        public List<PlayerRatingUpdateDto> PlayerRatingUpdates { get; set; } = new List<PlayerRatingUpdateDto>();
+    }
 }

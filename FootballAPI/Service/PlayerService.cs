@@ -233,6 +233,9 @@ private static PlayerDto MapToDto(Player player)
             Stamina = 1,
             Errors = 1
         };
+
+        
+
     }
     return new PlayerDto
     {
@@ -249,40 +252,85 @@ private static PlayerDto MapToDto(Player player)
     };
 }
 
-private static PlayerWithImageDto MapToPlayerWithImageDto(Player player)
-{
-    if (!player.IsEnabled)
-    {
-        return new PlayerWithImageDto
+        private static PlayerWithImageDto MapToPlayerWithImageDto(Player player)
         {
-            Id = player.Id,
-            FirstName = $"Player{player.Id}",
-            LastName = "",
-            Rating = 0.0f,
-            IsAvailable = false,
-            CurrentTeamId = null,
-            IsEnabled = false,
-            ImageUrl = null,
-            Speed = 1,
-            Stamina = 1,
-            Errors = 1
-        };
-    }
-    return new PlayerWithImageDto
-    {
-        Id = player.Id,
-        FirstName = player.FirstName,
-        LastName = player.LastName,
-        Rating = player.Rating,
-        IsAvailable = player.IsAvailable,
-        CurrentTeamId = player.CurrentTeamId,
-        IsEnabled = true,
-        ImageUrl = player.ImageUrl,
-        Speed = player.Speed,
-        Stamina = player.Stamina,
-        Errors = player.Errors
-    };
-}
+            if (!player.IsEnabled)
+            {
+                return new PlayerWithImageDto
+                {
+                    Id = player.Id,
+                    FirstName = $"Player{player.Id}",
+                    LastName = "",
+                    Rating = 0.0f,
+                    IsAvailable = false,
+                    CurrentTeamId = null,
+                    IsEnabled = false,
+                    ImageUrl = null,
+                    Speed = 1,
+                    Stamina = 1,
+                    Errors = 1
+                };
+            }
+            return new PlayerWithImageDto
+            {
+                Id = player.Id,
+                FirstName = player.FirstName,
+                LastName = player.LastName,
+                Rating = player.Rating,
+                IsAvailable = player.IsAvailable,
+                CurrentTeamId = player.CurrentTeamId,
+                IsEnabled = true,
+                ImageUrl = player.ImageUrl,
+                Speed = player.Speed,
+                Stamina = player.Stamina,
+                Errors = player.Errors
+            };
+        }
+       // Adaugă aceste metode în PlayerService.cs
+
+        public async Task<bool> UpdatePlayerRatingAsync(int playerId, float ratingChange)
+        {
+            try
+            {
+                var player = await _playerRepository.GetByIdAsync(playerId);
+                if (player == null || !player.IsEnabled)
+                    return false;
+
+                // Calculate new rating and ensure it stays within bounds
+                var newRating = Math.Max(0.0f, Math.Min(10000.0f, player.Rating + ratingChange));
+                player.Rating = newRating;
+
+                await _playerRepository.UpdateAsync(player);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates)
+        {
+            try
+            {
+                foreach (var update in playerRatingUpdates)
+                {
+                    var player = await _playerRepository.GetByIdAsync(update.PlayerId);
+                    if (player != null && player.IsEnabled)
+                    {
+                        // Calculate new rating and ensure it stays within bounds
+                        var newRating = Math.Max(0.0f, Math.Min(10000.0f, player.Rating + update.RatingChange));
+                        player.Rating = newRating;
+                        await _playerRepository.UpdateAsync(player);
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 }
 
 }
