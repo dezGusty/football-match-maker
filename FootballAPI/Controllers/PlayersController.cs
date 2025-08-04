@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using FootballAPI.DTOs;
 using FootballAPI.Service;
 using FootballAPI.Repository;
+
 namespace FootballAPI.Controllers
 {
     [ApiController]
@@ -23,9 +24,9 @@ namespace FootballAPI.Controllers
         }
 
         [HttpGet("with-images")]
-        public async Task<ActionResult<IEnumerable<PlayerWithImageDto>>> GetAllPlayersWithImages()
+        public async Task<ActionResult<IEnumerable<PlayerDto>>> GetAllPlayersWithImages()
         {
-            var players = await _playerService.GetAllPlayersWithImagesAsync();
+            var players = await _playerService.GetAllPlayersAsync();
             return Ok(players);
         }
 
@@ -38,10 +39,11 @@ namespace FootballAPI.Controllers
 
             return Ok(player);
         }
+
         [HttpGet("{id}/with-image")]
-        public async Task<ActionResult<PlayerWithImageDto>> GetPlayerWithImage(int id)
+        public async Task<ActionResult<PlayerDto>> GetPlayerWithImage(int id)
         {
-            var player = await _playerService.GetPlayerWithImageByIdAsync(id);
+            var player = await _playerService.GetPlayerByIdAsync(id);
             if (player == null)
                 return NotFound($"Player with ID {id} not found.");
 
@@ -82,7 +84,8 @@ namespace FootballAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Error creating player: {ex.Message}");
+                var msg = ex.InnerException?.Message ?? ex.Message;
+                return BadRequest($"Error creating player: {msg}");
             }
         }
 
@@ -112,6 +115,7 @@ namespace FootballAPI.Controllers
 
             return NoContent();
         }
+
         [HttpPatch("{id}/enable")]
         public async Task<ActionResult> EnablePlayer(int id)
         {
@@ -121,6 +125,7 @@ namespace FootballAPI.Controllers
 
             return NoContent();
         }
+
         [HttpPatch("{id}/set-available")]
         public async Task<ActionResult> SetPlayerAvailable(int id)
         {

@@ -99,6 +99,13 @@ namespace FootballAPI.Data
                 .HasConversion<int>()
                 .IsRequired();
 
+            modelBuilder.Entity<Player>()
+                .HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.Email)
+                .HasPrincipalKey(u => u.Email)
+                .OnDelete(DeleteBehavior.Restrict);
+
             SeedData(modelBuilder);
         }
 
@@ -116,6 +123,7 @@ namespace FootballAPI.Data
                     FirstName = "Ion",
                     LastName = "Popescu",
                     Rating = 8.5f,
+                    Email = "ion.popescu@gmail.com",
                     IsAvailable = true,
                     CurrentTeamId = 1
                 },
@@ -125,12 +133,30 @@ namespace FootballAPI.Data
                     FirstName = "Marius",
                     LastName = "Ionescu",
                     Rating = 7.8f,
+                    Email = "marius.ionescu@gmail.com",
                     IsAvailable = true,
                     CurrentTeamId = 1
                 }
             );
 
-
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Email = "ion.popescu@gmail.com",
+                    Username = "IonPopescu",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
+                },
+                new User
+                {
+                    Id = 2,
+                    Email = "marius.ionescu@gmail.com",
+                    Username = "MariusIonescu",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
+                }
+            );
         }
     }
 }

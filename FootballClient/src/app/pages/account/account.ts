@@ -182,5 +182,11 @@ export class Account {
 
   UserRole = UserRole;
 
+
+  selectImage(img: string) {
+    this.selectedImage = img;
+  }
+
+
 }
 

@@ -4,6 +4,7 @@ using FootballAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250731104106_AddUsersForExistingPlayers")]
+    partial class AddUsersForExistingPlayers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,9 +74,6 @@ namespace FootballAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-                        
-                    b.Property<int>("Errors")
-                        .HasColumnType("int");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -98,12 +98,6 @@ namespace FootballAPI.Migrations
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
-                    b.Property<int>("Speed")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Stamina")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CurrentTeamId");
@@ -120,28 +114,22 @@ namespace FootballAPI.Migrations
                             Id = 1,
                             CurrentTeamId = 1,
                             Email = "ion.popescu@gmail.com",
-                            Errors = 2,
                             FirstName = "Ion",
                             IsAvailable = true,
                             IsEnabled = true,
                             LastName = "Popescu",
-                            Rating = 8.5,
-                            Speed = 2,
-                            Stamina = 2
+                            Rating = 8.5
                         },
                         new
                         {
                             Id = 2,
                             CurrentTeamId = 1,
                             Email = "marius.ionescu@gmail.com",
-                            Errors = 2,
                             FirstName = "Marius",
                             IsAvailable = true,
                             IsEnabled = true,
                             LastName = "Ionescu",
-                            Rating = 7.8000001907348633,
-                            Speed = 2,
-                            Stamina = 2
+                            Rating = 7.8000001907348633
                         });
                 });
 

@@ -9,28 +9,9 @@ namespace FootballAPI.DTOs
         public string LastName { get; set; }
         [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
         public float Rating { get; set; }
-        public bool IsAvailable { get; set; }
-        public int? CurrentTeamId { get; set; }
-        public bool IsEnabled { get; set; }
 
-        // Noile proprietăți
-        [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
-        public int Speed { get; set; }
+        public string Email { get; set; }
 
-        [Range(1, 3, ErrorMessage = "Stamina must be between 1 (Low) and 3 (High)")]
-        public int Stamina { get; set; }
-
-        [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
-        public int Errors { get; set; }
-    }
-
-    public class PlayerWithImageDto
-    {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
-        public float Rating { get; set; }
         public bool IsAvailable { get; set; }
         public int? CurrentTeamId { get; set; }
         public bool IsEnabled { get; set; }
@@ -46,15 +27,18 @@ namespace FootballAPI.DTOs
         [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
         public int Errors { get; set; }
     }
+
+  
 
     public class CreatePlayerDto
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
         public float Rating { get; set; }
+        public string Email { get; set; }
         public string? ImageUrl { get; set; }
 
+        //public int? CurrentTeamId { get; set; }
         // Noile proprietăți cu valori default
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
         public int Speed { get; set; } = 2;
@@ -64,13 +48,13 @@ namespace FootballAPI.DTOs
 
         [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
         public int Errors { get; set; } = 2;
+
     }
 
     public class UpdatePlayerDto
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
         public float Rating { get; set; }
         public bool IsAvailable { get; set; }
         public int? CurrentTeamId { get; set; }

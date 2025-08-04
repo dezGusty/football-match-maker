@@ -24,7 +24,7 @@
               <button
                 class="image-option"
                 [class.selected]="selectedImage === img"
-                (click)="selectedImage = img"
+                (click)="selectImage(img)"
                 type="button"
               >
                 <img [src]="img" alt="profile option" />

@@ -34,8 +34,7 @@ namespace FootballAPI.Repository
 
         public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _context.Set<User>()
-                .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<IEnumerable<User>> GetUsersByRoleAsync(UserRole role)
