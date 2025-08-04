@@ -14,6 +14,9 @@ import { UserRole } from '../../models/user-role.enum';
 })
 export class Register {
   username: string = '';
+  firstName: string = '';
+  lastName: string = '';
+  rating: number | null = null;
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
