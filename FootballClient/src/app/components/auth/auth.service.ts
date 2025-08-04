@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { LoginRequest } from './auth.interface';
 import { UserRole } from '../../models/user-role.enum';
 import { HttpClient } from '@angular/common/http';
+import { PlayerUser } from '../../models/player-user.interface'; // importă interfața
 
 @Injectable({
   providedIn: 'root'
@@ -21,15 +22,35 @@ export class AuthService {
     }
   }
 
-  async register(email: string, username: string, password: string, role: UserRole): Promise<void> {
+  async register(email: string, username: string, password: string, role: UserRole, firstName?: string, lastName?: string, rating?: number, imageUrl?: string): Promise<void> {
     try {
-      const response = await fetch(`${this.apiUrl}/user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, username, password, role })
-      });
+      let response: Response;
+      if (role === UserRole.PLAYER) {
+        const playerUser: PlayerUser = {
+          email,
+          username,
+          password,
+          firstName: firstName || '',
+          lastName: lastName || '',
+          rating: rating ?? 0,
+          imageUrl
+        };
+        response = await fetch(`${this.apiUrl}/user/create-player-user`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(playerUser)
+        });
+      } else {
+        response = await fetch(`${this.apiUrl}/user`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, username, password, role, imageUrl })
+        });
+      }
 
       if (!response.ok) {
         const text = await response.text();

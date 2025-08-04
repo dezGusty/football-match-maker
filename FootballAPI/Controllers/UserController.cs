@@ -185,17 +185,17 @@ namespace FootballAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto createUserDto)
+        public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto dto)
         {
-            try
-            {
-                var user = await _userService.CreateUserAsync(createUserDto);
-                return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error registering user: {ex.Message}");
-            }
+            var user = await _userService.CreateUserAsync(dto);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+        }
+
+        [HttpPost("create-player-user")]
+        public async Task<ActionResult<UserDto>> CreatePlayerUser([FromBody] CreatePlayerUserDto dto)
+        {
+            var user = await _userService.CreatePlayerUserAsync(dto);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
         }
 
         [HttpPut("{id}")]
@@ -344,50 +344,50 @@ namespace FootballAPI.Controllers
         }
         // Adaugă acest endpoint în UserController.cs
 
-[HttpPost("{id}/change-username")]
-public async Task<ActionResult> ChangeUsername(int id, [FromBody] ChangeUsernameDto changeUsernameDto)
-{
-    try
-    {
-        if (!ModelState.IsValid)
+        [HttpPost("{id}/change-username")]
+        public async Task<ActionResult> ChangeUsername(int id, [FromBody] ChangeUsernameDto changeUsernameDto)
         {
-            return BadRequest(ModelState);
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var success = await _userService.ChangeUsernameAsync(id, changeUsernameDto);
+
+                if (!success)
+                {
+                    return NotFound($"User with ID {id} was not found.");
+                }
+
+                return Ok(new { message = "Username changed successfully" });
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation error changing username");
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing username");
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
         }
-
-        var success = await _userService.ChangeUsernameAsync(id, changeUsernameDto);
-
-        if (!success)
-        {
-            return NotFound($"User with ID {id} was not found.");
-        }
-
-        return Ok(new { message = "Username changed successfully" });
-    }
-    catch (ArgumentException ex)
-    {
-        _logger.LogWarning(ex, "Validation error changing username");
-        return BadRequest(new { message = ex.Message });
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error changing username");
-        return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
-    }
-}
 
         [HttpPost("update-forgot-password")]
-public async Task<IActionResult> UpdateForgotPassword([FromBody] ForgottenPasswordDto dto)
-{
-    if (!ModelState.IsValid)
-        return BadRequest(ModelState);
+        public async Task<IActionResult> UpdateForgotPassword([FromBody] ForgottenPasswordDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-    var success = await _userService.UpdateUserPasswordAsync(dto.Email);
+            var success = await _userService.UpdateUserPasswordAsync(dto.Email);
 
-    if (!success)
-        return NotFound("User not found or email sending failed.");
+            if (!success)
+                return NotFound("User not found or email sending failed.");
 
-    return Ok(new { message = "Password updated and email sent successfully" });
-}
+            return Ok(new { message = "Password updated and email sent successfully" });
+        }
 
 
     }
