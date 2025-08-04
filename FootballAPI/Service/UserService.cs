@@ -131,7 +131,6 @@ namespace FootballAPI.Service
             }
 
             existingUser.Username = updateUserDto.Username;
-            // Fix: updateUserDto.Role nu poate fi null, e enum, deci folosește direct valoarea
             existingUser.Role = updateUserDto.Role;
             existingUser.Email = updateUserDto.Email;
 

@@ -160,7 +160,7 @@ namespace FootballAPI.Service
                 var player = await _playerRepository.GetByIdAsync(history.PlayerId);
                 if (player != null)
                 {
-                    // Setează jucătorul ca indisponibil după meci
+
                     player.IsAvailable = false;
                     await _playerRepository.UpdateAsync(player);
                 }
@@ -186,7 +186,6 @@ namespace FootballAPI.Service
             var matches = await _matchRepository.GetAllAsync();
             var futureMatches = matches.Where(m => m.MatchDate.Date > currentDate);
             return futureMatches.Select(MapToDto);
-            /// linie de test
         }
     }
 }
