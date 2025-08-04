@@ -20,5 +20,7 @@ namespace FootballAPI.Service
         Task<bool> SetMultiplePlayersAvailableAsync(int[] playerIds);
         Task<bool> SetMultiplePlayersUnavailableAsync(int[] playerIds);
         Task<bool> ClearAllAvailablePlayersAsync();
+        Task<bool> UpdatePlayerRatingAsync(int playerId, float ratingChange);
+        Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates);
     }
 }

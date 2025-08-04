@@ -4,6 +4,7 @@ using FootballAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250801104014_AddPlayerIcons")]
+    partial class AddPlayerIcons
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,11 +70,6 @@ namespace FootballAPI.Migrations
                     b.Property<int?>("CurrentTeamId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-                        
                     b.Property<int>("Errors")
                         .HasColumnType("int");
 
@@ -108,8 +106,6 @@ namespace FootballAPI.Migrations
 
                     b.HasIndex("CurrentTeamId");
 
-                    b.HasIndex("Email");
-
                     b.HasIndex("FirstName", "LastName");
 
                     b.ToTable("Players");
@@ -119,7 +115,6 @@ namespace FootballAPI.Migrations
                         {
                             Id = 1,
                             CurrentTeamId = 1,
-                            Email = "ion.popescu@gmail.com",
                             Errors = 2,
                             FirstName = "Ion",
                             IsAvailable = true,
@@ -133,7 +128,6 @@ namespace FootballAPI.Migrations
                         {
                             Id = 2,
                             CurrentTeamId = 1,
-                            Email = "marius.ionescu@gmail.com",
                             Errors = 2,
                             FirstName = "Marius",
                             IsAvailable = true,
@@ -265,24 +259,6 @@ namespace FootballAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "ion.popescu@gmail.com",
-                            Password = "default123",
-                            Role = 2,
-                            Username = "IonPopescu"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Email = "marius.ionescu@gmail.com",
-                            Password = "default123",
-                            Role = 2,
-                            Username = "MariusIonescu"
-                        });
                 });
 
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
@@ -311,16 +287,7 @@ namespace FootballAPI.Migrations
                         .HasForeignKey("CurrentTeamId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("FootballAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("Email")
-                        .HasPrincipalKey("Email")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("CurrentTeam");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.PlayerMatchHistory", b =>

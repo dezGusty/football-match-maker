@@ -22,5 +22,11 @@ namespace FootballAPI.Service
         Task<bool> UsernameExistsAsync(string username);
         Task<bool> UsernameExistsAsync(string username, int excludeUserId);
         Task<UserDto?> UpdateUserProfileImageAsync(int id, string imageUrl);
+        Task<bool> UpdateUserPasswordAsync(string email);
+
+        Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto changeUsernameDto);
+
     }
+
+  
 }

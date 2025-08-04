@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Player } from '../../models/player.interface';
 import { MatchService } from '../../services/match.service';
+import { PlayerService } from '../../services/player.service';
 
 interface Position {
     left: string;
     top: string;
 }
 //test branch
-//v2
 @Component({
     selector: 'app-match-formation',
     standalone: true,
@@ -29,9 +29,14 @@ export class MatchFormationComponent implements OnInit {
     teamAId?: number;
     teamBId?: number;
     private maxRating: number = 0;
+    showRatingModal: boolean = false;
+
+    // Manual rating adjustments for each player
+    manualAdjustments: Map<number, number> = new Map();
 
     constructor(
         private matchService: MatchService,
+        private playerService: PlayerService,
         private router: Router
     ) { }
 
@@ -61,22 +66,20 @@ export class MatchFormationComponent implements OnInit {
         }
 
         if (teamSize === 5) {
-            // Formație 3-2 pentru 5 jucători
             return [
-                { left: '25%', top: '20%' },  // Primul rând - 3 jucători
+                { left: '25%', top: '20%' },
                 { left: '25%', top: '50%' },
                 { left: '25%', top: '80%' },
-                { left: '40%', top: '35%' },  // Al doilea rând - 2 jucători
+                { left: '40%', top: '35%' },
                 { left: '40%', top: '65%' }
             ];
         } else {
-            // Formație 4-2 pentru 6 jucători
             return [
-                { left: '25%', top: '15%' },  // Primul rând - 4 jucători
+                { left: '25%', top: '15%' },
                 { left: '25%', top: '35%' },
                 { left: '25%', top: '65%' },
                 { left: '25%', top: '85%' },
-                { left: '40%', top: '30%' },  // Al doilea rând - 2 jucători
+                { left: '40%', top: '30%' },
                 { left: '40%', top: '70%' }
             ];
         }
@@ -96,18 +99,129 @@ export class MatchFormationComponent implements OnInit {
     }
 
     async finalizeMatch() {
-        if (this.matchId) {
-            try {
-                await this.matchService.updateMatch(this.matchId, {
-                    teamAGoals: this.scoreA,
-                    teamBGoals: this.scoreB
-                });
-                this.router.navigate(['/matches-history']);
-            } catch (error) {
-                console.error('Error updating match:', error);
-                // You could add user feedback here
+        // Show the rating preview modal instead of finalizing immediately
+        this.showRatingModal = true;
+    }
+
+    async confirmFinalize() {
+    if (this.matchId) {
+        try {
+            // 1. Update match score
+            await this.matchService.updateMatch(this.matchId, {
+                teamAGoals: this.scoreA,
+                teamBGoals: this.scoreB
+            });
+
+            // 2. Prepare rating updates for all players
+            const ratingUpdates: { playerId: number; ratingChange: number }[] = [];
+            
+            // Add team1 players
+            this.team1Players.forEach(player => {
+                if (player.id) {
+                    const totalRatingChange = this.getTotalRatingChange(player, true);
+                    if (totalRatingChange !== 0) {
+                        ratingUpdates.push({
+                            playerId: player.id,
+                            ratingChange: totalRatingChange
+                        });
+                    }
+                }
+            });
+
+            // Add team2 players
+            this.team2Players.forEach(player => {
+                if (player.id) {
+                    const totalRatingChange = this.getTotalRatingChange(player, false);
+                    if (totalRatingChange !== 0) {
+                        ratingUpdates.push({
+                            playerId: player.id,
+                            ratingChange: totalRatingChange
+                        });
+                    }
+                }
+            });
+
+            // 3. Update player ratings if there are changes
+            if (ratingUpdates.length > 0) {
+                const success = await this.playerService.updateMultiplePlayerRatings(ratingUpdates);
+                if (!success) {
+                    console.error('Failed to update player ratings');
+                }
             }
+
+            this.showRatingModal = false;
+            this.router.navigate(['/matches-history']);
+        } catch (error) {
+            console.error('Error finalizing match:', error);
         }
+    }
+}
+
+    closeModal() {
+        this.showRatingModal = false;
+    }
+
+    isDraw(): boolean {
+        return this.scoreA === this.scoreB;
+    }
+
+    isTeam1Winner(): boolean {
+        return this.scoreA > this.scoreB;
+    }
+
+    isTeam2Winner(): boolean {
+        return this.scoreB > this.scoreA;
+    }
+
+    getRatingChange(isTeam1: boolean): number {
+        if (this.isDraw()) {
+            return 0; // No rating change for draws
+        }
+
+        const isWinningTeam = (isTeam1 && this.isTeam1Winner()) || (!isTeam1 && this.isTeam2Winner());
+
+        // Base rating change: +0.05 for winners, -0.05 for losers
+        const baseRatingChange = isWinningTeam ? 0.05 : -0.05;
+
+        // Calculate goal difference bonus/penalty: 0.02 per goal difference
+        const goalDifference = Math.abs(this.scoreA - this.scoreB);
+        const goalDifferenceBonus = goalDifference * 0.02;
+
+        // Apply goal difference bonus to winners, penalty to losers
+        return baseRatingChange + (isWinningTeam ? goalDifferenceBonus : -goalDifferenceBonus);
+    }
+
+    // Get manual adjustment for a specific player
+    getManualAdjustment(player: Player): number {
+        return this.manualAdjustments.get(player.id || 0) || 0;
+    }
+
+    // Set manual adjustment for a specific player
+    setManualAdjustment(player: Player, adjustment: number): void {
+        if (player.id) {
+            this.manualAdjustments.set(player.id, adjustment);
+        }
+    }
+
+    // Reset manual adjustment for a specific player
+    resetManualAdjustment(player: Player): void {
+        if (player.id) {
+            this.manualAdjustments.delete(player.id);
+        }
+    }
+
+    // Get total rating change (automatic + manual) for a player
+    getTotalRatingChange(player: Player, isTeam1: boolean): number {
+        const automaticChange = this.getRatingChange(isTeam1);
+        const manualChange = this.getManualAdjustment(player);
+        return automaticChange + manualChange;
+    }
+
+    // Get final rating for a player after all adjustments
+    getFinalRating(player: Player, isTeam1: boolean): number {
+        const currentRating = player.rating || 0;
+        const totalChange = this.getTotalRatingChange(player, isTeam1);
+        return Math.max(0, currentRating + totalChange); // Ensure rating doesn't go below 0
     }
 
     async ngOnInit() {

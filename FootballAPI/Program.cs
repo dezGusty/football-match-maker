@@ -32,6 +32,9 @@ builder.Services.AddScoped<IPlayerMatchHistoryService, PlayerMatchHistoryService
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
 
+// Email Service Registration
+builder.Services.AddScoped<EmailService>();
+
 // CORS Configuration - UPDATED FOR SWAGGER
 builder.Services.AddCors(options =>
 {

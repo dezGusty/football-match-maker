@@ -1,4 +1,5 @@
 using FootballAPI.Models;
+using FootballAPI.DTOs;
 
 namespace FootballAPI.Repository
 {
@@ -16,6 +17,7 @@ namespace FootballAPI.Repository
         Task<bool> UsernameExistsAsync(string username, int excludeUserId);
         Task<User> AuthenticateAsync(string email, string password);
         Task<bool> ChangePasswordAsync(int userId, string newPassword);
-        Task<IEnumerable<User>> GetUsersByRoleAsync(UserRole role); // MODIFICAT
+        Task<IEnumerable<User>> GetUsersByRoleAsync(UserRole role);
+        Task<bool> ChangeUsernameAsync(int userId, string newUsername);
     }
 }

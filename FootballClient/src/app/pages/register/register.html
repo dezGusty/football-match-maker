@@ -21,6 +21,18 @@
     <label>Confirm Password:</label>
     <input type="password" [(ngModel)]="confirmPassword" placeholder="Confirm password" />
 
+    <label>Account type:</label>
+<div class="radio-group">
+  <label style="color:#222">
+    <input type="radio" name="role" checked>
+    Organiser
+  </label>
+  <label style="color: #222">
+    <input type="radio" name="role">
+    Player
+  </label>
+</div>
+
     <button (click)="onRegister()">Register</button>
 
     <h6 class="login-prompt" style="margin-top: 10px; text-align: center; color: #222;">

@@ -138,14 +138,31 @@ namespace FootballAPI.Service
                         bool isPlayerInTeamA = history.TeamId == updateMatchDto.TeamAId;
                         bool isPlayerInWinningTeam = (isTeamAWinner && isPlayerInTeamA) || (!isTeamAWinner && !isPlayerInTeamA);
 
-                        player.Rating += isPlayerInWinningTeam ? 0.5f : -0.5f;
+                        float baseRatingChange = isPlayerInWinningTeam ? 0.05f : -0.05f;
 
-                        player.Rating = Math.Max(0, Math.Min(10, player.Rating));
+                        int goalDifference = Math.Abs(updateMatchDto.TeamAGoals - updateMatchDto.TeamBGoals);
+                        float goalDifferenceBonus = goalDifference * 0.02f;
+
+                        float totalRatingChange = baseRatingChange + (isPlayerInWinningTeam ? goalDifferenceBonus : -goalDifferenceBonus);
+
+                        player.Rating += totalRatingChange;
+
                         await _playerRepository.UpdateAsync(player);
 
                         history.PerformanceRating = player.Rating;
                         await _playerMatchHistoryRepository.UpdateAsync(history);
                     }
+                }
+            }
+
+            foreach (var history in playerMatchHistories)
+            {
+                var player = await _playerRepository.GetByIdAsync(history.PlayerId);
+                if (player != null)
+                {
+                    // Setează jucătorul ca indisponibil după meci
+                    player.IsAvailable = false;
+                    await _playerRepository.UpdateAsync(player);
                 }
             }
 
@@ -169,6 +186,7 @@ namespace FootballAPI.Service
             var matches = await _matchRepository.GetAllAsync();
             var futureMatches = matches.Where(m => m.MatchDate.Date > currentDate);
             return futureMatches.Select(MapToDto);
+            /// linie de test
         }
     }
 }

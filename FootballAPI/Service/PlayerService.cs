@@ -43,6 +43,7 @@ namespace FootballAPI.Service
             return players.Select(MapToDto);
         }
 
+
         public async Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto dto)
         {
             var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
@@ -73,12 +74,16 @@ namespace FootballAPI.Service
                 Email = dto.Email,
                 IsAvailable = false,
                 IsEnabled = true,
-                ImageUrl = dto.ImageUrl
+                ImageUrl = dto.ImageUrl,
+                Speed = dto.Speed,
+                Stamina = dto.Stamina,
+                Errors = dto.Errors
             };
             var createdPlayer = await _playerRepository.CreateAsync(player);
 
             return MapToDto(createdPlayer);
         }
+
 
         public async Task<PlayerDto?> UpdatePlayerAsync(int id, UpdatePlayerDto updatePlayerDto)
         {
@@ -93,10 +98,13 @@ namespace FootballAPI.Service
             existingPlayer.CurrentTeamId = updatePlayerDto.CurrentTeamId;
             existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
             existingPlayer.ImageUrl = updatePlayerDto.ImageUrl;
+            existingPlayer.Speed = updatePlayerDto.Speed;
+            existingPlayer.Stamina = updatePlayerDto.Stamina;
+            existingPlayer.Errors = updatePlayerDto.Errors;
+
             var updatedPlayer = await _playerRepository.UpdateAsync(existingPlayer);
             return MapToDto(updatedPlayer);
         }
-
         public async Task<bool> DeletePlayerAsync(int id)
         {
             var existingPlayer = await _playerRepository.GetByIdAsync(id);
@@ -218,21 +226,89 @@ namespace FootballAPI.Service
             }
         }
 
-        // Mapping unic pentru PlayerDto (include ImageUrl)
+
         private static PlayerDto MapToDto(Player player)
         {
+            if (!player.IsEnabled)
+            {
+                return new PlayerDto
+                {
+                    Id = player.Id,
+                    FirstName = $"Player{player.Id}",
+                    LastName = "",
+                    Rating = 0.0f,
+                    Email = "",
+                    IsAvailable = false,
+                    CurrentTeamId = null,
+                    IsEnabled = false,
+                    ImageUrl = null,
+                    Speed = 1,
+                    Stamina = 1,
+                    Errors = 1
+                };
+
+
+
+            }
             return new PlayerDto
             {
                 Id = player.Id,
-                FirstName = player.IsEnabled ? player.FirstName : $"Player{player.Id}",
-                LastName = player.IsEnabled ? player.LastName : "",
-                Rating = player.IsEnabled ? player.Rating : 0.0f,
+                FirstName = player.FirstName,
+                LastName = player.LastName,
+                Rating = player.Rating,
+                IsAvailable = player.IsAvailable,
+                CurrentTeamId = player.CurrentTeamId,
+                IsEnabled = true,
                 Email = player.Email,
-                IsAvailable = player.IsEnabled ? player.IsAvailable : false,
-                CurrentTeamId = player.IsEnabled ? player.CurrentTeamId : null,
-                IsEnabled = player.IsEnabled,
-                ImageUrl = !string.IsNullOrEmpty(player.ImageUrl) ? player.ImageUrl : null
+                ImageUrl = player.ImageUrl,
+                Speed = player.Speed,
+                Stamina = player.Stamina,
+                Errors = player.Errors
             };
+        }
+
+        public async Task<bool> UpdatePlayerRatingAsync(int playerId, float ratingChange)
+        {
+            try
+            {
+                var player = await _playerRepository.GetByIdAsync(playerId);
+                if (player == null || !player.IsEnabled)
+                    return false;
+
+                // Calculate new rating and ensure it stays within bounds
+                var newRating = Math.Max(0.0f, Math.Min(10000.0f, player.Rating + ratingChange));
+                player.Rating = newRating;
+
+                await _playerRepository.UpdateAsync(player);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates)
+        {
+            try
+            {
+                foreach (var update in playerRatingUpdates)
+                {
+                    var player = await _playerRepository.GetByIdAsync(update.PlayerId);
+                    if (player != null && player.IsEnabled)
+                    {
+                        // Calculate new rating and ensure it stays within bounds
+                        var newRating = Math.Max(0.0f, Math.Min(10000.0f, player.Rating + update.RatingChange));
+                        player.Rating = newRating;
+                        await _playerRepository.UpdateAsync(player);
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 
