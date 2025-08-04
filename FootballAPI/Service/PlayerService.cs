@@ -46,6 +46,7 @@ namespace FootballAPI.Service
 
         public async Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto dto)
         {
+            var emailService = new EmailService();
             var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
             if (existingUser == null)
             {
@@ -59,6 +60,11 @@ namespace FootballAPI.Service
                     ImageUrl = dto.ImageUrl
                 };
                 await _userRepository.CreateAsync(user);
+                await emailService.SendNewPasswordPlayerEmailAsync(
+                    user.Email,
+                    user.Username,
+                    password
+                );
             }
 
             var existingPlayer = (await _playerRepository.GetAllAsync())

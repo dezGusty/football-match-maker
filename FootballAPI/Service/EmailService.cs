@@ -9,9 +9,9 @@ public class EmailService
     private readonly string _fromPassword = "gjct lndg qgff sxrl";
 
     public async Task<bool> SendForgottenPasswordEmailAsync(string toEmail, string username, string newPassword)
-{
-    var subject = "Resetare Parolă";
-    var body = $@"
+    {
+        var subject = "Resetare Parolă";
+        var body = $@"
 <html>
 <body style='font-family: Arial, sans-serif;'>
     <h2>Salut, {username}!</h2>
@@ -23,46 +23,66 @@ public class EmailService
 </body>
 </html>";
 
+        return await SendEmailAsync(toEmail, subject, body);
+    }
+
+    public async Task<bool> SendNewPasswordPlayerEmailAsync(string toEmail, string username, string newPassword)
+{
+    var subject = "Creare Parolă";
+    var body = $@"
+<html>
+<body style='font-family: Arial, sans-serif;'>
+    <h2>Salut, {username}!</h2>
+    <p>Contul tău a fost creat cu această adresă de email.</p>
+    <p style='font-size:16px;'>Aceasta este parola ta temporară (pentru prima autentificare): 
+        <strong style='color:blue;'>{newPassword}</strong>
+    </p>
+    <p>Poți schimba parola după prima autentificare.</p>
+    <p>Te rugăm să te autentifici și să îți completezi profilul.</p>
+    <p>Cu drag,<br/>Echipa noastră</p>
+</body>
+</html>";
+
     return await SendEmailAsync(toEmail, subject, body);
 }
 
-private async Task<bool> SendEmailAsync(string toEmail, string subject, string body)
-{
-    try
+    private async Task<bool> SendEmailAsync(string toEmail, string subject, string body)
     {
-        var smtpClient = new SmtpClient("smtp.gmail.com")
+        try
         {
-            Port = 587,
-            Credentials = new NetworkCredential(_fromEmail, _fromPassword),
-            EnableSsl = true
-        };
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential(_fromEmail, _fromPassword),
+                EnableSsl = true
+            };
 
-        var mailMessage = new MailMessage
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(_fromEmail),
+                Subject = subject,
+                SubjectEncoding = System.Text.Encoding.UTF8,
+                Body = body,
+                BodyEncoding = System.Text.Encoding.UTF8,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(toEmail);
+
+            await smtpClient.SendMailAsync(mailMessage);
+            Console.WriteLine("[INFO] Email trimis cu succes.");
+            return true;
+        }
+        catch (Exception ex)
         {
-            From = new MailAddress(_fromEmail),
-            Subject = subject,
-            SubjectEncoding = System.Text.Encoding.UTF8,
-            Body = body,
-            BodyEncoding = System.Text.Encoding.UTF8,
-            IsBodyHtml = true
-        };
-
-        mailMessage.To.Add(toEmail);
-
-        await smtpClient.SendMailAsync(mailMessage);
-        Console.WriteLine("[INFO] Email trimis cu succes.");
-        return true;
+            Console.WriteLine($"[ERROR] Eroare la trimiterea emailului: {ex.Message}");
+            return false;
+        }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"[ERROR] Eroare la trimiterea emailului: {ex.Message}");
-        return false;
-    }
-}
 
     public string GenerateRandomPassword(int length = 6)
     {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%";
         var random = new Random();
         return new string(Enumerable.Repeat(chars, length)
             .Select(s => s[random.Next(s.Length)]).ToArray());
