@@ -26,7 +26,7 @@ export class PlayerService {
     return players;
   }
 
-  async addPlayer(player: { firstName: string; lastName: string; rating: number; imageUrl?: string }): Promise<Player> {
+  async addPlayer(player: { firstName: string; lastName: string; email?: string; rating: number; imageUrl?: string }): Promise<Player> {
     this.validateRating(player.rating);
 
     const response = await fetch(this.url, {
@@ -237,46 +237,46 @@ export class PlayerService {
   }
   // Adaugă aceste metode în PlayerService Angular
 
-async updatePlayerRating(playerId: number, ratingChange: number): Promise<boolean> {
-  try {
-    const response = await fetch(`${this.url}/${playerId}/update-rating`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ratingChange })
-    });
+  async updatePlayerRating(playerId: number, ratingChange: number): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.url}/${playerId}/update-rating`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ratingChange })
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to update player rating');
+      if (!response.ok) {
+        throw new Error('Failed to update player rating');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error updating player rating:', error);
+      return false;
     }
-
-    return true;
-  } catch (error) {
-    console.error('Error updating player rating:', error);
-    return false;
   }
-}
 
-async updateMultiplePlayerRatings(playerRatingUpdates: { playerId: number; ratingChange: number }[]): Promise<boolean> {
-  try {
-    const response = await fetch(`${this.url}/update-multiple-ratings`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        playerRatingUpdates: playerRatingUpdates.map(update => ({
-          playerId: update.playerId,
-          ratingChange: update.ratingChange
-        }))
-      })
-    });
+  async updateMultiplePlayerRatings(playerRatingUpdates: { playerId: number; ratingChange: number }[]): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.url}/update-multiple-ratings`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          playerRatingUpdates: playerRatingUpdates.map(update => ({
+            playerId: update.playerId,
+            ratingChange: update.ratingChange
+          }))
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to update multiple player ratings');
+      if (!response.ok) {
+        throw new Error('Failed to update multiple player ratings');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error updating multiple player ratings:', error);
+      return false;
     }
-
-    return true;
-  } catch (error) {
-    console.error('Error updating multiple player ratings:', error);
-    return false;
   }
-}
 }

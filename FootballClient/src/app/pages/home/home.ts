@@ -58,8 +58,10 @@ export class Home {
   newPlayer = {
     firstName: '',
     lastName: '',
+    email: '',
     rating: 0,
     imageUrl: '',
+
     speed: 2,
     stamina: 2,
     errors: 2
@@ -110,7 +112,7 @@ export class Home {
 
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
       this.players.push(addedPlayer);
-      this.newPlayer = { firstName: '', lastName: '', rating: 0, imageUrl: '', speed: 2, stamina: 2, errors: 2 };
+      this.newPlayer = { firstName: '', lastName: '', email: '', rating: 0, imageUrl: '', speed: 2, stamina: 2, errors: 2 };
       this.selectedFile = null;
       this.selectedFileName = '';
       console.log('Player added:', addedPlayer);

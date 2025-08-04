@@ -261,32 +261,32 @@
 }
 
 .file-upload {
-    margin: 10px 0;
+  margin: 10px 0;
 }
 
 .file-upload-label {
-    display: inline-block;
-    padding: 8px 16px;
-    background-color: #4CAF50;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .file-upload-label:hover {
-    background-color: #45a049;
+  background-color: #45a049;
 }
 
 .file-upload input[type="file"] {
-    display: none;
+  display: none;
 }
 
 .selected-file {
-    display: block;
-    margin-top: 8px;
-    font-size: 14px;
-    color: #666;
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #666;
 }
 
 .search-container {
@@ -324,6 +324,7 @@
   background: rgba(184, 199, 187, 0.98);
   box-shadow: 0 6px 24px rgba(106, 134, 110, 0.28);
 }
+
 .search-input:focus {
   outline: none;
   border-color: #3e5c43;
@@ -404,4 +405,24 @@
   border-radius: 4px;
   font-size: 12px;
   background: #fff;
+}
+
+.modal-content input[type="email"] {
+  padding: 6px 10px;
+  border: 2px solid #6a866e;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+
+.modal-content input[type="email"]:focus {
+  border-color: #3e5c43;
+  box-shadow: 0 0 0 3px rgba(106, 134, 110, 0.2);
+}
+
+.modal-content input[type="email"]:invalid {
+  border-color: #d32f2f;
 }
