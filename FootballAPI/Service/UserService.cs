@@ -80,40 +80,43 @@ namespace FootballAPI.Service
         {
             var user = new User
             {
-
+                Email = dto.Email,
                 Username = dto.Username,
                 Password = dto.Password,
                 Role = dto.Role,
-                Email = dto.Email,
                 ImageUrl = dto.ImageUrl
             };
-
-            if (!Enum.IsDefined(typeof(UserRole), user.Role))
-                user.Role = UserRole.ADMIN;
-            
-            string pattern = @"^[^@\s]+@(?:gmail\.com|yahoo\.com)$";
-            if (!System.Text.RegularExpressions.Regex.IsMatch(user.Email, pattern))
-            {
-                throw new ArgumentException("Email must be a Gmail or Yahoo email address.");
-            }
 
 
             var createdUser = await _userRepository.CreateAsync(user);
 
-            if (user.Role == UserRole.PLAYER)
+            return MapToDto(createdUser);
+        }
+
+        public async Task<UserDto> CreatePlayerUserAsync(CreatePlayerUserDto dto)
+        {
+            var user = new User
             {
-                var player = new Player
-                {
-                    FirstName = dto.FirstName,
-                    LastName = dto.LastName,
-                    Rating = dto.Rating ?? 0,
-                    Email = dto.Email,
-                    IsAvailable = false,
-                    IsEnabled = true,
-                    ImageUrl = dto.ImageUrl
-                };
-                await _playerRepository.CreateAsync(player);
-            }
+                Email = dto.Email,
+                Username = dto.Username,
+                Password = dto.Password,
+                Role = UserRole.PLAYER,
+                ImageUrl = dto.ImageUrl
+            };
+
+            var createdUser = await _userRepository.CreateAsync(user);
+
+            var player = new Player
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Rating = dto.Rating,
+                Email = dto.Email,
+                IsAvailable = false,
+                IsEnabled = true,
+                ImageUrl = dto.ImageUrl
+            };
+            await _playerRepository.CreateAsync(player);
 
             return MapToDto(createdUser);
         }
@@ -128,7 +131,6 @@ namespace FootballAPI.Service
             }
 
             existingUser.Username = updateUserDto.Username;
-            // Fix: updateUserDto.Role nu poate fi null, e enum, deci folosește direct valoarea
             existingUser.Role = updateUserDto.Role;
             existingUser.Email = updateUserDto.Email;
 
@@ -207,53 +209,53 @@ namespace FootballAPI.Service
         }
 
         public async Task<bool> UpdateUserPasswordAsync(string email)
-{
-    var _emailService = new EmailService();
-    
-    // Caută user-ul în DB
-    var user = await _userRepository.GetByEmailAsync(email);
-    if (user == null)
-    {
-        Console.WriteLine($"[ERROR] Nu există user cu email: {email}");
-        return false;
-    }
+        {
+            var _emailService = new EmailService();
 
-    var newPassword = _emailService.GenerateRandomPassword();
-    if (string.IsNullOrWhiteSpace(newPassword))
-    {
-        Console.WriteLine("[ERROR] Parola generată este goală!");
-        return false;
-    }
+            // Caută user-ul în DB
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user == null)
+            {
+                Console.WriteLine($"[ERROR] Nu există user cu email: {email}");
+                return false;
+            }
 
-    user.Password = newPassword; 
-    await _userRepository.UpdateAsync(user);
+            var newPassword = _emailService.GenerateRandomPassword();
+            if (string.IsNullOrWhiteSpace(newPassword))
+            {
+                Console.WriteLine("[ERROR] Parola generată este goală!");
+                return false;
+            }
 
-    return await _emailService.SendForgottenPasswordEmailAsync(
-        email,
-        user.Username ?? "User",
-        newPassword
-    );
-}
+            user.Password = newPassword;
+            await _userRepository.UpdateAsync(user);
+
+            return await _emailService.SendForgottenPasswordEmailAsync(
+                email,
+                user.Username ?? "User",
+                newPassword
+            );
+        }
 
 
-        
 
-public async Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto changeUsernameDto)
-{
-    var user = await _userRepository.GetByIdAsync(userId);
-    if (user == null)
-        return false;
 
-    // Verifică dacă parola este corectă
-    if (user.Password != changeUsernameDto.Password)
-        throw new ArgumentException("Password is incorrect.");
+        public async Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto changeUsernameDto)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+                return false;
 
-    // Verifică dacă username-ul nou există deja
-    if (await _userRepository.UsernameExistsAsync(changeUsernameDto.NewUsername, userId))
-        throw new ArgumentException($"Username '{changeUsernameDto.NewUsername}' already exists.");
+            // Verifică dacă parola este corectă
+            if (user.Password != changeUsernameDto.Password)
+                throw new ArgumentException("Password is incorrect.");
 
-    return await _userRepository.ChangeUsernameAsync(userId, changeUsernameDto.NewUsername);
-}
+            // Verifică dacă username-ul nou există deja
+            if (await _userRepository.UsernameExistsAsync(changeUsernameDto.NewUsername, userId))
+                throw new ArgumentException($"Username '{changeUsernameDto.NewUsername}' already exists.");
+
+            return await _userRepository.ChangeUsernameAsync(userId, changeUsernameDto.NewUsername);
+        }
 
     }
 }

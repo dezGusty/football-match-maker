@@ -17,7 +17,6 @@ namespace FootballAPI.DTOs
         public bool IsEnabled { get; set; }
         public string? ImageUrl { get; set; }
 
-        // Noile proprietăți
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
         public int Speed { get; set; }
 
@@ -28,7 +27,7 @@ namespace FootballAPI.DTOs
         public int Errors { get; set; }
     }
 
-  
+
 
     public class CreatePlayerDto
     {

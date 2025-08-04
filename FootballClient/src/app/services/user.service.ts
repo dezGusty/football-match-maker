@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { User } from '../models/user.interface';
 import { HttpClient } from '@angular/common/http';
+import { PlayerUser } from '../models/player-user.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -60,19 +61,32 @@ export class UserService {
   }
   
 
-async changeUsername(userId: number, newUsername: string, password: string): Promise<string> {
-  const response = await fetch(`${this.url}/${userId}/change-username`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      newUsername,
-      password
-    })
-  });
-  const result = await response.json();
-  if (!response.ok) {
-    throw new Error(result.message || 'Failed to change username');
+  async changeUsername(userId: number, newUsername: string, password: string): Promise<string> {
+    const response = await fetch(`${this.url}/${userId}/change-username`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        newUsername,
+        password
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to change username');
+    }
+    return result.message || 'Username changed successfully';
   }
-  return result.message || 'Username changed successfully';
-}
+
+  async createPlayerUser(playerUser: PlayerUser): Promise<any> {
+    const response = await fetch(`${this.url}/create-player-user`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(playerUser)
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to create player user');
+    }
+    return result;
+  }
 }

@@ -45,7 +45,6 @@ public class ImagesController : ControllerBase
                 await file.CopyToAsync(stream);
             }
 
-            // Return the URL that can be used to access the image
             return Ok(new { imageUrl = $"http://localhost:5145/images/Profile/{fileName}" });
         }
         catch (Exception ex)

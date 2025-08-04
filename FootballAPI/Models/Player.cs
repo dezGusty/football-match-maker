@@ -35,7 +35,7 @@ namespace FootballAPI.Models
         [StringLength(500)]
         public string? ImageUrl { get; set; }
 
-        // Noile proprietăți individuale
+
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
         public int Speed { get; set; } = 2; // 1 = Low, 2 = Medium, 3 = High
 

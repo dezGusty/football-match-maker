@@ -281,7 +281,6 @@ namespace FootballAPI.Service
                 if (player == null || !player.IsEnabled)
                     return false;
 
-                // Calculate new rating and ensure it stays within bounds
                 var newRating = Math.Max(0.0f, Math.Min(10000.0f, player.Rating + ratingChange));
                 player.Rating = newRating;
 
@@ -303,7 +302,6 @@ namespace FootballAPI.Service
                     var player = await _playerRepository.GetByIdAsync(update.PlayerId);
                     if (player != null && player.IsEnabled)
                     {
-                        // Calculate new rating and ensure it stays within bounds
                         var newRating = Math.Max(0.0f, Math.Min(10000.0f, player.Rating + update.RatingChange));
                         player.Rating = newRating;
                         await _playerRepository.UpdateAsync(player);
