@@ -149,4 +149,39 @@ export class MatchService {
       .filter(ph => ph.teamId === teamId && ph.player)
       .map(ph => `${ph.player.firstName} ${ph.player.lastName}`);
   }
+  async getPastMatches(): Promise<Match[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/matches/past`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch past matches: ${errorText}`);
+      }
+
+      const rawMatches = await response.json();
+
+      const matches: Match[] = rawMatches.map((m: any) => ({
+        id: m.id,
+        matchDate: m.matchDate,
+        teamAId: m.teamAId,
+        teamBId: m.teamBId,
+        teamAName: m.teamA ? m.teamA.name : 'Team A',
+        teamBName: m.teamB ? m.teamB.name : 'Team B',
+        scoreA: m.teamAGoals,
+        scoreB: m.teamBGoals,
+        playerHistory: m.playerHistory || []
+      }));
+
+      return matches;
+    } catch (error) {
+      console.error('Error fetching past matches:', error);
+      throw error;
+    }
+  }
 }

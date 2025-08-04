@@ -89,19 +89,19 @@
 }
 
 .team1-jersey {
-    background-image: url('http://localhost:5145/images/red_tshirt.png');
+    background-image: url('http://localhost:5145/images/red_tshirt3.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-color: #e53e3e;
+    /* background-color: #e53e3e; */
 }
 
 .team2-jersey {
-    background-image: url('http://localhost:5145/images/blue_tshirt.jpg');
+    background-image: url('http://localhost:5145/images/blue_tshirt3.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-color: #3182ce;
+    /*background-color: #3182ce;*/
 }
 
 .player-image {

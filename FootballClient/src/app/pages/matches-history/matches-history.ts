@@ -18,7 +18,7 @@ import { Player } from '../../models/player.interface';
 export class MatchesHistory implements OnInit {
   matches: Match[] = [];
 
-  constructor(private MatchService: MatchService) {}
+  constructor(private MatchService: MatchService) { }
 
 
   async ngOnInit() {
@@ -27,48 +27,49 @@ export class MatchesHistory implements OnInit {
 
   async init() {
     try {
-      this.matches = await this.MatchService.getMatches();
+      this.matches = await this.MatchService.getPastMatches();
       for (const match of this.matches) {
         match.teamAName = await this.MatchService.getTeamById(match.teamAId);
         match.teamBName = await this.MatchService.getTeamById(match.teamBId);
       }
+      
     } catch (error) {
       console.error('Error fetching matches:', error);
     }
   }
 
-selectedTeamAName: string = '';
-selectedTeamBName: string = '';
-selectedTeamAPlayers: string[] = [];
-selectedTeamBPlayers: string[] = [];
-modalOpen: boolean = false;
-selectedMatch: Match | null = null;
+  selectedTeamAName: string = '';
+  selectedTeamBName: string = '';
+  selectedTeamAPlayers: string[] = [];
+  selectedTeamBPlayers: string[] = [];
+  modalOpen: boolean = false;
+  selectedMatch: Match | null = null;
 
-async openPlayersModal(match: Match) {
-  try {
-    this.selectedMatch = match;
-    this.selectedTeamAName = match.teamAName!;
-    this.selectedTeamBName = match.teamBName!;
+  async openPlayersModal(match: Match) {
+    try {
+      this.selectedMatch = match;
+      this.selectedTeamAName = match.teamAName!;
+      this.selectedTeamBName = match.teamBName!;
 
-    this.selectedTeamAPlayers = match.playerHistory
-      .filter(p => p.teamId === match.teamAId && p.player)
-      .map(p => `${p.player.firstName} ${p.player.lastName} ${p.player.rating}`);
+      this.selectedTeamAPlayers = match.playerHistory
+        .filter(p => p.teamId === match.teamAId && p.player)
+        .map(p => `${p.player.firstName} ${p.player.lastName} ${p.player.rating}`);
 
-    this.selectedTeamBPlayers = match.playerHistory
-      .filter(p => p.teamId === match.teamBId && p.player)
-      .map(p => `${p.player.firstName} ${p.player.lastName} ${p.player.rating}`);
+      this.selectedTeamBPlayers = match.playerHistory
+        .filter(p => p.teamId === match.teamBId && p.player)
+        .map(p => `${p.player.firstName} ${p.player.lastName} ${p.player.rating}`);
 
-    this.modalOpen = true;
-  } catch (error) {
-    console.error('Error loading player data:', error);
+      this.modalOpen = true;
+    } catch (error) {
+      console.error('Error loading player data:', error);
+    }
   }
-}
 
-closeModal() {
-  this.modalOpen = false;
-}
+  closeModal() {
+    this.modalOpen = false;
+  }
 
- getPlayers(match: Match | null, teamId?: number): string[] {
+  getPlayers(match: Match | null, teamId?: number): string[] {
     if (!match || !teamId) return [];
     return match.playerHistory
       .filter(ph => ph.teamId === teamId && ph.player)

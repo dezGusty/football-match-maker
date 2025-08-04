@@ -182,11 +182,14 @@ namespace FootballAPI.Service
         }
         public async Task<IEnumerable<MatchDto>> GetFutureMatchesAsync()
         {
-            var currentDate = DateTime.Now.Date;
-            var matches = await _matchRepository.GetAllAsync();
-            var futureMatches = matches.Where(m => m.MatchDate.Date > currentDate);
+            var futureMatches = await _matchRepository.GetFutureMatchesAsync();
             return futureMatches.Select(MapToDto);
-            /// linie de test
+
         }
+        public async Task<IEnumerable<MatchDto>> GetPastMatchesAsync()
+{
+        var pastMatches = await _matchRepository.GetPastMatchesAsync();
+        return pastMatches.Select(MapToDto);
+}   
     }
 }

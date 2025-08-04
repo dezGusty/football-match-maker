@@ -101,5 +101,18 @@ namespace FootballAPI.Controllers
                 return BadRequest($"Error getting future matches: {ex.Message}");
             }
         }
+        [HttpGet("past")]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetPastMatches()
+        {
+            try
+            {
+                var pastMatches = await _matchService.GetPastMatchesAsync();
+                return Ok(pastMatches);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

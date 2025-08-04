@@ -95,5 +95,33 @@ namespace FootballAPI.Repository
         {
             return await _context.Matches.AnyAsync(m => m.Id == id);
         }
+     
+    public async Task<IEnumerable<Match>> GetPastMatchesAsync()
+    {
+        var currentDate = DateTime.Now.Date;
+        return await _context.Matches
+            .Include(m => m.TeamA)
+            .Include(m => m.TeamB)
+            .Include(m => m.PlayerHistory)
+                .ThenInclude(ph => ph.Player)
+            .Where(m => m.MatchDate.Date < currentDate)
+            .OrderByDescending(m => m.MatchDate)
+            .ToListAsync();
+    }
+
+    
+    public async Task<IEnumerable<Match>> GetFutureMatchesAsync()
+    {
+        var currentDate = DateTime.Now.Date;
+        return await _context.Matches
+            .Include(m => m.TeamA)
+            .Include(m => m.TeamB)
+            .Include(m => m.PlayerHistory)
+                .ThenInclude(ph => ph.Player)
+            .Where(m => m.MatchDate.Date > currentDate)
+            .OrderBy(m => m.MatchDate)
+            .ToListAsync();
+    }
+
     }
 } 
