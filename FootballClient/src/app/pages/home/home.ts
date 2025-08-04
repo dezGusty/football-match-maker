@@ -99,7 +99,6 @@ export class Home {
     }
 
     try {
-      // Upload image if selected
       if (this.selectedFile) {
         try {
           const imageUrl = await this.uploadImage(this.selectedFile);
@@ -139,7 +138,7 @@ export class Home {
       const index = this.players.findIndex(p => p.id === updatedPlayer.id);
       if (index !== -1) {
         this.players[index] = updatedPlayer;
-        this.filterPlayers(); // Refiltrăm lista după editare
+        this.filterPlayers();
       }
       this.clearEditIndex();
       console.log('Player updated:', updatedPlayer);
@@ -155,15 +154,12 @@ export class Home {
     try {
       const success = await this.PlayerService.deletePlayer(playerId);
       if (success) {
-        // ✅ NU reîncărca toți jucătorii, doar modifică local
         const playerIndex = this.players.findIndex(p => p.id === playerId);
         if (playerIndex !== -1) {
           this.players[playerIndex].isEnabled = false;
-          // Păstrează imaginea originală în memorie pentru match-formation
-          // this.players[playerIndex].imageUrl rămâne neschimbat
         }
 
-        this.filterPlayers(); // Refiltrează lista (va ascunde jucătorii disabled)
+        this.filterPlayers();
         console.log('Player deleted successfully');
       }
     } catch (error) {
@@ -179,13 +175,12 @@ export class Home {
     try {
       const success = await this.PlayerService.enablePlayer(playerId);
       if (success) {
-        // ✅ Modifică doar local
         const playerIndex = this.players.findIndex(p => p.id === playerId);
         if (playerIndex !== -1) {
           this.players[playerIndex].isEnabled = true;
         }
 
-        this.filterPlayers(); // Refiltrează lista
+        this.filterPlayers();
         console.log('Player reactivated successfully');
       }
     } catch (error) {

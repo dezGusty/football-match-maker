@@ -68,7 +68,6 @@
       }
     </div>
 
-    <!-- Toggle Buttons -->
     <div class="settings-toggles">
       <button 
         class="toggle-btn" 
@@ -84,7 +83,6 @@
       </button>
     </div>
 
-    <!-- Password Form -->
     @if (showPasswordForm) {
       <form class="account-password-form">
         <label for="current-password">Current Password</label>
@@ -99,8 +97,7 @@
         <button type="button" (click)="changePassword()">Save Changes</button>
       </form>
     }
-
-    <!-- Username Form -->
+    
     @if (showUsernameForm) {
       <form class="account-password-form">
         <label for="new-username">New Username</label>

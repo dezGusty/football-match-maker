@@ -442,8 +442,6 @@
   border: 1px dashed #b5c7b8;
 }
 
-/* Adaugă aceste stiluri în account.css */
-
 .settings-toggles {
   display: flex;
   gap: 12px;

@@ -1,13 +1,10 @@
 import { PlayerHistory } from './player-history.interface';
 
-export interface Match {
-    id?: number;
+export interface MatchCreated {
+    id: number;
     matchDate?: string;
     teamAId: number;
     teamBId: number;
     teamAName?: string;
     teamBName?: string;
-    scoreA?: number;
-    scoreB?: number;
-    playerHistory: PlayerHistory[];
 }

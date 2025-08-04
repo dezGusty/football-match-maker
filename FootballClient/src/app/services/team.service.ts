@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TeamCreated } from '../models/teamCreated.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -6,7 +7,7 @@ import { Injectable } from '@angular/core';
 export class TeamService {
   private readonly url: string = 'http://localhost:5145/api/teams';
 
-  async createTeam(name: string): Promise<any> {
+  async createTeam(name: string): Promise<TeamCreated> {
     const response = await fetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

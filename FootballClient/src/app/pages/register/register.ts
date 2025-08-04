@@ -17,10 +17,7 @@ export class Register {
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
-  role: UserRole = UserRole.ORGANISER;
-  firstName: string = '';
-  lastName: string = '';
-  rating: number = 0;
+  role: UserRole = UserRole.ADMIN;
   errorMessage: string = '';
   successMessage: string = '';
   UserRole = UserRole;
@@ -59,38 +56,8 @@ export class Register {
       return;
     }
 
-    if (this.role == UserRole.PLAYER) {
-      if (!this.firstName || !this.lastName) {
-        this.errorMessage = 'First name and last name are required for players!';
-        this.successMessage = '';
-        return;
-      }
-      if (this.rating < 0 || this.rating > 10000) {
-        this.errorMessage = 'Rating must be between 0 and 10000!';
-        this.successMessage = '';
-        return;
-      }
-    }
-
     try {
-      if (this.role == UserRole.PLAYER) {
-        await this.authService.register(
-          this.email,
-          this.username,
-          this.password,
-          this.role,
-          this.firstName,
-          this.lastName,
-          this.rating
-        );
-      } else {
-        await this.authService.register(
-          this.email,
-          this.username,
-          this.password,
-          this.role
-        );
-      }
+      await this.authService.register(this.email, this.username, this.password, this.role);
       this.successMessage = 'Registration successful!';
       this.errorMessage = '';
       this.router.navigate(['/home']);
@@ -99,7 +66,7 @@ export class Register {
       this.password = '';
       this.confirmPassword = '';
     } catch (error: any) {
-      this.errorMessage = error.message || 'Registration failed!';
+      this.errorMessage = 'Registration failed: ' + error.message;
       this.successMessage = '';
     }
   }

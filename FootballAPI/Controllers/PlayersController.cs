@@ -218,42 +218,42 @@ namespace FootballAPI.Controllers
         }
         // Adaugă această metodă în PlayerController.cs
 
-[HttpPatch("{id}/update-rating")]
-public async Task<IActionResult> UpdatePlayerRating(int id, [FromBody] UpdatePlayerRatingDto updateRatingDto)
-{
-    try
-    {
-        var result = await _playerService.UpdatePlayerRatingAsync(id, updateRatingDto.RatingChange);
-        if (!result)
+        [HttpPatch("{id}/update-rating")]
+        public async Task<IActionResult> UpdatePlayerRating(int id, [FromBody] UpdatePlayerRatingDto updateRatingDto)
         {
-            return NotFound($"Player with ID {id} not found");
-        }
-        
-        return Ok(new { message = "Player rating updated successfully" });
-    }
-    catch (Exception ex)
-    {
-        return BadRequest(new { message = ex.Message });
-    }
-}
+            try
+            {
+                var result = await _playerService.UpdatePlayerRatingAsync(id, updateRatingDto.RatingChange);
+                if (!result)
+                {
+                    return NotFound($"Player with ID {id} not found");
+                }
 
-[HttpPatch("update-multiple-ratings")]
-public async Task<IActionResult> UpdateMultiplePlayerRatings([FromBody] UpdateMultipleRatingsDto updateDto)
-{
-    try
-    {
-        var result = await _playerService.UpdateMultiplePlayerRatingsAsync(updateDto.PlayerRatingUpdates);
-        if (!result)
-        {
-            return BadRequest("Failed to update player ratings");
+                return Ok(new { message = "Player rating updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-        
-        return Ok(new { message = "Player ratings updated successfully" });
-    }
-    catch (Exception ex)
-    {
-        return BadRequest(new { message = ex.Message });
-    }
-}
+
+        [HttpPatch("update-multiple-ratings")]
+        public async Task<IActionResult> UpdateMultiplePlayerRatings([FromBody] UpdateMultipleRatingsDto updateDto)
+        {
+            try
+            {
+                var result = await _playerService.UpdateMultiplePlayerRatingsAsync(updateDto.PlayerRatingUpdates);
+                if (!result)
+                {
+                    return BadRequest("Failed to update player ratings");
+                }
+
+                return Ok(new { message = "Player ratings updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

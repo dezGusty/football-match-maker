@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Match } from '../models/match.interface';
+import { MatchCreated } from '../models/matchCreated.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +19,13 @@ export class MatchService {
 
     const rawMatches = await response.json();
 
-    const matches: Match[] = rawMatches.map((m: any) => ({
+    const matches: Match[] = (rawMatches as Match[]).map((m) => ({
       id: m.id,
       matchDate: m.matchDate,
       teamAId: m.teamAId,
       teamBId: m.teamBId,
-      scoreA: m.teamAGoals,
-      scoreB: m.teamBGoals,
+      scoreA: m.scoreA,
+      scoreB: m.scoreB,
       playerHistory: m.playerHistory
     }));
 
@@ -47,15 +48,15 @@ export class MatchService {
 
       const rawMatches = await response.json();
 
-      const matches: Match[] = rawMatches.map((m: any) => ({
+      const matches: Match[] = (rawMatches as Match[]).map((m) => ({
         id: m.id,
         matchDate: m.matchDate,
         teamAId: m.teamAId,
         teamBId: m.teamBId,
-        teamAName: m.teamA ? m.teamA.name : 'Team A',
-        teamBName: m.teamB ? m.teamB.name : 'Team B',
-        scoreA: m.teamAGoals,
-        scoreB: m.teamBGoals,
+        teamAName: m.teamAName || 'Team A',
+        teamBName: m.teamBName ||'Team B',
+        scoreA: m.scoreA,
+        scoreB: m.scoreB,
         playerHistory: m.playerHistory || []
       }));
 
@@ -85,7 +86,7 @@ export class MatchService {
     return team.name;
   }
 
-  async createMatch(teamAId: number, teamBId: number, matchDate: Date): Promise<any> {
+  async createMatch(teamAId: number, teamBId: number, matchDate: Date): Promise<MatchCreated> {
     const response = await fetch(`${this.baseUrl}/matches`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -106,7 +107,7 @@ export class MatchService {
     }
 
     const team = await response.json();
-    return team.currentPlayers.map((p: any) => `${p.firstName} ${p.lastName}`);
+    return team.currentPlayers.map((p: MemberByTeamId) => `${p.firstName} ${p.lastName}`);
   }
 
   async updateMatch(matchId: number, updateData: { teamAGoals: number, teamBGoals: number }): Promise<Match> {
@@ -166,15 +167,15 @@ export class MatchService {
 
       const rawMatches = await response.json();
 
-      const matches: Match[] = rawMatches.map((m: any) => ({
+      const matches: Match[] = (rawMatches as Match[]).map((m) => ({
         id: m.id,
         matchDate: m.matchDate,
         teamAId: m.teamAId,
         teamBId: m.teamBId,
-        teamAName: m.teamA ? m.teamA.name : 'Team A',
-        teamBName: m.teamB ? m.teamB.name : 'Team B',
-        scoreA: m.teamAGoals,
-        scoreB: m.teamBGoals,
+        teamAName: m.teamAName ||'Team A',
+        teamBName: m.teamBName || 'Team B',
+        scoreA: m.scoreA,
+        scoreB: m.scoreB,
         playerHistory: m.playerHistory || []
       }));
 

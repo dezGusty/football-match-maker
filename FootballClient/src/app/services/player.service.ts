@@ -111,7 +111,7 @@ export class PlayerService {
 
     return await response.json();
   }
-  // Noi metode pentru gestionarea disponibilității jucătorilor
+
   async setPlayerAvailable(playerId: number): Promise<boolean> {
     try {
       const response = await fetch(`${this.url}/${playerId}/set-available`, {
@@ -235,7 +235,6 @@ export class PlayerService {
       throw error;
     }
   }
-  // Adaugă aceste metode în PlayerService Angular
 
   async updatePlayerRating(playerId: number, ratingChange: number): Promise<boolean> {
     try {
