@@ -324,3 +324,84 @@
   background: rgba(184, 199, 187, 0.98);
   box-shadow: 0 6px 24px rgba(106, 134, 110, 0.28);
 }
+.search-input:focus {
+  outline: none;
+  border-color: #3e5c43;
+  background: rgba(184, 199, 187, 0.98);
+  box-shadow: 0 6px 24px rgba(106, 134, 110, 0.28);
+}
+
+/* Stats Controls in Modal */
+.stats-controls {
+  margin: 20px 0;
+  padding: 16px;
+  background: rgba(106, 134, 110, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(106, 134, 110, 0.2);
+}
+
+.stats-controls h4 {
+  margin: 0 0 12px 0;
+  color: #3e5c43;
+  font-size: 1.1rem;
+}
+
+.stat-control-group {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  gap: 12px;
+}
+
+.stat-control-group label {
+  min-width: 60px;
+  font-weight: 600;
+  color: #454545;
+}
+
+.stat-control-group select {
+  flex: 1;
+  padding: 6px 10px;
+  border: 2px solid #6a866e;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+  cursor: pointer;
+}
+
+.stat-control-group select:focus {
+  outline: none;
+  border-color: #3e5c43;
+  box-shadow: 0 0 0 3px rgba(106, 134, 110, 0.2);
+}
+
+/* Edit Stats in Table */
+.edit-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 150px;
+}
+
+.stat-edit-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-edit-group label {
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 50px;
+  color: #454545;
+}
+
+.stat-edit-group select {
+  flex: 1;
+  padding: 4px 6px;
+  border: 1px solid #6a866e;
+  border-radius: 4px;
+  font-size: 12px;
+  background: #fff;
+}

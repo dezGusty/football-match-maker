@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player.interface';
+import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [Header, FormsModule, CommonModule],
+  imports: [Header, FormsModule, CommonModule, PlayerStatsComponent],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
@@ -58,7 +59,10 @@ export class Home {
     firstName: '',
     lastName: '',
     rating: 0,
-    imageUrl: ''
+    imageUrl: '',
+    speed: 2,
+    stamina: 2,
+    errors: 2
   };
 
   onFileSelected(event: any) {
@@ -106,7 +110,7 @@ export class Home {
 
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
       this.players.push(addedPlayer);
-      this.newPlayer = { firstName: '', lastName: '', rating: 0, imageUrl: '' };
+      this.newPlayer = { firstName: '', lastName: '', rating: 0, imageUrl: '', speed: 2, stamina: 2, errors: 2 };
       this.selectedFile = null;
       this.selectedFileName = '';
       console.log('Player added:', addedPlayer);

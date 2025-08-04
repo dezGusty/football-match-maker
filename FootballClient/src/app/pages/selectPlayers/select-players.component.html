@@ -48,9 +48,15 @@
                     <ul class="players-list">
                         <li *ngFor="let player of filteredAvailablePlayers" class="player-item">
                             <div class="player-info">
-                                <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName
-                                    }}</span>
-                                <span class="player-rating">Rating: {{ player.rating }}</span>
+                                <div class="player-name-rating">
+                                    <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
+                                    <span class="player-rating">Rating: {{ player.rating }}</span>
+                                </div>
+                                <app-player-stats 
+                                    [speed]="player.speed || 2" 
+                                    [stamina]="player.stamina || 2" 
+                                    [errors]="player.errors || 2">
+                                </app-player-stats>
                             </div>
                             <button class="select-button" (click)="selectPlayer(player)"
                                 [disabled]="selectedPlayers.length >= maxAvailable">
@@ -71,8 +77,15 @@
                     <ul class="players-list">
                         <li *ngFor="let player of selectedPlayers" class="player-item">
                             <div class="player-info">
-                                <span>{{ player.firstName }} {{ player.lastName }}</span>
-                                <span class="player-rating">Rating: {{ player.rating }}</span>
+                                <div class="player-name-rating">
+                                    <span>{{ player.firstName }} {{ player.lastName }}</span>
+                                    <span class="player-rating">Rating: {{ player.rating }}</span>
+                                </div>
+                                <app-player-stats 
+                                    [speed]="player.speed || 2" 
+                                    [stamina]="player.stamina || 2" 
+                                    [errors]="player.errors || 2">
+                                </app-player-stats>
                             </div>
                             <button class="select-button" (click)="unselectPlayer(player)" style="background: #dc3545;">
                                 Remove
@@ -95,7 +108,7 @@
     </div>
 </div>
 
-<!-- Teams Modal (existing modal code) -->
+<!-- Teams Modal -->
 @if (showTeamsModal) {
 <div class="modal">
     <div class="modal-content">
@@ -124,8 +137,14 @@
                             </button>
                         </div>
                         <div class="player-info-team">
-                            <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName
-                                }}</span>
+                            <div class="player-name-stats">
+                                <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
+                                <app-player-stats 
+                                    [speed]="player.speed || 2" 
+                                    [stamina]="player.stamina || 2" 
+                                    [errors]="player.errors || 2">
+                                </app-player-stats>
+                            </div>
                             <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
                                 {{ player.rating }}
                             </span>
@@ -150,8 +169,14 @@
                             </span>
                         </div>
                         <div class="player-info-team">
-                            <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName
-                                }}</span>
+                            <div class="player-name-stats">
+                                <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
+                                <app-player-stats 
+                                    [speed]="player.speed || 2" 
+                                    [stamina]="player.stamina || 2" 
+                                    [errors]="player.errors || 2">
+                                </app-player-stats>
+                            </div>
                             <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
                                 {{ player.rating }}
                             </span>

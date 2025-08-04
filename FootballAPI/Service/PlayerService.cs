@@ -36,40 +36,46 @@ namespace FootballAPI.Service
             return players.Select(MapToDto);
         }
 
-        public async Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto createPlayerDto)
-        {
-            var player = new Player
-            {
-                FirstName = createPlayerDto.FirstName,
-                LastName = createPlayerDto.LastName,
-                Rating = createPlayerDto.Rating,
-                ImageUrl = createPlayerDto.ImageUrl,
-                IsAvailable = false,
-                IsEnabled = true,
-                CurrentTeamId = null
-            };
+  public async Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto createPlayerDto)
+{
+    var player = new Player
+    {
+        FirstName = createPlayerDto.FirstName,
+        LastName = createPlayerDto.LastName,
+        Rating = createPlayerDto.Rating,
+        ImageUrl = createPlayerDto.ImageUrl,
+        IsAvailable = false,
+        IsEnabled = true,
+        CurrentTeamId = null,
+        Speed = createPlayerDto.Speed,
+        Stamina = createPlayerDto.Stamina,
+        Errors = createPlayerDto.Errors
+    };
 
-            var createdPlayer = await _playerRepository.CreateAsync(player);
-            return MapToDto(createdPlayer);
-        }
+    var createdPlayer = await _playerRepository.CreateAsync(player);
+    return MapToDto(createdPlayer);
+}
 
-        public async Task<PlayerDto?> UpdatePlayerAsync(int id, UpdatePlayerDto updatePlayerDto)
-        {
-            var existingPlayer = await _playerRepository.GetByIdAsync(id);
-            if (existingPlayer == null)
-                return null;
+public async Task<PlayerDto?> UpdatePlayerAsync(int id, UpdatePlayerDto updatePlayerDto)
+{
+    var existingPlayer = await _playerRepository.GetByIdAsync(id);
+    if (existingPlayer == null)
+        return null;
 
-            existingPlayer.FirstName = updatePlayerDto.FirstName;
-            existingPlayer.LastName = updatePlayerDto.LastName;
-            existingPlayer.Rating = updatePlayerDto.Rating;
-            existingPlayer.IsAvailable = updatePlayerDto.IsAvailable;
-            existingPlayer.CurrentTeamId = updatePlayerDto.CurrentTeamId;
-            existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
-            existingPlayer.ImageUrl = updatePlayerDto.ImageUrl;
-            var updatedPlayer = await _playerRepository.UpdateAsync(existingPlayer);
-            return MapToDto(updatedPlayer);
-        }
-
+    existingPlayer.FirstName = updatePlayerDto.FirstName;
+    existingPlayer.LastName = updatePlayerDto.LastName;
+    existingPlayer.Rating = updatePlayerDto.Rating;
+    existingPlayer.IsAvailable = updatePlayerDto.IsAvailable;
+    existingPlayer.CurrentTeamId = updatePlayerDto.CurrentTeamId;
+    existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
+    existingPlayer.ImageUrl = updatePlayerDto.ImageUrl;
+    existingPlayer.Speed = updatePlayerDto.Speed;
+    existingPlayer.Stamina = updatePlayerDto.Stamina;
+    existingPlayer.Errors = updatePlayerDto.Errors;
+    
+    var updatedPlayer = await _playerRepository.UpdateAsync(existingPlayer);
+    return MapToDto(updatedPlayer);
+}
         public async Task<bool> DeletePlayerAsync(int id)
         {
             var existingPlayer = await _playerRepository.GetByIdAsync(id);
@@ -210,33 +216,42 @@ namespace FootballAPI.Service
             }
         }
 
-        private static PlayerDto MapToDto(Player player)
+private static PlayerDto MapToDto(Player player)
+{
+    if (!player.IsEnabled)
+    {
+        return new PlayerDto
         {
-            if (!player.IsEnabled)
-            {
-                return new PlayerDto
-                {
-                    Id = player.Id,
-                    FirstName = $"Player{player.Id}",
-                    LastName = "",
-                    Rating = 0.0f,
-                    IsAvailable = false,
-                    CurrentTeamId = null,
-                    IsEnabled = false
-                };
-            }
-            return new PlayerDto
-            {
-                Id = player.Id,
-                FirstName = player.FirstName,
-                LastName = player.LastName,
-                Rating = player.Rating,
-                IsAvailable = player.IsAvailable,
-                CurrentTeamId = player.CurrentTeamId,
-                IsEnabled = true
+            Id = player.Id,
+            FirstName = $"Player{player.Id}",
+            LastName = "",
+            Rating = 0.0f,
+            IsAvailable = false,
+            CurrentTeamId = null,
+            IsEnabled = false,
+            Speed = 1,
+            Stamina = 1,
+            Errors = 1
+        };
 
-            };
-        }
+        
+
+    }
+    return new PlayerDto
+    {
+        Id = player.Id,
+        FirstName = player.FirstName,
+        LastName = player.LastName,
+        Rating = player.Rating,
+        IsAvailable = player.IsAvailable,
+        CurrentTeamId = player.CurrentTeamId,
+        IsEnabled = true,
+        Speed = player.Speed,
+        Stamina = player.Stamina,
+        Errors = player.Errors
+    };
+}
+
         private static PlayerWithImageDto MapToPlayerWithImageDto(Player player)
         {
             if (!player.IsEnabled)
@@ -250,7 +265,10 @@ namespace FootballAPI.Service
                     IsAvailable = false,
                     CurrentTeamId = null,
                     IsEnabled = false,
-                    ImageUrl = null
+                    ImageUrl = null,
+                    Speed = 1,
+                    Stamina = 1,
+                    Errors = 1
                 };
             }
             return new PlayerWithImageDto
@@ -262,10 +280,13 @@ namespace FootballAPI.Service
                 IsAvailable = player.IsAvailable,
                 CurrentTeamId = player.CurrentTeamId,
                 IsEnabled = true,
-                ImageUrl = player.ImageUrl
+                ImageUrl = player.ImageUrl,
+                Speed = player.Speed,
+                Stamina = player.Stamina,
+                Errors = player.Errors
             };
         }
-        // Adaugă aceste metode în PlayerService.cs
+       // Adaugă aceste metode în PlayerService.cs
 
         public async Task<bool> UpdatePlayerRatingAsync(int playerId, float ratingChange)
         {
@@ -310,6 +331,6 @@ namespace FootballAPI.Service
                 return false;
             }
         }
-    }
+}
 
 }
