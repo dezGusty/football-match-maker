@@ -1,5 +1,3 @@
-// Înlocuiește componentul account.ts cu această versiune actualizată:
-
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -23,21 +21,18 @@ import { UserRole } from '../../models/user-role.enum';
 export class Account {
   user: User | null = null;
 
-  // Password change fields
   newPassword = '';
   confirmPassword = '';
   currentPassword = '';
 
-  // Username change fields
   newUsername = '';
   usernamePassword = '';
 
-  // Toggle states
   showPasswordForm = false;
   showUsernameForm = false;
 
   images: string[] = [];
-  selectedImage: string = ''; // la început e gol
+  selectedImage: string = '';
   showImageSelector = false;
   futureMatches: Match[] = [];
 
@@ -114,12 +109,10 @@ export class Account {
   }
 
   resetForms() {
-    // Reset password form
     this.currentPassword = '';
     this.newPassword = '';
     this.confirmPassword = '';
 
-    // Reset username form
     this.newUsername = '';
     this.usernamePassword = '';
   }
@@ -150,7 +143,6 @@ export class Account {
         this.usernamePassword
       );
       alert(message);
-      // Actualizează user-ul local
       this.user.username = this.newUsername;
       this.resetForms();
       this.showUsernameForm = false;

@@ -2,8 +2,8 @@ namespace FootballAPI.Models
 {
     public enum UserRole
     {
-        ADMIN,
-        ORGANISER,
-        PLAYER
+        ADMIN = 0,
+        ORGANISER = 1,
+        PLAYER = 2
     }
 }

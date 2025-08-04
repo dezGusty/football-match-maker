@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
 import { TeamService } from '../../services/team.service';
 import { MatchService } from '../../services/match.service';
 import { PlayerMatchHistoryService } from '../../services/player-match-history.service';
-// Update the path below to the correct location of player-stats.component.ts
 import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
 
 interface PlayerCategory {
@@ -33,11 +32,9 @@ interface Team {
     styleUrls: ['./select-players.component.css']
 })
 export class SelectPlayersComponent implements OnInit {
-    // Carousel properties
     currentSlide = 1;
     selectedDate: string | null = null;
 
-    // Existing properties
     allPlayers: Player[] = [];
     maxAvailable = 12;
     loading = false;
@@ -67,7 +64,6 @@ export class SelectPlayersComponent implements OnInit {
         this.setMinDateToday();
     }
 
-    // Carousel methods
     goToSlide(slideNumber: number) {
         if (slideNumber === 2 && !this.selectedDate) {
             alert('Please select a date first!');
@@ -108,7 +104,6 @@ export class SelectPlayersComponent implements OnInit {
         });
     }
 
-    // Existing methods
     getRatingCategory(rating: number | undefined): string {
         if (!rating) return 'low';
         if (rating <= 5) return 'low';
@@ -119,7 +114,6 @@ export class SelectPlayersComponent implements OnInit {
     setMinDateToday() {
         const today = new Date();
         this.minDate = today.toISOString().split('T')[0];
-        // Set matchDate to today by default if not set
         if (!this.matchDate) {
             this.matchDate = this.minDate;
             this.selectedDate = this.minDate;
@@ -217,7 +211,6 @@ export class SelectPlayersComponent implements OnInit {
         const targetSize1 = isEvenTotal ? totalPlayers / 2 : Math.ceil(totalPlayers / 2);
         const targetSize2 = isEvenTotal ? totalPlayers / 2 : Math.floor(totalPlayers / 2);
 
-        // Use balanced distribution strategy
         const sortedByRating = [...shuffledPlayers].sort((a, b) => (b.rating || 0) - (a.rating || 0));
         for (let i = 0; i < sortedByRating.length; i++) {
             if (i % 2 === 0 && team1Players.length < targetSize1) {
@@ -229,7 +222,6 @@ export class SelectPlayersComponent implements OnInit {
             }
         }
 
-        // Ensure correct team sizes
         while (team1Players.length > targetSize1) {
             team2Players.push(team1Players.pop()!);
         }
@@ -237,7 +229,6 @@ export class SelectPlayersComponent implements OnInit {
             team1Players.push(team2Players.pop()!);
         }
 
-        // Sort players by rating and optimize teams
         team1Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         team2Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
 
@@ -245,11 +236,9 @@ export class SelectPlayersComponent implements OnInit {
             if (!this.optimizeTeams(team1Players, team2Players)) break;
         }
 
-        // Calculate team stats
         const team1Stats = this.calculateTeamStats(team1Players);
         const team2Stats = this.calculateTeamStats(team2Players);
 
-        // Set the teams directly
         this.team1 = {
             ...team1Stats,
             players: team1Stats.players.map(p => ({ ...p, locked: false }))
@@ -263,20 +252,16 @@ export class SelectPlayersComponent implements OnInit {
     }
 
     shuffleTeams() {
-        // Save current locked player IDs to preserve them
         this.saveLockedPlayers();
 
-        // Get locked players and their current teams
         const lockedTeam1Players = this.team1.players.filter(p => p.locked);
         const lockedTeam2Players = this.team2.players.filter(p => p.locked);
 
-        // Get unlocked players from both teams
         const unlockedPlayers = [
             ...this.team1.players.filter(p => !p.locked),
             ...this.team2.players.filter(p => !p.locked)
         ];
 
-        // Calculate how many more players each team needs
         const totalPlayers = this.team1.players.length + this.team2.players.length;
         const isEvenTotal = totalPlayers % 2 === 0;
         const targetSize1 = isEvenTotal ? totalPlayers / 2 : Math.ceil(totalPlayers / 2);
@@ -285,25 +270,20 @@ export class SelectPlayersComponent implements OnInit {
         const team1NeededPlayers = targetSize1 - lockedTeam1Players.length;
         const team2NeededPlayers = targetSize2 - lockedTeam2Players.length;
 
-        // If no unlocked players to shuffle, return early
         if (unlockedPlayers.length === 0) {
             return;
         }
 
-        // Shuffle the unlocked players multiple times for better randomization
         let shuffledUnlocked = this.shufflePlayers(unlockedPlayers);
         shuffledUnlocked = this.shufflePlayers(shuffledUnlocked);
         shuffledUnlocked = this.shufflePlayers(shuffledUnlocked);
 
-        // Redistribute unlocked players using different strategies randomly
         const newTeam1Unlocked: Player[] = [];
         const newTeam2Unlocked: Player[] = [];
 
-        // Choose random distribution strategy
         const strategy = Math.floor(Math.random() * 3);
 
         if (strategy === 0) {
-            // Strategy 1: Alternating by rating
             const sortedUnlocked = [...shuffledUnlocked].sort((a, b) => (b.rating || 0) - (a.rating || 0));
             for (let i = 0; i < sortedUnlocked.length; i++) {
                 if (i % 2 === 0 && newTeam1Unlocked.length < team1NeededPlayers) {
@@ -315,7 +295,6 @@ export class SelectPlayersComponent implements OnInit {
                 }
             }
         } else if (strategy === 1) {
-            // Strategy 2: Random assignment with balance checking
             shuffledUnlocked.forEach(player => {
                 const team1Avg = newTeam1Unlocked.length > 0 ?
                     newTeam1Unlocked.reduce((sum, p) => sum + (p.rating || 0), 0) / newTeam1Unlocked.length : 0;
@@ -330,7 +309,6 @@ export class SelectPlayersComponent implements OnInit {
                 }
             });
         } else {
-            // Strategy 3: Pure random assignment
             shuffledUnlocked.forEach(player => {
                 if (Math.random() < 0.5 && newTeam1Unlocked.length < team1NeededPlayers) {
                     newTeam1Unlocked.push(player);
@@ -342,7 +320,6 @@ export class SelectPlayersComponent implements OnInit {
             });
         }
 
-        // Ensure correct team sizes for unlocked players
         while (newTeam1Unlocked.length > team1NeededPlayers && newTeam2Unlocked.length < team2NeededPlayers) {
             newTeam2Unlocked.push(newTeam1Unlocked.pop()!);
         }
@@ -350,24 +327,19 @@ export class SelectPlayersComponent implements OnInit {
             newTeam1Unlocked.push(newTeam2Unlocked.pop()!);
         }
 
-        // Combine locked and newly assigned unlocked players
         const finalTeam1Players = [...lockedTeam1Players, ...newTeam1Unlocked];
         const finalTeam2Players = [...lockedTeam2Players, ...newTeam2Unlocked];
 
-        // Sort by rating and optimize
         finalTeam1Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         finalTeam2Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
 
-        // Try to optimize teams while respecting locked players
         for (let i = 0; i < 3; i++) {
             if (!this.optimizeTeamsWithLocks(finalTeam1Players, finalTeam2Players)) break;
         }
 
-        // Update team stats and reset locked status for new players
         this.team1 = this.calculateTeamStats(finalTeam1Players);
         this.team2 = this.calculateTeamStats(finalTeam2Players);
 
-        // Restore locked status only for previously locked players
         this.restoreLockedPlayers();
     }
 
@@ -378,7 +350,6 @@ export class SelectPlayersComponent implements OnInit {
         const weakerTeam = team1Avg < team2Avg ? team1Players : team2Players;
         const strongerTeam = team1Avg < team2Avg ? team2Players : team1Players;
 
-        // Find the best swap between unlocked players only
         let bestSwap = null;
         let bestImprovementDiff = 0;
         const currentDiff = Math.abs(team1Avg - team2Avg);
@@ -388,7 +359,6 @@ export class SelectPlayersComponent implements OnInit {
                 const strongerPlayer = strongerTeam[i];
                 const weakerPlayer = weakerTeam[j];
 
-                // Only swap if both players are unlocked
                 if (strongerPlayer.locked || weakerPlayer.locked) continue;
 
                 const strongerPlayerRating = strongerPlayer.rating || 0;
@@ -428,19 +398,16 @@ export class SelectPlayersComponent implements OnInit {
         this.showTeamsModal = false;
     }
 
-    // Adaugă această metodă în clasa SelectPlayersComponent
     private isCurrentDate(selectedDate: string): boolean {
         const today = new Date();
         const selected = new Date(selectedDate);
 
-        // Resetăm timpul la 00:00:00 pentru comparația zilei
         today.setHours(0, 0, 0, 0);
         selected.setHours(0, 0, 0, 0);
 
         return today.getTime() === selected.getTime();
     }
 
-    // Modifică metoda beginMatch existentă
     async beginMatch() {
         try {
             if (!this.areTeamNamesValid()) {
@@ -453,7 +420,6 @@ export class SelectPlayersComponent implements OnInit {
                 return;
             }
 
-            // VALIDARE NOUĂ: Verifică dacă data selectată este data curentă
             if (!this.isCurrentDate(this.selectedDate)) {
                 alert("Meciul poate fi început doar în data curentă! Pentru alte date, folosește opțiunea 'Schedule Match'.");
                 return;
@@ -516,7 +482,6 @@ export class SelectPlayersComponent implements OnInit {
                 return;
             }
 
-            // Create teams and match in parallel
             const [teamA, teamB] = await Promise.all([
                 this.teamService.createTeam(this.team1Name || 'Team A'),
                 this.teamService.createTeam(this.team2Name || 'Team B')
@@ -525,7 +490,6 @@ export class SelectPlayersComponent implements OnInit {
             const selectedDateObj = new Date(this.selectedDate);
             const match = await this.matchService.createMatch(teamA.id, teamB.id, selectedDateObj);
 
-            // Create all player histories in parallel for better performance
             const allHistoryPromises = [
                 ...this.team1.players.map(player =>
                     this.playerMatchHistoryService.createPlayerMatchHistory(player.id!, teamA.id, match.id)
@@ -552,7 +516,6 @@ export class SelectPlayersComponent implements OnInit {
 
     private shufflePlayers(players: Player[]): Player[] {
         const shuffled = [...players];
-        // Fisher-Yates shuffle algorithm with multiple passes for better randomization
         for (let pass = 0; pass < 3; pass++) {
             for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -569,34 +532,27 @@ export class SelectPlayersComponent implements OnInit {
 
     movePlayerToOtherTeam(player: Player, fromTeam: 'team1' | 'team2') {
         if (fromTeam === 'team1') {
-            // Move from team1 to team2
             const playerIndex = this.team1.players.findIndex(p => p.id === player.id);
             if (playerIndex !== -1) {
                 const movedPlayer = this.team1.players.splice(playerIndex, 1)[0];
-                // Remove locked status when moving
                 movedPlayer.locked = false;
                 this.team2.players.push(movedPlayer);
             }
         } else {
-            // Move from team2 to team1
             const playerIndex = this.team2.players.findIndex(p => p.id === player.id);
             if (playerIndex !== -1) {
                 const movedPlayer = this.team2.players.splice(playerIndex, 1)[0];
-                // Remove locked status when moving
                 movedPlayer.locked = false;
                 this.team1.players.push(movedPlayer);
             }
         }
 
-        // Sort teams by rating after move
         this.team1.players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         this.team2.players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
 
-        // Recalculate team stats
         this.team1 = this.calculateTeamStats(this.team1.players);
         this.team2 = this.calculateTeamStats(this.team2.players);
 
-        // Update locked players storage
         this.saveLockedPlayers();
     }
 
@@ -660,7 +616,6 @@ export class SelectPlayersComponent implements OnInit {
         let bestSwap = null;
         let bestImprovementDiff = 0;
 
-        // Cache team ratings to avoid recalculation
         const sourceTeamRating = this.calculateTeamAverage(sourceTeam);
         const targetTeamRating = this.calculateTeamAverage(targetTeam);
         const currentDiff = Math.abs(sourceTeamRating - targetTeamRating);
@@ -670,7 +625,6 @@ export class SelectPlayersComponent implements OnInit {
                 const sourcePlayer = sourceTeam[i];
                 const targetPlayer = targetTeam[j];
 
-                // Calculate new ratings more efficiently
                 const sourcePlayerRating = sourcePlayer.rating || 0;
                 const targetPlayerRating = targetPlayer.rating || 0;
                 const ratingDifference = targetPlayerRating - sourcePlayerRating;

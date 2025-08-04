@@ -10,7 +10,7 @@ interface Position {
     left: string;
     top: string;
 }
-//test branch
+
 @Component({
     selector: 'app-match-formation',
     standalone: true,
@@ -31,7 +31,6 @@ export class MatchFormationComponent implements OnInit {
     private maxRating: number = 0;
     showRatingModal: boolean = false;
 
-    // Manual rating adjustments for each player
     manualAdjustments: Map<number, number> = new Map();
 
     constructor(
@@ -91,7 +90,6 @@ export class MatchFormationComponent implements OnInit {
 
     getTeam2Positions(): Position[] {
         const positions = this.getTeamPositions(this.team2Players.length);
-        // Ajustăm pozițiile pentru echipa din dreapta
         return positions.map(pos => ({
             left: (100 - parseInt(pos.left.replace('%', ''))).toString() + '%',
             top: pos.top
@@ -99,23 +97,19 @@ export class MatchFormationComponent implements OnInit {
     }
 
     async finalizeMatch() {
-        // Show the rating preview modal instead of finalizing immediately
         this.showRatingModal = true;
     }
 
     async confirmFinalize() {
     if (this.matchId) {
         try {
-            // 1. Update match score
             await this.matchService.updateMatch(this.matchId, {
                 teamAGoals: this.scoreA,
                 teamBGoals: this.scoreB
             });
 
-            // 2. Prepare rating updates for all players
             const ratingUpdates: { playerId: number; ratingChange: number }[] = [];
-            
-            // Add team1 players
+
             this.team1Players.forEach(player => {
                 if (player.id) {
                     const totalRatingChange = this.getTotalRatingChange(player, true);
@@ -128,7 +122,6 @@ export class MatchFormationComponent implements OnInit {
                 }
             });
 
-            // Add team2 players
             this.team2Players.forEach(player => {
                 if (player.id) {
                     const totalRatingChange = this.getTotalRatingChange(player, false);
@@ -141,7 +134,6 @@ export class MatchFormationComponent implements OnInit {
                 }
             });
 
-            // 3. Update player ratings if there are changes
             if (ratingUpdates.length > 0) {
                 const success = await this.playerService.updateMultiplePlayerRatings(ratingUpdates);
                 if (!success) {
@@ -175,53 +167,45 @@ export class MatchFormationComponent implements OnInit {
 
     getRatingChange(isTeam1: boolean): number {
         if (this.isDraw()) {
-            return 0; // No rating change for draws
+            return 0;
         }
 
         const isWinningTeam = (isTeam1 && this.isTeam1Winner()) || (!isTeam1 && this.isTeam2Winner());
 
-        // Base rating change: +0.05 for winners, -0.05 for losers
         const baseRatingChange = isWinningTeam ? 0.05 : -0.05;
 
-        // Calculate goal difference bonus/penalty: 0.02 per goal difference
         const goalDifference = Math.abs(this.scoreA - this.scoreB);
         const goalDifferenceBonus = goalDifference * 0.02;
 
-        // Apply goal difference bonus to winners, penalty to losers
         return baseRatingChange + (isWinningTeam ? goalDifferenceBonus : -goalDifferenceBonus);
     }
 
-    // Get manual adjustment for a specific player
     getManualAdjustment(player: Player): number {
         return this.manualAdjustments.get(player.id || 0) || 0;
     }
 
-    // Set manual adjustment for a specific player
     setManualAdjustment(player: Player, adjustment: number): void {
         if (player.id) {
             this.manualAdjustments.set(player.id, adjustment);
         }
     }
 
-    // Reset manual adjustment for a specific player
     resetManualAdjustment(player: Player): void {
         if (player.id) {
             this.manualAdjustments.delete(player.id);
         }
     }
 
-    // Get total rating change (automatic + manual) for a player
     getTotalRatingChange(player: Player, isTeam1: boolean): number {
         const automaticChange = this.getRatingChange(isTeam1);
         const manualChange = this.getManualAdjustment(player);
         return automaticChange + manualChange;
     }
 
-    // Get final rating for a player after all adjustments
     getFinalRating(player: Player, isTeam1: boolean): number {
         const currentRating = player.rating || 0;
         const totalChange = this.getTotalRatingChange(player, isTeam1);
-        return Math.max(0, currentRating + totalChange); // Ensure rating doesn't go below 0
+        return Math.max(0, currentRating + totalChange);
     }
 
     async ngOnInit() {
@@ -233,11 +217,9 @@ export class MatchFormationComponent implements OnInit {
             this.teamAId = navigation.teamAId;
             this.teamBId = navigation.teamBId;
 
-            // Calculate max rating from all players
             const allPlayers = [...this.team1Players, ...this.team2Players];
             this.maxRating = Math.max(...allPlayers.map(p => p?.rating || 0));
 
-            // Load team names after we have the IDs
             await this.loadTeamNames();
         }
 
@@ -283,25 +265,20 @@ export class MatchFormationComponent implements OnInit {
     getStarArray(rating: number): string[] {
         const stars: string[] = [];
 
-        // If maxRating is 0, use a default scale of 10
         const effectiveMaxRating = this.maxRating || 10;
 
-        // Scale the rating relative to maxRating (5 stars maximum)
         const scaledRating = (rating / effectiveMaxRating) * 10;
         const fullStars = Math.floor(scaledRating / 2);
         const hasHalfStar = (scaledRating % 2) >= 1;
 
-        // Add full stars
         for (let i = 0; i < fullStars && i < 5; i++) {
             stars.push('full');
         }
 
-        // Add half star if applicable
         if (hasHalfStar && stars.length < 5) {
             stars.push('half');
         }
 
-        // Fill remaining with empty stars
         while (stars.length < 5) {
             stars.push('empty');
         }

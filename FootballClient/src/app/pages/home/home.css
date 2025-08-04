@@ -332,7 +332,6 @@
   box-shadow: 0 6px 24px rgba(106, 134, 110, 0.28);
 }
 
-/* Stats Controls in Modal */
 .stats-controls {
   margin: 20px 0;
   padding: 16px;
@@ -377,7 +376,6 @@
   box-shadow: 0 0 0 3px rgba(106, 134, 110, 0.2);
 }
 
-/* Edit Stats in Table */
 .edit-stats {
   display: flex;
   flex-direction: column;

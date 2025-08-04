@@ -93,7 +93,6 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /* background-color: #e53e3e; */
 }
 
 .team2-jersey {
@@ -101,7 +100,6 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /*background-color: #3182ce;*/
 }
 
 .player-image {
@@ -249,7 +247,6 @@
     transform: translateY(1px);
 }
 
-/* Modal Styles */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -505,7 +502,6 @@
     color: white;
 }
 
-/* Responsive Design for Manual Rating Inputs */
 @media (max-width: 768px) {
     .modal-content {
         max-width: 95%;

@@ -1,19 +1,16 @@
 <app-header></app-header>
 
 <div class="carousel-container">
-    <!-- Slide Indicators -->
     <div class="slide-indicators">
         <div class="indicator" [class.active]="currentSlide === 1" (click)="goToSlide(1)"></div>
         <div class="indicator" [class.active]="currentSlide === 2" (click)="goToSlide(2)"></div>
     </div>
 
-    <!-- Selected Date Display (shown on second slide) -->
     <div class="selected-date-display" *ngIf="currentSlide === 2 && selectedDate">
         📅 Selected: {{ getFormattedDate() }}
     </div>
 
     <div class="carousel-wrapper" [ngClass]="'slide-' + currentSlide">
-        <!-- Slide 1: Calendar Selection -->
         <div class="carousel-slide calendar-slide">
             <div class="calendar-container">
                 <div class="calendar-icon">📅</div>
@@ -33,7 +30,6 @@
             </div>
         </div>
 
-        <!-- Slide 2: Player Selection -->
         <div class="carousel-slide players-slide">
             <div class="players-container">
                 <div class="column">
@@ -100,7 +96,6 @@
         </div>
     </div>
 
-    <!-- Navigation Buttons -->
     <div class="carousel-navigation">
         <button *ngIf="currentSlide === 2" class="nav-btn secondary" (click)="goToPreviousSlide()">
             ← Back to Date
@@ -108,7 +103,6 @@
     </div>
 </div>
 
-<!-- Teams Modal -->
 @if (showTeamsModal) {
 <div class="modal">
     <div class="modal-content">

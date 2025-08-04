@@ -100,21 +100,21 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.6); /* ușor mai întunecat pentru contrast */
+  background: rgba(0,0,0,0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999; /* peste restul */
+  z-index: 999;
 }
 
 .modal-content {
-  background: rgba(255, 255, 255, 0.1); /* transparent */
-  backdrop-filter: blur(14px); /* blur ca la login */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(14px);
   padding: 25px;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #e0e0e0; /* text albicios */
+  color: #e0e0e0;
   font-family: 'Poppins', sans-serif;
   width: 90%;
   max-width: 350px;
