@@ -30,7 +30,7 @@ export class Register {
     private authService: AuthService
   ) {
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/login']);
+      this.redirectBasedOnRole();
     }
   }
 
@@ -80,11 +80,28 @@ export class Register {
 
       this.successMessage = 'Registration successful!';
       this.errorMessage = '';
-      this.router.navigate(['/home']);
+
+      // Redirect based on the registered role
+      this.redirectBasedOnRole();
+
       this.clearForm();
     } catch (error: any) {
       this.errorMessage = 'Registration failed: ' + error.message;
       this.successMessage = '';
+    }
+  }
+
+  private redirectBasedOnRole() {
+    const userRole = this.authService.getUserRole();
+
+    // Redirect based on role
+    if (userRole === UserRole.PLAYER) {
+      this.router.navigate(['/player-dashboard']);
+    } else if (userRole === UserRole.ORGANISER) {
+      this.router.navigate(['/home']);
+    } else {
+      // Default fallback for ADMIN or unknown roles
+      this.router.navigate(['/home']);
     }
   }
 
