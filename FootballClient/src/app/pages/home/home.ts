@@ -26,10 +26,9 @@ export class Home {
   selectedFile: File | null = null;
   selectedFileName: string = '';
 
-
   async init() {
     try {
-      this.players = await this.PlayerService.getPlayers();
+      this.players = await this.PlayerService.getPlayersForOrganiser(this.authService.getUserId()!);
       this.filterPlayers();
     } catch (error) {
       console.error('Error fetching players:', error);

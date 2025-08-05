@@ -3,6 +3,7 @@ using FootballAPI.DTOs;
 using FootballAPI.Service;
 using FootballAPI.Repository;
 using FootballAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FootballAPI.Controllers
 {
@@ -262,9 +263,15 @@ namespace FootballAPI.Controllers
             if (dto == null)
                 return BadRequest("Invalid data.");
 
-            await _playerService.AddPlayerOrganiserRelationAsync(dto.PlayerId, dto.OrganiserId);
-
-            return Ok();
+           try
+            {
+                await _playerService.AddPlayerOrganiserRelationAsync(dto.PlayerId, dto.OrganiserId);
+                return Ok();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = "A player cannot create another player." });
+            }
         }
 
         [HttpPatch("{id}/set-public")]

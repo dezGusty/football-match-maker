@@ -8,7 +8,7 @@ namespace FootballAPI.Repository
 {
     public class PlayerRepository : IPlayerRepository
     {
-        private static FootballDbContext _context;
+        private FootballDbContext _context;
 
         public PlayerRepository(FootballDbContext context)
         {

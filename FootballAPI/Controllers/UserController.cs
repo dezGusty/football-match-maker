@@ -389,6 +389,14 @@ namespace FootballAPI.Controllers
             return Ok(new { message = "Password updated and email sent successfully" });
         }
 
+        [HttpGet("{id}/players")]
+        public async Task<ActionResult> GetPlayersForOrganiser(int id)
+        {
+            var players = await _userService.GetPlayersByOrganiserAsync(id);
+            if (players == null || !players.Any())
+                return NotFound("No players found for this organiser.");
 
+            return Ok(players);
+        }
     }
 }

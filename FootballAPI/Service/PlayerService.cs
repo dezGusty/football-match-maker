@@ -322,6 +322,10 @@ namespace FootballAPI.Service
 
         public async Task AddPlayerOrganiserRelationAsync(int playerId, int organiserId)
         {
+             var organiser = await _userRepository.GetByIdAsync(organiserId);
+            if (organiser == null || organiser.Role != UserRole.ORGANISER)
+                throw new InvalidOperationException("OrganiserId does not correspond to a valid organiser user.");
+
             var relation = new PlayerOrganiser
             {
                 PlayerId = playerId,

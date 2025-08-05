@@ -19,5 +19,6 @@ namespace FootballAPI.Repository
         Task<bool> ChangePasswordAsync(int userId, string newPassword);
         Task<IEnumerable<User>> GetUsersByRoleAsync(UserRole role);
         Task<bool> ChangeUsernameAsync(int userId, string newUsername);
+        Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int id);
     }
 }

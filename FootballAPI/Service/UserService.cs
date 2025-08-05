@@ -258,5 +258,10 @@ namespace FootballAPI.Service
             return await _userRepository.ChangeUsernameAsync(userId, changeUsernameDto.NewUsername);
         }
 
+        public async Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int id)
+        {
+            var players = await _userRepository.GetPlayersByOrganiserAsync(id);
+            return players;
+        }
     }
 }

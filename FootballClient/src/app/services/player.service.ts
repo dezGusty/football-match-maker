@@ -26,6 +26,14 @@ export class PlayerService {
     return players;
   }
 
+  async getPlayersForOrganiser(organiserId: number): Promise<Player[]> {
+  const response = await fetch(`http://localhost:5145/api/user/${organiserId}/players`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch players for organiser');
+  }
+  return await response.json();
+}
+
   async addPlayer(player: { firstName: string; lastName: string; email?: string; rating: number; imageUrl?: string }): Promise<Player> {
     this.validateRating(player.rating);
 
