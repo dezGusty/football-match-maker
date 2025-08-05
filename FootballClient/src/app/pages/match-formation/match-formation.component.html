@@ -23,8 +23,11 @@
                     </div>
                 </div>
                 <div class="player-rating">
-                    <span *ngFor="let star of getStarArray(team1Players[i]?.rating || 0); let starIndex = index"
-                        class="star" [class.full]="star === 'full'" [class.half]="star === 'half'"></span>
+                    <div class="stars-container">
+                        <span *ngFor="let star of getStarArray(team1Players[i]?.rating || 0); let starIndex = index"
+                            class="star" [class.full]="star === 'full'" [class.half]="star === 'half'"></span>
+                    </div>
+                    <div class="rating-number">{{(team1Players[i]?.rating || 0) | number:'1.0-2'}}</div>
                 </div>
             </div>
         </div>
@@ -42,8 +45,11 @@
                     </div>
                 </div>
                 <div class="player-rating">
-                    <span *ngFor="let star of getStarArray(team2Players[i]?.rating || 0); let starIndex = index"
-                        class="star" [class.full]="star === 'full'" [class.half]="star === 'half'"></span>
+                    <div class="stars-container">
+                        <span *ngFor="let star of getStarArray(team2Players[i]?.rating || 0); let starIndex = index"
+                            class="star" [class.full]="star === 'full'" [class.half]="star === 'half'"></span>
+                    </div>
+                    <div class="rating-number">{{(team2Players[i]?.rating || 0) | number:'1.0-2'}}</div>
                 </div>
             </div>
         </div>
