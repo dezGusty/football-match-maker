@@ -317,6 +317,28 @@ namespace FootballAPI.Service
                 return false;
             }
         }
+
+        public async Task<bool> SetPlayerPublicAsync(int playerId)
+        {
+            var player = await _playerRepository.GetByIdAsync(playerId);
+            if (player == null || !player.IsEnabled)
+                return false;
+
+            player.IsPublic = true;
+            await _playerRepository.UpdateAsync(player);
+            return true;
+        }
+
+        public async Task<bool> SetPlayerPrivateAsync(int playerId)
+        {
+            var player = await _playerRepository.GetByIdAsync(playerId);
+            if (player == null || !player.IsEnabled)
+                return false;
+
+            player.IsPublic = false;
+            await _playerRepository.UpdateAsync(player);
+            return true;
+        }
     }
 
 }
