@@ -26,6 +26,7 @@ namespace FootballAPI.Models
         public virtual User User { get; set; }
         public bool IsAvailable { get; set; } = false;
         public bool IsEnabled { get; set; } = true;
+        public bool IsPublic { get; set; } = true;
 
         public int? CurrentTeamId { get; set; }
 
