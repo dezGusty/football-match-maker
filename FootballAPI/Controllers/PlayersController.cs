@@ -261,16 +261,16 @@ namespace FootballAPI.Controllers
         public async Task<IActionResult> AddPlayerOrganiserRelation([FromBody] PlayerOrganiserDto dto)
         {
             if (dto == null)
-                return BadRequest("Invalid data.");
+                return StatusCode(500, $"Invalid Data." );
 
-           try
+            try
             {
                 await _playerService.AddPlayerOrganiserRelationAsync(dto.PlayerId, dto.OrganiserId);
                 return Ok();
             }
-            catch (InvalidOperationException ex)
+            catch
             {
-                return BadRequest(new { message = "A player cannot create another player." });
+                return BadRequest("A player cannot create another player.");
             }
         }
 
