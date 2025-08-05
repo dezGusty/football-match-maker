@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using FootballAPI.DTOs;
 using FootballAPI.Service;
 using FootballAPI.Repository;
+using FootballAPI.Models;
 
 namespace FootballAPI.Controllers
 {
@@ -253,6 +254,17 @@ namespace FootballAPI.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
+        }
+
+        [HttpPost("player-organiser")]
+        public async Task<IActionResult> AddPlayerOrganiserRelation([FromBody] PlayerOrganiserDto dto)
+        {
+            if (dto == null)
+                return BadRequest("Invalid data.");
+
+            await _playerService.AddPlayerOrganiserRelationAsync(dto.PlayerId, dto.OrganiserId);
+
+            return Ok();
         }
 
         [HttpPatch("{id}/set-public")]

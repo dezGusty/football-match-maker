@@ -17,5 +17,6 @@ namespace FootballAPI.Repository
         Task<IEnumerable<Player>> SearchByNameAsync(string searchTerm);
         Task<IEnumerable<Player>> GetEnabledPlayersAsync();
         Task<IEnumerable<Player>> GetDisabledPlayersAsync();
+        Task AddPlayerOrganiserRelationAsync(PlayerOrganiser relation);
     }
 }

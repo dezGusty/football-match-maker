@@ -1,12 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using FootballAPI.Data;
 using FootballAPI.Models;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+using static FootballAPI.Repository.UserRepository;
 
 namespace FootballAPI.Repository
 {
     public class PlayerRepository : IPlayerRepository
     {
-        private readonly FootballDbContext _context;
+        private static FootballDbContext _context;
 
         public PlayerRepository(FootballDbContext context)
         {
@@ -96,7 +98,10 @@ namespace FootballAPI.Repository
                    (p.FirstName.Contains(searchTerm) || p.LastName.Contains(searchTerm)))
                 .ToListAsync();
         }
+        public async Task AddPlayerOrganiserRelationAsync(PlayerOrganiser relation)
+        {
+            _context.PlayerOrganisers.Add(relation);
+            await _context.SaveChangesAsync();
+        }
     }
-
-
 }
