@@ -107,17 +107,27 @@ namespace FootballAPI.Repository
             await UpdateAsync(user);
             return true;
         }
-       
 
-public async Task<bool> ChangeUsernameAsync(int userId, string newUsername)
-{
-    var user = await GetByIdAsync(userId);
-    if (user == null)
-        return false;
 
-    user.Username = newUsername;
-    await UpdateAsync(user);
-    return true;
-}
+        public async Task<bool> ChangeUsernameAsync(int userId, string newUsername)
+        {
+            var user = await GetByIdAsync(userId);
+            if (user == null)
+                return false;
+
+            user.Username = newUsername;
+            await UpdateAsync(user);
+            return true;
+        }
+
+        public async Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int id)
+        {
+            var players = await _context.PlayerOrganisers
+            .Where(po => po.OrganiserId == id)
+            .Select(po => po.Player)
+            .ToListAsync();
+
+            return players;
+        }
     }
 }

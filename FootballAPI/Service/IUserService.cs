@@ -26,6 +26,8 @@ namespace FootballAPI.Service
         Task<bool> UpdateUserPasswordAsync(string email);
 
         Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto changeUsernameDto);
+        Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int id);
+
 
     }
 
