@@ -102,7 +102,7 @@ export class Home {
     body: JSON.stringify({ playerId,  organiserId})
   });
   if (!response.ok) {
-    throw new Error('Failed to add player-organiser relation');
+    alert('A player cannot add another player.');
   }
 }
 
@@ -133,6 +133,7 @@ export class Home {
       console.log('Player added:', addedPlayer);
     } catch (error) {
       console.error('Error adding player:', error);
+      alert('Adding player failed. Please try again if you are an organiser or admin.');
     }
   }
 
