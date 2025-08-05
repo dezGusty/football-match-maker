@@ -49,7 +49,6 @@ export class MatchFormationComponent implements OnInit {
                 this.team1Name = teamA;
                 this.team2Name = teamB;
             } catch (error) {
-                console.error('Error loading team names:', error);
                 this.team1Name = 'Team A';
                 this.team2Name = 'Team B';
             }
@@ -60,7 +59,7 @@ export class MatchFormationComponent implements OnInit {
         const positions: Position[] = [];
 
         if (teamSize < 5 || teamSize > 6) {
-            console.warn(`Număr invalid de jucători: ${teamSize}. Se așteaptă 5 sau 6 jucători.`);
+            console.warn(`Invalid number of players: ${teamSize}. Expected 5 or 6 players.`);
             return positions;
         }
 
@@ -97,59 +96,65 @@ export class MatchFormationComponent implements OnInit {
     }
 
     async finalizeMatch() {
+        console.log('finalizeMatch() called - showing rating modal');
+        console.log('Current score:', this.scoreA, '-', this.scoreB);
         this.showRatingModal = true;
     }
 
     async confirmFinalize() {
-    if (this.matchId) {
-        try {
-            await this.matchService.updateMatch(this.matchId, {
-                teamAGoals: this.scoreA,
-                teamBGoals: this.scoreB
-            });
+        console.log('=== confirmFinalize() called ===');
+        console.log('Match ID:', this.matchId);
+        console.log('Score A:', this.scoreA, 'Score B:', this.scoreB);
+        console.log('Manual adjustments:', this.manualAdjustments);
 
-            const ratingUpdates: { playerId: number; ratingChange: number }[] = [];
+        if (this.matchId) {
+            try {
+                console.log('Updating match score...');
+                await this.matchService.updateMatch(this.matchId, {
+                    teamAGoals: this.scoreA,
+                    teamBGoals: this.scoreB
+                });
+                console.log('Match score updated successfully - ratings updated automatically by backend');
 
-            this.team1Players.forEach(player => {
-                if (player.id) {
-                    const totalRatingChange = this.getTotalRatingChange(player, true);
-                    if (totalRatingChange !== 0) {
-                        ratingUpdates.push({
-                            playerId: player.id,
-                            ratingChange: totalRatingChange
-                        });
+                if (this.manualAdjustments.size > 0) {
+                    const manualRatingUpdates: { playerId: number; ratingChange: number }[] = [];
+
+                    console.log('Processing manual adjustments...');
+                    this.manualAdjustments.forEach((adjustment, playerId) => {
+                        if (adjustment !== 0) {
+                            console.log(`Manual adjustment for player ${playerId}: ${adjustment}`);
+                            manualRatingUpdates.push({
+                                playerId: playerId,
+                                ratingChange: adjustment
+                            });
+                        }
+                    });
+
+                    if (manualRatingUpdates.length > 0) {
+                        console.log('Applying manual rating adjustments:', manualRatingUpdates);
+                        const success = await this.playerService.updateMultiplePlayerRatings(manualRatingUpdates);
+                        if (success) {
+                            console.log('Manual rating adjustments applied successfully');
+                        } else {
+                            console.error('Failed to apply manual rating adjustments');
+                        }
+                    } else {
+                        console.log('No manual adjustments to apply');
                     }
+                } else {
+                    console.log('No manual adjustments set');
                 }
-            });
 
-            this.team2Players.forEach(player => {
-                if (player.id) {
-                    const totalRatingChange = this.getTotalRatingChange(player, false);
-                    if (totalRatingChange !== 0) {
-                        ratingUpdates.push({
-                            playerId: player.id,
-                            ratingChange: totalRatingChange
-                        });
-                    }
-                }
-            });
-
-            if (ratingUpdates.length > 0) {
-                const success = await this.playerService.updateMultiplePlayerRatings(ratingUpdates);
-                if (!success) {
-                    console.error('Failed to update player ratings');
-                }
+                console.log('Match finalized successfully, navigating to history...');
+                this.showRatingModal = false;
+                this.router.navigate(['/matches-history']);
+            } catch (error) {
+                console.error('Error finalizing match:', error);
             }
-
-            this.showRatingModal = false;
-            this.router.navigate(['/matches-history']);
-        } catch (error) {
-            console.error('Error finalizing match:', error);
+        } else {
+            console.error('No match ID found');
         }
-    }
-}
-
-    closeModal() {
+    } closeModal() {
         this.showRatingModal = false;
     }
 
@@ -185,8 +190,12 @@ export class MatchFormationComponent implements OnInit {
     }
 
     setManualAdjustment(player: Player, adjustment: number): void {
+        console.log('setManualAdjustment called with:', player.firstName, player.lastName, adjustment);
         if (player.id) {
-            this.manualAdjustments.set(player.id, adjustment);
+            const numAdjustment = isNaN(adjustment) ? 0 : Number(adjustment);
+            console.log(`Setting manual adjustment for ${player.firstName} ${player.lastName}: ${numAdjustment}`);
+            this.manualAdjustments.set(player.id, numAdjustment);
+            console.log('Current manual adjustments:', this.manualAdjustments);
         }
     }
 
@@ -208,6 +217,10 @@ export class MatchFormationComponent implements OnInit {
         return Math.max(0, currentRating + totalChange);
     }
 
+    trackByPlayerId(index: number, player: Player): number {
+        return player.id || index;
+    }
+
     async ngOnInit() {
         const navigation = window.history.state;
         if (navigation) {
@@ -224,10 +237,10 @@ export class MatchFormationComponent implements OnInit {
         }
 
         if (this.team1Players.length < 5 || this.team1Players.length > 6) {
-            console.error(`Echipa 1 are un număr invalid de jucători: ${this.team1Players.length}`);
+            console.error(`Team 1 has an invalid number of players: ${this.team1Players.length}`);
         }
         if (this.team2Players.length < 5 || this.team2Players.length > 6) {
-            console.error(`Echipa 2 are un număr invalid de jucători: ${this.team2Players.length}`);
+            console.error(`Team 2 has an invalid number of players: ${this.team2Players.length}`);
         }
     }
 

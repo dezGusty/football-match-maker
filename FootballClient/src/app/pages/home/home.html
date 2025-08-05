@@ -62,7 +62,7 @@
       <ng-template #viewMode>
         <td>{{ isPlayerEnabled(player) ? player.firstName : (player.firstName | slice:0:3) }}</td>
         <td>{{ isPlayerEnabled(player) ? player.lastName : (player.lastName | slice:0:3) }}</td>
-        <td>{{ player.rating }}</td>
+        <td>{{ player.rating | number:'1.0-2' }}</td>
         <td>
           <app-player-stats [speed]="player.speed || 2" [stamina]="player.stamina || 2" [errors]="player.errors || 2">
           </app-player-stats>

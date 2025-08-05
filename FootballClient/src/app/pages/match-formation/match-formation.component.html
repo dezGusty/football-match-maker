@@ -71,12 +71,12 @@
                                 </div>
                                 <div class="manual-rating-container">
                                     <div class="rating-display">
-                                        <span>{{(player.rating || 0).toFixed(2)}} → {{getFinalRating(player,
-                                            true).toFixed(2)}}</span>
+                                        <span>{{(player.rating || 0) | number:'1.0-2'}} → {{getFinalRating(player,
+                                            true) | number:'1.0-2'}}</span>
                                         <span [class.positive]="getTotalRatingChange(player, true) > 0"
                                             [class.negative]="getTotalRatingChange(player, true) < 0">
                                             ({{getTotalRatingChange(player, true) > 0 ? '+' :
-                                            ''}}{{getTotalRatingChange(player, true).toFixed(2)}})
+                                            ''}}{{getTotalRatingChange(player, true) | number:'1.0-2'}})
                                         </span>
                                     </div>
                                     <div class="manual-rating-input">
@@ -102,12 +102,12 @@
                                 </div>
                                 <div class="manual-rating-container">
                                     <div class="rating-display">
-                                        <span>{{(player.rating || 0).toFixed(2)}} → {{getFinalRating(player,
-                                            false).toFixed(2)}}</span>
+                                        <span>{{(player.rating || 0) | number:'1.0-2'}} → {{getFinalRating(player,
+                                            false) | number:'1.0-2'}}</span>
                                         <span [class.positive]="getTotalRatingChange(player, false) > 0"
                                             [class.negative]="getTotalRatingChange(player, false) < 0">
                                             ({{getTotalRatingChange(player, false) > 0 ? '+' :
-                                            ''}}{{getTotalRatingChange(player, false).toFixed(2)}})
+                                            ''}}{{getTotalRatingChange(player, false) | number:'1.0-2'}})
                                         </span>
                                     </div>
                                     <div class="manual-rating-input">
