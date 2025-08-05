@@ -1,0 +1,240 @@
+.player-header-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #a8c3ab;
+    height: 80px;
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-left,
+.header-right {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.header-right {
+    justify-content: flex-end;
+}
+
+.header-center {
+    flex: 0 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.logo-container:hover {
+    transform: translateY(-1px);
+}
+
+.app-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2d4a32;
+    margin: 0;
+    text-align: center;
+    cursor: pointer;
+}
+
+.header-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.header-profile:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.profile-username {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d4a32;
+    line-height: 1.2;
+}
+
+.profile-playername {
+    font-size: 12px;
+    font-weight: 400;
+    color: #4a6b4f;
+    line-height: 1.2;
+}
+
+.profile-icon {
+    font-size: 2rem;
+    color: #2d4a32;
+}
+
+.header-profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #2d4a32;
+    background: #fff;
+}
+
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 32px;
+    height: 22px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.hamburger:hover span {
+    background-color: #1a3b1f;
+}
+
+.hamburger span {
+    width: 100%;
+    height: 3px;
+    background-color: #2d4a32;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+.menu {
+    position: fixed;
+    top: 80px;
+    right: -300px;
+    background: #6a866e;
+    width: 280px;
+    padding: 24px;
+    transition: all 0.3s ease;
+    z-index: 99;
+    border-bottom-left-radius: 12px;
+    box-shadow: -4px 4px 20px rgba(0, 0, 0, 0.15);
+    visibility: hidden;
+    opacity: 0;
+}
+
+.menu.open {
+    right: 0;
+    visibility: visible;
+    opacity: 1;
+}
+
+.menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu li {
+    margin-bottom: 12px;
+}
+
+.menu li:last-child {
+    margin-bottom: 0;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.menu button {
+    width: 100%;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.menu button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(4px);
+}
+
+.menu button.logout-btn:hover {
+    background: rgba(244, 67, 54, 0.3);
+    color: #ffcdd2;
+}
+
+.menu-icon {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .player-header-nav {
+        padding: 0 16px;
+        height: 70px;
+    }
+
+    .app-title {
+        font-size: 20px;
+    }
+
+    .profile-username {
+        font-size: 14px;
+    }
+
+    .profile-playername {
+        font-size: 11px;
+    }
+
+    .header-profile-image {
+        width: 36px;
+        height: 36px;
+    }
+
+    .menu {
+        width: 260px;
+        top: 70px;
+    }
+}
