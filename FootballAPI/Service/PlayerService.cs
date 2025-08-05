@@ -1,3 +1,5 @@
+using System.Diagnostics.Tracing;
+using FootballAPI.Data;
 using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Repository;
@@ -314,6 +316,17 @@ namespace FootballAPI.Service
                 return false;
             }
         }
+
+        public async Task AddPlayerOrganiserRelationAsync(int playerId, int organiserId)
+    {
+        var relation = new PlayerOrganiser
+        {
+            PlayerId = playerId,
+            OrganiserId = organiserId
+        };
+
+        await _playerRepository.AddPlayerOrganiserRelationAsync(relation);
+    }
     }
 
 }

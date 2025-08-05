@@ -15,7 +15,8 @@ namespace FootballAPI.Repository
         Task<bool> DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
         Task<IEnumerable<Player>> SearchByNameAsync(string searchTerm);
-            Task<IEnumerable<Player>> GetEnabledPlayersAsync();
-            Task<IEnumerable<Player>> GetDisabledPlayersAsync();
+        Task<IEnumerable<Player>> GetEnabledPlayersAsync();
+        Task<IEnumerable<Player>> GetDisabledPlayersAsync();
+        Task AddPlayerOrganiserRelationAsync(PlayerOrganiser relation);
     }
 }

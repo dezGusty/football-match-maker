@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player.interface';
 import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
+import { AuthService } from '../../components/auth/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,8 @@ import { PlayerStatsComponent } from '../../components/player-stats.component/pl
   styleUrls: ['./home.css']
 })
 export class Home {
+  constructor(private PlayerService: PlayerService, private authService : AuthService) { }
+
   players: Player[] = [];
   filteredPlayers: Player[] = [];
   searchTerm: string = '';
@@ -23,7 +26,6 @@ export class Home {
   selectedFile: File | null = null;
   selectedFileName: string = '';
 
-  constructor(private PlayerService: PlayerService) { }
 
   async init() {
     try {
@@ -92,6 +94,17 @@ export class Home {
     return result.imageUrl;
   }
 
+  async addPlayerOrganiserRelation(playerId: number, organiserId: number | null = this.authService.getUserId()): Promise<void> {
+  const response = await fetch('http://localhost:5145/api/playerorganisers', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ playerId,  organiserId})
+  });
+  if (!response.ok) {
+    throw new Error('Failed to add player-organiser relation');
+  }
+}
+
   async addPlayer() {
     if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10000) {
       alert('Rating must be between 0 and 10000.');
@@ -110,6 +123,8 @@ export class Home {
       }
 
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
+      await this.PlayerService.addPlayerOrganiserRelation(addedPlayer.id!, this.authService.getUserId()!);
+
       this.players.push(addedPlayer);
       this.newPlayer = { firstName: '', lastName: '', email: '', rating: 0, imageUrl: '', speed: 2, stamina: 2, errors: 2 };
       this.selectedFile = null;

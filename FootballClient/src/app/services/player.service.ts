@@ -278,4 +278,18 @@ export class PlayerService {
       return false;
     }
   }
+
+  async addPlayerOrganiserRelation(playerId: number, organiserId: number): Promise<void> {
+    const body = { playerId, organiserId };
+
+    const response = await fetch(`${this.url}/player-organiser`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to add player-organiser relation');
+    }
+  }
 }
