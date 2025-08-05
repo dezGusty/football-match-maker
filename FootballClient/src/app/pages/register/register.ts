@@ -14,6 +14,9 @@ import { UserRole } from '../../models/user-role.enum';
 })
 export class Register {
   username: string = '';
+  firstName: string = '';
+  lastName: string = '';
+  rating: number | null = null;
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
@@ -39,6 +42,15 @@ export class Register {
       this.errorMessage = 'Complete all fields!';
       this.successMessage = '';
       return;
+    }
+
+    // Validare suplimentară pentru câmpurile de player
+    if (this.role === UserRole.PLAYER) {
+      if (!this.firstName || !this.lastName) {
+        this.errorMessage = 'First Name and Last Name are required for players!';
+        this.successMessage = '';
+        return;
+      }
     }
 
     if (this.password !== this.confirmPassword) {
@@ -94,14 +106,22 @@ export class Register {
       this.successMessage = 'Registration successful!';
       this.errorMessage = '';
       this.router.navigate(['/home']);
-      this.username = '';
-      this.email = '';
-      this.password = '';
-      this.confirmPassword = '';
+      this.clearForm();
     } catch (error: any) {
       this.errorMessage = error.message || 'Registration failed!';
       this.successMessage = '';
     }
+  }
+
+  private clearForm() {
+    this.username = '';
+    this.firstName = '';
+    this.lastName = '';
+    this.rating = null;
+    this.email = '';
+    this.password = '';
+    this.confirmPassword = '';
+    this.role = UserRole.ORGANISER;
   }
 
   goToLogin() {
