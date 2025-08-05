@@ -47,7 +47,7 @@
 /* Back Button */
 .back-button-container {
     position: fixed;
-    top: 80px;
+    top: 140px;
     left: 20px;
     z-index: 1001;
 }
