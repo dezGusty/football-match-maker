@@ -70,6 +70,7 @@ export class AuthService {
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userId', userData.id.toString());
       localStorage.setItem('authExpiresAt', expiresAt.toString());
+      localStorage.setItem('userRole', userData.role);
 
     } catch (error) {
       console.error('Register error:', error);
@@ -101,6 +102,7 @@ export class AuthService {
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userId', userData.id.toString());
       localStorage.setItem('authExpiresAt', expiresAt.toString());
+      localStorage.setItem('userRole', userData.role); 
     } catch (error) {
       console.error('Failed to login:', error);
       throw error;
@@ -135,6 +137,17 @@ export class AuthService {
   getUserId(): number | null {
     return this.userId;
   }
+
+  getUserRole(): UserRole | null {
+  const role = localStorage.getItem('userRole');
+  if (role !== null) {
+    const roleNum = Number(role);
+    if (!isNaN(roleNum) && UserRole[roleNum] !== undefined) {
+      return roleNum as UserRole;
+    }
+  }
+  return null;
+}
 
 forgotPassword(email: string) {
   if (!email) {

@@ -6,6 +6,7 @@ import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player.interface';
 import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
 import { AuthService } from '../../components/auth/auth.service';
+import { UserRole } from '../../models/user-role.enum';
 
 @Component({
   selector: 'app-home',
@@ -27,12 +28,13 @@ export class Home {
   selectedFileName: string = '';
 
   async init() {
-    try {
+    const role = this.authService.getUserRole();
+    if (role === UserRole.ADMIN) {
+      this.players = await this.PlayerService.getPlayers();
+    } else if (role === UserRole.ORGANISER) {
       this.players = await this.PlayerService.getPlayersForOrganiser(this.authService.getUserId()!);
-      this.filterPlayers();
-    } catch (error) {
-      console.error('Error fetching players:', error);
     }
+    this.filterPlayers();
   }
 
   ngOnInit() {
