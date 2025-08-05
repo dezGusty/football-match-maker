@@ -79,6 +79,7 @@ namespace FootballAPI.Service
                 Rating = dto.Rating,
                 Email = dto.Email,
                 IsAvailable = false,
+                IsPublic = true,
                 IsEnabled = true,
                 ImageUrl = dto.ImageUrl,
                 Speed = dto.Speed,
@@ -101,6 +102,7 @@ namespace FootballAPI.Service
             existingPlayer.LastName = updatePlayerDto.LastName;
             existingPlayer.Rating = updatePlayerDto.Rating;
             existingPlayer.IsAvailable = updatePlayerDto.IsAvailable;
+            existingPlayer.IsPublic = updatePlayerDto.IsPublic;
             existingPlayer.CurrentTeamId = updatePlayerDto.CurrentTeamId;
             existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
             existingPlayer.ImageUrl = updatePlayerDto.ImageUrl;
@@ -149,7 +151,6 @@ namespace FootballAPI.Service
             return await _playerRepository.ExistsAsync(id);
         }
 
-        // Disponibilitate
         public async Task<bool> SetPlayerAvailableAsync(int playerId)
         {
             var player = await _playerRepository.GetByIdAsync(playerId);
@@ -245,6 +246,7 @@ namespace FootballAPI.Service
                     Rating = 0.0f,
                     Email = "",
                     IsAvailable = false,
+                    IsPublic = player.IsPublic,
                     CurrentTeamId = null,
                     IsEnabled = false,
                     ImageUrl = null,
@@ -263,6 +265,7 @@ namespace FootballAPI.Service
                 LastName = player.LastName,
                 Rating = player.Rating,
                 IsAvailable = player.IsAvailable,
+                IsPublic = player.IsPublic,
                 CurrentTeamId = player.CurrentTeamId,
                 IsEnabled = true,
                 Email = player.Email,

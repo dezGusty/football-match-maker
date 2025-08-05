@@ -11,8 +11,8 @@ namespace FootballAPI.DTOs
         public float Rating { get; set; }
 
         public string Email { get; set; }
-
         public bool IsAvailable { get; set; }
+        public bool IsPublic { get; set; }
         public int? CurrentTeamId { get; set; }
         public bool IsEnabled { get; set; }
         public string? ImageUrl { get; set; }
@@ -37,8 +37,6 @@ namespace FootballAPI.DTOs
         public string Email { get; set; }
         public string? ImageUrl { get; set; }
 
-        //public int? CurrentTeamId { get; set; }
-        // Noile proprietăți cu valori default
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
         public int Speed { get; set; } = 2;
 
@@ -59,8 +57,8 @@ namespace FootballAPI.DTOs
         public int? CurrentTeamId { get; set; }
         public bool IsEnabled { get; set; }
         public string? ImageUrl { get; set; }
+        public bool IsPublic { get; set; }
 
-        // Noile proprietăți
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
         public int Speed { get; set; }
 
