@@ -38,5 +38,15 @@ export const routes: Routes = [
         path: 'matches-history',
         loadComponent: () => import('./pages/matches-history/matches-history').then(m => m.MatchesHistory),
         canActivate: [authGuard]
+    },
+    {
+        path: 'player-dashboard',
+        loadComponent: () => import('./pages/player-dashboard/player-dashboard.component').then(m => m.PlayerDashboardComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'player-account',
+        loadComponent: () => import('./pages/player-account/player-account.component').then(m => m.PlayerAccountComponent),
+        canActivate: [authGuard]
     }
 ];
