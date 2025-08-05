@@ -113,6 +113,7 @@ namespace FootballAPI.Service
                 Rating = dto.Rating,
                 Email = dto.Email,
                 IsAvailable = false,
+                IsPublic = true,
                 IsEnabled = true,
                 ImageUrl = dto.ImageUrl
             };

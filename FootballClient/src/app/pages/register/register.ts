@@ -20,7 +20,7 @@ export class Register {
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
-  role: UserRole = UserRole.ORGANISER; // SCHIMBAT: din ADMIN în ORGANISER
+  role: UserRole = UserRole.ORGANISER;
   errorMessage: string = '';
   successMessage: string = '';
   UserRole = UserRole;
@@ -41,7 +41,6 @@ export class Register {
       return;
     }
 
-    // Validare suplimentară pentru câmpurile de player
     if (this.role === UserRole.PLAYER) {
       if (!this.firstName || !this.lastName) {
         this.errorMessage = 'First Name and Last Name are required for players!';
@@ -69,7 +68,6 @@ export class Register {
     }
 
     try {
-      // AuthService.register gestionează deja atât organizatorii cât și players
       await this.authService.register(
         this.email,
         this.username,

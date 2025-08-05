@@ -81,6 +81,7 @@ namespace FootballAPI.Service
                 Rating = dto.Rating,
                 Email = dto.Email,
                 IsAvailable = false,
+                IsPublic = true,
                 IsEnabled = true,
                 ImageUrl = dto.ImageUrl,
                 Speed = dto.Speed,
@@ -103,6 +104,7 @@ namespace FootballAPI.Service
             existingPlayer.LastName = updatePlayerDto.LastName;
             existingPlayer.Rating = updatePlayerDto.Rating;
             existingPlayer.IsAvailable = updatePlayerDto.IsAvailable;
+            existingPlayer.IsPublic = updatePlayerDto.IsPublic;
             existingPlayer.CurrentTeamId = updatePlayerDto.CurrentTeamId;
             existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
             existingPlayer.ImageUrl = updatePlayerDto.ImageUrl;
@@ -151,7 +153,6 @@ namespace FootballAPI.Service
             return await _playerRepository.ExistsAsync(id);
         }
 
-        // Disponibilitate
         public async Task<bool> SetPlayerAvailableAsync(int playerId)
         {
             var player = await _playerRepository.GetByIdAsync(playerId);
@@ -247,6 +248,7 @@ namespace FootballAPI.Service
                     Rating = 0.0f,
                     Email = "",
                     IsAvailable = false,
+                    IsPublic = player.IsPublic,
                     CurrentTeamId = null,
                     IsEnabled = false,
                     ImageUrl = null,
@@ -265,6 +267,7 @@ namespace FootballAPI.Service
                 LastName = player.LastName,
                 Rating = player.Rating,
                 IsAvailable = player.IsAvailable,
+                IsPublic = player.IsPublic,
                 CurrentTeamId = player.CurrentTeamId,
                 IsEnabled = true,
                 Email = player.Email,
@@ -318,15 +321,37 @@ namespace FootballAPI.Service
         }
 
         public async Task AddPlayerOrganiserRelationAsync(int playerId, int organiserId)
-    {
-        var relation = new PlayerOrganiser
         {
-            PlayerId = playerId,
-            OrganiserId = organiserId
-        };
+            var relation = new PlayerOrganiser
+            {
+                PlayerId = playerId,
+                OrganiserId = organiserId
+            };
 
-        await _playerRepository.AddPlayerOrganiserRelationAsync(relation);
-    }
+            await _playerRepository.AddPlayerOrganiserRelationAsync(relation);
+        }
+
+        public async Task<bool> SetPlayerPublicAsync(int playerId)
+        {
+            var player = await _playerRepository.GetByIdAsync(playerId);
+            if (player == null || !player.IsEnabled)
+                return false;
+
+            player.IsPublic = true;
+            await _playerRepository.UpdateAsync(player);
+            return true;
+        }
+
+        public async Task<bool> SetPlayerPrivateAsync(int playerId)
+        {
+            var player = await _playerRepository.GetByIdAsync(playerId);
+            if (player == null || !player.IsEnabled)
+                return false;
+
+            player.IsPublic = false;
+            await _playerRepository.UpdateAsync(player);
+            return true;
+        }
     }
 
 }

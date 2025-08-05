@@ -106,6 +106,10 @@ namespace FootballAPI.Data
                 .HasPrincipalKey(u => u.Email)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Player>()
+                .Property(p => p.IsPublic)
+                .HasDefaultValue(true);
+
             SeedData(modelBuilder);
         }
 
@@ -125,6 +129,7 @@ namespace FootballAPI.Data
                     Rating = 8.5f,
                     Email = "ion.popescu@gmail.com",
                     IsAvailable = true,
+                    IsPublic = true,
                     CurrentTeamId = 1
                 },
                 new Player
@@ -135,6 +140,7 @@ namespace FootballAPI.Data
                     Rating = 7.8f,
                     Email = "marius.ionescu@gmail.com",
                     IsAvailable = true,
+                    IsPublic = true,
                     CurrentTeamId = 1
                 }
             );

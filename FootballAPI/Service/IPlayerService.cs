@@ -23,5 +23,7 @@ namespace FootballAPI.Service
         Task<bool> UpdatePlayerRatingAsync(int playerId, float ratingChange);
         Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates);
         Task AddPlayerOrganiserRelationAsync(int playerId, int organiserId);
+        Task<bool> SetPlayerPublicAsync(int playerId);
+        Task<bool> SetPlayerPrivateAsync(int playerId);
     }
 }

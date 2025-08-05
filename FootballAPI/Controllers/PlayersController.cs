@@ -217,7 +217,6 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Error clearing available players: {ex.Message}");
             }
         }
-        // Adaugă această metodă în PlayerController.cs
 
         [HttpPatch("{id}/update-rating")]
         public async Task<IActionResult> UpdatePlayerRating(int id, [FromBody] UpdatePlayerRatingDto updateRatingDto)
@@ -266,6 +265,40 @@ namespace FootballAPI.Controllers
             await _playerService.AddPlayerOrganiserRelationAsync(dto.PlayerId, dto.OrganiserId);
 
             return Ok();
+        }
+
+        [HttpPatch("{id}/set-public")]
+        public async Task<ActionResult> SetPlayerPublic(int id)
+        {
+            try
+            {
+                var result = await _playerService.SetPlayerPublicAsync(id);
+                if (!result)
+                    return NotFound($"Player with ID {id} not found or is disabled.");
+
+                return Ok(new { message = "Player set as public successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error setting player public: {ex.Message}");
+            }
+        }
+
+        [HttpPatch("{id}/set-private")]
+        public async Task<ActionResult> SetPlayerPrivate(int id)
+        {
+            try
+            {
+                var result = await _playerService.SetPlayerPrivateAsync(id);
+                if (!result)
+                    return NotFound($"Player with ID {id} not found or is disabled.");
+
+                return Ok(new { message = "Player set as private successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error setting player private: {ex.Message}");
+            }
         }
     }
 }
