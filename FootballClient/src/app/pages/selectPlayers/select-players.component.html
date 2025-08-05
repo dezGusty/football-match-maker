@@ -45,12 +45,11 @@
                         <li *ngFor="let player of filteredAvailablePlayers" class="player-item">
                             <div class="player-info">
                                 <div class="player-name-rating">
-                                    <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
-                                    <span class="player-rating">Rating: {{ player.rating }}</span>
+                                    <span [class.player-locked]="player.locked">{{ player.firstName }} {{
+                                        player.lastName }}</span>
+                                    <span class="player-rating">Rating: {{ player.rating | number:'1.0-2' }}</span>
                                 </div>
-                                <app-player-stats 
-                                    [speed]="player.speed || 2" 
-                                    [stamina]="player.stamina || 2" 
+                                <app-player-stats [speed]="player.speed || 2" [stamina]="player.stamina || 2"
                                     [errors]="player.errors || 2">
                                 </app-player-stats>
                             </div>
@@ -75,11 +74,9 @@
                             <div class="player-info">
                                 <div class="player-name-rating">
                                     <span>{{ player.firstName }} {{ player.lastName }}</span>
-                                    <span class="player-rating">Rating: {{ player.rating }}</span>
+                                    <span class="player-rating">Rating: {{ player.rating | number:'1.0-2' }}</span>
                                 </div>
-                                <app-player-stats 
-                                    [speed]="player.speed || 2" 
-                                    [stamina]="player.stamina || 2" 
+                                <app-player-stats [speed]="player.speed || 2" [stamina]="player.stamina || 2"
                                     [errors]="player.errors || 2">
                                 </app-player-stats>
                             </div>
@@ -117,7 +114,7 @@
         <div class="teams-container">
             <div class="team">
                 <input type="text" [(ngModel)]="team1Name" class="team-name-input" />
-                <h3>({{ team1.players.length }} players - {{ team1.averageRating | number:'1.1-1' }})</h3>
+                <h3>({{ team1.players.length }} players - {{ team1.averageRating | number:'1.0-2' }})</h3>
                 <ul>
                     <li *ngFor="let player of team1.players" class="player-team-item">
                         <div class="player-controls">
@@ -132,15 +129,14 @@
                         </div>
                         <div class="player-info-team">
                             <div class="player-name-stats">
-                                <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
-                                <app-player-stats 
-                                    [speed]="player.speed || 2" 
-                                    [stamina]="player.stamina || 2" 
+                                <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName
+                                    }}</span>
+                                <app-player-stats [speed]="player.speed || 2" [stamina]="player.stamina || 2"
                                     [errors]="player.errors || 2">
                                 </app-player-stats>
                             </div>
                             <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
-                                {{ player.rating }}
+                                {{ player.rating | number:'1.0-2' }}
                             </span>
                         </div>
                     </li>
@@ -149,7 +145,7 @@
 
             <div class="team">
                 <input type="text" [(ngModel)]="team2Name" class="team-name-input" />
-                <h3>({{ team2.players.length }} players - {{ team2.averageRating | number:'1.1-1' }})</h3>
+                <h3>({{ team2.players.length }} players - {{ team2.averageRating | number:'1.0-2' }})</h3>
                 <ul>
                     <li *ngFor="let player of team2.players" class="player-team-item">
                         <div class="player-controls">
@@ -164,15 +160,14 @@
                         </div>
                         <div class="player-info-team">
                             <div class="player-name-stats">
-                                <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
-                                <app-player-stats 
-                                    [speed]="player.speed || 2" 
-                                    [stamina]="player.stamina || 2" 
+                                <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName
+                                    }}</span>
+                                <app-player-stats [speed]="player.speed || 2" [stamina]="player.stamina || 2"
                                     [errors]="player.errors || 2">
                                 </app-player-stats>
                             </div>
                             <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
-                                {{ player.rating }}
+                                {{ player.rating | number:'1.0-2' }}
                             </span>
                         </div>
                     </li>

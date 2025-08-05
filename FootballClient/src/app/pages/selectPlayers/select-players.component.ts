@@ -10,11 +10,6 @@ import { MatchService } from '../../services/match.service';
 import { PlayerMatchHistoryService } from '../../services/player-match-history.service';
 import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
 
-interface PlayerCategory {
-    high: Player[];
-    medium: Player[];
-    low: Player[];
-}
 
 interface Team {
     players: Player[];
