@@ -1,123 +1,20 @@
-/* Header Bar */
-.header-bar {
-    background: #a8c3ab;
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-}
-
-.header-bar:hover {
-    background: #9bb89e;
-    transform: translateY(-1px);
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #2d4a32;
-    font-weight: 600;
-}
-
-.user-icon {
-    font-size: 18px;
-}
-
-.username {
-    font-size: 16px;
-}
-
-.app-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #2d4a32;
-    margin: 0;
-    text-align: center;
-    flex: 1;
-}
-
-.header-spacer {
-    width: 120px;
-    /* Same width as user-info to center the title */
-}
-
 /* Main Dashboard Container */
 .dashboard-container {
     display: flex;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 80px);
     /* Adjusted for header bar height */
     background: #f5f5f5;
 }
 
-/* Main Content Area */
+/* Main Content Area - Now takes full width */
 .main-content {
     flex: 1;
     padding: 24px;
     background: white;
     margin: 16px;
-    margin-right: 8px;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     overflow-y: auto;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 250px;
-    background: #6a866e;
-    margin: 16px;
-    margin-left: 8px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar-menu {
-    padding: 24px 0;
-}
-
-.menu-item {
-    display: block;
-    width: 100%;
-    padding: 16px 24px;
-    border: none;
-    background: transparent;
-    color: white;
-    font-size: 16px;
-    font-weight: 500;
-    text-align: left;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    border-left: 4px solid transparent;
-}
-
-.menu-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateX(2px);
-}
-
-.menu-item.active {
-    background: rgba(255, 255, 255, 0.15);
-    border-left-color: white;
-    font-weight: 600;
-}
-
-.menu-item.logout-btn {
-    margin-top: 32px;
-    color: #ffebee;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding-top: 24px;
-}
-
-.menu-item.logout-btn:hover {
-    background: rgba(244, 67, 54, 0.2);
-    color: #ffcdd2;
 }
 
 /* Content Section */
@@ -367,46 +264,8 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .header-bar {
-        padding: 12px 16px;
-    }
-
-    .app-title {
-        font-size: 18px;
-    }
-
-    .user-info {
-        font-size: 14px;
-    }
-
     .dashboard-container {
-        flex-direction: column;
-        height: calc(100vh - 60px);
-    }
-
-    .sidebar {
-        width: 100%;
-        order: -1;
-        margin: 8px;
-    }
-
-    .sidebar-menu {
-        display: flex;
-        padding: 12px;
-        gap: 8px;
-    }
-
-    .menu-item {
-        flex: 1;
-        text-align: center;
-        padding: 12px 8px;
-        font-size: 14px;
-    }
-
-    .menu-item.logout-btn {
-        margin-top: 0;
-        border-top: none;
-        padding-top: 12px;
+        height: calc(100vh - 70px);
     }
 
     .main-content {
@@ -462,5 +321,23 @@
         content: "Your Team: ";
         font-weight: 600;
         color: #6a866e;
+    }
+
+    .teams-container {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .vs-divider {
+        align-self: center;
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .modal-content {
+        min-width: 90%;
+        margin: 20px;
+        padding: 24px;
     }
 }

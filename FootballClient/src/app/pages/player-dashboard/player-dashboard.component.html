@@ -1,18 +1,5 @@
-<!-- Account/Profile Content -->
-<div *ngIf="activeTab === 'account'" class="content-section">
-    
-</div> <!-- Profile Content -->
-<div *ngIf="activeTab === 'profile'" class="content-section">
-    >
-</div><!-- Header Bar -->
-<div class="header-bar" (click)="goToAccount()">
-    <div class="user-info">
-        <span class="user-icon">👤</span>
-        <span class="username">{{currentPlayer?.firstName || 'lucapuiu'}}</span>
-    </div>
-    <h1 class="app-title">Football Match Maker</h1>
-    <div class="header-spacer"></div>
-</div>
+<!-- Player Header -->
+<app-player-header></app-player-header>
 
 <!-- Main Container -->
 <div class="dashboard-container">
@@ -66,11 +53,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Profile Content -->
-        <div *ngIf="activeTab === 'profile'" class="content-section">
-           
         </div>
     </div>
 

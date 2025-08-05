@@ -60,8 +60,14 @@ export class PlayerHeaderComponent implements OnInit {
 
     navigateTo(route: string) {
         this.router.navigate([route]);
+        
         this.isMenuOpen = false;
     }
+    navigateToTab(tab: string) {
+  // Folosește query params pentru a transmite tab-ul
+  this.router.navigate(['/player-dashboard'], { queryParams: { tab: tab } });
+  this.isMenuOpen = false;
+}
 
     logout() {
         this.authService.logout();
