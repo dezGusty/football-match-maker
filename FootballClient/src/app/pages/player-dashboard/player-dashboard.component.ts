@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../components/auth/auth.service';
 import { MatchService } from '../../services/match.service';
 import { PlayerService } from '../../services/player.service';
+import { PlayerHeaderComponent } from '../../components/player-header/player-header.component';
 import { Match } from '../../models/match.interface';
 import { Player } from '../../models/player.interface';
 import { PlayerHistory } from '../../models/player-history.interface';
@@ -12,7 +13,7 @@ import { PlayerHistory } from '../../models/player-history.interface';
 @Component({
     selector: 'app-player-dashboard',
     standalone: true,
-    imports: [CommonModule, FormsModule, DatePipe],
+    imports: [CommonModule, FormsModule, DatePipe, PlayerHeaderComponent],
     templateUrl: './player-dashboard.component.html',
     styleUrls: ['./player-dashboard.component.css']
 })
@@ -138,6 +139,4 @@ export class PlayerDashboardComponent implements OnInit {
     goToAccount() {
         this.router.navigate(['/player-account']);
     }
-
-    // Remove hamburger menu related code since we're using sidebar now
 }

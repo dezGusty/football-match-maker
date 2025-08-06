@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../components/auth/auth.service';
-import { HttpClient } from '@angular/common/http';
+import { UserRole } from '../../models/user-role.enum';
 
 @Component({
   selector: 'app-login',
@@ -22,21 +22,21 @@ export class Login {
     private authService: AuthService
   ) {
     if (this.authService.isLoggedIn()) {
-    this.router.navigate(['/home']);
+      this.redirectBasedOnRole();
     }
   }
 
   showForgotPasswordModal = false;
-forgotEmail = '';
+  forgotEmail = '';
 
-openForgotPasswordModal() {
-  this.forgotEmail = '';
-  this.showForgotPasswordModal = true;
-}
+  openForgotPasswordModal() {
+    this.forgotEmail = '';
+    this.showForgotPasswordModal = true;
+  }
 
-closeForgotPasswordModal() {
-  this.showForgotPasswordModal = false;
-}
+  closeForgotPasswordModal() {
+    this.showForgotPasswordModal = false;
+  }
 
   async onLogin() {
     try {
@@ -44,10 +44,27 @@ closeForgotPasswordModal() {
         email: this.email,
         password: this.password
       });
-      this.router.navigate(['/home']);
+
+      // Redirect based on user role after successful login
+      this.redirectBasedOnRole();
+
     } catch (error) {
       this.errorMessage = 'Incorrect username or password';
       console.error('Eroare la autentificare:', error);
+    }
+  }
+
+  private redirectBasedOnRole() {
+    const userRole = this.authService.getUserRole();
+
+    // Redirect based on role
+    if (userRole === UserRole.PLAYER) {
+      this.router.navigate(['/player-dashboard']);
+    } else if (userRole === UserRole.ORGANISER) {
+      this.router.navigate(['/home']);
+    } else {
+      // Default fallback for ADMIN or unknown roles
+      this.router.navigate(['/home']);
     }
   }
 
@@ -55,19 +72,18 @@ closeForgotPasswordModal() {
     this.router.navigate(['/register']);
   }
 
-forgotPassword() {
-  this.email = this.forgotEmail;
-  this.authService.forgotPassword(this.email)
-    .subscribe({
-      next: () => alert('Email trimis cu succes! Verifică inbox-ul.'),
-      error: (err) => {
-        console.error(err);
-        this.errorMessage = 'A apărut o eroare la trimiterea email-ului.';
-      }
-    });
-  this.forgotEmail = '';
-  this.email = '';
-  this.closeForgotPasswordModal();
-}
-
+  forgotPassword() {
+    this.email = this.forgotEmail;
+    this.authService.forgotPassword(this.email)
+      .subscribe({
+        next: () => alert('Email trimis cu succes! Verifică inbox-ul.'),
+        error: (err) => {
+          console.error(err);
+          this.errorMessage = 'A apărut o eroare la trimiterea email-ului.';
+        }
+      });
+    this.forgotEmail = '';
+    this.email = '';
+    this.closeForgotPasswordModal();
+  }
 }

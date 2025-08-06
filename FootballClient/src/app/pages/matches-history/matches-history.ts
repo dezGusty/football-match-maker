@@ -32,7 +32,7 @@ export class MatchesHistory implements OnInit {
         match.teamAName = await this.MatchService.getTeamById(match.teamAId);
         match.teamBName = await this.MatchService.getTeamById(match.teamBId);
       }
-      
+
     } catch (error) {
       console.error('Error fetching matches:', error);
     }
@@ -53,11 +53,11 @@ export class MatchesHistory implements OnInit {
 
       this.selectedTeamAPlayers = match.playerHistory
         .filter(p => p.teamId === match.teamAId && p.player)
-        .map(p => `${p.player.firstName} ${p.player.lastName} ${p.player.rating}`);
+        .map(p => `${p.player.firstName} ${p.player.lastName} ${(p.player.rating || 0).toFixed(2)}`);
 
       this.selectedTeamBPlayers = match.playerHistory
         .filter(p => p.teamId === match.teamBId && p.player)
-        .map(p => `${p.player.firstName} ${p.player.lastName} ${p.player.rating}`);
+        .map(p => `${p.player.firstName} ${p.player.lastName} ${(p.player.rating || 0).toFixed(2)}`);
 
       this.modalOpen = true;
     } catch (error) {
@@ -73,7 +73,7 @@ export class MatchesHistory implements OnInit {
     if (!match || !teamId) return [];
     return match.playerHistory
       .filter(ph => ph.teamId === teamId && ph.player)
-      .map(ph => `${ph.player.firstName} ${ph.player.lastName} ${ph.player.rating}`);
+      .map(ph => `${ph.player.firstName} ${ph.player.lastName} ${(ph.player.rating || 0).toFixed(2)}`);
   }
 }
 

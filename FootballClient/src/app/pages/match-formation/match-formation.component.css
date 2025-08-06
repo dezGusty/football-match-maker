@@ -1,11 +1,26 @@
+:host {
+    display: block;
+    height: 100vh;
+    background: linear-gradient(135deg, #2d5f3f 0%, #4a7c59 25%, #68a373 50%, #7fbc8c 75%, #a8d8a8 100%);
+    padding: 0;
+    overflow: hidden;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .football-field {
     width: 1200px;
     height: 700px;
     position: relative;
-    margin: 20px auto;
+    margin: 125px auto 0 auto;
     overflow: hidden;
     border: 4px solid white;
     border-radius: 10px;
+    background-color: #2d5f3f;
 
     background-image:
         url('http://localhost:5145/images/football_field.jpg'),
@@ -83,7 +98,6 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    border: 2px solid white;
     border-radius: 6px 6px 0 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
@@ -106,7 +120,6 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    border: 2px solid white;
     object-fit: cover;
     margin-bottom: 6px;
     background-color: rgba(255, 255, 255, 0.2);
@@ -140,12 +153,22 @@
 .player-rating {
     margin-top: 6px;
     display: flex;
-    justify-content: center;
-    gap: 1px;
+    flex-direction: column;
+    align-items: center;
     background: rgba(0, 0, 0, 0.4);
-    padding: 2px 6px;
+    padding: 4px 6px;
     border-radius: 8px;
     backdrop-filter: blur(2px);
+}
+
+.player-rating .stars-container {
+    display: flex;
+    justify-content: center;
+    gap: 1px;
+}
+
+.player-rating .star {
+    display: inline-block;
 }
 
 .star {
@@ -182,69 +205,157 @@
     width: 50%;
 }
 
+.rating-number {
+    margin-top: 3px;
+    font-size: 9px;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 1px 4px;
+    border-radius: 4px;
+    min-width: 20px;
+}
+
 .score-container {
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 20px;
+    margin-bottom: 5;
+    padding: 0;
 }
 
 .score-table {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    gap: 60px;
+    margin-bottom: -2px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(240, 248, 255, 0.7) 100%);
+    padding: 15px 20px;
+    border-radius: 0 0 60px 60px;
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    position: relative;
+}
+
+.score-table::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, #4CAF50 50%, transparent 100%);
 }
 
 .team-name {
-    font-weight: bold;
-    min-width: 100px;
+    font-weight: 700;
+    min-width: 80px;
     text-align: center;
+    color: #2d5f3f;
+    font-size: 14px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    letter-spacing: 0.3px;
 }
 
 .score-input {
-    width: 60px;
-    height: 40px;
+    width: 50px;
+    height: 35px;
     text-align: center;
-    font-size: 24px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    border: 2px solid rgba(224, 224, 224, 0.8);
+    border-radius: 8px;
+    padding: 4px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+    color: #2d5f3f;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .score-input:focus {
     outline: none;
     border-color: #4CAF50;
+    box-shadow:
+        0 0 0 2px rgba(76, 175, 80, 0.15),
+        inset 0 1px 3px rgba(0, 0, 0, 0.03);
+    transform: scale(1.03);
 }
 
 .score-separator {
     font-size: 24px;
-    font-weight: bold;
+    font-weight: 800;
+    color: #2d5f3f;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin: 0 8px;
+}
+
+.preview-ratings-btn {
+    position: absolute;
+    bottom: -15px;
+    right: 20px;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow:
+        0 4px 12px rgba(76, 175, 80, 0.3),
+        0 2px 6px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-ratings-btn:hover {
+    transform: scale(1.1);
+    box-shadow:
+        0 6px 16px rgba(76, 175, 80, 0.4),
+        0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.preview-ratings-btn:active {
+    transform: scale(1.05);
 }
 
 .finalize-button {
-    padding: 12px 24px;
-    background-color: #4CAF50;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 20px;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+    margin-top: 10px;
 }
 
 .finalize-button:hover {
-    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.3);
 }
 
 .finalize-button:active {
-    transform: translateY(1px);
+    transform: translateY(0px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
 .modal-overlay {

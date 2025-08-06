@@ -1,18 +1,5 @@
-<!-- Account/Profile Content -->
-<div *ngIf="activeTab === 'account'" class="content-section">
-    
-</div> <!-- Profile Content -->
-<div *ngIf="activeTab === 'profile'" class="content-section">
-    >
-</div><!-- Header Bar -->
-<div class="header-bar" (click)="goToAccount()">
-    <div class="user-info">
-        <span class="user-icon">👤</span>
-        <span class="username">{{currentPlayer?.firstName || 'lucapuiu'}}</span>
-    </div>
-    <h1 class="app-title">Football Match Maker</h1>
-    <div class="header-spacer"></div>
-</div>
+<!-- Player Header -->
+<app-player-header (tabChange)="setActiveTab($event)"></app-player-header>
 
 <!-- Main Container -->
 <div class="dashboard-container">
@@ -67,30 +54,9 @@
                 </div>
             </div>
         </div>
-
-        <!-- Profile Content -->
-        <div *ngIf="activeTab === 'profile'" class="content-section">
-           
-        </div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-menu">
-            <button class="menu-item" [class.active]="activeTab === 'future'" (click)="setActiveTab('future')">
-                Future Matches
-            </button>
-
-            <button class="menu-item" [class.active]="activeTab === 'past'" (click)="setActiveTab('past')">
-                Past Matches
-            </button>
-
-            <button class="menu-item logout-btn" (click)="logout()">
-                Log Out
-            </button>
-        </div>
-    </div>
-</div>
+  
 
 <!-- Modal -->
 <div *ngIf="modalOpen" class="modal-backdrop" (click)="closeModal()">

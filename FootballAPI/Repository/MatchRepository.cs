@@ -104,7 +104,7 @@ namespace FootballAPI.Repository
             .Include(m => m.TeamB)
             .Include(m => m.PlayerHistory)
                 .ThenInclude(ph => ph.Player)
-            .Where(m => m.MatchDate.Date < currentDate)
+            .Where(m => m.MatchDate.Date <= currentDate)
             .OrderByDescending(m => m.MatchDate)
             .ToListAsync();
     }
