@@ -240,18 +240,11 @@ namespace FootballAPI.Service
         {
             if (!player.IsEnabled)
             {
-                string shortFirst = player.FirstName != null && player.FirstName.Length > 3
-                    ? player.FirstName.Substring(0, 3)
-                    : player.FirstName ?? "";
-                string shortLast = player.LastName != null && player.LastName.Length > 3
-                    ? player.LastName.Substring(0, 3)
-                    : player.LastName ?? "";
-
                 return new PlayerDto
                 {
                     Id = player.Id,
-                    FirstName = shortFirst,
-                    LastName = shortLast,
+                    FirstName = player.FirstName,
+                    LastName = player.LastName,
                     Rating = 0.0f,
                     Email = "",
                     IsAvailable = false,
