@@ -1,11 +1,6 @@
 <app-header></app-header>
 
 <div class="carousel-container">
-    <div class="slide-indicators">
-        <div class="indicator" [class.active]="currentSlide === 1" (click)="goToSlide(1)"></div>
-        <div class="indicator" [class.active]="currentSlide === 2" (click)="goToSlide(2)"></div>
-    </div>
-
     <div class="selected-date-display" *ngIf="currentSlide === 2 && selectedDate">
         📅 Selected: {{ getFormattedDate() }}
     </div>

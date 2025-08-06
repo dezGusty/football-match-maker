@@ -546,34 +546,6 @@ carousel-container {
     transform: none !important;
 }
 
-.slide-indicators {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    display: flex;
-    gap: 10px;
-    z-index: 100;
-}
-
-.indicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: rgba(164, 196, 168, 0.3);
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.indicator.active {
-    background: #388e3c;
-    transform: scale(1.2);
-}
-
-.indicator:hover:not(.active) {
-    background: rgba(164, 196, 168, 0.5);
-    transform: scale(1.1);
-}
-
 .selected-date-display {
     position: absolute;
     top: 30px;
