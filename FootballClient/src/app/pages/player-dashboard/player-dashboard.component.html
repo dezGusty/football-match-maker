@@ -1,5 +1,5 @@
 <!-- Player Header -->
-<app-player-header></app-player-header>
+<app-player-header (tabChange)="setActiveTab($event)"></app-player-header>
 
 <!-- Main Container -->
 <div class="dashboard-container">
@@ -56,23 +56,7 @@
         </div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-menu">
-            <button class="menu-item" [class.active]="activeTab === 'future'" (click)="setActiveTab('future')">
-                Future Matches
-            </button>
-
-            <button class="menu-item" [class.active]="activeTab === 'past'" (click)="setActiveTab('past')">
-                Past Matches
-            </button>
-
-            <button class="menu-item logout-btn" (click)="logout()">
-                Log Out
-            </button>
-        </div>
-    </div>
-</div>
+  
 
 <!-- Modal -->
 <div *ngIf="modalOpen" class="modal-backdrop" (click)="closeModal()">

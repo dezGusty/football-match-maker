@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
@@ -7,6 +7,7 @@ import { PlayerService } from '../../services/player.service';
 import { User } from '../../models/user.interface';
 import { Player } from '../../models/player.interface';
 
+// Service pentru comunicarea între componente
 @Component({
     selector: 'app-player-header',
     standalone: true,
@@ -16,10 +17,11 @@ import { Player } from '../../models/player.interface';
 })
 export class PlayerHeaderComponent implements OnInit {
     username: string = '';
-    playerName: string = '';
     imageUrl?: string;
     isMenuOpen = false;
     currentPlayer: Player | null = null;
+
+    @Output() tabChange = new EventEmitter<string>();
 
     constructor(
         private router: Router,
@@ -44,10 +46,6 @@ export class PlayerHeaderComponent implements OnInit {
                 // Get player data for first/last name
                 const players = await this.playerService.getPlayers();
                 this.currentPlayer = players.find(p => p.email === user.email) || null;
-
-                if (this.currentPlayer) {
-                    this.playerName = `${this.currentPlayer.firstName} ${this.currentPlayer.lastName}`;
-                }
             } catch (error) {
                 console.error('Error loading player data:', error);
             }
@@ -60,14 +58,14 @@ export class PlayerHeaderComponent implements OnInit {
 
     navigateTo(route: string) {
         this.router.navigate([route]);
-        
         this.isMenuOpen = false;
     }
-    navigateToTab(tab: string) {
-  // Folosește query params pentru a transmite tab-ul
-  this.router.navigate(['/player-dashboard'], { queryParams: { tab: tab } });
-  this.isMenuOpen = false;
-}
+
+    switchTab(tab: string) {
+        console.log('Switching to tab:', tab); // Debug log
+        this.tabChange.emit(tab);
+        this.isMenuOpen = false;
+    }
 
     logout() {
         this.authService.logout();

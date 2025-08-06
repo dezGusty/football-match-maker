@@ -26,13 +26,13 @@
     <div class="menu" [class.open]="isMenuOpen">
         <ul>
             <li>
-                <button (click)="navigateTo('/player-dashboard')">
+                <button (click)="switchTab('future')">
                     Future Matches
                 </button>
             </li>
             <li>
-                <button (click)="navigateToTab('past')">
-                     Past Matches
+                <button (click)="switchTab('past')">
+                    Past Matches
                 </button>
             </li>
             <li>
