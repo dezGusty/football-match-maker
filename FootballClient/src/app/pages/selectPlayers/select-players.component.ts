@@ -449,8 +449,15 @@ export class SelectPlayersComponent implements OnInit {
                 return;
             }
 
+            // Check team size balance
+            const sizeDiff = Math.abs(this.team1.players.length - this.team2.players.length);
+            if (sizeDiff > 1) {
+                alert("Unable to start the match! The teams are unbalanced. The maximum difference allowed is 1 player between teams.");
+                return;
+            }
+
             if (!this.isCurrentDate(this.selectedDate)) {
-                alert("Meciul poate fi început doar în data curentă! Pentru alte date, folosește opțiunea 'Schedule Match'.");
+                alert("The match can only be started on the current date! For other dates, use the 'Schedule Match' option.");
                 return;
             }
 
@@ -508,6 +515,13 @@ export class SelectPlayersComponent implements OnInit {
 
             if (!this.selectedDate) {
                 alert("Please select a match date first.");
+                return;
+            }
+
+            // Check team size balance
+            const sizeDiff = Math.abs(this.team1.players.length - this.team2.players.length);
+            if (sizeDiff > 1) {
+                alert("Unable to schedule the match! The teams are unbalanced. The maximum difference allowed is 1 player between teams.");
                 return;
             }
 
