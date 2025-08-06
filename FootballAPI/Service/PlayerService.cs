@@ -240,11 +240,18 @@ namespace FootballAPI.Service
         {
             if (!player.IsEnabled)
             {
+                string shortFirst = player.FirstName != null && player.FirstName.Length > 3
+                    ? player.FirstName.Substring(0, 3)
+                    : player.FirstName ?? "";
+                string shortLast = player.LastName != null && player.LastName.Length > 3
+                    ? player.LastName.Substring(0, 3)
+                    : player.LastName ?? "";
+
                 return new PlayerDto
                 {
                     Id = player.Id,
-                    FirstName = $"Player{player.Id}",
-                    LastName = "",
+                    FirstName = shortFirst,
+                    LastName = shortLast,
                     Rating = 0.0f,
                     Email = "",
                     IsAvailable = false,
@@ -256,9 +263,6 @@ namespace FootballAPI.Service
                     Stamina = 1,
                     Errors = 1
                 };
-
-
-
             }
             return new PlayerDto
             {
@@ -322,7 +326,7 @@ namespace FootballAPI.Service
 
         public async Task AddPlayerOrganiserRelationAsync(int playerId, int organiserId)
         {
-             var organiser = await _userRepository.GetByIdAsync(organiserId);
+            var organiser = await _userRepository.GetByIdAsync(organiserId);
             if (organiser == null || organiser.Role != UserRole.ORGANISER)
                 throw new InvalidOperationException("OrganiserId does not correspond to a valid organiser user.");
 
