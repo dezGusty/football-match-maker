@@ -207,29 +207,64 @@ export class SelectPlayersComponent implements OnInit {
         const targetSize2 = isEvenTotal ? totalPlayers / 2 : Math.floor(totalPlayers / 2);
 
         const sortedByRating = [...shuffledPlayers].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        for (let i = 0; i < sortedByRating.length; i++) {
+
+        const avgRating = sortedByRating.reduce((sum, p) => sum + (p.rating || 0), 0) / sortedByRating.length;
+
+        const highSkillThreshold = avgRating * 1.2;
+
+        const highSkillPlayers = sortedByRating.filter(p => (p.rating || 0) >= highSkillThreshold);
+        const regularPlayers = sortedByRating.filter(p => (p.rating || 0) < highSkillThreshold);
+
+        for (let i = 0; i < highSkillPlayers.length; i++) {
             if (i % 2 === 0 && team1Players.length < targetSize1) {
-                team1Players.push(sortedByRating[i]);
+                team1Players.push(highSkillPlayers[i]);
             } else if (team2Players.length < targetSize2) {
-                team2Players.push(sortedByRating[i]);
-            } else {
-                team1Players.push(sortedByRating[i]);
+                team2Players.push(highSkillPlayers[i]);
             }
         }
 
-        while (team1Players.length > targetSize1) {
-            team2Players.push(team1Players.pop()!);
+        regularPlayers.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
+        const getTeamRating = (team: Player[]) =>
+            team.reduce((sum, p) => sum + (p.rating || 0), 0) / (team.length || 1);
+
+        for (const player of regularPlayers) {
+            const team1Rating = getTeamRating(team1Players);
+            const team2Rating = getTeamRating(team2Players);
+
+            if (team1Players.length < targetSize1 &&
+                (team2Players.length >= targetSize2 || team1Rating < team2Rating)) {
+                team1Players.push(player);
+            } else if (team2Players.length < targetSize2) {
+                team2Players.push(player);
+            } else {
+                team1Players.push(player);
+            }
         }
-        while (team2Players.length > targetSize2) {
-            team1Players.push(team2Players.pop()!);
+
+        for (let i = 0; i < 3; i++) {
+            const team1Rating = getTeamRating(team1Players);
+            const team2Rating = getTeamRating(team2Players);
+
+            if (Math.abs(team1Rating - team2Rating) < 0.1) break;
+
+            for (let j = 0; j < team1Players.length; j++) {
+                for (let k = 0; k < team2Players.length; k++) {
+                    const newTeam1Rating = (team1Rating * team1Players.length - (team1Players[j].rating || 0) + (team2Players[k].rating || 0)) / team1Players.length;
+                    const newTeam2Rating = (team2Rating * team2Players.length - (team2Players[k].rating || 0) + (team1Players[j].rating || 0)) / team2Players.length;
+
+                    if (Math.abs(newTeam1Rating - newTeam2Rating) < Math.abs(team1Rating - team2Rating)) {
+                        const temp = team1Players[j];
+                        team1Players[j] = team2Players[k];
+                        team2Players[k] = temp;
+                        break;
+                    }
+                }
+            }
         }
 
         team1Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         team2Players.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-
-        for (let i = 0; i < 3; i++) {
-            if (!this.optimizeTeams(team1Players, team2Players)) break;
-        }
 
         const team1Stats = this.calculateTeamStats(team1Players);
         const team2Stats = this.calculateTeamStats(team2Players);
@@ -245,7 +280,6 @@ export class SelectPlayersComponent implements OnInit {
 
         this.restoreLockedPlayers();
     }
-
     shuffleTeams() {
         this.saveLockedPlayers();
 
