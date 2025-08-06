@@ -65,20 +65,20 @@ export class MatchFormationComponent implements OnInit {
 
         if (teamSize === 5) {
             return [
-                { left: '25%', top: '20%' },
-                { left: '25%', top: '50%' },
-                { left: '25%', top: '80%' },
-                { left: '40%', top: '35%' },
-                { left: '40%', top: '65%' }
+                { left: '20%', top: '18%' },
+                { left: '20%', top: '50%' },
+                { left: '20%', top: '82%' },
+                { left: '40%', top: '32%' },
+                { left: '40%', top: '68%' }
             ];
         } else {
             return [
-                { left: '25%', top: '15%' },
-                { left: '25%', top: '35%' },
-                { left: '25%', top: '65%' },
-                { left: '25%', top: '85%' },
-                { left: '40%', top: '30%' },
-                { left: '40%', top: '70%' }
+                { left: '20%', top: '12%' },
+                { left: '20%', top: '32%' },
+                { left: '20%', top: '68%' },
+                { left: '20%', top: '88%' },
+                { left: '40%', top: '27%' },
+                { left: '40%', top: '73%' }
             ];
         }
     }
