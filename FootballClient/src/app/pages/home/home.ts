@@ -16,7 +16,7 @@ import { UserRole } from '../../models/user-role.enum';
   styleUrls: ['./home.css']
 })
 export class Home {
-  constructor(private PlayerService: PlayerService, private authService : AuthService) { }
+  constructor(private PlayerService: PlayerService, private authService: AuthService) { }
 
   players: Player[] = [];
   filteredPlayers: Player[] = [];
@@ -96,15 +96,15 @@ export class Home {
   }
 
   async addPlayerOrganiserRelation(playerId: number, organiserId: number | null = this.authService.getUserId()): Promise<void> {
-  const response = await fetch('http://localhost:5145/api/playerorganisers', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ playerId,  organiserId})
-  });
-  if (!response.ok) {
-    alert('A player cannot add another player.');
+    const response = await fetch('http://localhost:5145/api/playerorganisers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerId, organiserId })
+    });
+    if (!response.ok) {
+      alert('A player cannot add another player.');
+    }
   }
-}
 
   async addPlayer() {
     if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10000) {
@@ -133,7 +133,7 @@ export class Home {
       console.log('Player added:', addedPlayer);
     } catch (error) {
       console.error('Error adding player:', error);
-      alert('Adding player failed. Please try again if you are an organiser or admin.');
+
     }
   }
 
