@@ -9,5 +9,7 @@ export interface Match {
     teamBName?: string;
     scoreA?: number;
     scoreB?: number;
+    teamAGoals?: number;
+    teamBGoals?: number;
     playerHistory: PlayerHistory[];
 }

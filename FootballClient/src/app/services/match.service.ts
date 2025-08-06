@@ -55,8 +55,8 @@ export class MatchService {
         teamBId: m.teamBId,
         teamAName: m.teamAName || 'Team A',
         teamBName: m.teamBName ||'Team B',
-        scoreA: m.scoreA,
-        scoreB: m.scoreB,
+        scoreA: m.teamAGoals,
+        scoreB: m.teamBGoals,
         playerHistory: m.playerHistory || []
       }));
 
@@ -174,8 +174,8 @@ export class MatchService {
         teamBId: m.teamBId,
         teamAName: m.teamAName ||'Team A',
         teamBName: m.teamBName || 'Team B',
-        scoreA: m.scoreA,
-        scoreB: m.scoreB,
+        scoreA: m.teamAGoals,
+        scoreB: m.teamBGoals,
         playerHistory: m.playerHistory || []
       }));
 
