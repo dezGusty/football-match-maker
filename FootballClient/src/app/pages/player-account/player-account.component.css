@@ -1,59 +1,7 @@
-/* Account Header Bar */
-.account-header-bar {
-    background: #a8c3ab;
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1002;
-    height: 70px;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #2d4a32;
-    font-weight: 600;
-}
-
-.user-icon {
-    font-size: 18px;
-}
-
-.username {
-    font-size: 16px;
-}
-
-.app-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #2d4a32;
-    margin: 0;
-    text-align: center;
-    flex: 1;
-}
-
-.header-spacer {
-    width: 120px;
-    /* Same width as user-info to center the title */
-}
-
-/* Back Button */
-.back-button-container {
-    position: fixed;
-    top: 140px;
-    left: 20px;
-    z-index: 1001;
-}
-
+/* Back Button - Now styled as regular button in avatar column */
 .back-btn {
-    padding: 12px 20px;
+    margin: 12px 0 8px 0;
+    padding: 10px 20px;
     background: #6a866e;
     color: white;
     border: none;
@@ -63,6 +11,7 @@
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
     box-shadow: 0 2px 8px rgba(106, 134, 110, 0.2);
+    width: 200px;
 }
 
 .back-btn:hover {
@@ -75,10 +24,8 @@
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 80px);
     /* Adjust for header height */
-    margin-top: 70px;
-    /* Push content below header */
     background: linear-gradient(120deg, #e5e5e5 0%, #f8f9fa 100%);
     padding: 0;
     gap: 0;
@@ -91,7 +38,7 @@
     justify-content: flex-start;
     min-width: 340px;
     background: #b5c7b8;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 80px);
     /* Match the container height */
     padding-top: 64px;
 }
@@ -123,7 +70,7 @@
     align-items: flex-start;
     padding: 64px 48px;
     background: #fff;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 80px);
     /* Match the container height */
     overflow-y: auto;
 }
@@ -323,12 +270,14 @@
 @media (max-width: 768px) {
     .account-fullpage {
         flex-direction: column;
+        height: calc(100vh - 70px);
     }
 
     .account-avatar-col {
         width: 100%;
         min-height: 300px;
         padding: 32px 0;
+        height: auto;
     }
 
     .avatar-big {
@@ -337,8 +286,14 @@
         font-size: 100px;
     }
 
+    .back-btn {
+        width: 180px;
+        margin: 10px 0;
+    }
+
     .account-details-col {
         padding: 32px 24px;
+        height: auto;
     }
 
     .account-username {

@@ -7,11 +7,11 @@ import { User } from '../../models/user.interface';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { UserRole } from '../../models/user-role.enum';
-
+import { PlayerHeaderComponent } from '../../components/player-header/player-header.component';
 @Component({
     selector: 'app-player-account',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule,PlayerHeaderComponent],
     templateUrl: './player-account.component.html',
     styleUrl: './player-account.component.css'
 })

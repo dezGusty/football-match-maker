@@ -1,19 +1,5 @@
-<!-- Header Bar for Account Page -->
-<div class="account-header-bar">
-    <div class="user-info">
-        <span class="user-icon">👤</span>
-        <span class="username">{{user?.username || 'Player'}}</span>
-    </div>
-    <h1 class="app-title">Football Match Maker</h1>
-    <div class="header-spacer"></div>
-</div>
-
-<!-- Back Button -->
-<div class="back-button-container">
-    <button class="back-btn" (click)="goBack()">
-        ← Back to Dashboard
-    </button>
-</div>
+<!-- Player Header -->
+<app-player-header></app-player-header>
 
 <div class="account-fullpage">
     <div class="account-avatar-col">
@@ -29,6 +15,11 @@
 
         <button class="change-image-btn" (click)="showImageSelector = !showImageSelector">
             Change Profile Picture
+        </button>
+
+        <!-- Back Button moved here -->
+        <button class="back-btn" (click)="goBack()">
+            ← Back to Dashboard
         </button>
 
         @if (showImageSelector) {
