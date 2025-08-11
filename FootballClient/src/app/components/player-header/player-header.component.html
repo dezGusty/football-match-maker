@@ -1,45 +1,52 @@
 <nav class="player-header-nav">
-    <div class="header-left">
-        <div class="header-profile" (click)="navigateTo('/player-account')" title="Account">
-            @if (imageUrl) {
-            <img [src]="imageUrl" alt="Profile" class="header-profile-image" />
-            } @else {
-            <span class="material-icons profile-icon">person</span>
-            }
-            <span class="profile-username">{{ username }}</span>
-        </div>
+  <div class="header-left">
+    <div
+      class="header-profile"
+      (click)="navigateTo('/player-account')"
+      title="Account"
+    >
+      @if (imageUrl) {
+        <img [src]="imageUrl" alt="Profile" class="header-profile-image" />
+      } @else {
+        <span class="material-icons profile-icon">person</span>
+      }
+      <span class="profile-username">{{ username }}</span>
     </div>
-    <div class="header-center">
-        <div class="logo-container" (click)="navigateTo('/player-dashboard')" style="cursor:pointer;"
-            title="Go to Dashboard">
-            <h1 class="app-title">Football Match Maker</h1>
-        </div>
+  </div>
+  <div class="header-center">
+    <div
+      class="logo-container"
+      (click)="navigateTo('/player-dashboard')"
+      style="cursor: pointer"
+      title="Go to Dashboard"
+    >
+      <h1 class="app-title">Football Match Maker</h1>
     </div>
-    <div class="header-right">
-        <button class="hamburger" (click)="toggleMenu()" [class.active]="isMenuOpen" aria-label="Toggle menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-    </div>
+  </div>
+  <div class="header-right">
+    <button
+      class="hamburger"
+      (click)="toggleMenu()"
+      [class.active]="isMenuOpen"
+      aria-label="Toggle menu"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
 
-    <div class="menu" [class.open]="isMenuOpen">
-        <ul>
-            <li>
-                <button (click)="switchTab('future')">
-                    Future Matches
-                </button>
-            </li>
-            <li>
-                <button (click)="switchTab('past')">
-                    Past Matches
-                </button>
-            </li>
-            <li>
-                <button (click)="logout()" class="logout-btn">
-                    Log Out
-                </button>
-            </li>
-        </ul>
-    </div>
+  <div class="menu" [class.open]="isMenuOpen">
+    <ul>
+      <li>
+        <button (click)="switchTab('future')">Future Matches</button>
+      </li>
+      <li>
+        <button (click)="switchTab('past')">Past Matches</button>
+      </li>
+      <li>
+        <button (click)="logout()" class="logout-btn">Log Out</button>
+      </li>
+    </ul>
+  </div>
 </nav>

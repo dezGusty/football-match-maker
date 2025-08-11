@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TeamCreated } from '../models/teamCreated.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TeamService {
   private readonly url: string = 'http://localhost:5145/api/teams';
@@ -11,7 +11,7 @@ export class TeamService {
     const response = await fetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name })
+      body: JSON.stringify({ name }),
     });
 
     if (!response.ok) {
@@ -20,4 +20,4 @@ export class TeamService {
 
     return await response.json();
   }
-} 
+}

@@ -3,14 +3,14 @@ import { Match } from '../models/match.interface';
 import { MatchCreated } from '../models/matchCreated.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MatchService {
   private readonly baseUrl: string = 'http://localhost:5145/api';
   // Cache pentru numele echipelor pentru a reduce request-urile
   private teamNamesCache: Map<number, string> = new Map();
 
-  constructor() { }
+  constructor() {}
 
   async getMatches(): Promise<Match[]> {
     const response = await fetch(`${this.baseUrl}/matches`);
@@ -27,12 +27,12 @@ export class MatchService {
         matchDate: m.matchDate,
         teamAId: m.teamAId,
         teamBId: m.teamBId,
-        teamAName: m.teamAName || await this.getTeamById(m.teamAId),
-        teamBName: m.teamBName || await this.getTeamById(m.teamBId),
+        teamAName: m.teamAName || (await this.getTeamById(m.teamAId)),
+        teamBName: m.teamBName || (await this.getTeamById(m.teamBId)),
         scoreA: m.scoreA,
         scoreB: m.scoreB,
-        playerHistory: m.playerHistory
-      }))
+        playerHistory: m.playerHistory,
+      })),
     );
 
     return matches;
@@ -43,9 +43,9 @@ export class MatchService {
       const response = await fetch(`${this.baseUrl}/matches/future`, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -78,9 +78,9 @@ export class MatchService {
             teamBName: teamBName,
             scoreA: m.teamAGoals || m.scoreA || 0,
             scoreB: m.teamBGoals || m.scoreB || 0,
-            playerHistory: m.playerHistory || []
+            playerHistory: m.playerHistory || [],
           };
-        })
+        }),
       );
 
       return matches;
@@ -91,7 +91,9 @@ export class MatchService {
   }
 
   async getPlayersForScheduledMatch(matchId: number): Promise<number[]> {
-    const response = await fetch(`${this.baseUrl}/playermatchhistory/match/${matchId}`);
+    const response = await fetch(
+      `${this.baseUrl}/playermatchhistory/match/${matchId}`,
+    );
     if (!response.ok) {
       throw new Error('Failed to fetch players for scheduled match');
     }
@@ -129,11 +131,15 @@ export class MatchService {
     }
   }
 
-  async createMatch(teamAId: number, teamBId: number, matchDate: Date): Promise<MatchCreated> {
+  async createMatch(
+    teamAId: number,
+    teamBId: number,
+    matchDate: Date,
+  ): Promise<MatchCreated> {
     const response = await fetch(`${this.baseUrl}/matches`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ teamAId, teamBId, matchDate })
+      body: JSON.stringify({ teamAId, teamBId, matchDate }),
     });
 
     if (!response.ok) {
@@ -153,7 +159,10 @@ export class MatchService {
     return team.currentPlayers.map((p: any) => `${p.firstName} ${p.lastName}`);
   }
 
-  async updateMatch(matchId: number, updateData: { teamAGoals: number, teamBGoals: number }): Promise<Match> {
+  async updateMatch(
+    matchId: number,
+    updateData: { teamAGoals: number; teamBGoals: number },
+  ): Promise<Match> {
     const currentMatch = await this.getMatchById(matchId);
     if (!currentMatch) {
       throw new Error('Match not found');
@@ -164,13 +173,13 @@ export class MatchService {
       teamAId: currentMatch.teamAId,
       teamBId: currentMatch.teamBId,
       teamAGoals: updateData.teamAGoals,
-      teamBGoals: updateData.teamBGoals
+      teamBGoals: updateData.teamBGoals,
     };
 
     const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updateMatchDto)
+      body: JSON.stringify(updateMatchDto),
     });
 
     if (!response.ok) {
@@ -201,8 +210,8 @@ export class MatchService {
 
   getPlayersFromMatch(match: Match, teamId: number): string[] {
     return match.playerHistory
-      .filter(ph => ph.teamId === teamId && ph.player)
-      .map(ph => `${ph.player.firstName} ${ph.player.lastName}`);
+      .filter((ph) => ph.teamId === teamId && ph.player)
+      .map((ph) => `${ph.player.firstName} ${ph.player.lastName}`);
   }
 
   async getPastMatches(): Promise<Match[]> {
@@ -210,9 +219,9 @@ export class MatchService {
       const response = await fetch(`${this.baseUrl}/matches/past`, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -244,9 +253,9 @@ export class MatchService {
             teamBName: teamBName,
             scoreA: m.teamAGoals || m.scoreA || 0,
             scoreB: m.teamBGoals || m.scoreB || 0,
-            playerHistory: m.playerHistory || []
+            playerHistory: m.playerHistory || [],
           };
-        })
+        }),
       );
 
       return matches;
@@ -264,8 +273,8 @@ export class MatchService {
   // Metodă pentru a pre-încărca numele echipelor (opțională)
   async preloadTeamNames(teamIds: number[]): Promise<void> {
     const promises = teamIds
-      .filter(id => !this.teamNamesCache.has(id))
-      .map(id => this.getTeamById(id));
+      .filter((id) => !this.teamNamesCache.has(id))
+      .map((id) => this.getTeamById(id));
 
     await Promise.all(promises);
   }

@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { PlayerUser } from '../../models/player-user.interface'; // importă interfața
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private readonly apiUrl = 'http://localhost:5145/api';
@@ -22,7 +22,16 @@ export class AuthService {
     }
   }
 
-  async register(email: string, username: string, password: string, role: UserRole, firstName?: string, lastName?: string, rating?: number, imageUrl?: string): Promise<void> {
+  async register(
+    email: string,
+    username: string,
+    password: string,
+    role: UserRole,
+    firstName?: string,
+    lastName?: string,
+    rating?: number,
+    imageUrl?: string,
+  ): Promise<void> {
     try {
       let response: Response;
       if (role === UserRole.PLAYER) {
@@ -33,14 +42,14 @@ export class AuthService {
           firstName: firstName || '',
           lastName: lastName || '',
           rating: rating ?? 0,
-          imageUrl
+          imageUrl,
         };
         response = await fetch(`${this.apiUrl}/user/create-player-user`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(playerUser)
+          body: JSON.stringify(playerUser),
         });
       } else {
         response = await fetch(`${this.apiUrl}/user`, {
@@ -48,7 +57,7 @@ export class AuthService {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, username, password, role, imageUrl })
+          body: JSON.stringify({ email, username, password, role, imageUrl }),
         });
       }
 
@@ -58,7 +67,7 @@ export class AuthService {
         try {
           const error = JSON.parse(text);
           message = error.message || message;
-        } catch (_) { }
+        } catch (_) {}
         throw new Error(message);
       }
       const userData = await response.json();
@@ -71,7 +80,6 @@ export class AuthService {
       localStorage.setItem('userId', userData.id.toString());
       localStorage.setItem('authExpiresAt', expiresAt.toString());
       localStorage.setItem('userRole', userData.role);
-
     } catch (error) {
       console.error('Register error:', error);
       throw error;
@@ -85,7 +93,7 @@ export class AuthService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(credentials),
       });
 
       if (!response.ok) {
@@ -102,7 +110,7 @@ export class AuthService {
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userId', userData.id.toString());
       localStorage.setItem('authExpiresAt', expiresAt.toString());
-      localStorage.setItem('userRole', userData.role); 
+      localStorage.setItem('userRole', userData.role);
     } catch (error) {
       console.error('Failed to login:', error);
       throw error;
@@ -118,17 +126,20 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-  const isAuth = localStorage.getItem('isAuthenticated') === 'true';
-  const expiresAt = parseInt(localStorage.getItem('authExpiresAt') || '0', 10);
-  const now = new Date().getTime();
+    const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+    const expiresAt = parseInt(
+      localStorage.getItem('authExpiresAt') || '0',
+      10,
+    );
+    const now = new Date().getTime();
 
-  if (!isAuth || now > expiresAt) {
-    this.logout();
-    return false;
+    if (!isAuth || now > expiresAt) {
+      this.logout();
+      return false;
+    }
+
+    return true;
   }
-
-  return true;
-}
 
   isRegistered(): boolean {
     return localStorage.getItem('isAuthenticated') === 'true';
@@ -139,21 +150,23 @@ export class AuthService {
   }
 
   getUserRole(): UserRole | null {
-  const role = localStorage.getItem('userRole');
-  if (role !== null) {
-    const roleNum = Number(role);
-    if (!isNaN(roleNum) && UserRole[roleNum] !== undefined) {
-      return roleNum as UserRole;
+    const role = localStorage.getItem('userRole');
+    if (role !== null) {
+      const roleNum = Number(role);
+      if (!isNaN(roleNum) && UserRole[roleNum] !== undefined) {
+        return roleNum as UserRole;
+      }
     }
-  }
-  return null;
-}
-
-forgotPassword(email: string) {
-  if (!email) {
-    throw new Error('Te rog introdu adresa de email.');
+    return null;
   }
 
-  return this.http.post(`${this.apiUrl}/user/update-forgot-password`, { email });
-}
+  forgotPassword(email: string) {
+    if (!email) {
+      throw new Error('Te rog introdu adresa de email.');
+    }
+
+    return this.http.post(`${this.apiUrl}/user/update-forgot-password`, {
+      email,
+    });
+  }
 }

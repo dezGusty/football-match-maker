@@ -11,9 +11,13 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let match of matches; let i = index" (click)="openPlayersModal(match)" style="cursor: pointer;">
-      <td>{{ i + 1}}</td>
-      <td>{{ match.matchDate | date: 'MMM d, y, HH:mm' }}</td>
+    <tr
+      *ngFor="let match of matches; let i = index"
+      (click)="openPlayersModal(match)"
+      style="cursor: pointer"
+    >
+      <td>{{ i + 1 }}</td>
+      <td>{{ match.matchDate | date: "MMM d, y, HH:mm" }}</td>
       <td>{{ match.teamAName }}</td>
       <td>{{ match.teamBName }}</td>
       <td>{{ match.scoreA }} - {{ match.scoreB }}</td>
@@ -23,7 +27,6 @@
 
 <div class="modal-overlay" *ngIf="modalOpen" (click)="closeModal()">
   <div class="modal" (click)="$event.stopPropagation()">
-
     <div class="modal-header">
       <h2 class="modal-title">Match Details</h2>
     </div>
@@ -32,7 +35,11 @@
       <div class="team-section">
         <h3>{{ selectedMatch?.teamAName }}</h3>
         <ul>
-          <li *ngFor="let player of getPlayers(selectedMatch, selectedMatch?.teamAId)">
+          <li
+            *ngFor="
+              let player of getPlayers(selectedMatch, selectedMatch?.teamAId)
+            "
+          >
             {{ player }}
           </li>
         </ul>
@@ -41,16 +48,19 @@
       <div class="team-section">
         <h3>{{ selectedMatch?.teamBName }}</h3>
         <ul>
-          <li *ngFor="let player of getPlayers(selectedMatch, selectedMatch?.teamBId)">
+          <li
+            *ngFor="
+              let player of getPlayers(selectedMatch, selectedMatch?.teamBId)
+            "
+          >
             {{ player }}
           </li>
         </ul>
       </div>
     </div>
 
-    <div style="text-align: center; margin-top: 20px;">
+    <div style="text-align: center; margin-top: 20px">
       <button (click)="closeModal()">Close</button>
     </div>
-    
   </div>
 </div>

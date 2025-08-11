@@ -7,7 +7,7 @@ import { User } from '../../models/user.interface';
 @Component({
   selector: 'app-header',
   templateUrl: './header.html',
-  styleUrls: ['./header.css']
+  styleUrls: ['./header.css'],
 })
 export class Header implements OnInit {
   username: string = '';
@@ -17,7 +17,7 @@ export class Header implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
   ) {}
 
   async ngOnInit() {

@@ -1,21 +1,35 @@
 <nav class="header-nav">
   <div class="header-left">
-    <div class="header-profile" (click)="navigateTo('/account')" title="Account">
+    <div
+      class="header-profile"
+      (click)="navigateTo('/account')"
+      title="Account"
+    >
       @if (imageUrl) {
-      <img [src]="imageUrl" alt="Profile" class="header-profile-image" />
+        <img [src]="imageUrl" alt="Profile" class="header-profile-image" />
       } @else {
-      <span class="material-icons profile-icon">person</span>
+        <span class="material-icons profile-icon">person</span>
       }
       <span class="profile-username">{{ username }}</span>
     </div>
   </div>
   <div class="header-center">
-    <div class="logo-container" (click)="navigateTo('/home')" style="cursor:pointer;" title="Go to Home">
+    <div
+      class="logo-container"
+      (click)="navigateTo('/home')"
+      style="cursor: pointer"
+      title="Go to Home"
+    >
       <img src="../../assets/logo.png" alt="Football Match Logo" class="logo" />
     </div>
   </div>
   <div class="header-right">
-    <button class="hamburger" (click)="toggleMenu()" [class.active]="isMenuOpen" aria-label="Toggle menu">
+    <button
+      class="hamburger"
+      (click)="toggleMenu()"
+      [class.active]="isMenuOpen"
+      aria-label="Toggle menu"
+    >
       <span></span>
       <span></span>
       <span></span>
@@ -25,23 +39,19 @@
   <div class="menu" [class.open]="isMenuOpen">
     <ul>
       <li>
-        <button (click)="navigateTo('/select-players')">
-          Generate Match
-        </button>
+        <button (click)="navigateTo('/select-players')">Generate Match</button>
       </li>
       <li>
-        <button (click)="navigateTo('/home')">
-          Manage Players
-        </button>
+        <button (click)="navigateTo('/home')">Manage Players</button>
       </li>
       <li>
         <button (click)="navigateTo('/matches-history')">
           Matches History
         </button>
+      </li>
+
       <li>
-        <button (click)="logout()" class="logout-btn">
-          Log Out
-        </button>
+        <button (click)="logout()" class="logout-btn">Log Out</button>
       </li>
     </ul>
   </div>

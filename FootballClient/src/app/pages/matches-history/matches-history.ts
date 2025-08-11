@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Header } from "../../components/header/header";
+import { Header } from '../../components/header/header';
 import { MatchService } from '../../services/match.service';
 import { Match } from '../../models/match.interface';
 import { DatePipe } from '@angular/common';
@@ -12,14 +12,12 @@ import { Player } from '../../models/player.interface';
   selector: 'app-matches-history',
   imports: [Header, DatePipe, CommonModule],
   templateUrl: './matches-history.html',
-  styleUrl: './matches-history.css'
+  styleUrl: './matches-history.css',
 })
-
 export class MatchesHistory implements OnInit {
   matches: Match[] = [];
 
-  constructor(private MatchService: MatchService) { }
-
+  constructor(private MatchService: MatchService) {}
 
   async ngOnInit() {
     await this.init();
@@ -32,7 +30,6 @@ export class MatchesHistory implements OnInit {
         match.teamAName = await this.MatchService.getTeamById(match.teamAId);
         match.teamBName = await this.MatchService.getTeamById(match.teamBId);
       }
-
     } catch (error) {
       console.error('Error fetching matches:', error);
     }
@@ -52,12 +49,18 @@ export class MatchesHistory implements OnInit {
       this.selectedTeamBName = match.teamBName!;
 
       this.selectedTeamAPlayers = match.playerHistory
-        .filter(p => p.teamId === match.teamAId && p.player)
-        .map(p => `${p.player.firstName} ${p.player.lastName} ${(p.player.rating || 0).toFixed(2)}`);
+        .filter((p) => p.teamId === match.teamAId && p.player)
+        .map(
+          (p) =>
+            `${p.player.firstName} ${p.player.lastName} ${(p.player.rating || 0).toFixed(2)}`,
+        );
 
       this.selectedTeamBPlayers = match.playerHistory
-        .filter(p => p.teamId === match.teamBId && p.player)
-        .map(p => `${p.player.firstName} ${p.player.lastName} ${(p.player.rating || 0).toFixed(2)}`);
+        .filter((p) => p.teamId === match.teamBId && p.player)
+        .map(
+          (p) =>
+            `${p.player.firstName} ${p.player.lastName} ${(p.player.rating || 0).toFixed(2)}`,
+        );
 
       this.modalOpen = true;
     } catch (error) {
@@ -72,8 +75,10 @@ export class MatchesHistory implements OnInit {
   getPlayers(match: Match | null, teamId?: number): string[] {
     if (!match || !teamId) return [];
     return match.playerHistory
-      .filter(ph => ph.teamId === teamId && ph.player)
-      .map(ph => `${ph.player.firstName} ${ph.player.lastName} ${(ph.player.rating || 0).toFixed(2)}`);
+      .filter((ph) => ph.teamId === teamId && ph.player)
+      .map(
+        (ph) =>
+          `${ph.player.firstName} ${ph.player.lastName} ${(ph.player.rating || 0).toFixed(2)}`,
+      );
   }
 }
-

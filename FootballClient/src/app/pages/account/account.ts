@@ -16,7 +16,7 @@ import { UserRole } from '../../models/user-role.enum';
   selector: 'app-account',
   imports: [Header, CommonModule, FormsModule],
   templateUrl: './account.html',
-  styleUrl: './account.css'
+  styleUrl: './account.css',
 })
 export class Account {
   user: User | null = null;
@@ -42,7 +42,7 @@ export class Account {
     private router: Router,
     private http: HttpClient,
     private matchService: MatchService,
-    private playerService: PlayerService
+    private playerService: PlayerService,
   ) {
     this.loadUser();
     this.loadImages();
@@ -73,7 +73,9 @@ export class Account {
 
   async beginScheduledMatch(match: Match) {
     try {
-      const playerIds = await this.matchService.getPlayersForScheduledMatch(match.id!);
+      const playerIds = await this.matchService.getPlayersForScheduledMatch(
+        match.id!,
+      );
       await this.playerService.setMultiplePlayersAvailable(playerIds);
       this.router.navigate(['/select-players']);
     } catch (error) {
@@ -88,7 +90,7 @@ export class Account {
         this.images = imgs;
         console.log('Loaded images:', this.images);
       },
-      error: () => this.images = []
+      error: () => (this.images = []),
     });
   }
 
@@ -124,7 +126,7 @@ export class Account {
         this.user.id,
         this.currentPassword,
         this.newPassword,
-        this.confirmPassword
+        this.confirmPassword,
       );
       alert(message);
       this.resetForms();
@@ -140,7 +142,7 @@ export class Account {
       const message = await this.userService.changeUsername(
         this.user.id,
         this.newUsername,
-        this.usernamePassword
+        this.usernamePassword,
       );
       alert(message);
       this.user.username = this.newUsername;
@@ -174,11 +176,7 @@ export class Account {
 
   UserRole = UserRole;
 
-
   selectImage(img: string) {
     this.selectedImage = img;
   }
-
-
 }
-

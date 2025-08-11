@@ -8,9 +8,9 @@ export const authGuard = () => {
 
   if (authService.isLoggedIn()) {
     return true;
-}
+  }
 
   router.navigate(['/']);
   authService.logout();
   return false;
-}; 
+};

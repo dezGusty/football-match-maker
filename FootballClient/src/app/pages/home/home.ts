@@ -13,10 +13,13 @@ import { UserRole } from '../../models/user-role.enum';
   standalone: true,
   imports: [Header, FormsModule, CommonModule, PlayerStatsComponent],
   templateUrl: './home.html',
-  styleUrls: ['./home.css']
+  styleUrls: ['./home.css'],
 })
 export class Home {
-  constructor(private PlayerService: PlayerService, private authService: AuthService) { }
+  constructor(
+    private PlayerService: PlayerService,
+    private authService: AuthService,
+  ) {}
 
   players: Player[] = [];
   filteredPlayers: Player[] = [];
@@ -32,7 +35,9 @@ export class Home {
     if (role === UserRole.ADMIN) {
       this.players = await this.PlayerService.getPlayers();
     } else if (role === UserRole.ORGANISER) {
-      this.players = await this.PlayerService.getPlayersForOrganiser(this.authService.getUserId()!);
+      this.players = await this.PlayerService.getPlayersForOrganiser(
+        this.authService.getUserId()!,
+      );
     }
     this.filterPlayers();
   }
@@ -42,13 +47,15 @@ export class Home {
   }
 
   filterPlayers() {
-    this.filteredPlayers = this.players.filter(player => {
+    this.filteredPlayers = this.players.filter((player) => {
       const isActive = this.isPlayerEnabled(player);
       const searchTerms = this.searchTerm.toLowerCase().trim().split(' ');
-      const fullName = `${player.firstName || ''} ${player.lastName || ''}`.toLowerCase();
+      const fullName =
+        `${player.firstName || ''} ${player.lastName || ''}`.toLowerCase();
 
-      const matchesSearch = this.searchTerm.trim() === '' ||
-        searchTerms.every(term => fullName.includes(term));
+      const matchesSearch =
+        this.searchTerm.trim() === '' ||
+        searchTerms.every((term) => fullName.includes(term));
 
       return isActive && matchesSearch;
     });
@@ -67,7 +74,7 @@ export class Home {
 
     speed: 2,
     stamina: 2,
-    errors: 2
+    errors: 2,
   };
 
   onFileSelected(event: any) {
@@ -84,7 +91,7 @@ export class Home {
 
     const response = await fetch('http://localhost:5145/api/images/upload', {
       method: 'POST',
-      body: formData
+      body: formData,
     });
 
     if (!response.ok) {
@@ -95,11 +102,14 @@ export class Home {
     return result.imageUrl;
   }
 
-  async addPlayerOrganiserRelation(playerId: number, organiserId: number | null = this.authService.getUserId()): Promise<void> {
+  async addPlayerOrganiserRelation(
+    playerId: number,
+    organiserId: number | null = this.authService.getUserId(),
+  ): Promise<void> {
     const response = await fetch('http://localhost:5145/api/playerorganisers', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerId, organiserId })
+      body: JSON.stringify({ playerId, organiserId }),
     });
     if (!response.ok) {
       alert('A player cannot add another player.');
@@ -119,21 +129,34 @@ export class Home {
           this.newPlayer.imageUrl = imageUrl;
         } catch (error) {
           console.error('Error uploading image:', error);
-          alert('Failed to upload image. Player will be added without an image.');
+          alert(
+            'Failed to upload image. Player will be added without an image.',
+          );
         }
       }
 
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
-      await this.PlayerService.addPlayerOrganiserRelation(addedPlayer.id!, this.authService.getUserId()!);
+      await this.PlayerService.addPlayerOrganiserRelation(
+        addedPlayer.id!,
+        this.authService.getUserId()!,
+      );
 
       this.players.push(addedPlayer);
-      this.newPlayer = { firstName: '', lastName: '', email: '', rating: 0, imageUrl: '', speed: 2, stamina: 2, errors: 2 };
+      this.newPlayer = {
+        firstName: '',
+        lastName: '',
+        email: '',
+        rating: 0,
+        imageUrl: '',
+        speed: 2,
+        stamina: 2,
+        errors: 2,
+      };
       this.selectedFile = null;
       this.selectedFileName = '';
       console.log('Player added:', addedPlayer);
     } catch (error) {
       console.error('Error adding player:', error);
-
     }
   }
 
@@ -145,14 +168,19 @@ export class Home {
   async editPlayer() {
     if (!this.editedPlayer) return;
 
-    if (typeof this.editedPlayer.rating === 'number' && (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10000)) {
+    if (
+      typeof this.editedPlayer.rating === 'number' &&
+      (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10000)
+    ) {
       alert('Rating must be between 0 and 10000.');
       return;
     }
 
     try {
-      const updatedPlayer = await this.PlayerService.editPlayer(this.editedPlayer);
-      const index = this.players.findIndex(p => p.id === updatedPlayer.id);
+      const updatedPlayer = await this.PlayerService.editPlayer(
+        this.editedPlayer,
+      );
+      const index = this.players.findIndex((p) => p.id === updatedPlayer.id);
       if (index !== -1) {
         this.players[index] = updatedPlayer;
         this.filterPlayers();
@@ -171,7 +199,7 @@ export class Home {
     try {
       const success = await this.PlayerService.deletePlayer(playerId);
       if (success) {
-        const playerIndex = this.players.findIndex(p => p.id === playerId);
+        const playerIndex = this.players.findIndex((p) => p.id === playerId);
         if (playerIndex !== -1) {
           this.players[playerIndex].isEnabled = false;
         }
@@ -192,7 +220,7 @@ export class Home {
     try {
       const success = await this.PlayerService.enablePlayer(playerId);
       if (success) {
-        const playerIndex = this.players.findIndex(p => p.id === playerId);
+        const playerIndex = this.players.findIndex((p) => p.id === playerId);
         if (playerIndex !== -1) {
           this.players[playerIndex].isEnabled = true;
         }

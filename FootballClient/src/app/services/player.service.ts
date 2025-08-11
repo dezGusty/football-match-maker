@@ -2,18 +2,20 @@ import { Injectable } from '@angular/core';
 import { Player } from '../models/player.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PlayerService {
   private readonly url: string = 'http://localhost:5145/api/players';
   private readonly MAX_RATING = 10000;
   private readonly MIN_RATING = 0;
 
-  constructor() { }
+  constructor() {}
 
   private validateRating(rating: number): void {
     if (rating < this.MIN_RATING || rating > this.MAX_RATING) {
-      throw new Error(`Rating must be between ${this.MIN_RATING} and ${this.MAX_RATING}`);
+      throw new Error(
+        `Rating must be between ${this.MIN_RATING} and ${this.MAX_RATING}`
+      );
     }
   }
 
@@ -27,20 +29,28 @@ export class PlayerService {
   }
 
   async getPlayersForOrganiser(organiserId: number): Promise<Player[]> {
-  const response = await fetch(`http://localhost:5145/api/user/${organiserId}/players`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch players for organiser');
+    const response = await fetch(
+      `http://localhost:5145/api/user/${organiserId}/players`
+    );
+    if (!response.ok) {
+      throw new Error('Failed to fetch players for organiser');
+    }
+    return await response.json();
   }
-  return await response.json();
-}
 
-  async addPlayer(player: { firstName: string; lastName: string; email?: string; rating: number; imageUrl?: string }): Promise<Player> {
+  async addPlayer(player: {
+    firstName: string;
+    lastName: string;
+    email?: string;
+    rating: number;
+    imageUrl?: string;
+  }): Promise<Player> {
     this.validateRating(player.rating);
 
     const response = await fetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(player)
+      body: JSON.stringify(player),
     });
 
     if (!response.ok) {
@@ -50,7 +60,10 @@ export class PlayerService {
     return await response.json();
   }
 
-  async updatePlayer(playerId: number, updateData: Partial<Player>): Promise<Player> {
+  async updatePlayer(
+    playerId: number,
+    updateData: Partial<Player>
+  ): Promise<Player> {
     if (updateData.rating !== undefined) {
       this.validateRating(updateData.rating);
     }
@@ -58,7 +71,7 @@ export class PlayerService {
     const response = await fetch(`${this.url}/${playerId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updateData)
+      body: JSON.stringify(updateData),
     });
 
     if (!response.ok) {
@@ -76,7 +89,7 @@ export class PlayerService {
     const response = await fetch(`${this.url}/${player.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(player)
+      body: JSON.stringify(player),
     });
 
     if (!response.ok) {
@@ -88,7 +101,7 @@ export class PlayerService {
   async deletePlayer(playerId: number): Promise<boolean> {
     const response = await fetch(`${this.url}/${playerId}`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (!response.ok) {
@@ -101,7 +114,7 @@ export class PlayerService {
   async enablePlayer(playerId: number): Promise<boolean> {
     const response = await fetch(`${this.url}/${playerId}/enable`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (!response.ok) {
@@ -124,7 +137,7 @@ export class PlayerService {
     try {
       const response = await fetch(`${this.url}/${playerId}/set-available`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (!response.ok) {
@@ -142,7 +155,7 @@ export class PlayerService {
     try {
       const response = await fetch(`${this.url}/${playerId}/set-unavailable`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (!response.ok) {
@@ -161,7 +174,7 @@ export class PlayerService {
       const response = await fetch(`${this.url}/set-multiple-available`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(playerIds)
+        body: JSON.stringify(playerIds),
       });
 
       if (!response.ok) {
@@ -180,7 +193,7 @@ export class PlayerService {
       const response = await fetch(`${this.url}/set-multiple-unavailable`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(playerIds)
+        body: JSON.stringify(playerIds),
       });
 
       if (!response.ok) {
@@ -198,7 +211,7 @@ export class PlayerService {
     try {
       const response = await fetch(`${this.url}/clear-all-available`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (!response.ok) {
@@ -230,7 +243,9 @@ export class PlayerService {
 
   async searchPlayers(searchTerm: string): Promise<Player[]> {
     try {
-      const response = await fetch(`${this.url}/search?searchTerm=${encodeURIComponent(searchTerm)}`);
+      const response = await fetch(
+        `${this.url}/search?searchTerm=${encodeURIComponent(searchTerm)}`
+      );
 
       if (!response.ok) {
         throw new Error('Failed to search players');
@@ -244,12 +259,15 @@ export class PlayerService {
     }
   }
 
-  async updatePlayerRating(playerId: number, ratingChange: number): Promise<boolean> {
+  async updatePlayerRating(
+    playerId: number,
+    ratingChange: number
+  ): Promise<boolean> {
     try {
       const response = await fetch(`${this.url}/${playerId}/update-rating`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ratingChange })
+        body: JSON.stringify({ ratingChange }),
       });
 
       if (!response.ok) {
@@ -263,17 +281,19 @@ export class PlayerService {
     }
   }
 
-  async updateMultiplePlayerRatings(playerRatingUpdates: { playerId: number; ratingChange: number }[]): Promise<boolean> {
+  async updateMultiplePlayerRatings(
+    playerRatingUpdates: { playerId: number; ratingChange: number }[]
+  ): Promise<boolean> {
     try {
       const response = await fetch(`${this.url}/update-multiple-ratings`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          playerRatingUpdates: playerRatingUpdates.map(update => ({
+          playerRatingUpdates: playerRatingUpdates.map((update) => ({
             playerId: update.playerId,
-            ratingChange: update.ratingChange
-          }))
-        })
+            ratingChange: update.ratingChange,
+          })),
+        }),
       });
 
       if (!response.ok) {
@@ -287,13 +307,16 @@ export class PlayerService {
     }
   }
 
-  async addPlayerOrganiserRelation(playerId: number, organiserId: number): Promise<void> {
+  async addPlayerOrganiserRelation(
+    playerId: number,
+    organiserId: number
+  ): Promise<void> {
     const body = { playerId, organiserId };
 
     const response = await fetch(`${this.url}/player-organiser`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {

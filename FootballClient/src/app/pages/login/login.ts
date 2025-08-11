@@ -10,7 +10,7 @@ import { UserRole } from '../../models/user-role.enum';
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './login.html',
-  styleUrls: ['./login.css']
+  styleUrls: ['./login.css'],
 })
 export class Login {
   email: string = '';
@@ -19,7 +19,7 @@ export class Login {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
   ) {
     if (this.authService.isLoggedIn()) {
       this.redirectBasedOnRole();
@@ -42,12 +42,11 @@ export class Login {
     try {
       await this.authService.login({
         email: this.email,
-        password: this.password
+        password: this.password,
       });
 
       // Redirect based on user role after successful login
       this.redirectBasedOnRole();
-
     } catch (error) {
       this.errorMessage = 'Incorrect username or password';
       console.error('Eroare la autentificare:', error);
@@ -74,14 +73,13 @@ export class Login {
 
   forgotPassword() {
     this.email = this.forgotEmail;
-    this.authService.forgotPassword(this.email)
-      .subscribe({
-        next: () => alert('Email trimis cu succes! Verifică inbox-ul.'),
-        error: (err) => {
-          console.error(err);
-          this.errorMessage = 'A apărut o eroare la trimiterea email-ului.';
-        }
-      });
+    this.authService.forgotPassword(this.email).subscribe({
+      next: () => alert('Email trimis cu succes! Verifică inbox-ul.'),
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = 'A apărut o eroare la trimiterea email-ului.';
+      },
+    });
     this.forgotEmail = '';
     this.email = '';
     this.closeForgotPasswordModal();

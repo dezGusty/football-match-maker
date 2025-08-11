@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './player-stats.component.html',
-  styleUrls: ['./player-stats.component.css']
+  styleUrls: ['./player-stats.component.css'],
 })
 export class PlayerStatsComponent {
   @Input() speed: number = 2;

@@ -3,81 +3,92 @@
 
 <!-- Main Container -->
 <div class="dashboard-container">
-    <!-- Main Content Area -->
-    <div class="main-content">
-        <!-- Future Matches Content -->
-        <div *ngIf="activeTab === 'future'" class="content-section">
-            <h2>Future Matches</h2>
-            <div *ngIf="upcomingMatches.length === 0" class="empty-state">No upcoming matches scheduled.</div>
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Future Matches Content -->
+    <div *ngIf="activeTab === 'future'" class="content-section">
+      <h2>Future Matches</h2>
+      <div *ngIf="upcomingMatches.length === 0" class="empty-state">
+        No upcoming matches scheduled.
+      </div>
 
-            <div class="matches-table" *ngIf="upcomingMatches.length > 0">
-                <div class="table-header">
-                    <div class="col-team">Teams</div>
-                    <div class="col-date">Date</div>
-                    <div class="col-your-team">Your Team</div>
-                    <div class="col-action">Action</div>
-                </div>
-
-                <div class="table-row" *ngFor="let match of upcomingMatches">
-                    <div class="col-team">{{match.teamAName}} vs {{match.teamBName}}</div>
-                    <div class="col-date">{{match.matchDate | date:'dd/MM/yyyy'}}</div>
-                    <div class="col-your-team">{{getPlayerTeamName(match)}}</div>
-                    <div class="col-action">
-                        <button class="action-btn" (click)="openPlayersModal(match)">View Teams</button>
-                    </div>
-                </div>
-            </div>
+      <div class="matches-table" *ngIf="upcomingMatches.length > 0">
+        <div class="table-header">
+          <div class="col-team">Teams</div>
+          <div class="col-date">Date</div>
+          <div class="col-your-team">Your Team</div>
+          <div class="col-action">Action</div>
         </div>
 
-        <!-- Past Matches Content -->
-        <div *ngIf="activeTab === 'past'" class="content-section">
-            <h2>Past Matches</h2>
-            <div *ngIf="matchHistory.length === 0" class="empty-state">No match history available.</div>
-
-            <div class="matches-table" *ngIf="matchHistory.length > 0">
-                <div class="table-header">
-                    <div class="col-team">Teams</div>
-                    <div class="col-date">Date</div>
-                    <div class="col-score">Score</div>
-                    <div class="col-your-team">Your Team</div>
-                    <div class="col-action">Action</div>
-                </div>
-
-                <div class="table-row" *ngFor="let match of matchHistory">
-                    <div class="col-team">{{match.teamAName}} vs {{match.teamBName}}</div>
-                    <div class="col-date">{{match.matchDate | date:'dd/MM/yyyy'}}</div>
-                    <div class="col-score">{{match.scoreA}} - {{match.scoreB}}</div>
-                    <div class="col-your-team">{{getPlayerTeamName(match)}}</div>
-                    <div class="col-action">
-                        <button class="action-btn" (click)="openPlayersModal(match)">View Teams</button>
-                    </div>
-                </div>
-            </div>
+        <div class="table-row" *ngFor="let match of upcomingMatches">
+          <div class="col-team">
+            {{ match.teamAName }} vs {{ match.teamBName }}
+          </div>
+          <div class="col-date">{{ match.matchDate | date: "dd/MM/yyyy" }}</div>
+          <div class="col-your-team">{{ getPlayerTeamName(match) }}</div>
+          <div class="col-action">
+            <button class="action-btn" (click)="openPlayersModal(match)">
+              View Teams
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
-  
+    <!-- Past Matches Content -->
+    <div *ngIf="activeTab === 'past'" class="content-section">
+      <h2>Past Matches</h2>
+      <div *ngIf="matchHistory.length === 0" class="empty-state">
+        No match history available.
+      </div>
 
-<!-- Modal -->
-<div *ngIf="modalOpen" class="modal-backdrop" (click)="closeModal()">
+      <div class="matches-table" *ngIf="matchHistory.length > 0">
+        <div class="table-header">
+          <div class="col-team">Teams</div>
+          <div class="col-date">Date</div>
+          <div class="col-score">Score</div>
+          <div class="col-your-team">Your Team</div>
+          <div class="col-action">Action</div>
+        </div>
+
+        <div class="table-row" *ngFor="let match of matchHistory">
+          <div class="col-team">
+            {{ match.teamAName }} vs {{ match.teamBName }}
+          </div>
+          <div class="col-date">{{ match.matchDate | date: "dd/MM/yyyy" }}</div>
+          <div class="col-score">{{ match.scoreA }} - {{ match.scoreB }}</div>
+          <div class="col-your-team">{{ getPlayerTeamName(match) }}</div>
+          <div class="col-action">
+            <button class="action-btn" (click)="openPlayersModal(match)">
+              View Teams
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div *ngIf="modalOpen" class="modal-backdrop" (click)="closeModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
-        <button class="close-modal-btn" (click)="closeModal()">×</button>
-        <h3>{{selectedTeamAName}} vs {{selectedTeamBName}}</h3>
+      <button class="close-modal-btn" (click)="closeModal()">×</button>
+      <h3>{{ selectedTeamAName }} vs {{ selectedTeamBName }}</h3>
 
-        <div class="teams-container">
-            <div class="team-list">
-                <h4>{{selectedTeamAName}}</h4>
-                <ul>
-                    <li *ngFor="let player of selectedTeamAPlayers">{{player}}</li>
-                </ul>
-            </div>
-            <div class="vs-divider">VS</div>
-            <div class="team-list">
-                <h4>{{selectedTeamBName}}</h4>
-                <ul>
-                    <li *ngFor="let player of selectedTeamBPlayers">{{player}}</li>
-                </ul>
-            </div>
+      <div class="teams-container">
+        <div class="team-list">
+          <h4>{{ selectedTeamAName }}</h4>
+          <ul>
+            <li *ngFor="let player of selectedTeamAPlayers">{{ player }}</li>
+          </ul>
         </div>
+        <div class="vs-divider">VS</div>
+        <div class="team-list">
+          <h4>{{ selectedTeamBName }}</h4>
+          <ul>
+            <li *ngFor="let player of selectedTeamBPlayers">{{ player }}</li>
+          </ul>
+        </div>
+      </div>
     </div>
+  </div>
 </div>

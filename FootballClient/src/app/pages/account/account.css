@@ -35,7 +35,7 @@
   justify-content: center;
   font-size: 44px;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(106, 134, 110, 0.10);
+  box-shadow: 0 2px 8px rgba(106, 134, 110, 0.1);
 }
 
 .user-info {
@@ -240,7 +240,10 @@
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
   box-shadow: 0 2px 8px rgba(106, 134, 110, 0.08);
 }
 
@@ -390,7 +393,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: border-color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .future-match-item:hover {

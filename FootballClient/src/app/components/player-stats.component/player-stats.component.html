@@ -1,28 +1,43 @@
 <div class="player-stats">
-    <div class="stat-group" title="Speed">
-        <span class="stat-label">⚡</span>
-        <div class="stat-icons">
-            <span *ngFor="let i of [1,2,3]" class="stat-icon" [class.active]="i <= speed" [class.speed]="true">
-                🔥
-            </span>
-        </div>
+  <div class="stat-group" title="Speed">
+    <span class="stat-label">⚡</span>
+    <div class="stat-icons">
+      <span
+        *ngFor="let i of [1, 2, 3]"
+        class="stat-icon"
+        [class.active]="i <= speed"
+        [class.speed]="true"
+      >
+        🔥
+      </span>
     </div>
+  </div>
 
-    <div class="stat-group" title="Stamina">
-        <span class="stat-label">💪</span>
-        <div class="stat-icons">
-            <span *ngFor="let i of [1,2,3]" class="stat-icon" [class.active]="i <= stamina" [class.stamina]="true">
-                ❤️
-            </span>
-        </div>
+  <div class="stat-group" title="Stamina">
+    <span class="stat-label">💪</span>
+    <div class="stat-icons">
+      <span
+        *ngFor="let i of [1, 2, 3]"
+        class="stat-icon"
+        [class.active]="i <= stamina"
+        [class.stamina]="true"
+      >
+        ❤️
+      </span>
     </div>
+  </div>
 
-    <div class="stat-group" title="Error Rate">
-        <span class="stat-label">⚠️</span>
-        <div class="stat-icons">
-            <span *ngFor="let i of [1,2,3]" class="stat-icon" [class.active]="i <= errors" [class.errors]="true">
-                ❌
-            </span>
-        </div>
+  <div class="stat-group" title="Error Rate">
+    <span class="stat-label">⚠️</span>
+    <div class="stat-icons">
+      <span
+        *ngFor="let i of [1, 2, 3]"
+        class="stat-icon"
+        [class.active]="i <= errors"
+        [class.errors]="true"
+      >
+        ❌
+      </span>
     </div>
+  </div>
 </div>

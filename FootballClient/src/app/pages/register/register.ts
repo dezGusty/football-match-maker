@@ -10,7 +10,7 @@ import { UserRole } from '../../models/user-role.enum';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './register.html',
-  styleUrls: ['./register.css']
+  styleUrls: ['./register.css'],
 })
 export class Register {
   username: string = '';
@@ -27,7 +27,7 @@ export class Register {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
   ) {
     if (this.authService.isLoggedIn()) {
       this.redirectBasedOnRole();
@@ -35,7 +35,12 @@ export class Register {
   }
 
   async onRegister() {
-    if (!this.username || !this.email || !this.password || !this.confirmPassword) {
+    if (
+      !this.username ||
+      !this.email ||
+      !this.password ||
+      !this.confirmPassword
+    ) {
       this.errorMessage = 'Complete all fields!';
       this.successMessage = '';
       return;
@@ -43,7 +48,8 @@ export class Register {
 
     if (this.role === UserRole.PLAYER) {
       if (!this.firstName || !this.lastName) {
-        this.errorMessage = 'First Name and Last Name are required for players!';
+        this.errorMessage =
+          'First Name and Last Name are required for players!';
         this.successMessage = '';
         return;
       }
@@ -75,7 +81,7 @@ export class Register {
         this.role,
         this.firstName || undefined,
         this.lastName || undefined,
-        this.rating || undefined
+        this.rating || undefined,
       );
 
       this.successMessage = 'Registration successful!';

@@ -2,7 +2,7 @@
   width: 80%;
   margin: 40px auto;
   border-collapse: collapse;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   background: #e5e5e5;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   border-radius: 8px;
@@ -46,7 +46,10 @@
   font-family: inherit;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
 }
 
 .action-btn:hover {
@@ -156,7 +159,9 @@
   font-weight: 600;
   box-shadow: 0 4px 18px rgba(106, 134, 110, 0.18);
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
   backdrop-filter: blur(1px);
 }
 
@@ -216,7 +221,9 @@
   font-size: 14px;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
   background: #fff;
 }
 
@@ -250,7 +257,9 @@
   font-size: 14px;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
   background: #fff;
   width: 90%;
 }
@@ -267,7 +276,7 @@
 .file-upload-label {
   display: inline-block;
   padding: 8px 16px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border-radius: 4px;
   cursor: pointer;
@@ -309,7 +318,9 @@
   font-family: inherit;
   background: rgba(184, 199, 187, 0.95);
   color: #3e5c43;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
   backdrop-filter: blur(1px);
   box-shadow: 0 4px 18px rgba(106, 134, 110, 0.18);
 }
@@ -412,7 +423,9 @@
   font-size: 14px;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
   background: #fff;
 }
 

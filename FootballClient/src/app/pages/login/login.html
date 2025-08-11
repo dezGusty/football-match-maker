@@ -6,32 +6,61 @@
       {{ errorMessage }}
     </div>
 
-   <label>Email:</label>
-<input type="email" 
-       [(ngModel)]="email" 
-       name="email"
-       #emailInput
-       (keydown.enter)="$event.preventDefault(); passwordInput.focus()"
-       placeholder="Introduce email" />
+    <label>Email:</label>
+    <input
+      type="email"
+      [(ngModel)]="email"
+      name="email"
+      #emailInput
+      (keydown.enter)="$event.preventDefault(); passwordInput.focus()"
+      placeholder="Introduce email"
+    />
 
     <label>Password:</label>
-    <input type="password" 
-           [(ngModel)]="password" 
-           name="password"
-           #passwordInput
-           (keydown.enter)="$event.preventDefault(); onLogin()"
-           placeholder="Introduce password" />
+    <input
+      type="password"
+      [(ngModel)]="password"
+      name="password"
+      #passwordInput
+      (keydown.enter)="$event.preventDefault(); onLogin()"
+      placeholder="Introduce password"
+    />
 
     <button type="submit">Login</button>
 
-    <h6 class="register-prompt" style="margin-top: 10px; text-align: center; color: #222;">
+    <h6
+      class="register-prompt"
+      style="margin-top: 10px; text-align: center; color: #222"
+    >
       Don't have an account?
-      <a (click)="goToRegister()" class="register-link" style="color: #1976d2; text-decoration: underline; cursor: pointer; margin-left: 4px;">Register now.</a>
+      <a
+        (click)="goToRegister()"
+        class="register-link"
+        style="
+          color: #1976d2;
+          text-decoration: underline;
+          cursor: pointer;
+          margin-left: 4px;
+        "
+        >Register now.</a
+      >
     </h6>
 
-    <h6 class="register-prompt" style="margin-top: 10px; text-align: center; color: #222;">
+    <h6
+      class="register-prompt"
+      style="margin-top: 10px; text-align: center; color: #222"
+    >
       Forgotten your password?
-      <a (click)="openForgotPasswordModal()" style="color: #1976d2; text-decoration: underline; cursor: pointer; margin-left: 4px;">Click here.</a>
+      <a
+        (click)="openForgotPasswordModal()"
+        style="
+          color: #1976d2;
+          text-decoration: underline;
+          cursor: pointer;
+          margin-left: 4px;
+        "
+        >Click here.</a
+      >
     </h6>
   </form>
 </div>
@@ -44,7 +73,9 @@
 
     <div class="modal-buttons">
       <button (click)="forgotPassword()">OK</button>
-      <button class="cancel" (click)="closeForgotPasswordModal()">Cancel</button>
+      <button class="cancel" (click)="closeForgotPasswordModal()">
+        Cancel
+      </button>
     </div>
   </div>
 </div>

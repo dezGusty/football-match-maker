@@ -1,137 +1,221 @@
 <div class="score-container">
-    <div class="score-table">
-        <div class="team-name">{{team1Name}}</div>
-        <input type="number" [(ngModel)]="scoreA" min="0" class="score-input">
-        <span class="score-separator">-</span>
-        <input type="number" [(ngModel)]="scoreB" min="0" class="score-input">
-        <div class="team-name">{{team2Name}}</div>
-    </div>
-    <button class="finalize-button" (click)="finalizeMatch()">Preview Rating Changes</button>
+  <div class="score-table">
+    <div class="team-name">{{ team1Name }}</div>
+    <input type="number" [(ngModel)]="scoreA" min="0" class="score-input" />
+    <span class="score-separator">-</span>
+    <input type="number" [(ngModel)]="scoreB" min="0" class="score-input" />
+    <div class="team-name">{{ team2Name }}</div>
+  </div>
+  <button class="finalize-button" (click)="finalizeMatch()">
+    Preview Rating Changes
+  </button>
 </div>
 
 <div class="football-field">
-    <div class="team team1">
-        <div *ngFor="let pos of getTeam1Positions(); let i = index" class="player" [style.left]="pos.left"
-            [style.top]="pos.top">
-            <div class="player-card">
-                <div class="jersey team1-jersey">
-                    <img [src]="getPlayerImage(team1Players[i])" [alt]="getPlayerName(team1Players[i])"
-                        class="player-image" (error)="onImageError($event)">
-                    <div class="player-name">
-                        <div>{{getPlayerFirstName(team1Players[i])}}</div>
-                        <div>{{getPlayerLastName(team1Players[i])}}</div>
-                    </div>
-                </div>
-                <div class="player-rating">
-                    <div class="stars-container">
-                        <span *ngFor="let star of getStarArray(team1Players[i]?.rating || 0); let starIndex = index"
-                            class="star" [class.full]="star === 'full'" [class.half]="star === 'half'"></span>
-                    </div>
-                    <div class="rating-number">{{(team1Players[i]?.rating || 0) | number:'1.0-2'}}</div>
-                </div>
-            </div>
+  <div class="team team1">
+    <div
+      *ngFor="let pos of getTeam1Positions(); let i = index"
+      class="player"
+      [style.left]="pos.left"
+      [style.top]="pos.top"
+    >
+      <div class="player-card">
+        <div class="jersey team1-jersey">
+          <img
+            [src]="getPlayerImage(team1Players[i])"
+            [alt]="getPlayerName(team1Players[i])"
+            class="player-image"
+            (error)="onImageError($event)"
+          />
+          <div class="player-name">
+            <div>{{ getPlayerFirstName(team1Players[i]) }}</div>
+            <div>{{ getPlayerLastName(team1Players[i]) }}</div>
+          </div>
         </div>
-    </div>
-    <div class="team team2">
-        <div *ngFor="let pos of getTeam2Positions(); let i = index" class="player" [style.left]="pos.left"
-            [style.top]="pos.top">
-            <div class="player-card">
-                <div class="jersey team2-jersey">
-                    <img [src]="getPlayerImage(team2Players[i])" [alt]="getPlayerName(team2Players[i])"
-                        class="player-image" (error)="onImageError($event)">
-                    <div class="player-name">
-                        <div>{{getPlayerFirstName(team2Players[i])}}</div>
-                        <div>{{getPlayerLastName(team2Players[i])}}</div>
-                    </div>
-                </div>
-                <div class="player-rating">
-                    <div class="stars-container">
-                        <span *ngFor="let star of getStarArray(team2Players[i]?.rating || 0); let starIndex = index"
-                            class="star" [class.full]="star === 'full'" [class.half]="star === 'half'"></span>
-                    </div>
-                    <div class="rating-number">{{(team2Players[i]?.rating || 0) | number:'1.0-2'}}</div>
-                </div>
-            </div>
+        <div class="player-rating">
+          <div class="stars-container">
+            <span
+              *ngFor="
+                let star of getStarArray(team1Players[i]?.rating || 0);
+                let starIndex = index
+              "
+              class="star"
+              [class.full]="star === 'full'"
+              [class.half]="star === 'half'"
+            ></span>
+          </div>
+          <div class="rating-number">
+            {{ team1Players[i]?.rating || 0 | number: "1.0-2" }}
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+  <div class="team team2">
+    <div
+      *ngFor="let pos of getTeam2Positions(); let i = index"
+      class="player"
+      [style.left]="pos.left"
+      [style.top]="pos.top"
+    >
+      <div class="player-card">
+        <div class="jersey team2-jersey">
+          <img
+            [src]="getPlayerImage(team2Players[i])"
+            [alt]="getPlayerName(team2Players[i])"
+            class="player-image"
+            (error)="onImageError($event)"
+          />
+          <div class="player-name">
+            <div>{{ getPlayerFirstName(team2Players[i]) }}</div>
+            <div>{{ getPlayerLastName(team2Players[i]) }}</div>
+          </div>
+        </div>
+        <div class="player-rating">
+          <div class="stars-container">
+            <span
+              *ngFor="
+                let star of getStarArray(team2Players[i]?.rating || 0);
+                let starIndex = index
+              "
+              class="star"
+              [class.full]="star === 'full'"
+              [class.half]="star === 'half'"
+            ></span>
+          </div>
+          <div class="rating-number">
+            {{ team2Players[i]?.rating || 0 | number: "1.0-2" }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div *ngIf="showRatingModal" class="modal-overlay" (click)="closeModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <h2>Preview Rating Changes</h2>
-            <button class="close-btn" (click)="closeModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="rating-preview">
-                <div class="teams-container">
-                    <div class="team-section">
-                        <h3>{{team1Name}} {{isDraw() ? '(Draw)' : (isTeam1Winner() ? '(Winners)' :
-                            '(Losers)')}}</h3>
-                        <div class="players-list">
-                            <div *ngFor="let player of team1Players" class="player-rating-item">
-                                <div class="player-info">
-                                    <img [src]="getPlayerImage(player)" [alt]="getPlayerName(player)"
-                                        class="player-avatar">
-                                    <span class="player-name">{{getPlayerName(player)}}</span>
-                                </div>
-                                <div class="manual-rating-container">
-                                    <div class="rating-display">
-                                        <span>{{(player.rating || 0) | number:'1.0-2'}} → {{getFinalRating(player,
-                                            true) | number:'1.0-2'}}</span>
-                                        <span [class.positive]="getTotalRatingChange(player, true) > 0"
-                                            [class.negative]="getTotalRatingChange(player, true) < 0">
-                                            ({{getTotalRatingChange(player, true) > 0 ? '+' :
-                                            ''}}{{getTotalRatingChange(player, true) | number:'1.0-2'}})
-                                        </span>
-                                    </div>
-                                    <div class="manual-rating-input">
-                                        <input type="number" class="rating-adjustment-input"
-                                            [value]="getManualAdjustment(player)"
-                                            (input)="setManualAdjustment(player, +$any($event.target).value)" step="0.1"
-                                            placeholder="0">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="team-section">
-                        <h3>{{team2Name}} {{isDraw() ? '(Draw)' : (isTeam2Winner() ? '(Winners)' :
-                            '(Losers)')}}</h3>
-                        <div class="players-list">
-                            <div *ngFor="let player of team2Players" class="player-rating-item">
-                                <div class="player-info">
-                                    <img [src]="getPlayerImage(player)" [alt]="getPlayerName(player)"
-                                        class="player-avatar">
-                                    <span class="player-name">{{getPlayerName(player)}}</span>
-                                </div>
-                                <div class="manual-rating-container">
-                                    <div class="rating-display">
-                                        <span>{{(player.rating || 0) | number:'1.0-2'}} → {{getFinalRating(player,
-                                            false) | number:'1.0-2'}}</span>
-                                        <span [class.positive]="getTotalRatingChange(player, false) > 0"
-                                            [class.negative]="getTotalRatingChange(player, false) < 0">
-                                            ({{getTotalRatingChange(player, false) > 0 ? '+' :
-                                            ''}}{{getTotalRatingChange(player, false) | number:'1.0-2'}})
-                                        </span>
-                                    </div>
-                                    <div class="manual-rating-input">
-                                        <input type="number" class="rating-adjustment-input"
-                                            [value]="getManualAdjustment(player)"
-                                            (input)="setManualAdjustment(player, +$any($event.target).value)" step="0.1"
-                                            placeholder="0">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-cancel" (click)="closeModal()">Cancel</button>
-            <button class="btn-confirm" (click)="confirmFinalize()">Confirm changes</button>
-        </div>
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Preview Rating Changes</h2>
+      <button class="close-btn" (click)="closeModal()">&times;</button>
     </div>
+    <div class="modal-body">
+      <div class="rating-preview">
+        <div class="teams-container">
+          <div class="team-section">
+            <h3>
+              {{ team1Name }}
+              {{
+                isDraw() ? "(Draw)" : isTeam1Winner() ? "(Winners)" : "(Losers)"
+              }}
+            </h3>
+            <div class="players-list">
+              <div
+                *ngFor="let player of team1Players"
+                class="player-rating-item"
+              >
+                <div class="player-info">
+                  <img
+                    [src]="getPlayerImage(player)"
+                    [alt]="getPlayerName(player)"
+                    class="player-avatar"
+                  />
+                  <span class="player-name">{{ getPlayerName(player) }}</span>
+                </div>
+                <div class="manual-rating-container">
+                  <div class="rating-display">
+                    <span
+                      >{{ player.rating || 0 | number: "1.0-2" }} →
+                      {{ getFinalRating(player, true) | number: "1.0-2" }}</span
+                    >
+                    <span
+                      [class.positive]="getTotalRatingChange(player, true) > 0"
+                      [class.negative]="getTotalRatingChange(player, true) < 0"
+                    >
+                      ({{ getTotalRatingChange(player, true) > 0 ? "+" : ""
+                      }}{{
+                        getTotalRatingChange(player, true) | number: "1.0-2"
+                      }})
+                    </span>
+                  </div>
+                  <div class="manual-rating-input">
+                    <input
+                      type="number"
+                      class="rating-adjustment-input"
+                      [value]="getManualAdjustment(player)"
+                      (input)="
+                        setManualAdjustment(player, +$any($event.target).value)
+                      "
+                      step="0.1"
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-section">
+            <h3>
+              {{ team2Name }}
+              {{
+                isDraw() ? "(Draw)" : isTeam2Winner() ? "(Winners)" : "(Losers)"
+              }}
+            </h3>
+            <div class="players-list">
+              <div
+                *ngFor="let player of team2Players"
+                class="player-rating-item"
+              >
+                <div class="player-info">
+                  <img
+                    [src]="getPlayerImage(player)"
+                    [alt]="getPlayerName(player)"
+                    class="player-avatar"
+                  />
+                  <span class="player-name">{{ getPlayerName(player) }}</span>
+                </div>
+                <div class="manual-rating-container">
+                  <div class="rating-display">
+                    <span
+                      >{{ player.rating || 0 | number: "1.0-2" }} →
+                      {{
+                        getFinalRating(player, false) | number: "1.0-2"
+                      }}</span
+                    >
+                    <span
+                      [class.positive]="getTotalRatingChange(player, false) > 0"
+                      [class.negative]="getTotalRatingChange(player, false) < 0"
+                    >
+                      ({{ getTotalRatingChange(player, false) > 0 ? "+" : ""
+                      }}{{
+                        getTotalRatingChange(player, false) | number: "1.0-2"
+                      }})
+                    </span>
+                  </div>
+                  <div class="manual-rating-input">
+                    <input
+                      type="number"
+                      class="rating-adjustment-input"
+                      [value]="getManualAdjustment(player)"
+                      (input)="
+                        setManualAdjustment(player, +$any($event.target).value)
+                      "
+                      step="0.1"
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+      <button class="btn-confirm" (click)="confirmFinalize()">
+        Confirm changes
+      </button>
+    </div>
+  </div>
 </div>
