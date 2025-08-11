@@ -25,6 +25,19 @@ export class Register {
   successMessage: string = '';
   UserRole = UserRole;
 
+
+  ngOnInit(): void {
+    let index = 0;
+    const slides = document.querySelectorAll<HTMLImageElement>('.slideshow .slide');
+
+    setInterval(() => {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+      index = (index + 1) % slides.length;
+    }, 4000);
+  }
+
   constructor(
     private router: Router,
     private authService: AuthService,
