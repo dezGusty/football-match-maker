@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FootballAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,13 +32,16 @@ namespace FootballAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Role = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.UniqueConstraint("AK_Users_Email", x => x.Email);
                 });
 
             migrationBuilder.CreateTable(
@@ -78,9 +81,16 @@ namespace FootballAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Rating = table.Column<decimal>(type: "decimal(3,2)", nullable: false),
+                    Rating = table.Column<double>(type: "float", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
-                    CurrentTeamId = table.Column<int>(type: "int", nullable: true)
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    IsPublic = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    CurrentTeamId = table.Column<int>(type: "int", nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Speed = table.Column<int>(type: "int", nullable: false),
+                    Stamina = table.Column<int>(type: "int", nullable: false),
+                    Errors = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,6 +101,12 @@ namespace FootballAPI.Migrations
                         principalTable: "Teams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Players_Users_Email",
+                        column: x => x.Email,
+                        principalTable: "Users",
+                        principalColumn: "Email",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -102,7 +118,7 @@ namespace FootballAPI.Migrations
                     PlayerId = table.Column<int>(type: "int", nullable: false),
                     TeamId = table.Column<int>(type: "int", nullable: false),
                     MatchId = table.Column<int>(type: "int", nullable: false),
-                    PerformanceRating = table.Column<decimal>(type: "decimal(3,2)", nullable: false),
+                    PerformanceRating = table.Column<double>(type: "float", nullable: false),
                     RecordDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -128,6 +144,30 @@ namespace FootballAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PlayerOrganisers",
+                columns: table => new
+                {
+                    OrganiserId = table.Column<int>(type: "int", nullable: false),
+                    PlayerId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlayerOrganisers", x => new { x.OrganiserId, x.PlayerId });
+                    table.ForeignKey(
+                        name: "FK_PlayerOrganisers_Players_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Players",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PlayerOrganisers_Users_OrganiserId",
+                        column: x => x.OrganiserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Teams",
                 columns: new[] { "Id", "Name" },
@@ -139,16 +179,20 @@ namespace FootballAPI.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Password", "Role", "Username" },
-                values: new object[] { 1, "parola123", "Admin", "admin" });
+                columns: new[] { "Id", "Email", "ImageUrl", "Password", "Role", "Username" },
+                values: new object[,]
+                {
+                    { 1, "ion.popescu@gmail.com", null, "default123", 2, "IonPopescu" },
+                    { 2, "marius.ionescu@gmail.com", null, "default123", 2, "MariusIonescu" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Players",
-                columns: new[] { "Id", "CurrentTeamId", "FirstName", "IsAvailable", "LastName", "Rating" },
+                columns: new[] { "Id", "CurrentTeamId", "Email", "Errors", "FirstName", "ImageUrl", "IsAvailable", "IsEnabled", "IsPublic", "LastName", "Rating", "Speed", "Stamina" },
                 values: new object[,]
                 {
-                    { 1, 1, "Ion", true, "Popescu", 8.5m },
-                    { 2, 1, "Marius", true, "Ionescu", 7.8m }
+                    { 1, 1, "ion.popescu@gmail.com", 2, "Ion", null, true, true, true, "Popescu", 8.5, 2, 2 },
+                    { 2, 1, "marius.ionescu@gmail.com", 2, "Marius", null, true, true, true, "Ionescu", 7.8000001907348633, 2, 2 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -182,9 +226,19 @@ namespace FootballAPI.Migrations
                 column: "TeamId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PlayerOrganisers_PlayerId",
+                table: "PlayerOrganisers",
+                column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Players_CurrentTeamId",
                 table: "Players",
                 column: "CurrentTeamId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Players_Email",
+                table: "Players",
+                column: "Email");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Players_FirstName_LastName",
@@ -194,7 +248,12 @@ namespace FootballAPI.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Teams_Name",
                 table: "Teams",
-                column: "Name",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -211,7 +270,7 @@ namespace FootballAPI.Migrations
                 name: "PlayerMatchHistory");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "PlayerOrganisers");
 
             migrationBuilder.DropTable(
                 name: "Matches");
@@ -221,6 +280,9 @@ namespace FootballAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Teams");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

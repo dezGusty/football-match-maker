@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    [Migration("20250730102101_ChangeUserRoleToEnum")]
-    partial class ChangeUserRoleToEnum
+    [Migration("20250807072925_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,6 +70,14 @@ namespace FootballAPI.Migrations
                     b.Property<int?>("CurrentTeamId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Errors")
+                        .HasColumnType("int");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -85,6 +93,11 @@ namespace FootballAPI.Migrations
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsPublic")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -93,9 +106,17 @@ namespace FootballAPI.Migrations
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
+                    b.Property<int>("Speed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stamina")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CurrentTeamId");
+
+                    b.HasIndex("Email");
 
                     b.HasIndex("FirstName", "LastName");
 
@@ -106,21 +127,31 @@ namespace FootballAPI.Migrations
                         {
                             Id = 1,
                             CurrentTeamId = 1,
+                            Email = "ion.popescu@gmail.com",
+                            Errors = 2,
                             FirstName = "Ion",
                             IsAvailable = true,
                             IsEnabled = true,
+                            IsPublic = true,
                             LastName = "Popescu",
-                            Rating = 8.5
+                            Rating = 8.5,
+                            Speed = 2,
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 2,
                             CurrentTeamId = 1,
+                            Email = "marius.ionescu@gmail.com",
+                            Errors = 2,
                             FirstName = "Marius",
                             IsAvailable = true,
                             IsEnabled = true,
+                            IsPublic = true,
                             LastName = "Ionescu",
-                            Rating = 7.8000001907348633
+                            Rating = 7.8000001907348633,
+                            Speed = 2,
+                            Stamina = 2
                         });
                 });
 
@@ -249,11 +280,18 @@ namespace FootballAPI.Migrations
                         new
                         {
                             Id = 1,
-                            Email = "admin@gmail.com",
-                            ImageUrl = "http://localhost:5145/images/admin.jpg",
-                            Password = "parola123",
-                            Role = 0,
-                            Username = "admin"
+                            Email = "ion.popescu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "IonPopescu"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "marius.ionescu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "MariusIonescu"
                         });
                 });
 
@@ -283,7 +321,16 @@ namespace FootballAPI.Migrations
                         .HasForeignKey("CurrentTeamId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("FootballAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("Email")
+                        .HasPrincipalKey("Email")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("CurrentTeam");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.PlayerMatchHistory", b =>
