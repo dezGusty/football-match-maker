@@ -161,7 +161,25 @@ namespace FootballAPI.Data
                     Username = "MariusIonescu",
                     Password = "default123",
                     Role = UserRole.PLAYER
+                },
+                new User
+                {
+                    Id = 3,
+                    Email="admin@gmail.com",
+                    Username="Admin",
+                    Password="default123",
+                    Role=UserRole.ADMIN
+                },
+                new User
+                {
+                    Id = 4,
+                    Email = "organiser@gmail.com",
+                    Username = "Organiser",
+                    Password = "default123",
+                    Role = UserRole.ORGANISER
                 }
+
+
             );
         }
     }
