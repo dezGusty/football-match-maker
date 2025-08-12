@@ -1,19 +1,16 @@
 <app-header></app-header>
-
 <div class="carousel-container">
   <div class="selected-date-display" *ngIf="currentSlide === 2 && selectedDate">
     📅 Selected: {{ getFormattedDate() }}
   </div>
-
-  <div class="carousel-wrapper" [ngClass]="'slide-' + currentSlide">
-    <div class="carousel-slide calendar-slide">
+  <div class="carousel-wrapper">
+    <div class="carousel-slide calendar-slide" *ngIf="currentSlide === 1">
       <div class="calendar-container">
         <div class="calendar-icon">📅</div>
         <div class="calendar-header">
           <h2>Select Match Date</h2>
           <p>Choose when you want to play your match</p>
         </div>
-
         <div class="date-input-container">
           <input
             type="date"
@@ -23,7 +20,6 @@
             (change)="validateDate()"
           />
         </div>
-
         <button
           class="next-step-btn"
           [disabled]="!selectedDate"
@@ -33,15 +29,12 @@
         </button>
       </div>
     </div>
-
-    <div class="carousel-slide players-slide">
+    <div class="carousel-slide players-slide" *ngIf="currentSlide === 2">
       <div class="players-container">
         <div class="column">
           <div class="column-header">
             <h3>Available Players</h3>
-            <span class="player-count"
-              >{{ filteredAvailablePlayers.length }} Players</span
-            >
+            <span class="player-count">{{ filteredAvailablePlayers.length }} Players</span>
           </div>
           <div class="search-container">
             <input
@@ -52,25 +45,17 @@
             />
           </div>
           <ul class="players-list">
-            <li
-              *ngFor="let player of filteredAvailablePlayers"
-              class="player-item"
-            >
+            <li *ngFor="let player of filteredAvailablePlayers" class="player-item">
               <div class="player-info">
                 <div class="player-name-rating">
-                  <span [class.player-locked]="player.locked"
-                    >{{ player.firstName }} {{ player.lastName }}</span
-                  >
-                  <span class="player-rating"
-                    >Rating: {{ player.rating | number: "1.0-2" }}</span
-                  >
+                  <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
+                  <span class="player-rating">Rating: {{ player.rating | number: "1.0-2" }}</span>
                 </div>
                 <app-player-stats
                   [speed]="player.speed || 2"
                   [stamina]="player.stamina || 2"
                   [errors]="player.errors || 2"
-                >
-                </app-player-stats>
+                ></app-player-stats>
               </div>
               <button
                 class="select-button"
@@ -82,16 +67,10 @@
             </li>
           </ul>
         </div>
-
         <div class="column">
           <div class="column-header">
             <h3>Selected Players</h3>
-            <span
-              class="player-count"
-              [ngClass]="
-                selectedPlayers.length < 10 ? 'count-red' : 'count-green'
-              "
-            >
+            <span class="player-count" [ngClass]="selectedPlayers.length < 10 ? 'count-red' : 'count-green'">
               {{ maxAvailable - selectedPlayers.length }} Players left
             </span>
           </div>
@@ -100,16 +79,13 @@
               <div class="player-info">
                 <div class="player-name-rating">
                   <span>{{ player.firstName }} {{ player.lastName }}</span>
-                  <span class="player-rating"
-                    >Rating: {{ player.rating | number: "1.0-2" }}</span
-                  >
+                  <span class="player-rating">Rating: {{ player.rating | number: "1.0-2" }}</span>
                 </div>
                 <app-player-stats
                   [speed]="player.speed || 2"
                   [stamina]="player.stamina || 2"
                   [errors]="player.errors || 2"
-                >
-                </app-player-stats>
+                ></app-player-stats>
               </div>
               <button
                 class="select-button"
@@ -120,47 +96,15 @@
               </button>
             </li>
           </ul>
-          <button
-            *ngIf="selectedPlayers.length >= 10"
-            class="floating-btn"
-            (click)="generateTeams()"
-          >
+          <button *ngIf="selectedPlayers.length >= 10" class="floating-btn" (click)="generateTeams()">
             Finalize Selection
           </button>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="carousel-navigation">
-    <button
-      *ngIf="currentSlide === 2"
-      class="nav-btn secondary"
-      (click)="goToPreviousSlide()"
-    >
-      ← Back to Date
-    </button>
-  </div>
-</div>
-
-@if (showTeamsModal) {
-  <div class="modal">
-    <div class="modal-content">
-      <button class="close-btn" (click)="closeTeamsModal()">&times;</button>
-      <div class="modal-header">
-        <h2>Generated teams</h2>
-        <button class="shuffle-btn" (click)="shuffleTeams()">
-          🔄 Shuffle Teams
-        </button>
-      </div>
-
-      <div class="teams-container">
+      <div *ngIf="showTeamsModal" class="teams-container">
         <div class="team">
           <input type="text" [(ngModel)]="team1Name" class="team-name-input" />
-          <h3>
-            ({{ team1.players.length }} players -
-            {{ team1.averageRating | number: "1.0-2" }})
-          </h3>
+          <h3>({{ team1.players.length }} players - {{ team1.averageRating | number: "1.0-2" }})</h3>
           <ul>
             <li *ngFor="let player of team1.players" class="player-team-item">
               <div class="player-controls">
@@ -184,33 +128,23 @@
               </div>
               <div class="player-info-team">
                 <div class="player-name-stats">
-                  <span [class.player-locked]="player.locked"
-                    >{{ player.firstName }} {{ player.lastName }}</span
-                  >
+                  <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
                   <app-player-stats
                     [speed]="player.speed || 2"
                     [stamina]="player.stamina || 2"
                     [errors]="player.errors || 2"
-                  >
-                  </app-player-stats>
+                  ></app-player-stats>
                 </div>
-                <span
-                  class="rating-badge"
-                  [class]="'rating-' + getRatingCategory(player.rating)"
-                >
+                <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
                   {{ player.rating | number: "1.0-2" }}
                 </span>
               </div>
             </li>
           </ul>
         </div>
-
         <div class="team">
           <input type="text" [(ngModel)]="team2Name" class="team-name-input" />
-          <h3>
-            ({{ team2.players.length }} players -
-            {{ team2.averageRating | number: "1.0-2" }})
-          </h3>
+          <h3>({{ team2.players.length }} players - {{ team2.averageRating | number: "1.0-2" }})</h3>
           <ul>
             <li *ngFor="let player of team2.players" class="player-team-item">
               <div class="player-controls">
@@ -234,20 +168,14 @@
               </div>
               <div class="player-info-team">
                 <div class="player-name-stats">
-                  <span [class.player-locked]="player.locked"
-                    >{{ player.firstName }} {{ player.lastName }}</span
-                  >
+                  <span [class.player-locked]="player.locked">{{ player.firstName }} {{ player.lastName }}</span>
                   <app-player-stats
                     [speed]="player.speed || 2"
                     [stamina]="player.stamina || 2"
                     [errors]="player.errors || 2"
-                  >
-                  </app-player-stats>
+                  ></app-player-stats>
                 </div>
-                <span
-                  class="rating-badge"
-                  [class]="'rating-' + getRatingCategory(player.rating)"
-                >
+                <span class="rating-badge" [class]="'rating-' + getRatingCategory(player.rating)">
                   {{ player.rating | number: "1.0-2" }}
                 </span>
               </div>
@@ -255,19 +183,17 @@
           </ul>
         </div>
       </div>
-
       <div class="modal-actions">
-        <button class="begin-match-btn" (click)="beginMatch()">
-          Begin Match
-        </button>
-        <button
-          class="begin-match-btn"
-          (click)="scheduleMatch()"
-          style="background: #6a866e; margin-left: 10px"
-        >
+        <button class="begin-match-btn" (click)="beginMatch()">Begin Match</button>
+        <button class="begin-match-btn" (click)="scheduleMatch()" style="background: #6a866e; margin-left: 10px">
           Schedule Match
         </button>
       </div>
     </div>
   </div>
-}
+  <div class="carousel-navigation">
+    <button *ngIf="currentSlide === 2" class="nav-btn secondary" (click)="goToPreviousSlide()">
+      ← Back to Date
+    </button>
+  </div>
+</div>
