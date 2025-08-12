@@ -1,6 +1,7 @@
 using FootballAPI.Data;
 using FootballAPI.Repository;
 using FootballAPI.Service;
+using FootballAPI.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -36,6 +37,7 @@ builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IPlayerMatchHistoryService, PlayerMatchHistoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();

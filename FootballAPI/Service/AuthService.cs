@@ -28,7 +28,7 @@ namespace FootballAPI.Service
          {
              new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
              new Claim(ClaimTypes.Email, user.Email),
-             new Claim(ClaimTypes.Role, user.Role.ToString()) // Add role as string from enum
+             new Claim(ClaimTypes.Role, user.Role.ToString()) 
          };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
