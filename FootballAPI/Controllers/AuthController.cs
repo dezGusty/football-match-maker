@@ -1,9 +1,10 @@
 ﻿using FootballAPI.DTOs;
+using FootballAPI.Models;
 using FootballAPI.Service;
 using FootballAPI.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FootballAPI.Controllers
 {
@@ -25,13 +26,39 @@ namespace FootballAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            var success = await _authService.LoginAsync(HttpContext, dto.Email, dto.Password);
-            if (!success)
+            try
             {
-                return Unauthorized("Incorrect email or password.");
+
+
+                var token = await _authService.LoginAsync(dto.Email, dto.Password);
+                if (token == null)
+                {
+                    return Unauthorized("Incorrect email or password.");
+                }
+
+                var user = await _userService.GetUserByEmailAsync(dto.Email);
+
+                return Ok(new
+                {
+                    message = "Login successful.",
+                    token = token,
+                    user = new
+                    {
+                        id = user.Id,
+                        email = user.Email,
+                        role = user.Role,
+                        username = user.Username
+                    }
+                }
+                );
             }
-            return Ok(new { message = "Login successful." });
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during login for email: {Email}", dto.Email);
+                return StatusCode(500, new { message = "An error occurred during login." });
+            }
         }
+        
 
         [Authorize]
         [HttpPost("logout")]
@@ -40,8 +67,34 @@ namespace FootballAPI.Controllers
             await _authService.LogoutAsync(HttpContext);
             return Ok(new { message = "Logout successful." });
         }
-        
-        
+
+
+        [Authorize]
+        [HttpGet("verify")]
+        public IActionResult VerifyToken()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var role= User.FindFirst(ClaimTypes.Role)?.Value;
+            var username= User.FindFirst(ClaimTypes.Name)?.Value;
+
+
+            return Ok(new
+            {
+                message = "Token is valid.",
+                user = new
+                {
+                    id = userId,
+                    email = email,
+                    role = role,
+                    username = username
+                }
+            });
+        }
+
+
+        }
+
+
 
     }
-}
