@@ -105,7 +105,7 @@ export class AuthService {
 
   async login(credentials: LoginRequest): Promise<void> {
     try {
-      const response = await fetch(`${this.apiUrl}/auth/login`, {
+      const response = await fetch(`${this.apiUrl}/Auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
