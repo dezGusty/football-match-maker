@@ -88,11 +88,12 @@ export class AuthService {
 
   async login(credentials: LoginRequest): Promise<void> {
     try {
-      const response = await fetch(`${this.apiUrl}/user/authenticate`, {
+      const response = await fetch(`${this.apiUrl}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', 
         body: JSON.stringify(credentials),
       });
 
