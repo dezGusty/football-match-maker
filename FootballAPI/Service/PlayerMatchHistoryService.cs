@@ -25,23 +25,13 @@ namespace FootballAPI.Service
                     FirstName = playerMatchHistory.Player.FirstName,
                     LastName = playerMatchHistory.Player.LastName,
                     Rating = playerMatchHistory.Player.Rating,
-                    IsAvailable = playerMatchHistory.Player.IsAvailable,
-                    CurrentTeamId = playerMatchHistory.Player.CurrentTeamId
+                    IsAvailable = playerMatchHistory.Player.IsAvailable
                 } : null,
                 TeamId = playerMatchHistory.TeamId,
                 Team = playerMatchHistory.Team != null ? new TeamDto
                 {
                     Id = playerMatchHistory.Team.Id,
-                    Name = playerMatchHistory.Team.Name,
-                    CurrentPlayers = playerMatchHistory.Team.CurrentPlayers?.Select(p => new PlayerDto
-                    {
-                        Id = p.Id,
-                        FirstName = p.FirstName,
-                        LastName = p.LastName,
-                        Rating = p.Rating,
-                        IsAvailable = p.IsAvailable,
-                        CurrentTeamId = p.CurrentTeamId
-                    }).ToList() ?? new List<PlayerDto>()
+                    Name = playerMatchHistory.Team.Name
                 } : null,
                 MatchId = playerMatchHistory.MatchId,
                 Match = playerMatchHistory.Match != null ? new MatchDto

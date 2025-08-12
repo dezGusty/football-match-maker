@@ -30,31 +30,13 @@ namespace FootballAPI.Service
                 TeamA = match.TeamA != null ? new TeamDto
                 {
                     Id = match.TeamA.Id,
-                    Name = match.TeamA.Name,
-                    CurrentPlayers = match.TeamA.CurrentPlayers?.Select(p => new PlayerDto
-                    {
-                        Id = p.Id,
-                        FirstName = p.FirstName,
-                        LastName = p.LastName,
-                        Rating = p.Rating,
-                        IsAvailable = p.IsAvailable,
-                        CurrentTeamId = p.CurrentTeamId
-                    }).ToList()
+                    Name = match.TeamA.Name
                 } : null,
                 TeamBId = match.TeamBId,
                 TeamB = match.TeamB != null ? new TeamDto
                 {
                     Id = match.TeamB.Id,
-                    Name = match.TeamB.Name,
-                    CurrentPlayers = match.TeamB.CurrentPlayers?.Select(p => new PlayerDto
-                    {
-                        Id = p.Id,
-                        FirstName = p.FirstName,
-                        LastName = p.LastName,
-                        Rating = p.Rating,
-                        IsAvailable = p.IsAvailable,
-                        CurrentTeamId = p.CurrentTeamId
-                    }).ToList()
+                    Name = match.TeamB.Name
                 } : null,
                 TeamAGoals = match.TeamAGoals,
                 TeamBGoals = match.TeamBGoals,
@@ -68,8 +50,7 @@ namespace FootballAPI.Service
                         FirstName = ph.Player.FirstName,
                         LastName = ph.Player.LastName,
                         Rating = ph.Player.Rating,
-                        IsAvailable = ph.Player.IsAvailable,
-                        CurrentTeamId = ph.Player.CurrentTeamId
+                        IsAvailable = ph.Player.IsAvailable
                     } : null,
                     TeamId = ph.TeamId,
                     PerformanceRating = ph.PerformanceRating,

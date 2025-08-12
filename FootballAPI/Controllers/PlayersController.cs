@@ -52,13 +52,6 @@ namespace FootballAPI.Controllers
             return Ok(player);
         }
 
-        [HttpGet("team/{teamId}")]
-        public async Task<ActionResult<IEnumerable<PlayerDto>>> GetPlayersByTeam(int teamId)
-        {
-            var players = await _playerService.GetPlayersByTeamIdAsync(teamId);
-            return Ok(players);
-        }
-
         [HttpGet("available")]
         public async Task<ActionResult<IEnumerable<PlayerDto>>> GetAvailablePlayers()
         {
@@ -261,7 +254,7 @@ namespace FootballAPI.Controllers
         public async Task<IActionResult> AddPlayerOrganiserRelation([FromBody] PlayerOrganiserDto dto)
         {
             if (dto == null)
-                return StatusCode(500, $"Invalid Data." );
+                return StatusCode(500, $"Invalid Data.");
 
             try
             {

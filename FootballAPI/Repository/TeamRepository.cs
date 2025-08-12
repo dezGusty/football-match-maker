@@ -16,28 +16,24 @@ namespace FootballAPI.Repository
         public async Task<IEnumerable<Team>> GetAllAsync()
         {
             return await _context.Teams
-                .Include(t => t.CurrentPlayers)
                 .ToListAsync();
         }
 
         public async Task<Team> GetByIdAsync(int id)
         {
             return await _context.Teams
-                .Include(t => t.CurrentPlayers)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<Team> GetByNameAsync(string name)
         {
             return await _context.Teams
-                .Include(t => t.CurrentPlayers)
                 .FirstOrDefaultAsync(t => t.Name.ToLower() == name.ToLower());
         }
 
         public async Task<IEnumerable<Team>> SearchByNameAsync(string searchTerm)
         {
             return await _context.Teams
-                .Include(t => t.CurrentPlayers)
                 .Where(t => t.Name.ToLower().Contains(searchTerm.ToLower()))
                 .ToListAsync();
         }
@@ -72,4 +68,4 @@ namespace FootballAPI.Repository
             return await _context.Teams.AnyAsync(t => t.Id == id);
         }
     }
-} 
+}

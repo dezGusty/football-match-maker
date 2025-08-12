@@ -28,11 +28,6 @@ namespace FootballAPI.Models
         public bool IsEnabled { get; set; } = true;
         public bool IsPublic { get; set; } = true;
 
-        public int? CurrentTeamId { get; set; }
-
-        [ForeignKey("CurrentTeamId")]
-        public virtual Team CurrentTeam { get; set; }
-
         [StringLength(500)]
         public string? ImageUrl { get; set; }
 

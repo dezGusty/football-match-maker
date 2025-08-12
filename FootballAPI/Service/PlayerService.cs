@@ -33,12 +33,6 @@ namespace FootballAPI.Service
             return player != null ? MapToDto(player) : null;
         }
 
-        public async Task<IEnumerable<PlayerDto>> GetPlayersByTeamIdAsync(int teamId)
-        {
-            var players = await _playerRepository.GetByTeamIdAsync(teamId);
-            return players.Select(MapToDto);
-        }
-
         public async Task<IEnumerable<PlayerDto>> GetAvailablePlayersAsync()
         {
             var players = await _playerRepository.GetAvailablePlayersAsync();
@@ -105,7 +99,6 @@ namespace FootballAPI.Service
             existingPlayer.Rating = updatePlayerDto.Rating;
             existingPlayer.IsAvailable = updatePlayerDto.IsAvailable;
             existingPlayer.IsPublic = updatePlayerDto.IsPublic;
-            existingPlayer.CurrentTeamId = updatePlayerDto.CurrentTeamId;
             existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
             existingPlayer.ImageUrl = updatePlayerDto.ImageUrl;
             existingPlayer.Speed = updatePlayerDto.Speed;
@@ -249,7 +242,6 @@ namespace FootballAPI.Service
                     Email = "",
                     IsAvailable = false,
                     IsPublic = player.IsPublic,
-                    CurrentTeamId = null,
                     IsEnabled = false,
                     ImageUrl = null,
                     Speed = 1,
@@ -265,7 +257,6 @@ namespace FootballAPI.Service
                 Rating = player.Rating,
                 IsAvailable = player.IsAvailable,
                 IsPublic = player.IsPublic,
-                CurrentTeamId = player.CurrentTeamId,
                 IsEnabled = true,
                 Email = player.Email,
                 ImageUrl = player.ImageUrl,

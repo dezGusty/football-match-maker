@@ -18,12 +18,6 @@ namespace FootballAPI.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Player>()
-                .HasOne(p => p.CurrentTeam)
-                .WithMany(t => t.CurrentPlayers)
-                .HasForeignKey(p => p.CurrentTeamId)
-                .OnDelete(DeleteBehavior.SetNull);
-
             modelBuilder.Entity<Match>()
                 .HasOne(m => m.TeamA)
                 .WithMany(t => t.HomeMatches)
@@ -129,8 +123,7 @@ namespace FootballAPI.Data
                     Rating = 8.5f,
                     Email = "ion.popescu@gmail.com",
                     IsAvailable = true,
-                    IsPublic = true,
-                    CurrentTeamId = 1
+                    IsPublic = true
                 },
                 new Player
                 {
@@ -140,8 +133,107 @@ namespace FootballAPI.Data
                     Rating = 7.8f,
                     Email = "marius.ionescu@gmail.com",
                     IsAvailable = true,
-                    IsPublic = true,
-                    CurrentTeamId = 1
+                    IsPublic = true
+                },
+                new Player
+                {
+                    Id = 3,
+                    FirstName = "Alex",
+                    LastName = "Georgescu",
+                    Rating = 7.2f,
+                    Email = "alex.georgescu@gmail.com",
+                    IsAvailable = true,
+                    IsPublic = true
+                },
+                new Player
+                {
+                    Id = 4,
+                    FirstName = "Razvan",
+                    LastName = "Moldovan",
+                    Rating = 8.1f,
+                    Email = "razvan.moldovan@gmail.com",
+                    IsAvailable = true,
+                    IsPublic = true
+                },
+                new Player
+                {
+                    Id = 5,
+                    FirstName = "Cristian",
+                    LastName = "Stancu",
+                    Rating = 6.9f,
+                    Email = "cristian.stancu@gmail.com",
+                    IsAvailable = true,
+                    IsPublic = true
+                },
+                new Player
+                {
+                    Id = 6,
+                    FirstName = "Andrei",
+                    LastName = "Vasilescu",
+                    Rating = 7.7f,
+                    Email = "andrei.vasilescu@gmail.com",
+                    IsAvailable = true,
+                    IsPublic = true
+                },
+                new Player
+                {
+                    Id = 7,
+                    FirstName = "Florin",
+                    LastName = "Dumitru",
+                    Rating = 8.3f,
+                    Email = "florin.dumitru@gmail.com",
+                    IsAvailable = true,
+                    IsPublic = true
+                },
+                new Player
+                {
+                    Id = 8,
+                    FirstName = "Gabriel",
+                    LastName = "Ciobanu",
+                    Rating = 7.4f,
+                    Email = "gabriel.ciobanu@gmail.com",
+                    IsAvailable = true,
+                    IsPublic = true
+                },
+                new Player
+                {
+                    Id = 9,
+                    FirstName = "Lucian",
+                    LastName = "Matei",
+                    Rating = 6.8f,
+                    Email = "lucian.matei@gmail.com",
+                    IsAvailable = true,
+                    IsPublic = true
+                },
+                new Player
+                {
+                    Id = 10,
+                    FirstName = "Daniel",
+                    LastName = "Radu",
+                    Rating = 7.9f,
+                    Email = "daniel.radu@gmail.com",
+                    IsAvailable = true,
+                    IsPublic = true
+                },
+                new Player
+                {
+                    Id = 11,
+                    FirstName = "Mihai",
+                    LastName = "Popa",
+                    Rating = 8.0f,
+                    Email = "mihai.popa@gmail.com",
+                    IsAvailable = true,
+                    IsPublic = true
+                },
+                new Player
+                {
+                    Id = 12,
+                    FirstName = "Stefan",
+                    LastName = "Nicolae",
+                    Rating = 7.6f,
+                    Email = "stefan.nicolae@gmail.com",
+                    IsAvailable = true,
+                    IsPublic = true
                 }
             );
 
@@ -165,10 +257,10 @@ namespace FootballAPI.Data
                 new User
                 {
                     Id = 3,
-                    Email="admin@gmail.com",
-                    Username="Admin",
-                    Password="default123",
-                    Role=UserRole.ADMIN
+                    Email = "admin@gmail.com",
+                    Username = "Admin",
+                    Password = "default123",
+                    Role = UserRole.ADMIN
                 },
                 new User
                 {
@@ -177,6 +269,86 @@ namespace FootballAPI.Data
                     Username = "Organiser",
                     Password = "default123",
                     Role = UserRole.ORGANISER
+                },
+                new User
+                {
+                    Id = 5,
+                    Email = "alex.georgescu@gmail.com",
+                    Username = "AlexGeorgescu",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
+                },
+                new User
+                {
+                    Id = 6,
+                    Email = "razvan.moldovan@gmail.com",
+                    Username = "RazvanMoldovan",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
+                },
+                new User
+                {
+                    Id = 7,
+                    Email = "cristian.stancu@gmail.com",
+                    Username = "CristianStancu",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
+                },
+                new User
+                {
+                    Id = 8,
+                    Email = "andrei.vasilescu@gmail.com",
+                    Username = "AndreiVasilescu",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
+                },
+                new User
+                {
+                    Id = 9,
+                    Email = "florin.dumitru@gmail.com",
+                    Username = "FlorinDumitru",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
+                },
+                new User
+                {
+                    Id = 10,
+                    Email = "gabriel.ciobanu@gmail.com",
+                    Username = "GabrielCiobanu",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
+                },
+                new User
+                {
+                    Id = 11,
+                    Email = "lucian.matei@gmail.com",
+                    Username = "LucianMatei",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
+                },
+                new User
+                {
+                    Id = 12,
+                    Email = "daniel.radu@gmail.com",
+                    Username = "DanielRadu",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
+                },
+                new User
+                {
+                    Id = 13,
+                    Email = "mihai.popa@gmail.com",
+                    Username = "MihaiPopa",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
+                },
+                new User
+                {
+                    Id = 14,
+                    Email = "stefan.nicolae@gmail.com",
+                    Username = "StefanNicolae",
+                    Password = "default123",
+                    Role = UserRole.PLAYER
                 }
 
 

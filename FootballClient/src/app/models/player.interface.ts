@@ -7,7 +7,6 @@ export interface Player {
   isEnabled?: boolean;
   isSelected?: boolean;
   imageUrl?: string;
-  currentTeamId?: number | null;
   locked?: boolean;
   email: string;
   speed: number; // 1 = Low, 2 = Medium, 3 = High

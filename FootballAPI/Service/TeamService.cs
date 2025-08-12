@@ -18,16 +18,7 @@ namespace FootballAPI.Service
             return new TeamDto
             {
                 Id = team.Id,
-                Name = team.Name,
-                CurrentPlayers = team.CurrentPlayers?.Select(p => new PlayerDto
-                {
-                    Id = p.Id,
-                    FirstName = p.FirstName,
-                    LastName = p.LastName,
-                    Rating = p.Rating,
-                    IsAvailable = p.IsAvailable,
-                    CurrentTeamId = p.CurrentTeamId
-                }).ToList() ?? new List<PlayerDto>()
+                Name = team.Name
             };
         }
 
@@ -83,4 +74,4 @@ namespace FootballAPI.Service
             return await _teamRepository.DeleteAsync(id);
         }
     }
-} 
+}

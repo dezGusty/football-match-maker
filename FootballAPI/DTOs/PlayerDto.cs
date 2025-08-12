@@ -13,7 +13,6 @@ namespace FootballAPI.DTOs
         public string Email { get; set; }
         public bool IsAvailable { get; set; }
         public bool IsPublic { get; set; }
-        public int? CurrentTeamId { get; set; }
         public bool IsEnabled { get; set; }
         public string? ImageUrl { get; set; }
 
@@ -54,7 +53,6 @@ namespace FootballAPI.DTOs
         public string LastName { get; set; }
         public float Rating { get; set; }
         public bool IsAvailable { get; set; }
-        public int? CurrentTeamId { get; set; }
         public bool IsEnabled { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsPublic { get; set; }
