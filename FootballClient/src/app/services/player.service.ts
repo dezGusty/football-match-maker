@@ -20,7 +20,7 @@ export class PlayerService {
   }
 
   async getPlayers(): Promise<Player[]> {
-    const response = await fetch(`${this.url}/with-images`);
+    const response = await fetch(`${this.url}`);
     if (!response.ok) {
       throw new Error('Failed to fetch players');
     }
@@ -121,15 +121,6 @@ export class PlayerService {
     }
 
     return true;
-  }
-  async getPlayerWithImage(playerId: number): Promise<Player> {
-    const response = await fetch(`${this.url}/${playerId}/with-image`);
-
-    if (!response.ok) {
-      throw new Error('Failed to get player with image');
-    }
-
-    return await response.json();
   }
 
   async setPlayerAvailable(playerId: number): Promise<boolean> {

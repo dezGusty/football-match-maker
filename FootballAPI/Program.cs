@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using FootballAPI.Data;
 using FootballAPI.Repository;
 using FootballAPI.Service;
+using FootballAPI.Service.Interfaces;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,7 @@ builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IPlayerMatchHistoryService, PlayerMatchHistoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();
@@ -77,6 +79,21 @@ else
     app.UseCors("AllowAngularApp");
 }
 
+// Serve static files (for uploaded images)
+app.UseStaticFiles();
+
+// Serve files from uploads directory
+var uploadsPath = Path.Combine(builder.Environment.WebRootPath, "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
 
 app.UseAuthorization();
 

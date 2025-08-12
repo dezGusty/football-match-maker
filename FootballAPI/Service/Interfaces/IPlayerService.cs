@@ -24,5 +24,7 @@ namespace FootballAPI.Service
         Task AddPlayerOrganiserRelationAsync(int playerId, int organiserId);
         Task<bool> SetPlayerPublicAsync(int playerId);
         Task<bool> SetPlayerPrivateAsync(int playerId);
+        Task<string> UpdatePlayerProfileImageAsync(int playerId, IFormFile imageFile);
+        Task<bool> DeletePlayerProfileImageAsync(int playerId);
     }
 }

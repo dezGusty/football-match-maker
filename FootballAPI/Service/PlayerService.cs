@@ -3,6 +3,7 @@ using FootballAPI.Data;
 using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Repository;
+using FootballAPI.Service.Interfaces;
 namespace FootballAPI.Service
 {
     public class PlayerService : IPlayerService
@@ -10,15 +11,18 @@ namespace FootballAPI.Service
         private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
         private readonly IPasswordGeneratorService _passwordGeneratorService;
+        private readonly IFileService _fileService;
 
         public PlayerService(
             IPlayerRepository playerRepository,
             IUserRepository userRepository,
-            IPasswordGeneratorService passwordGeneratorService)
+            IPasswordGeneratorService passwordGeneratorService,
+            IFileService fileService)
         {
             _playerRepository = playerRepository;
             _userRepository = userRepository;
             _passwordGeneratorService = passwordGeneratorService;
+            _fileService = fileService;
         }
 
         public async Task<IEnumerable<PlayerDto>> GetAllPlayersAsync()
@@ -226,7 +230,7 @@ namespace FootballAPI.Service
         }
 
 
-        private static PlayerDto MapToDto(Player player)
+        private PlayerDto MapToDto(Player player)
         {
             if (!player.IsEnabled)
             {
@@ -242,7 +246,8 @@ namespace FootballAPI.Service
                     IsEnabled = false,
                     Speed = 1,
                     Stamina = 1,
-                    Errors = 1
+                    Errors = 1,
+                    ProfileImageUrl = "http://localhost:5145/assets/default-avatar.png"
                 };
             }
             return new PlayerDto
@@ -257,7 +262,8 @@ namespace FootballAPI.Service
                 Email = player.Email,
                 Speed = player.Speed,
                 Stamina = player.Stamina,
-                Errors = player.Errors
+                Errors = player.Errors,
+                ProfileImageUrl = _fileService.GetProfileImageUrl(player.ProfileImagePath)
             };
         }
 
@@ -337,6 +343,41 @@ namespace FootballAPI.Service
 
             player.IsPublic = false;
             await _playerRepository.UpdateAsync(player);
+            return true;
+        }
+
+        public async Task<string> UpdatePlayerProfileImageAsync(int playerId, IFormFile imageFile)
+        {
+            var player = await _playerRepository.GetByIdAsync(playerId);
+            if (player == null || !player.IsEnabled)
+                throw new ArgumentException("Player not found or not enabled");
+
+            if (!string.IsNullOrEmpty(player.ProfileImagePath))
+            {
+                await _fileService.DeleteProfileImageAsync(player.ProfileImagePath);
+            }
+
+            var imagePath = await _fileService.SaveProfileImageAsync(imageFile, player.Email);
+
+            player.ProfileImagePath = imagePath;
+            await _playerRepository.UpdateAsync(player);
+
+            return _fileService.GetProfileImageUrl(imagePath);
+        }
+
+        public async Task<bool> DeletePlayerProfileImageAsync(int playerId)
+        {
+            var player = await _playerRepository.GetByIdAsync(playerId);
+            if (player == null || !player.IsEnabled)
+                return false;
+
+            if (!string.IsNullOrEmpty(player.ProfileImagePath))
+            {
+                await _fileService.DeleteProfileImageAsync(player.ProfileImagePath);
+                player.ProfileImagePath = null;
+                await _playerRepository.UpdateAsync(player);
+            }
+
             return true;
         }
     }
