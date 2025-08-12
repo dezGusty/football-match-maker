@@ -6,7 +6,6 @@ export interface Player {
   isAvailable?: boolean;
   isEnabled?: boolean;
   isSelected?: boolean;
-  imageUrl?: string;
   locked?: boolean;
   email: string;
   speed: number; // 1 = Low, 2 = Medium, 3 = High

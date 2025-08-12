@@ -36,16 +36,6 @@ namespace FootballAPI.Service
 
             };
         }
-        private UserWithImageDto MapToWithImageDto(User user)
-        {
-            return new UserWithImageDto
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Role = user.Role,
-                ImageUrl = user.ImageUrl
-            };
-        }
 
         public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
         {
@@ -83,8 +73,7 @@ namespace FootballAPI.Service
                 Email = dto.Email,
                 Username = dto.Username,
                 Password = dto.Password,
-                Role = dto.Role,
-                ImageUrl = dto.ImageUrl
+                Role = dto.Role
             };
 
 
@@ -100,8 +89,7 @@ namespace FootballAPI.Service
                 Email = dto.Email,
                 Username = dto.Username,
                 Password = dto.Password,
-                Role = UserRole.PLAYER,
-                ImageUrl = dto.ImageUrl
+                Role = UserRole.PLAYER
             };
 
             var createdUser = await _userRepository.CreateAsync(user);
@@ -114,8 +102,7 @@ namespace FootballAPI.Service
                 Email = dto.Email,
                 IsAvailable = false,
                 IsPublic = true,
-                IsEnabled = true,
-                ImageUrl = dto.ImageUrl
+                IsEnabled = true
             };
             await _playerRepository.CreateAsync(player);
 
@@ -174,39 +161,6 @@ namespace FootballAPI.Service
         public async Task<bool> UsernameExistsAsync(string username, int excludeUserId)
         {
             return await _userRepository.UsernameExistsAsync(username, excludeUserId);
-        }
-
-        public async Task<UserWithImageDto> GetUserWithImageByIdAsync(int id)
-        {
-            var user = await _userRepository.GetByIdAsync(id);
-            return user == null ? null : MapToWithImageDto(user);
-        }
-
-        public async Task<IEnumerable<UserWithImageDto>> GetAllUsersWithImageAsync()
-        {
-            var users = await _userRepository.GetAllAsync();
-            return users.Select(MapToWithImageDto);
-        }
-
-        public async Task<UserWithImageDto> GetUserWithImageByUsernameAsync(string username)
-        {
-            var user = await _userRepository.GetByUsernameAsync(username);
-            return user == null ? null : MapToWithImageDto(user);
-        }
-        public async Task<IEnumerable<UserWithImageDto>> GetUsersWithImageByRoleAsync(UserRole role)
-        {
-            var users = await _userRepository.GetAllAsync();
-            return users.Where(u => u.Role == role).Select(MapToWithImageDto);
-        }
-        public async Task<UserDto?> UpdateUserProfileImageAsync(int id, string imageUrl)
-        {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
-                return null;
-
-            user.ImageUrl = imageUrl;
-            var updatedUser = await _userRepository.UpdateAsync(user);
-            return MapToDto(updatedUser);
         }
 
         public async Task<bool> UpdateUserPasswordAsync(string email)

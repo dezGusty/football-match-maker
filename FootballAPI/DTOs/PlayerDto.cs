@@ -14,7 +14,6 @@ namespace FootballAPI.DTOs
         public bool IsAvailable { get; set; }
         public bool IsPublic { get; set; }
         public bool IsEnabled { get; set; }
-        public string? ImageUrl { get; set; }
 
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
         public int Speed { get; set; }
@@ -34,7 +33,6 @@ namespace FootballAPI.DTOs
         public string LastName { get; set; }
         public float Rating { get; set; }
         public string Email { get; set; }
-        public string? ImageUrl { get; set; }
 
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
         public int Speed { get; set; } = 2;
@@ -54,7 +52,6 @@ namespace FootballAPI.DTOs
         public float Rating { get; set; }
         public bool IsAvailable { get; set; }
         public bool IsEnabled { get; set; }
-        public string? ImageUrl { get; set; }
         public bool IsPublic { get; set; }
 
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]

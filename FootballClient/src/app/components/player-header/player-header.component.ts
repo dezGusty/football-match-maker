@@ -17,7 +17,6 @@ import { Player } from '../../models/player.interface';
 })
 export class PlayerHeaderComponent implements OnInit {
   username: string = '';
-  imageUrl?: string;
   isMenuOpen = false;
   currentPlayer: Player | null = null;
 
@@ -27,7 +26,7 @@ export class PlayerHeaderComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private userService: UserService,
-    private playerService: PlayerService,
+    private playerService: PlayerService
   ) {}
 
   async ngOnInit() {
@@ -39,9 +38,8 @@ export class PlayerHeaderComponent implements OnInit {
     if (userId) {
       try {
         // Get user data for username and image
-        const user = await this.userService.getUserWithImageById(userId);
+        const user = await this.userService.getUserById(userId);
         this.username = user.username;
-        this.imageUrl = user.imageUrl;
 
         // Get player data for first/last name
         const players = await this.playerService.getPlayers();

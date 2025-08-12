@@ -29,8 +29,7 @@ export class AuthService {
     role: UserRole,
     firstName?: string,
     lastName?: string,
-    rating?: number,
-    imageUrl?: string,
+    rating?: number
   ): Promise<void> {
     try {
       let response: Response;
@@ -42,7 +41,6 @@ export class AuthService {
           firstName: firstName || '',
           lastName: lastName || '',
           rating: rating ?? 0,
-          imageUrl,
         };
         response = await fetch(`${this.apiUrl}/user/create-player-user`, {
           method: 'POST',
@@ -57,7 +55,7 @@ export class AuthService {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, username, password, role, imageUrl }),
+          body: JSON.stringify({ email, username, password, role }),
         });
       }
 
@@ -129,7 +127,7 @@ export class AuthService {
     const isAuth = localStorage.getItem('isAuthenticated') === 'true';
     const expiresAt = parseInt(
       localStorage.getItem('authExpiresAt') || '0',
-      10,
+      10
     );
     const now = new Date().getTime();
 

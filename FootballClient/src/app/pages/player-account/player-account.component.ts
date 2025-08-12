@@ -28,42 +28,24 @@ export class PlayerAccountComponent {
   showPasswordForm = false;
   showUsernameForm = false;
 
-  images: string[] = [];
-  selectedImage: string = '';
-  showImageSelector = false;
-
   constructor(
     private userService: UserService,
     private authService: AuthService,
     private router: Router,
-    private http: HttpClient,
+    private http: HttpClient
   ) {
     this.loadUser();
-    this.loadImages();
   }
 
   async loadUser() {
     try {
       const userId = this.authService.getUserId();
       if (userId) {
-        this.user = await this.userService.getUserWithImageById(userId);
-      }
-      if (this.user?.imageUrl) {
-        this.selectedImage = this.user.imageUrl;
+        this.user = await this.userService.getUserById(userId);
       }
     } catch (error) {
       console.error('Failed to load user:', error);
     }
-  }
-
-  loadImages() {
-    this.http.get<string[]>('http://localhost:5145/api/images').subscribe({
-      next: (imgs) => {
-        this.images = imgs;
-        console.log('Loaded images:', this.images);
-      },
-      error: () => (this.images = []),
-    });
   }
 
   togglePasswordForm() {
@@ -98,7 +80,7 @@ export class PlayerAccountComponent {
         this.user.id,
         this.currentPassword,
         this.newPassword,
-        this.confirmPassword,
+        this.confirmPassword
       );
       alert(message);
       this.resetForms();
@@ -114,7 +96,7 @@ export class PlayerAccountComponent {
       const message = await this.userService.changeUsername(
         this.user.id,
         this.newUsername,
-        this.usernamePassword,
+        this.usernamePassword
       );
       alert(message);
       this.user.username = this.newUsername;
@@ -125,24 +107,8 @@ export class PlayerAccountComponent {
     }
   }
 
-  async updateProfileImage() {
-    if (!this.user || !this.selectedImage) return;
-    try {
-      await this.userService.updateUserImage(this.user.id, this.selectedImage);
-      this.user.imageUrl = this.selectedImage;
-      this.showImageSelector = false;
-      alert('Profile image updated!');
-    } catch (err: any) {
-      alert(err.message || 'Failed to update image!');
-    }
-  }
-
   getRoleString(role: UserRole): string {
     return UserRole[role];
-  }
-
-  selectImage(img: string) {
-    this.selectedImage = img;
   }
 
   goBack() {

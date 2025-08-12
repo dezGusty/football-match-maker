@@ -52,8 +52,7 @@ namespace FootballAPI.Service
                     Email = dto.Email,
                     Username = dto.FirstName + dto.LastName,
                     Password = password,
-                    Role = UserRole.PLAYER,
-                    ImageUrl = dto.ImageUrl
+                    Role = UserRole.PLAYER
                 };
                 await _userRepository.CreateAsync(user);
                 await emailService.SendNewPasswordPlayerEmailAsync(
@@ -77,7 +76,6 @@ namespace FootballAPI.Service
                 IsAvailable = false,
                 IsPublic = true,
                 IsEnabled = true,
-                ImageUrl = dto.ImageUrl,
                 Speed = dto.Speed,
                 Stamina = dto.Stamina,
                 Errors = dto.Errors
@@ -100,7 +98,6 @@ namespace FootballAPI.Service
             existingPlayer.IsAvailable = updatePlayerDto.IsAvailable;
             existingPlayer.IsPublic = updatePlayerDto.IsPublic;
             existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
-            existingPlayer.ImageUrl = updatePlayerDto.ImageUrl;
             existingPlayer.Speed = updatePlayerDto.Speed;
             existingPlayer.Stamina = updatePlayerDto.Stamina;
             existingPlayer.Errors = updatePlayerDto.Errors;
@@ -243,7 +240,6 @@ namespace FootballAPI.Service
                     IsAvailable = false,
                     IsPublic = player.IsPublic,
                     IsEnabled = false,
-                    ImageUrl = null,
                     Speed = 1,
                     Stamina = 1,
                     Errors = 1
@@ -259,7 +255,6 @@ namespace FootballAPI.Service
                 IsPublic = player.IsPublic,
                 IsEnabled = true,
                 Email = player.Email,
-                ImageUrl = player.ImageUrl,
                 Speed = player.Speed,
                 Stamina = player.Stamina,
                 Errors = player.Errors

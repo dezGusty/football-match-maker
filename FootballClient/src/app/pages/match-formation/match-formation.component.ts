@@ -36,7 +36,7 @@ export class MatchFormationComponent implements OnInit {
   constructor(
     private matchService: MatchService,
     private playerService: PlayerService,
-    private router: Router,
+    private router: Router
   ) {}
 
   async loadTeamNames() {
@@ -60,7 +60,7 @@ export class MatchFormationComponent implements OnInit {
 
     if (teamSize < 5 || teamSize > 6) {
       console.warn(
-        `Invalid number of players: ${teamSize}. Expected 5 or 6 players.`,
+        `Invalid number of players: ${teamSize}. Expected 5 or 6 players.`
       );
       return positions;
     }
@@ -117,7 +117,7 @@ export class MatchFormationComponent implements OnInit {
           teamBGoals: this.scoreB,
         });
         console.log(
-          'Match score updated successfully - ratings updated automatically by backend',
+          'Match score updated successfully - ratings updated automatically by backend'
         );
 
         if (this.manualAdjustments.size > 0) {
@@ -130,7 +130,7 @@ export class MatchFormationComponent implements OnInit {
           this.manualAdjustments.forEach((adjustment, playerId) => {
             if (adjustment !== 0) {
               console.log(
-                `Manual adjustment for player ${playerId}: ${adjustment}`,
+                `Manual adjustment for player ${playerId}: ${adjustment}`
               );
               manualRatingUpdates.push({
                 playerId: playerId,
@@ -142,11 +142,11 @@ export class MatchFormationComponent implements OnInit {
           if (manualRatingUpdates.length > 0) {
             console.log(
               'Applying manual rating adjustments:',
-              manualRatingUpdates,
+              manualRatingUpdates
             );
             const success =
               await this.playerService.updateMultiplePlayerRatings(
-                manualRatingUpdates,
+                manualRatingUpdates
               );
             if (success) {
               console.log('Manual rating adjustments applied successfully');
@@ -214,12 +214,12 @@ export class MatchFormationComponent implements OnInit {
       'setManualAdjustment called with:',
       player.firstName,
       player.lastName,
-      adjustment,
+      adjustment
     );
     if (player.id) {
       const numAdjustment = isNaN(adjustment) ? 0 : Number(adjustment);
       console.log(
-        `Setting manual adjustment for ${player.firstName} ${player.lastName}: ${numAdjustment}`,
+        `Setting manual adjustment for ${player.firstName} ${player.lastName}: ${numAdjustment}`
       );
       this.manualAdjustments.set(player.id, numAdjustment);
       console.log('Current manual adjustments:', this.manualAdjustments);
@@ -265,12 +265,12 @@ export class MatchFormationComponent implements OnInit {
 
     if (this.team1Players.length < 5 || this.team1Players.length > 6) {
       console.error(
-        `Team 1 has an invalid number of players: ${this.team1Players.length}`,
+        `Team 1 has an invalid number of players: ${this.team1Players.length}`
       );
     }
     if (this.team2Players.length < 5 || this.team2Players.length > 6) {
       console.error(
-        `Team 2 has an invalid number of players: ${this.team2Players.length}`,
+        `Team 2 has an invalid number of players: ${this.team2Players.length}`
       );
     }
   }
@@ -291,10 +291,7 @@ export class MatchFormationComponent implements OnInit {
   }
 
   getPlayerImage(player: Player | undefined): string {
-    if (!player || !player.imageUrl) {
-      return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNjY2NjY2MiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDAgNSAyMVYyMkMxIDIyIDIzIDIyIDIzIDIyVjIxQzIzIDE3LjEzNDAgMTkuODY2IDE0IDEyIDE0WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cjwvc3ZnPgo=';
-    }
-    return player.imageUrl;
+    return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNjY2NjY2MiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDAgNSAyMVYyMkMxIDIyIDIzIDIyIDIzIDIyVjIxQzIzIDE3LjEzNDAgMTkuODY2IDE0IDEyIDE0WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cjwvc3ZnPgo=';
   }
 
   onImageError(event: any) {

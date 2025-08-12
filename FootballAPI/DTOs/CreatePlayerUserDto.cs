@@ -17,8 +17,6 @@ namespace FootballAPI.DTOs
         [StringLength(255)]
         public string Password { get; set; }
 
-        public string? ImageUrl { get; set; }
-
         [Required]
         [StringLength(50)]
         public string FirstName { get; set; }

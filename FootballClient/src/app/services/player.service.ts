@@ -43,7 +43,6 @@ export class PlayerService {
     lastName: string;
     email?: string;
     rating: number;
-    imageUrl?: string;
   }): Promise<Player> {
     this.validateRating(player.rating);
 
