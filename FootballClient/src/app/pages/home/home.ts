@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player.interface';
 import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
-import { AuthService } from '../../components/auth/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
 
 @Component({

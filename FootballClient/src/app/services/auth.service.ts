@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { LoginRequest } from './auth.interface';
-import { UserRole } from '../../models/user-role.enum';
+import { LoginRequest } from '../models/auth.interface';
+import { UserRole } from '../models/user-role.enum';
 import { HttpClient } from '@angular/common/http';
-import { PlayerUser } from '../../models/player-user.interface'; // importă interfața
+import { PlayerUser } from '../models/player-user.interface'; // importă interfața
 
 @Injectable({
   providedIn: 'root',
@@ -11,14 +11,29 @@ export class AuthService {
   private readonly apiUrl = 'http://localhost:5145/api';
   private isAuthenticated = false;
   private userId: number | null = null;
+  private userRole: UserRole | null = null;
   errorMessage: string = '';
   email: string = '';
 
   constructor(private http: HttpClient) {
-    this.isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-    const savedUserId = localStorage.getItem('userId');
-    if (savedUserId) {
-      this.userId = parseInt(savedUserId, 10);
+    this.LoadAuthState();
+  }
+
+  private LoadAuthState() {
+    const token = this.getToken();
+    if (token && !this.isTokenExpired(token)) {
+      this.isAuthenticated = true;
+      const savedUserId = localStorage.getItem('userId');
+      const savedUserRole = localStorage.getItem('userRole');
+
+      if (savedUserId) {
+        this.userId = parseInt(savedUserId, 10);
+      }
+      if (savedUserRole) {
+        this.userRole = parseInt(savedUserRole, 10) as UserRole;
+      }
+    } else {
+      this.logout();
     }
   }
 
@@ -69,15 +84,17 @@ export class AuthService {
         throw new Error(message);
       }
       const userData = await response.json();
-      const now = new Date().getTime();
-      const expiresAt = now + 60 * 60 * 1000;
 
       this.isAuthenticated = true;
       this.userId = userData.id;
+      this.userRole = userData.role;
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userId', userData.id.toString());
-      localStorage.setItem('authExpiresAt', expiresAt.toString());
-      localStorage.setItem('userRole', userData.role);
+      localStorage.setItem('userRole', userData.role.toString());
+
+      if (userData.token) {
+        localStorage.setItem('authToken', userData.token);
+      }
     } catch (error) {
       console.error('Register error:', error);
       throw error;
@@ -86,41 +103,45 @@ export class AuthService {
 
   async login(credentials: LoginRequest): Promise<void> {
     try {
-      const response = await fetch(`${this.apiUrl}/user/authenticate`, {
+      const response = await fetch(`${this.apiUrl}/Auth/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to login. Please check your credentials.');
+        let message = 'Failed to login. Please check your credentials.';
+        try {
+          const errorData = await response.json();
+          message = errorData?.message || message;
+        } catch {
+          const text = await response.text();
+          if (text) message = text;
+        }
+        throw new Error(message);
       }
 
-      const userData = await response.json();
+      const loginResponse = await response.json();
 
-      const now = new Date().getTime();
-      const expiresAt = now + 60 * 60 * 1000;
+      localStorage.setItem('authToken', loginResponse.token);
+
+      const payload = JSON.parse(atob(loginResponse.token.split('.')[1]));
+      if (payload?.exp) {
+        localStorage.setItem('authExpiresAt', String(payload.exp * 1000));
+      }
+
+      localStorage.setItem('isAuthenticated', 'true');
+
+      localStorage.setItem('userId', loginResponse.user.id.toString());
+      localStorage.setItem('userRole', loginResponse.user.role.toString());
 
       this.isAuthenticated = true;
-      this.userId = userData.id;
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('userId', userData.id.toString());
-      localStorage.setItem('authExpiresAt', expiresAt.toString());
-      localStorage.setItem('userRole', userData.role);
+      this.userId = loginResponse.user.id;
+      this.userRole = loginResponse.user.role;
     } catch (error) {
       console.error('Failed to login:', error);
       throw error;
     }
-  }
-
-  logout(): void {
-    this.isAuthenticated = false;
-    this.userId = null;
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('authExpiresAt');
   }
 
   isLoggedIn(): boolean {
@@ -166,5 +187,48 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/user/update-forgot-password`, {
       email,
     });
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('authToken');
+  }
+
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const exp = payload.exp * 1000;
+      return Date.now() >= exp;
+    } catch (error) {
+      console.error('Error checking token expiration:', error);
+      return true;
+    }
+  }
+
+  private clearAuthState(): void {
+    this.isAuthenticated = false;
+    this.userId = null;
+    this.userRole = null;
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userRole');
+  }
+  async logout(): Promise<void> {
+    try {
+      const token = this.getToken();
+      if (token) {
+        await fetch(`${this.apiUrl}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      this.clearAuthState();
+    }
   }
 }

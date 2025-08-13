@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
-import { AuthService } from '../../components/auth/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.interface';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
