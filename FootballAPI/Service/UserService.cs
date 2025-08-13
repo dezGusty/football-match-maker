@@ -82,7 +82,7 @@ namespace FootballAPI.Service
             {
                 Email = dto.Email,
                 Username = dto.Username,
-                Password = dto.Password,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 11),
                 Role = dto.Role,
                 ImageUrl = dto.ImageUrl
             };
@@ -99,7 +99,7 @@ namespace FootballAPI.Service
             {
                 Email = dto.Email,
                 Username = dto.Username,
-                Password = dto.Password,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 11),
                 Role = UserRole.PLAYER,
                 ImageUrl = dto.ImageUrl
             };

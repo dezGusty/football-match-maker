@@ -180,7 +180,7 @@ namespace FootballAPI.Data
                 },
                 new User
                 {
-                    Id = 4,
+                    Id = 5,
                     Email = "test@test.com",
                     Username = "test",
                     Password = BCrypt.Net.BCrypt.HashPassword("default123"),

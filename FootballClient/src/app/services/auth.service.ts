@@ -107,25 +107,35 @@ export class AuthService {
     try {
       const response = await fetch(`${this.apiUrl}/Auth/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.message || 'Failed to login. Please check your credentials.'
-        );
+        let message = 'Failed to login. Please check your credentials.';
+        try {
+          const errorData = await response.json();
+          message = errorData?.message || message;
+        } catch {
+          const text = await response.text();
+          if (text) message = text;
+        }
+        throw new Error(message);
       }
 
       const loginResponse = await response.json();
 
       localStorage.setItem('authToken', loginResponse.token);
+
+      const payload = JSON.parse(atob(loginResponse.token.split('.')[1]));
+      if (payload?.exp) {
+        localStorage.setItem('authExpiresAt', String(payload.exp * 1000));
+      }
+
       localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('userId', loginResponse.id.toString());
-      localStorage.setItem('userRole', loginResponse.role.toString());
+
+      localStorage.setItem('userId', loginResponse.user.id.toString());
+      localStorage.setItem('userRole', loginResponse.user.role.toString());
 
       this.isAuthenticated = true;
       this.userId = loginResponse.user.id;

@@ -22,14 +22,37 @@ namespace FootballAPI.Service
             _configuration = configuration;
         }
 
-        public async Task<string?> LoginAsync( string email, string password)
+        public async Task<string?> LoginAsync(string email, string password)
         {
             var user = await _userRepository.GetUserByEmail(email);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
-                return null;
+            if (user == null) return null;
 
-             return GenerateJwtToken(user);
+            bool ok = false;
+            try
+            {
+                ok = BCrypt.Net.BCrypt.Verify(password, user.Password);
+            }
+            catch (BCrypt.Net.SaltParseException)
+            {
+                
+                if (user.Password == password)
+                {
+                
+                    user.Password = BCrypt.Net.BCrypt.HashPassword(password, workFactor: 11);
+                    await _userRepository.UpdateAsync(user);
+                    ok = true;
+                }
+                else
+                {
+                    ok = false;
+                }
+            }
+
+            if (!ok) return null;
+
+            return GenerateJwtToken(user);
         }
+
 
         private string GenerateJwtToken(dynamic user)
         {

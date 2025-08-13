@@ -23,25 +23,30 @@ namespace FootballAPI.Controllers
             _logger = logger;
         }
 
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             try
             {
-
-
                 var token = await _authService.LoginAsync(dto.Email, dto.Password);
                 if (token == null)
-                {
-                    return Unauthorized("Incorrect email or password.");
-                }
+                    return Unauthorized(new { message = "Incorrect email or password." });
 
+                _logger.LogInformation("Looking up user by email {Email}", dto.Email);
                 var user = await _userService.GetUserByEmailAsync(dto.Email);
+                _logger.LogInformation("User lookup result: {HasUser}", user != null);
+
+                if (user == null)
+                {
+                    
+                    return StatusCode(500, new { message = "User not found after login." });
+                }
 
                 return Ok(new
                 {
                     message = "Login successful.",
-                    token = token,
+                    token,
                     user = new
                     {
                         id = user.Id,
@@ -49,16 +54,21 @@ namespace FootballAPI.Controllers
                         role = user.Role,
                         username = user.Username
                     }
-                }
-                );
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError(ex, "Config/validation error during login for {Email}", dto.Email);
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during login for email: {Email}", dto.Email);
+                _logger.LogError(ex, "Error during login for {Email}", dto.Email);
                 return StatusCode(500, new { message = "An error occurred during login." });
             }
         }
-        
+
+
 
         [Authorize]
         [HttpPost("logout")]
