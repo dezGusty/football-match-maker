@@ -1,238 +1,178 @@
 <app-header></app-header>
 
-<div class="search-container">
-  <input
-    type="text"
-    [(ngModel)]="searchTerm"
-    (ngModelChange)="onSearchChange()"
-    placeholder="Search player..."
-    class="search-input"
-  />
-</div>
+<div class="page">
+  <!-- Floating Actions -->
+  <div class="fab-stack">
+    <button class="fab primary" (click)="showAddModal = true" aria-label="Add new player">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
 
-<table class="players-table">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>First name</th>
-      <th>Last name</th>
-      <th>Rating</th>
-      <th>Individual Stats</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr
-      *ngFor="
-        let player of searchTerm.trim() ? filteredPlayers : players;
-        let i = index
-      "
-      [class.disabled-player]="!isPlayerEnabled(player)"
-    >
-      <td>{{ i + 1 }}</td>
-      <ng-container
-        *ngIf="editIndex === i && isPlayerEnabled(player); else viewMode"
+    <!-- Search FAB that expands into an input -->
+    <div class="fab search-fab" [class.expanded]="searchTerm">
+      <button class="fab" aria-label="Search players" (click)="$event.preventDefault()">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/><path d="M20 20l-3.2-3.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <input
+        class="fab-input"
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Search player..."
+        aria-label="Search player"
+      />
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper" role="region" aria-label="Players table" tabindex="0">
+    <table class="players-table modern">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Rating</th>
+        <th>Individual Stats</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr
+        *ngFor="let player of searchTerm.trim() ? filteredPlayers : players; let i = index"
+        [class.disabled-player]="!isPlayerEnabled(player)"
+        class="row-anim"
+        [style.animationDelay]="(i * 40) + 'ms'"
       >
-        <td><input type="text" [(ngModel)]="editedPlayer!.firstName" /></td>
-        <td><input type="text" [(ngModel)]="editedPlayer!.lastName" /></td>
-        <td>
-          <input
-            type="number"
-            [(ngModel)]="editedPlayer!.rating"
-            min="0"
-            max="10000"
-            step="0.1"
-          />
-        </td>
-        <td>
-          <div class="edit-stats">
-            <div class="stat-edit-group">
+        <td>{{ i + 1 }}</td>
+
+        <ng-container *ngIf="editIndex === i && isPlayerEnabled(player); else viewMode">
+          <td><input type="text" [(ngModel)]="editedPlayer!.firstName" /></td>
+          <td><input type="text" [(ngModel)]="editedPlayer!.lastName" /></td>
+          <td>
+            <input type="number" [(ngModel)]="editedPlayer!.rating" min="0" max="10000" step="0.1" />
+          </td>
+          <td>
+            <div class="edit-stats">
+              <div class="stat-edit-group">
+                <label>Speed:</label>
+                <select [(ngModel)]="editedPlayer!.speed">
+                  <option value="1">Low</option>
+                  <option value="2">Medium</option>
+                  <option value="3">High</option>
+                  <option value="4">Extreme</option>
+                </select>
+              </div>
+              <div class="stat-edit-group">
+                <label>Stamina:</label>
+                <select [(ngModel)]="editedPlayer!.stamina">
+                  <option value="1">Low</option>
+                  <option value="2">Medium</option>
+                  <option value="3">High</option>
+                  <option value="4">Extreme</option>
+                </select>
+              </div>
+              <div class="stat-edit-group">
+                <label>Errors:</label>
+                <select [(ngModel)]="editedPlayer!.errors">
+                  <option value="1">Low</option>
+                  <option value="2">Medium</option>
+                  <option value="3">High</option>
+                  <option value="4">Extreme</option>
+                </select>
+              </div>
+            </div>
+          </td>
+          <td><span class="status-badge enabled">Active</span></td>
+          <td class="actions">
+            <button class="action-btn save-btn" title="Save" (click)="editPlayer()">Save</button>
+            <button class="action-btn cancel-btn" title="Cancel" (click)="clearEditIndex()">Cancel</button>
+          </td>
+        </ng-container>
+
+        <ng-template #viewMode>
+          <td>{{ isPlayerEnabled(player) ? player.firstName : (player.firstName | slice: 0 : 3) }}</td>
+          <td>{{ isPlayerEnabled(player) ? player.lastName : (player.lastName | slice: 0 : 3) }}</td>
+          <td>{{ player.rating | number: '1.0-2' }}</td>
+          <td>
+            <app-player-stats [speed]="player.speed || 2" [stamina]="player.stamina || 2" [errors]="player.errors || 2"></app-player-stats>
+          </td>
+          <td>
+              <span class="status-badge" [class.enabled]="isPlayerEnabled(player)">
+                {{ isPlayerEnabled(player) ? 'Active' : 'Inactive' }}
+              </span>
+          </td>
+          <td class="actions">
+            @if (isPlayerEnabled(player)) {
+              <button class="action-btn edit-btn" title="Edit" (click)="setEditIndex(i)">Edit</button>
+              <button class="action-btn delete-btn" title="Disable" (click)="deletePlayer(player.id!)">Disable</button>
+            } @else {
+              <button class="action-btn reactivate-btn" title="Reactivate" (click)="enablePlayer(player.id!)">Reactivate</button>
+            }
+          </td>
+        </ng-template>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  @if (showAddModal) {
+    <div class="modal-backdrop" (click)="showAddModal = false">
+      <div class="modal-content glass" (click)="$event.stopPropagation()">
+        <button class="close-modal-btn" (click)="showAddModal = false" title="Close">&times;</button>
+        <h3>Add New Player</h3>
+        <div class="grid two">
+          <input type="text" placeholder="First Name" [(ngModel)]="newPlayer.firstName" />
+          <input type="text" placeholder="Last Name" [(ngModel)]="newPlayer.lastName" />
+        </div>
+        <input type="email" placeholder="Email (optional)" [(ngModel)]="newPlayer.email" />
+        <input type="number" placeholder="Rating" [(ngModel)]="newPlayer.rating" min="0" max="10000" step="0.1" />
+
+        <div class="stats-controls">
+          <h4>Individual Stats</h4>
+          <div class="grid three">
+            <div class="stat-control-group">
               <label>Speed:</label>
-              <select [(ngModel)]="editedPlayer!.speed">
-                <option value="1">Low</option>
-                <option value="2">Medium</option>
-                <option value="3">High</option>
+              <select [(ngModel)]="newPlayer.speed">
+                <option value="1">Low ⚡</option>
+                <option value="2" selected>Medium ⚡⚡</option>
+                <option value="3">High ⚡⚡⚡</option>
+                <option value="4">Extreme ⚡⚡⚡⚡</option>
               </select>
             </div>
-            <div class="stat-edit-group">
+            <div class="stat-control-group">
               <label>Stamina:</label>
-              <select [(ngModel)]="editedPlayer!.stamina">
-                <option value="1">Low</option>
-                <option value="2">Medium</option>
-                <option value="3">High</option>
+              <select [(ngModel)]="newPlayer.stamina">
+                <option value="1">Low 💪</option>
+                <option value="2" selected>Medium 💪💪</option>
+                <option value="3">High 💪💪💪</option>
+                <option value="4">Extreme 💪💪💪💪</option>
               </select>
             </div>
-            <div class="stat-edit-group">
-              <label>Errors:</label>
-              <select [(ngModel)]="editedPlayer!.errors">
-                <option value="1">Low</option>
-                <option value="2">Medium</option>
-                <option value="3">High</option>
+            <div class="stat-control-group">
+              <label>Error Rate:</label>
+              <select [(ngModel)]="newPlayer.errors">
+                <option value="1">Low ❌</option>
+                <option value="2" selected>Medium ❌❌</option>
+                <option value="3">High ❌❌❌</option>
+                <option value="4">Extreme ❌❌❌❌</option>
               </select>
             </div>
           </div>
-        </td>
-        <td><span class="status-badge enabled">Active</span></td>
-        <td>
-          <button
-            class="action-btn save-btn"
-            title="Save"
-            (click)="editPlayer()"
-          >
-            Save
-          </button>
-          <button
-            class="action-btn cancel-btn"
-            title="Cancel"
-            (click)="clearEditIndex()"
-          >
-            Cancel
-          </button>
-        </td>
-      </ng-container>
-      <ng-template #viewMode>
-        <td>
-          {{
-            isPlayerEnabled(player)
-              ? player.firstName
-              : (player.firstName | slice: 0 : 3)
-          }}
-        </td>
-        <td>
-          {{
-            isPlayerEnabled(player)
-              ? player.lastName
-              : (player.lastName | slice: 0 : 3)
-          }}
-        </td>
-        <td>{{ player.rating | number: "1.0-2" }}</td>
-        <td>
-          <app-player-stats
-            [speed]="player.speed || 2"
-            [stamina]="player.stamina || 2"
-            [errors]="player.errors || 2"
-          >
-          </app-player-stats>
-        </td>
-        <td>
-          <span class="status-badge" [class.enabled]="isPlayerEnabled(player)">
-            {{ isPlayerEnabled(player) ? "Active" : "Inactive" }}
-          </span>
-        </td>
-        <td>
-          @if (isPlayerEnabled(player)) {
-            <button
-              class="action-btn edit-btn"
-              title="Edit"
-              (click)="setEditIndex(i)"
-            >
-              Edit
-            </button>
-            <button
-              class="action-btn delete-btn"
-              title="Disable"
-              (click)="deletePlayer(player.id!)"
-            >
-              Disable
-            </button>
-          } @else {
-            <button
-              class="action-btn reactivate-btn"
-              title="Reactivate"
-              (click)="enablePlayer(player.id!)"
-            >
-              Reactivate
-            </button>
+        </div>
+
+        <div class="file-upload">
+          <label for="imageUpload" class="file-upload-label">
+            <span>Choose Image</span>
+            <input type="file" id="imageUpload" (change)="onFileSelected($event)" accept="image/*" />
+          </label>
+          @if (selectedFileName) {
+            <span class="selected-file">Selected: {{ selectedFileName }}</span>
           }
-        </td>
-      </ng-template>
-    </tr>
-  </tbody>
-</table>
-
-<button class="open-modal-btn" (click)="showAddModal = true">
-  Add New Player
-</button>
-
-@if (showAddModal) {
-  <div class="modal-backdrop">
-    <div class="modal-content">
-      <button
-        class="close-modal-btn"
-        (click)="showAddModal = false"
-        title="Close"
-      >
-        &times;
-      </button>
-      <h3>Add New Player</h3>
-      <input
-        type="text"
-        placeholder="First Name"
-        [(ngModel)]="newPlayer.firstName"
-      />
-      <input
-        type="text"
-        placeholder="Last Name"
-        [(ngModel)]="newPlayer.lastName"
-      />
-      <input
-        type="email"
-        placeholder="Email (optional)"
-        [(ngModel)]="newPlayer.email"
-      />
-      <input
-        type="number"
-        placeholder="Rating"
-        [(ngModel)]="newPlayer.rating"
-        min="0"
-        max="10000"
-        step="0.1"
-      />
-
-      <div class="stats-controls">
-        <h4>Individual Stats</h4>
-        <div class="stat-control-group">
-          <label>Speed:</label>
-          <select [(ngModel)]="newPlayer.speed">
-            <option value="1">Low ⚡</option>
-            <option value="2" selected>Medium ⚡⚡</option>
-            <option value="3">High ⚡⚡⚡</option>
-          </select>
         </div>
-        <div class="stat-control-group">
-          <label>Stamina:</label>
-          <select [(ngModel)]="newPlayer.stamina">
-            <option value="1">Low 💪</option>
-            <option value="2" selected>Medium 💪💪</option>
-            <option value="3">High 💪💪💪</option>
-          </select>
-        </div>
-        <div class="stat-control-group">
-          <label>Error Rate:</label>
-          <select [(ngModel)]="newPlayer.errors">
-            <option value="1">Low ❌ (Few errors)</option>
-            <option value="2" selected>Medium ❌❌</option>
-            <option value="3">High ❌❌❌ (Many errors)</option>
-          </select>
-        </div>
+        <button class="primary-cta" (click)="addPlayer(); showAddModal = false">Add Player</button>
       </div>
-
-      <div class="file-upload">
-        <label for="imageUpload" class="file-upload-label">
-          <span>Choose Image</span>
-          <input
-            type="file"
-            id="imageUpload"
-            (change)="onFileSelected($event)"
-            accept="image/*"
-          />
-        </label>
-        @if (selectedFileName) {
-          <span class="selected-file">Selected: {{ selectedFileName }}</span>
-        }
-      </div>
-      <button (click)="addPlayer(); showAddModal = false">Add Player</button>
     </div>
-  </div>
-}
+  }
+</div>
