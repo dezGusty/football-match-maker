@@ -1,242 +1,318 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
-.register-page {
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+.login-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-image: url("/assets/backgroundImageLogin.jpg");
-  background-size: cover;
-  background-position: center;
+  height: 100vh;
   font-family: "Poppins", sans-serif;
 }
 
-.register-main-container {
+/* Left Football Theme Section */
+.login-left {
+  flex: 1;
+  background: url("/assets/football-stadium.jpg") center/cover no-repeat;
+  position: relative;
   display: flex;
-  flex-direction: row;
+  align-items: center;
   justify-content: center;
-  align-items: flex-start;
-  gap: 32px;
-  max-width: 800px;
-  width: 100%;
 }
 
-.register-container {
+.login-left .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 50, 0, 0.6);
+}
+
+.left-content {
+  position: relative;
+  text-align: center;
+  color: white;
+  animation: fadeIn 1.2s ease-out;
+}
+
+.left-content h1 {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+}
+
+.left-content p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* Right Login Form Section */
+.login-right {
+  flex: 1;
+  background: #1b1b1b;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form {
   width: 100%;
-  max-width: 420px;
-  max-height: 95vh;
-  overflow-y: auto;
-  background: rgba(255, 255, 255, 0.13);
-  backdrop-filter: blur(14px);
-  padding: 32px 28px;
-  border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #222;
-  transition: transform 0.3s ease;
-  scrollbar-width: thin;
-  scrollbar-color: #bdbdbd #e0e0e0;
+  max-width: 350px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  color: white;
+  animation: slideUp 0.8s ease-out;
 }
 
-.register-container:hover {
-  transform: scale(1.25);
-}
-
-.register-container h2 {
+.login-form h2 {
   text-align: center;
   margin-bottom: 25px;
   font-weight: 700;
-  font-size: 26px;
-  color: #f0f0f0;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
 }
 
-.register-container label {
-  margin-top: 12px;
-  margin-bottom: 4px;
-  font-weight: 500;
-  font-size: 15px;
-  color: #444;
+.login-form label {
+  margin-bottom: 5px;
+  display: block;
+  font-size: 14px;
 }
 
-.register-container input[type="text"],
-.register-container input[type="email"],
-.register-container input[type="password"],
-.register-container input[type="number"] {
-  margin-bottom: 10px;
+.login-form input {
+  margin-bottom: 15px;
   padding: 10px;
   border: none;
   border-radius: 8px;
+  width: 95%;
+  background: rgba(255, 255, 255, 0.85);
+  color: #333;
+  font-size: 14px;
   outline: none;
-  background: rgba(255, 255, 255, 0.95);
-  color: #222;
-  font-size: 15px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.2s;
+  transition: all 0.2s ease-in-out;
 }
 
-.register-container input:focus {
-  box-shadow: 0 0 0 2px #1976d2;
+.login-form input:focus {
+  background: white;
+  box-shadow: 0 0 0 2px #00ff88;
 }
 
-.register-container button {
-  width: 100%;
+.btn-login {
   padding: 12px;
-  background: linear-gradient(90deg, #222, #444);
-  color: #fff;
+  background: linear-gradient(to right, #00b33c, #006622);
   border: none;
   border-radius: 8px;
-  font-size: 17px;
+  color: white;
   font-weight: 600;
-  margin-top: 18px;
   cursor: pointer;
-  transition: background 0.2s;
+  width: 100%;
+  transition: all 0.3s;
 }
 
-.register-container button:hover {
-  background: linear-gradient(90deg, #1976d2, #222);
+.btn-login:hover {
+  background: linear-gradient(to right, #009933, #004d1a);
+  transform: translateY(-2px);
+}
+
+.register-prompt {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.register-prompt a {
+  color: #00ff88;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .error-message {
+  background: #f8d7da;
   color: #721c24;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
   padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 15px;
+  border-radius: 6px;
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
+  margin-bottom: 15px;
 }
 
-.success-message {
-  color: #388e3c;
-  background-color: #e8f5e9;
-  border: 1px solid #c8e6c9;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  text-align: center;
-  font-size: 14px;
+/* Modal styling remains the same */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  color: white;
+  width: 90%;
+  max-width: 350px;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-buttons button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-buttons button.cancel {
+  background: #777;
+  color: white;
+}
+
+.modal-buttons button:not(.cancel) {
+  background: #00b33c;
+  color: white;
+}
+
+.modal-buttons button:hover {
+  transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.football-ball {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 80px;
+  height: 80px;
+  background: url("/assets/soccerBall.png") center/contain no-repeat;
+  opacity: 0.5;
+  animation: ballFloat 12s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes ballFloat {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(15px, -10px) rotate(10deg);
+  }
+  50% {
+    transform: translate(0, -20px) rotate(-10deg);
+  }
+  75% {
+    transform: translate(-15px, -10px) rotate(10deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+.slideshow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.slideshow img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.slideshow img.active {
+  opacity: 1;
+}
+
+
 
 .radio-group {
   display: flex;
-  gap: 24px;
-  margin-bottom: 10px;
-  margin-top: 4px;
+  align-content: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 8px 10px 16px 0;
 }
 
 .radio-group label {
   font-size: 14px;
-  color: #222;
   cursor: pointer;
+  display: flex;
+  padding: 10px;
 }
 
 .radio-group input[type="radio"] {
-  margin-right: 5px;
-}
-
-.register-container::-webkit-scrollbar {
-  width: 8px;
-  background: transparent;
-}
-
-.register-container::-webkit-scrollbar-thumb {
-  background: #bdbdbd;
-  border-radius: 8px;
-}
-
-.register-container::-webkit-scrollbar-thumb:hover {
-  background: #888;
-}
-
-.register-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.player-extra-container {
-  display: flex;
-  flex-direction: column;
-  width: 250px;
-  max-height: 90vh;
-  overflow-y: auto;
-  background: rgba(255, 255, 255, 0.13);
-  backdrop-filter: blur(10px);
-  padding: 30px 20px;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #e0e0e0;
-}
-
-.player-extra-container label {
-  margin-bottom: 5px;
-  font-weight: 500;
-  font-size: 14px;
-  color: #cccccc;
-}
-
-.player-extra-container input {
-  margin-bottom: 15px;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  outline: none;
-  background: rgba(255, 255, 255, 0.85);
-  color: #333;
-  font-size: 14px;
-  transition: box-shadow 0.2s ease-in-out;
-}
-
-.player-extra-container input:focus {
-  box-shadow: 0 0 0 2px #999;
-  background: #fff;
+  margin-right: 0px;
 }
 
 .player-extra-fields {
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid #e0e0e0;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.2);
 }
 
 .player-fields-row {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .player-field {
   flex: 1 1 0;
   min-width: 120px;
-  display: flex;
-  flex-direction: column;
 }
 
 .player-field label {
+  display: block;
+  font-size: 13px;
   margin-bottom: 4px;
-  font-size: 14px;
-  color: #444;
-  font-weight: 500;
 }
 
 .player-field input {
-  padding: 10px;
+  padding: 8px;
+  border-radius: 6px;
   border: none;
-  border-radius: 8px;
   outline: none;
-  background: rgba(255, 255, 255, 0.95);
-  color: #222;
-  font-size: 15px;
-  margin-bottom: 0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.2s;
+  background: rgba(255, 255, 255, 0.85);
+  width: 90%;
 }
-
-@media (max-width: 700px) {
-  .player-fields-row {
-    flex-direction: column;
-    gap: 8px;
-  }
+.rating-field input {
+  width: 95% !important;
 }

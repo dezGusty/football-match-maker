@@ -1,100 +1,138 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
-.login-page {
+.login-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
-  background-image: url("/assets/backgroundImageLogin.jpg");
-  background-size: cover;
-  background-position: center;
-  overflow: hidden;
   font-family: "Poppins", sans-serif;
 }
 
-.login-container {
+/* Left Football Theme Section */
+.login-left {
+  flex: 1;
+  background: url("/assets/football-stadium.jpg") center/cover no-repeat;
+  position: relative;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-left .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 50, 0, 0.6);
+}
+
+.left-content {
+  position: relative;
+  text-align: center;
+  color: white;
+  animation: fadeIn 1.2s ease-out;
+}
+
+.left-content h1 {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+}
+
+.left-content p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* Right Login Form Section */
+.login-right {
+  flex: 1;
+  background: #1b1b1b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form {
   width: 100%;
   max-width: 350px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(14px);
-  padding: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #e0e0e0;
-  transition: transform 0.3s ease;
+  box-shadow: 0 10px 50px rgba(2, 53, 19, 0.48);
+  backdrop-filter: blur(12px);
+  color: white;
+  animation: slideUp 0.8s ease-out;
 }
 
-.login-container:hover {
-  transform: scale(1.25);
-}
-
-.login-container h2 {
+.login-form h2 {
   text-align: center;
   margin-bottom: 25px;
   font-weight: 700;
-  font-size: 26px;
-  color: #f0f0f0;
-
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
 }
 
-.login-container label {
+.login-form label {
   margin-bottom: 5px;
-  font-weight: 500;
+  display: block;
   font-size: 14px;
-  color: #cccccc;
 }
 
-.login-container input {
+.login-form input {
   margin-bottom: 15px;
   padding: 10px;
   border: none;
   border-radius: 8px;
-  outline: none;
+  width: 100%;
   background: rgba(255, 255, 255, 0.85);
   color: #333;
   font-size: 14px;
-  transition: box-shadow 0.2s ease-in-out;
+  outline: none;
+  transition: all 0.2s ease-in-out;
 }
 
-.login-container input:focus {
-  box-shadow: 0 0 0 2px #999;
-  background: #fff;
+.login-form input:focus {
+  background: white;
+  box-shadow: 0 0 0 2px #00ff88;
 }
 
-.login-container button {
+.btn-login {
   padding: 12px;
-  background: linear-gradient(to right, #4b4b4b, #2c2c2c);
-
-  color: white;
+  background: linear-gradient(to right, #00b33c, #006622);
   border: none;
   border-radius: 8px;
+  color: white;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    background 0.3s,
-    transform 0.2s;
+  width: 105%;
+  transition: all 0.3s;
 }
 
-.login-container button:hover {
-  background: linear-gradient(to right, #2c2c2c, #000000);
+.btn-login:hover {
+  background: linear-gradient(to right, #009933, #004d1a);
   transform: translateY(-2px);
 }
 
-.error-message {
-  color: #721c24;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 15px;
+.register-prompt {
   text-align: center;
-  font-size: 14px;
+  margin-top: 12px;
+  font-size: 13px;
 }
 
+.register-prompt a {
+  color: #00ff88;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+/* Modal styling remains the same */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -109,38 +147,14 @@
 }
 
 .modal-content {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.05);
   padding: 25px;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #e0e0e0;
-  font-family: "Poppins", sans-serif;
+  box-shadow: 0 8px 32px rgba(255, 0, 0, 0.25);
+  color: white;
   width: 90%;
   max-width: 350px;
   animation: fadeIn 0.3s ease;
-}
-
-.modal-content h3 {
-  margin-top: 0;
-  text-align: center;
-  font-weight: 600;
-  font-size: 20px;
-  color: #f0f0f0;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
-}
-
-.modal-content input {
-  margin-top: 15px;
-  margin-bottom: 15px;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  outline: none;
-  background: rgba(255, 255, 255, 0.85);
-  color: #333;
-  font-size: 14px;
 }
 
 .modal-buttons {
@@ -155,18 +169,15 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    background 0.3s,
-    transform 0.2s;
 }
 
 .modal-buttons button.cancel {
-  background: linear-gradient(to right, #777, #555);
+  background: #777;
   color: white;
 }
 
 .modal-buttons button:not(.cancel) {
-  background: linear-gradient(to right, #4b4b4b, #2c2c2c);
+  background: #00b33c;
   color: white;
 }
 
@@ -174,13 +185,77 @@
   transform: translateY(-2px);
 }
 
+/* Animations */
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
   }
   to {
     opacity: 1;
-    transform: scale(1);
   }
 }
+.football-ball {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 80px;
+  height: 80px;
+  background: url("/assets/soccerBall.png") center/contain no-repeat;
+  opacity: 0.5;
+  animation: ballFloat 12s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes ballFloat {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(15px, -10px) rotate(10deg);
+  }
+  50% {
+    transform: translate(0, -20px) rotate(-10deg);
+  }
+  75% {
+    transform: translate(-15px, -10px) rotate(10deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+.slideshow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.slideshow img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.slideshow img.active {
+  opacity: 1;
+}
+

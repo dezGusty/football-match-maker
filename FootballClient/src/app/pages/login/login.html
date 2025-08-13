@@ -1,74 +1,70 @@
-<div class="login-page">
-  <form class="login-container" (ngSubmit)="onLogin()">
-    <h2>Login</h2>
+<div class="login-wrapper">
+  <!-- Left Side - Football Theme -->
+  <div class="login-left">
 
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
+    <div class="slideshow">
+      <img src="/assets/background0.jpg" class="slide active" alt="Football Image 1">
+      <img src="/assets/background1.jpg" class="slide" alt="Football Image 2">
+      <img src="/assets/background2.jpg" class="slide active" alt="Football Image 3">
+      <img src="/assets/background3.jpg" class="slide" alt="Football Image 4">
     </div>
+    <div class="overlay"></div>
+    <div class="left-content">
+      <h1>Football Manager</h1>
+      <p>Lead your team to glory.</p>
+    </div>
+    <div class="football-ball"></div>
+  </div>
 
-    <label>Email:</label>
-    <input
-      type="email"
-      [(ngModel)]="email"
-      name="email"
-      #emailInput
-      (keydown.enter)="$event.preventDefault(); passwordInput.focus()"
-      placeholder="Introduce email"
-    />
+  <!-- Right Side - Login Form -->
+  <div class="login-right">
+    <form class="login-form" (ngSubmit)="onLogin()">
+      <h2>Sign In</h2>
 
-    <label>Password:</label>
-    <input
-      type="password"
-      [(ngModel)]="password"
-      name="password"
-      #passwordInput
-      (keydown.enter)="$event.preventDefault(); onLogin()"
-      placeholder="Introduce password"
-    />
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
 
-    <button type="submit">Login</button>
+      <label>Email</label>
+      <input
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        #emailInput
+        (keydown.enter)="$event.preventDefault(); passwordInput.focus()"
+        placeholder="Enter your email"
+      />
 
-    <h6
-      class="register-prompt"
-      style="margin-top: 10px; text-align: center; color: #222"
-    >
-      Don't have an account?
-      <a
-        (click)="goToRegister()"
-        class="register-link"
-        style="
-          color: #1976d2;
-          text-decoration: underline;
-          cursor: pointer;
-          margin-left: 4px;
-        "
-        >Register now.</a
-      >
-    </h6>
+      <label>Password</label>
+      <input
+        type="password"
+        [(ngModel)]="password"
+        name="password"
+        #passwordInput
+        (keydown.enter)="$event.preventDefault(); onLogin()"
+        placeholder="Enter your password"
+      />
 
-    <h6
-      class="register-prompt"
-      style="margin-top: 10px; text-align: center; color: #222"
-    >
-      Forgotten your password?
-      <a
-        (click)="openForgotPasswordModal()"
-        style="
-          color: #1976d2;
-          text-decoration: underline;
-          cursor: pointer;
-          margin-left: 4px;
-        "
-        >Click here.</a
-      >
-    </h6>
-  </form>
+      <button type="submit" class="btn-login">Login</button>
+
+      <p class="register-prompt">
+        Don't have an account?
+        <a (click)="goToRegister()">Register now</a>
+      </p>
+
+      <p class="register-prompt">
+        Forgotten your password?
+        <a (click)="openForgotPasswordModal()">Click here</a>
+      </p>
+    </form>
+  </div>
 </div>
 
+<!-- Forgot Password Modal -->
 <div class="modal-backdrop" *ngIf="showForgotPasswordModal">
   <div class="modal-content">
     <h3>Reset password</h3>
-    <p>Introduce your email address:</p>
+    <p>Enter your email address:</p>
     <input type="email" [(ngModel)]="forgotEmail" placeholder="Email" />
 
     <div class="modal-buttons">
