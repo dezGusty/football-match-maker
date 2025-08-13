@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FootballAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Initialcreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,8 +35,7 @@ namespace FootballAPI.Migrations
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Role = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
+                    Role = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -86,21 +85,14 @@ namespace FootballAPI.Migrations
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     IsEnabled = table.Column<bool>(type: "bit", nullable: false),
                     IsPublic = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    CurrentTeamId = table.Column<int>(type: "int", nullable: true),
-                    ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Speed = table.Column<int>(type: "int", nullable: false),
                     Stamina = table.Column<int>(type: "int", nullable: false),
-                    Errors = table.Column<int>(type: "int", nullable: false)
+                    Errors = table.Column<int>(type: "int", nullable: false),
+                    ProfileImagePath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Players", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Players_Teams_CurrentTeamId",
-                        column: x => x.CurrentTeamId,
-                        principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Players_Users_Email",
                         column: x => x.Email,
@@ -179,20 +171,42 @@ namespace FootballAPI.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Email", "ImageUrl", "Password", "Role", "Username" },
+                columns: new[] { "Id", "Email", "Password", "Role", "Username" },
                 values: new object[,]
                 {
-                    { 1, "ion.popescu@gmail.com", null, "default123", 2, "IonPopescu" },
-                    { 2, "marius.ionescu@gmail.com", null, "default123", 2, "MariusIonescu" }
+                    { 1, "ion.popescu@gmail.com", "default123", 2, "IonPopescu" },
+                    { 2, "marius.ionescu@gmail.com", "default123", 2, "MariusIonescu" },
+                    { 3, "admin@gmail.com", "default123", 0, "Admin" },
+                    { 4, "organiser@gmail.com", "default123", 1, "Organiser" },
+                    { 5, "alex.georgescu@gmail.com", "default123", 2, "AlexGeorgescu" },
+                    { 6, "razvan.moldovan@gmail.com", "default123", 2, "RazvanMoldovan" },
+                    { 7, "cristian.stancu@gmail.com", "default123", 2, "CristianStancu" },
+                    { 8, "andrei.vasilescu@gmail.com", "default123", 2, "AndreiVasilescu" },
+                    { 9, "florin.dumitru@gmail.com", "default123", 2, "FlorinDumitru" },
+                    { 10, "gabriel.ciobanu@gmail.com", "default123", 2, "GabrielCiobanu" },
+                    { 11, "lucian.matei@gmail.com", "default123", 2, "LucianMatei" },
+                    { 12, "daniel.radu@gmail.com", "default123", 2, "DanielRadu" },
+                    { 13, "mihai.popa@gmail.com", "default123", 2, "MihaiPopa" },
+                    { 14, "stefan.nicolae@gmail.com", "default123", 2, "StefanNicolae" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Players",
-                columns: new[] { "Id", "CurrentTeamId", "Email", "Errors", "FirstName", "ImageUrl", "IsAvailable", "IsEnabled", "IsPublic", "LastName", "Rating", "Speed", "Stamina" },
+                columns: new[] { "Id", "Email", "Errors", "FirstName", "IsAvailable", "IsEnabled", "IsPublic", "LastName", "ProfileImagePath", "Rating", "Speed", "Stamina" },
                 values: new object[,]
                 {
-                    { 1, 1, "ion.popescu@gmail.com", 2, "Ion", null, true, true, true, "Popescu", 8.5, 2, 2 },
-                    { 2, 1, "marius.ionescu@gmail.com", 2, "Marius", null, true, true, true, "Ionescu", 7.8000001907348633, 2, 2 }
+                    { 1, "ion.popescu@gmail.com", 2, "Ion", true, true, true, "Popescu", null, 8.5, 2, 2 },
+                    { 2, "marius.ionescu@gmail.com", 2, "Marius", true, true, true, "Ionescu", null, 7.8000001907348633, 2, 2 },
+                    { 3, "alex.georgescu@gmail.com", 2, "Alex", true, true, true, "Georgescu", null, 7.1999998092651367, 2, 2 },
+                    { 4, "razvan.moldovan@gmail.com", 2, "Razvan", true, true, true, "Moldovan", null, 8.1000003814697266, 2, 2 },
+                    { 5, "cristian.stancu@gmail.com", 2, "Cristian", true, true, true, "Stancu", null, 6.9000000953674316, 2, 2 },
+                    { 6, "andrei.vasilescu@gmail.com", 2, "Andrei", true, true, true, "Vasilescu", null, 7.6999998092651367, 2, 2 },
+                    { 7, "florin.dumitru@gmail.com", 2, "Florin", true, true, true, "Dumitru", null, 8.3000001907348633, 2, 2 },
+                    { 8, "gabriel.ciobanu@gmail.com", 2, "Gabriel", true, true, true, "Ciobanu", null, 7.4000000953674316, 2, 2 },
+                    { 9, "lucian.matei@gmail.com", 2, "Lucian", true, true, true, "Matei", null, 6.8000001907348633, 2, 2 },
+                    { 10, "daniel.radu@gmail.com", 2, "Daniel", true, true, true, "Radu", null, 7.9000000953674316, 2, 2 },
+                    { 11, "mihai.popa@gmail.com", 2, "Mihai", true, true, true, "Popa", null, 8.0, 2, 2 },
+                    { 12, "stefan.nicolae@gmail.com", 2, "Stefan", true, true, true, "Nicolae", null, 7.5999999046325684, 2, 2 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -229,11 +243,6 @@ namespace FootballAPI.Migrations
                 name: "IX_PlayerOrganisers_PlayerId",
                 table: "PlayerOrganisers",
                 column: "PlayerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Players_CurrentTeamId",
-                table: "Players",
-                column: "CurrentTeamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Players_Email",

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    [Migration("20250813064948_initialcreate")]
-    partial class initialcreate
+    [Migration("20250813073830_Initialcreate")]
+    partial class Initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,9 +67,6 @@ namespace FootballAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CurrentTeamId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -82,10 +79,6 @@ namespace FootballAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ImageUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
@@ -103,6 +96,10 @@ namespace FootballAPI.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("ProfileImagePath")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
@@ -114,8 +111,6 @@ namespace FootballAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CurrentTeamId");
-
                     b.HasIndex("Email");
 
                     b.HasIndex("FirstName", "LastName");
@@ -126,7 +121,6 @@ namespace FootballAPI.Migrations
                         new
                         {
                             Id = 1,
-                            CurrentTeamId = 1,
                             Email = "ion.popescu@gmail.com",
                             Errors = 2,
                             FirstName = "Ion",
@@ -141,7 +135,6 @@ namespace FootballAPI.Migrations
                         new
                         {
                             Id = 2,
-                            CurrentTeamId = 1,
                             Email = "marius.ionescu@gmail.com",
                             Errors = 2,
                             FirstName = "Marius",
@@ -150,6 +143,146 @@ namespace FootballAPI.Migrations
                             IsPublic = true,
                             LastName = "Ionescu",
                             Rating = 7.8000001907348633,
+                            Speed = 2,
+                            Stamina = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "alex.georgescu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Alex",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            IsPublic = true,
+                            LastName = "Georgescu",
+                            Rating = 7.1999998092651367,
+                            Speed = 2,
+                            Stamina = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Email = "razvan.moldovan@gmail.com",
+                            Errors = 2,
+                            FirstName = "Razvan",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            IsPublic = true,
+                            LastName = "Moldovan",
+                            Rating = 8.1000003814697266,
+                            Speed = 2,
+                            Stamina = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Email = "cristian.stancu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Cristian",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            IsPublic = true,
+                            LastName = "Stancu",
+                            Rating = 6.9000000953674316,
+                            Speed = 2,
+                            Stamina = 2
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Email = "andrei.vasilescu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Andrei",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            IsPublic = true,
+                            LastName = "Vasilescu",
+                            Rating = 7.6999998092651367,
+                            Speed = 2,
+                            Stamina = 2
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Email = "florin.dumitru@gmail.com",
+                            Errors = 2,
+                            FirstName = "Florin",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            IsPublic = true,
+                            LastName = "Dumitru",
+                            Rating = 8.3000001907348633,
+                            Speed = 2,
+                            Stamina = 2
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Email = "gabriel.ciobanu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Gabriel",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            IsPublic = true,
+                            LastName = "Ciobanu",
+                            Rating = 7.4000000953674316,
+                            Speed = 2,
+                            Stamina = 2
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Email = "lucian.matei@gmail.com",
+                            Errors = 2,
+                            FirstName = "Lucian",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            IsPublic = true,
+                            LastName = "Matei",
+                            Rating = 6.8000001907348633,
+                            Speed = 2,
+                            Stamina = 2
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Email = "daniel.radu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Daniel",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            IsPublic = true,
+                            LastName = "Radu",
+                            Rating = 7.9000000953674316,
+                            Speed = 2,
+                            Stamina = 2
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Email = "mihai.popa@gmail.com",
+                            Errors = 2,
+                            FirstName = "Mihai",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            IsPublic = true,
+                            LastName = "Popa",
+                            Rating = 8.0,
+                            Speed = 2,
+                            Stamina = 2
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Email = "stefan.nicolae@gmail.com",
+                            Errors = 2,
+                            FirstName = "Stefan",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            IsPublic = true,
+                            LastName = "Nicolae",
+                            Rating = 7.5999999046325684,
                             Speed = 2,
                             Stamina = 2
                         });
@@ -249,10 +382,6 @@ namespace FootballAPI.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("ImageUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -281,7 +410,7 @@ namespace FootballAPI.Migrations
                         {
                             Id = 1,
                             Email = "ion.popescu@gmail.com",
-                            Password = "$2a$11$fnnJIiRBTlzNPHyqEwbwk.qpKED2HO0zzZ3cDIMd3kVKEXxLK/i82",
+                            Password = "default123",
                             Role = 2,
                             Username = "IonPopescu"
                         },
@@ -289,7 +418,7 @@ namespace FootballAPI.Migrations
                         {
                             Id = 2,
                             Email = "marius.ionescu@gmail.com",
-                            Password = "$2a$11$.MR.nS.YS1.IBCZzN13gT.PoNPHmXzyicUMbFGpp6TO4VwkLsoSOu",
+                            Password = "default123",
                             Role = 2,
                             Username = "MariusIonescu"
                         },
@@ -297,7 +426,7 @@ namespace FootballAPI.Migrations
                         {
                             Id = 3,
                             Email = "admin@gmail.com",
-                            Password = "$2a$11$xLIWBrbjm6IxQ/d1f1daC.uiHf52MJ5/80BqlxdfmEBqAV3R5w9bG",
+                            Password = "default123",
                             Role = 0,
                             Username = "Admin"
                         },
@@ -305,17 +434,89 @@ namespace FootballAPI.Migrations
                         {
                             Id = 4,
                             Email = "organiser@gmail.com",
-                            Password = "$2a$11$bqw8YMksfi7XbQF3MRBqhO7akFJ7aPiVAAEx3lrJ.RAd7.y9SFEGK",
+                            Password = "default123",
                             Role = 1,
                             Username = "Organiser"
                         },
                         new
                         {
                             Id = 5,
-                            Email = "test@test.com",
-                            Password = "$2a$11$nBsa9IC1TgkY0yaSvOxV2eNy8/UcX4HxNWay45yAKbHE3jjjgAwQq",
+                            Email = "alex.georgescu@gmail.com",
+                            Password = "default123",
                             Role = 2,
-                            Username = "test"
+                            Username = "AlexGeorgescu"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Email = "razvan.moldovan@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "RazvanMoldovan"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Email = "cristian.stancu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "CristianStancu"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Email = "andrei.vasilescu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "AndreiVasilescu"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Email = "florin.dumitru@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "FlorinDumitru"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Email = "gabriel.ciobanu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "GabrielCiobanu"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Email = "lucian.matei@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "LucianMatei"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Email = "daniel.radu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "DanielRadu"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Email = "mihai.popa@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "MihaiPopa"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Email = "stefan.nicolae@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "StefanNicolae"
                         });
                 });
 
@@ -340,19 +541,12 @@ namespace FootballAPI.Migrations
 
             modelBuilder.Entity("FootballAPI.Models.Player", b =>
                 {
-                    b.HasOne("FootballAPI.Models.Team", "CurrentTeam")
-                        .WithMany("CurrentPlayers")
-                        .HasForeignKey("CurrentTeamId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("FootballAPI.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("Email")
                         .HasPrincipalKey("Email")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("CurrentTeam");
 
                     b.Navigation("User");
                 });
@@ -416,8 +610,6 @@ namespace FootballAPI.Migrations
             modelBuilder.Entity("FootballAPI.Models.Team", b =>
                 {
                     b.Navigation("AwayMatches");
-
-                    b.Navigation("CurrentPlayers");
 
                     b.Navigation("HomeMatches");
 
