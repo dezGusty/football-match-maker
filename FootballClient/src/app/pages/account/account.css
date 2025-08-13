@@ -29,7 +29,7 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: #b5c7b8;
+  background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,7 +52,7 @@
 }
 
 .role-badge {
-  background: #6a866e;
+  background: var(--surface);
   color: #fff;
   padding: 4px 16px;
   border-radius: 12px;
@@ -127,7 +127,7 @@
   align-items: center;
   justify-content: flex-start;
   min-width: 340px;
-  background: #b5c7b8;
+  background: var(--bg);
   height: calc(100vh - 64px);
   padding-top: 64px;
 }
@@ -136,7 +136,7 @@
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background: #6a866e;
+  background: var(--card);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -158,7 +158,7 @@
   justify-content: flex-start;
   align-items: flex-start;
   padding: 64px 48px;
-  background: #fff;
+  background: var(--surface);
   min-height: calc(100vh - 64px);
 }
 
