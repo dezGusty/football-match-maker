@@ -151,7 +151,7 @@ namespace FootballAPI.Data
                     Id = 1,
                     Email = "ion.popescu@gmail.com",
                     Username = "IonPopescu",
-                    Password = BCrypt.Net.BCrypt.HashPassword("default123"),
+                    Password = "default123",
                     Role = UserRole.PLAYER
                 },
                 new User
@@ -159,7 +159,7 @@ namespace FootballAPI.Data
                     Id = 2,
                     Email = "marius.ionescu@gmail.com",
                     Username = "MariusIonescu",
-                    Password = BCrypt.Net.BCrypt.HashPassword("default123"),
+                    Password = "default123",
                     Role = UserRole.PLAYER
                 },
                 new User
@@ -167,7 +167,7 @@ namespace FootballAPI.Data
                     Id = 3,
                     Email="admin@gmail.com",
                     Username="Admin",
-                    Password = BCrypt.Net.BCrypt.HashPassword("default123"),
+                    Password = "default123",
                     Role=UserRole.ADMIN
                 },
                 new User
@@ -175,7 +175,7 @@ namespace FootballAPI.Data
                     Id = 4,
                     Email = "organiser@gmail.com",
                     Username = "Organiser",
-                    Password = BCrypt.Net.BCrypt.HashPassword("default123"),
+                    Password = "default123",
                     Role = UserRole.ORGANISER
                 },
                 new User
@@ -183,7 +183,7 @@ namespace FootballAPI.Data
                     Id = 5,
                     Email = "test@test.com",
                     Username = "test",
-                    Password = BCrypt.Net.BCrypt.HashPassword("default123"),
+                    Password = "default123",
                     Role = UserRole.PLAYER
                 }
 

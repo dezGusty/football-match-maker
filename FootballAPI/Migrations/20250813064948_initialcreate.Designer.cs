@@ -4,6 +4,7 @@ using FootballAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250813064948_initialcreate")]
+    partial class initialcreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -278,7 +281,7 @@ namespace FootballAPI.Migrations
                         {
                             Id = 1,
                             Email = "ion.popescu@gmail.com",
-                            Password = "default123",
+                            Password = "$2a$11$fnnJIiRBTlzNPHyqEwbwk.qpKED2HO0zzZ3cDIMd3kVKEXxLK/i82",
                             Role = 2,
                             Username = "IonPopescu"
                         },
@@ -286,7 +289,7 @@ namespace FootballAPI.Migrations
                         {
                             Id = 2,
                             Email = "marius.ionescu@gmail.com",
-                            Password = "default123",
+                            Password = "$2a$11$.MR.nS.YS1.IBCZzN13gT.PoNPHmXzyicUMbFGpp6TO4VwkLsoSOu",
                             Role = 2,
                             Username = "MariusIonescu"
                         },
@@ -294,7 +297,7 @@ namespace FootballAPI.Migrations
                         {
                             Id = 3,
                             Email = "admin@gmail.com",
-                            Password = "default123",
+                            Password = "$2a$11$xLIWBrbjm6IxQ/d1f1daC.uiHf52MJ5/80BqlxdfmEBqAV3R5w9bG",
                             Role = 0,
                             Username = "Admin"
                         },
@@ -302,7 +305,7 @@ namespace FootballAPI.Migrations
                         {
                             Id = 4,
                             Email = "organiser@gmail.com",
-                            Password = "default123",
+                            Password = "$2a$11$bqw8YMksfi7XbQF3MRBqhO7akFJ7aPiVAAEx3lrJ.RAd7.y9SFEGK",
                             Role = 1,
                             Username = "Organiser"
                         },
@@ -310,7 +313,7 @@ namespace FootballAPI.Migrations
                         {
                             Id = 5,
                             Email = "test@test.com",
-                            Password = "default123",
+                            Password = "$2a$11$nBsa9IC1TgkY0yaSvOxV2eNy8/UcX4HxNWay45yAKbHE3jjjgAwQq",
                             Role = 2,
                             Username = "test"
                         });
