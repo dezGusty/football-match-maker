@@ -20,20 +20,20 @@ public class EmailService : IEmailService
     {
         try
         {
-            var smtpClient = new SmtpClient(_configuration["Email:SmtpServer"])
+            var smtpClient = new SmtpClient(_configuration["SmtpSettings:Host"])
             {
-                Port = int.Parse(_configuration["Email:SmtpPort"] ?? "587"),
+                Port = int.Parse(_configuration["SmtpSettings:Port"] ?? "587"),
                 Credentials = new NetworkCredential(
-                    _configuration["Email:Username"],
-                    _configuration["Email:Password"]
+                    _configuration["SmtpSettings:Username"],
+                    _configuration["SmtpSettings:Password"]
                 ),
-                EnableSsl = bool.Parse(_configuration["Email:EnableSsl"] ?? "true")
+                EnableSsl = bool.Parse(_configuration["SmtpSettings:EnableSsl"] ?? "true")
             };
 
             var mailMessage = new MailMessage
             {
-                From = new MailAddress(_configuration["Email:FromAddress"] ?? "noreply@yourapp.com",
-                                     _configuration["Email:FromName"] ?? "Football App"),
+                From = new MailAddress(_configuration["SmtpSettings:FromEmail"] ?? "noreply@yourapp.com",
+                                     _configuration["SmtpSettings:FromName"] ?? "Football App"),
                 Subject = "Set Your Password - Football App",
                 Body = GenerateSetPasswordEmailBody(username, setPasswordUrl),
                 IsBodyHtml = true
