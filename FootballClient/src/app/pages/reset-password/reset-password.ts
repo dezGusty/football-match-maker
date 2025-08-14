@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 interface SetPasswordRequest {
   token: string;
@@ -13,7 +14,12 @@ interface ApiResponse {
 }
 
 @Component({
-  selector: 'app-set-password',
+  selector: 'app-reset-password',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    CommonModule // pentru *ngIf, *ngFor etc.
+  ],
   templateUrl: './reset-password.html',
   styleUrls: ['./reset-password.css'],
 })
@@ -25,7 +31,7 @@ export class SetPasswordComponent implements OnInit {
   showPassword = false;
   token = '';
 
-  private readonly API_URL = 'https://localhost:4200/api/Auth'; // Înlocuiește cu URL-ul tău real
+  private readonly API_URL = 'https://localhost:5145/api/Auth'; // Înlocuiește cu URL-ul tău real
 
   constructor(
     private fb: FormBuilder,
