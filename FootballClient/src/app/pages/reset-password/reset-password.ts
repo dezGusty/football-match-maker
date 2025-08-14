@@ -31,7 +31,7 @@ export class SetPasswordComponent implements OnInit {
   showPassword = false;
   token = '';
 
-  private readonly API_URL = 'https://localhost:5145/api/Auth'; // Înlocuiește cu URL-ul tău real
+  private readonly API_URL = 'https://localhost:5145/api/Auth'; 
 
   constructor(
     private fb: FormBuilder,

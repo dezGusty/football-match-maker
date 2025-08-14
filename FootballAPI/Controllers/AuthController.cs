@@ -114,7 +114,7 @@ namespace FootballAPI.Controllers
             });
         }
 
-        [Authorize] //Roles = "Admin" "Organiser")
+        // [Authorize] //Roles = "Admin" "Organiser")
         [HttpPost("create-player-account")]
         public async Task<IActionResult> CreatePlayerAccount([FromBody] CreatePlayerUserDto dto)
         {
@@ -140,7 +140,8 @@ namespace FootballAPI.Controllers
                 var resetToken = await _passwordResetService.GeneratePasswordResetTokenAsync(createdUser.Id);
 
                 var frontendUrl = _configuration["Frontend:BaseUrl"];
-                var setPasswordUrl = $"{frontendUrl}/set-password?token={resetToken}";
+
+                var setPasswordUrl = $"{frontendUrl}/reset-password?token={resetToken}";
 
                 // Trimitem email-ul
                 await _emailService.SendSetPasswordEmailAsync(dto.Email, dto.Username, setPasswordUrl);
