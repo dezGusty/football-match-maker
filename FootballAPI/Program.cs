@@ -10,12 +10,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -29,6 +26,8 @@ builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<IPlayerMatchHistoryRepository, PlayerMatchHistoryRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IResetPasswordTokenRepository, ResetPasswordTokenRepository>();
+
 
 // Service Registration
 builder.Services.AddScoped<IPlayerService, PlayerService>();
@@ -39,9 +38,12 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IResetPasswordService, ResetPasswordService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();
+
 
 // CORS Configuration - UPDATED FOR SWAGGER
 builder.Services.AddCors(options =>

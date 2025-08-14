@@ -8,17 +8,17 @@ using FootballAPI.Repository;
 using FootballAPI.Service.Interfaces;
 namespace FootballAPI.Service
 {
-  public class PasswordResetService : IResetPasswordService
+  public class ResetPasswordService : IResetPasswordService
   {
     private readonly IResetPasswordTokenRepository _tokenRepository;
     private readonly IUserRepository _userRepository;
-    private readonly ILogger<PasswordResetService> _logger;
+    private readonly ILogger<ResetPasswordService> _logger;
     private readonly IConfiguration _configuration;
 
-    public PasswordResetService(
+    public ResetPasswordService(
         IResetPasswordTokenRepository tokenRepository,
         IUserRepository userRepository,
-        ILogger<PasswordResetService> logger,
+        ILogger<ResetPasswordService> logger,
         IConfiguration configuration)
     {
       _tokenRepository = tokenRepository;

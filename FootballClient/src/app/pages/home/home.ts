@@ -69,6 +69,7 @@ export class Home {
     lastName: '',
     email: '',
     rating: 0,
+    username: '',
 
     speed: 2,
     stamina: 2,
@@ -107,6 +108,7 @@ export class Home {
         firstName: '',
         lastName: '',
         email: '',
+        username: '',
         rating: 0,
         speed: 2,
         stamina: 2,

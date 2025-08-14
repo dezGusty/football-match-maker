@@ -43,10 +43,11 @@ export class PlayerService {
     lastName: string;
     email?: string;
     rating: number;
+    username: string;
   }): Promise<Player> {
     this.validateRating(player.rating);
 
-    const response = await fetch(this.url, {
+    const response = await fetch('http://localhost:5145/api/Auth/create-player-account', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(player),
