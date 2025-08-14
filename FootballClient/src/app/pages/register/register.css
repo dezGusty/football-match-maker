@@ -47,7 +47,7 @@
 /* Right Login Form Section */
 .login-right {
   flex: 1;
-  background: #1b1b1b;
+  background: var(--gradient);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -56,10 +56,10 @@
 .login-form {
   width: 100%;
   max-width: 350px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--gradient);
   padding: 40px;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 50px rgba(3, 191, 181, 0.75);
   backdrop-filter: blur(12px);
   color: white;
   animation: slideUp 0.8s ease-out;
@@ -97,18 +97,18 @@
 
 .btn-login {
   padding: 12px;
-  background: linear-gradient(to right, #00b33c, #006622);
+  background: linear-gradient(to right, var(--primary-700), var(--primary-600));
   border: none;
   border-radius: 8px;
   color: white;
   font-weight: 600;
   cursor: pointer;
-  width: 100%;
+  width: 95%;
   transition: all 0.3s;
 }
 
 .btn-login:hover {
-  background: linear-gradient(to right, #009933, #004d1a);
+  background: linear-gradient(to right, var(--primary), var(--primary-700));
   transform: translateY(-2px);
 }
 
@@ -119,7 +119,7 @@
 }
 
 .register-prompt a {
-  color: #00ff88;
+  color: var(--primary-600);
   cursor: pointer;
   text-decoration: underline;
 }
