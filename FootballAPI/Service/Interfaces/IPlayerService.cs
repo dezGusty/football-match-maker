@@ -8,7 +8,7 @@ namespace FootballAPI.Service
         Task<IEnumerable<PlayerDto>> GetAllPlayersAsync();
         Task<PlayerDto?> GetPlayerByIdAsync(int id);
         Task<IEnumerable<PlayerDto>> GetAvailablePlayersAsync();
-        Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto createPlayerDto);
+        Task<PlayerDto> CreatePlayerAsync(CreatePlayerUserDto createPlayerUserDto);
         Task<PlayerDto?> UpdatePlayerAsync(int id, UpdatePlayerDto updatePlayerDto);
         Task<bool> DeletePlayerAsync(int id);
         Task<IEnumerable<PlayerDto>> SearchPlayersByNameAsync(string searchTerm);

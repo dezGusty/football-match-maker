@@ -55,11 +55,11 @@ namespace FootballAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PlayerDto>> CreatePlayer(CreatePlayerDto createPlayerDto)
+        public async Task<ActionResult<PlayerDto>> CreatePlayer(CreatePlayerUserDto createPlayerUserDto)
         {
             try
             {
-                var player = await _playerService.CreatePlayerAsync(createPlayerDto);
+                var player = await _playerService.CreatePlayerAsync(createPlayerUserDto);
                 return CreatedAtAction(nameof(GetPlayer), new { id = player.Id }, player);
             }
             catch (Exception ex)
