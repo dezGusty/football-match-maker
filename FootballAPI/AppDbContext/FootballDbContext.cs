@@ -13,6 +13,7 @@ namespace FootballAPI.Data
         public DbSet<PlayerMatchHistory> PlayerMatchHistory { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<PlayerOrganiser> PlayerOrganisers { get; set; }
+        public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
