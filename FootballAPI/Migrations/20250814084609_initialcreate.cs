@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FootballAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class Initialcreate : Migration
+    public partial class initialcreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -99,6 +99,29 @@ namespace FootballAPI.Migrations
                         principalTable: "Users",
                         principalColumn: "Email",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ResetPasswordTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    TokenHash = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UsedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ResetPasswordTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ResetPasswordTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -255,6 +278,27 @@ namespace FootballAPI.Migrations
                 columns: new[] { "FirstName", "LastName" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_PasswordResetTokens_ExpiresAt",
+                table: "ResetPasswordTokens",
+                column: "ExpiresAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PasswordResetTokens_TokenHash_ExpiresAt_UsedAt",
+                table: "ResetPasswordTokens",
+                columns: new[] { "TokenHash", "ExpiresAt", "UsedAt" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PasswordResetTokens_UserId",
+                table: "ResetPasswordTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResetPasswordTokens_TokenHash",
+                table: "ResetPasswordTokens",
+                column: "TokenHash",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Teams_Name",
                 table: "Teams",
                 column: "Name");
@@ -280,6 +324,9 @@ namespace FootballAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "PlayerOrganisers");
+
+            migrationBuilder.DropTable(
+                name: "ResetPasswordTokens");
 
             migrationBuilder.DropTable(
                 name: "Matches");
