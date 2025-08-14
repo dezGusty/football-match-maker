@@ -73,13 +73,7 @@ namespace FootballAPI.Data
             modelBuilder.Entity<Match>()
                 .HasIndex(m => m.MatchDate);
 
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
-                .IsUnique();
-
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.Email)
-                .IsUnique();
+            
 
             modelBuilder.Entity<Player>()
                 .Property(p => p.Rating)
@@ -89,10 +83,6 @@ namespace FootballAPI.Data
                 .Property(pmh => pmh.PerformanceRating)
                 .HasColumnType("float");
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.Role)
-                .HasConversion<int>()
-                .IsRequired();
 
             modelBuilder.Entity<Player>()
                 .HasOne(p => p.User)
@@ -105,6 +95,52 @@ namespace FootballAPI.Data
                 .Property(p => p.IsPublic)
                 .HasDefaultValue(true);
 
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.Username).IsUnique();
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Password).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.Role).HasConversion<int>().IsRequired();
+            });
+
+          modelBuilder.Entity<ResetPasswordToken>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                
+                entity.HasIndex(e => e.TokenHash).IsUnique();
+                
+                entity.Property(e => e.TokenHash)
+                    .IsRequired()
+                    .HasMaxLength(255);
+                
+                entity.Property(e => e.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("GETUTCDATE()"); 
+                
+                entity.Property(e => e.ExpiresAt)
+                    .IsRequired();
+                
+                entity.Property(e => e.UsedAt)
+                    .IsRequired(false);
+
+             
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => new { e.TokenHash, e.ExpiresAt, e.UsedAt })
+                    .HasDatabaseName("IX_PasswordResetTokens_TokenHash_ExpiresAt_UsedAt");
+                
+                entity.HasIndex(e => e.UserId)
+                    .HasDatabaseName("IX_PasswordResetTokens_UserId");
+                
+                entity.HasIndex(e => e.ExpiresAt)
+                    .HasDatabaseName("IX_PasswordResetTokens_ExpiresAt");
+            });
             SeedData(modelBuilder);
         }
 
