@@ -35,11 +35,12 @@ namespace FootballAPI.Repository
 
         public async Task<ResetPasswordToken?> GetValidTokenByHashAsync(string tokenHash)
         {
+            Console.WriteLine($"Caut token cu hash: {tokenHash}");
             return await _context.ResetPasswordTokens
                 .Include(t => t.User)
                 .FirstOrDefaultAsync(t =>
                     t.TokenHash == tokenHash &&
-                    t.UsedAt != null &&
+                    t.UsedAt == null &&
                     t.ExpiresAt > DateTime.UtcNow);
         }
 
