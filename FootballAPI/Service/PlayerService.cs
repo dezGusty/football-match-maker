@@ -43,6 +43,13 @@ namespace FootballAPI.Service
             return players.Select(MapToDto);
         }
 
+        public async Task<IEnumerable<PlayerDto>> GetAvailablePlayersByOrganiserAsync(int organiserId)
+        {
+            var organiserPlayers = await _userRepository.GetPlayersByOrganiserAsync(organiserId);
+            var availablePlayers = organiserPlayers.Where(p => p.IsAvailable && p.IsEnabled);
+            return availablePlayers.Select(MapToDto);
+        }
+
 
         public async Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto dto)
         {

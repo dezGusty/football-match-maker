@@ -44,6 +44,13 @@ namespace FootballAPI.Controllers
             return Ok(players);
         }
 
+        [HttpGet("available/organiser/{organiserId}")]
+        public async Task<ActionResult<IEnumerable<PlayerDto>>> GetAvailablePlayersByOrganiser(int organiserId)
+        {
+            var players = await _playerService.GetAvailablePlayersByOrganiserAsync(organiserId);
+            return Ok(players);
+        }
+
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<PlayerDto>>> SearchPlayers([FromQuery] string searchTerm)
         {

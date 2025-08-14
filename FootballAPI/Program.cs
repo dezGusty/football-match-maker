@@ -29,6 +29,7 @@ builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<IPlayerMatchHistoryRepository, PlayerMatchHistoryRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
 
 // Service Registration
 builder.Services.AddScoped<IPlayerService, PlayerService>();
@@ -39,6 +40,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
 
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();
@@ -55,7 +57,7 @@ builder.Services.AddCors(options =>
 
     options.AddPolicy("AllowAngularApp", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") // Angular dev server
+        policy.WithOrigins("http://localhost:4200")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

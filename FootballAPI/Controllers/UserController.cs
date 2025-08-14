@@ -1,6 +1,8 @@
 using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Service;
+using FootballAPI.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
 
@@ -120,10 +122,28 @@ namespace FootballAPI.Controllers
         }
 
         [HttpPost("create-player-user")]
+        [Authorize]
         public async Task<ActionResult<UserDto>> CreatePlayerUser([FromBody] CreatePlayerUserDto dto)
         {
-            var user = await _userService.CreatePlayerUserAsync(dto);
-            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+            try
+            {
+                var organizerId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var user = await _userService.CreatePlayerUserAsync(dto, organizerId);
+                return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating player user");
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
         }
 
         [HttpPut("{id}")]

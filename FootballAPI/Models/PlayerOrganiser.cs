@@ -11,5 +11,9 @@ namespace FootballAPI.Models
         public int PlayerId { get; set; }
         [ForeignKey("PlayerId")]
         public virtual Player Player { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
     }
 }

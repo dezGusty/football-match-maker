@@ -56,6 +56,7 @@ export class AuthService {
           firstName: firstName || '',
           lastName: lastName || '',
           rating: rating ?? 0,
+          role: UserRole.PLAYER,
         };
         response = await fetch(`${this.apiUrl}/user/create-player-user`, {
           method: 'POST',
@@ -65,12 +66,21 @@ export class AuthService {
           body: JSON.stringify(playerUser),
         });
       } else {
-        response = await fetch(`${this.apiUrl}/user`, {
+        const organiserUser: PlayerUser = {
+          email,
+          username,
+          password,
+          firstName: firstName || '',
+          lastName: lastName || '',
+          rating: rating ?? 1000,
+          role: UserRole.ORGANISER,
+        };
+        response = await fetch(`${this.apiUrl}/user/create-player-user`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, username, password, role }),
+          body: JSON.stringify(organiserUser),
         });
       }
 

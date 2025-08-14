@@ -13,6 +13,7 @@ namespace FootballAPI.Data
         public DbSet<PlayerMatchHistory> PlayerMatchHistory { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<PlayerOrganiser> PlayerOrganisers { get; set; }
+        public DbSet<FriendRequest> FriendRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -62,6 +63,27 @@ namespace FootballAPI.Data
 
             modelBuilder.Entity<PlayerOrganiser>()
                 .HasKey(po => new { po.OrganiserId, po.PlayerId });
+
+            modelBuilder.Entity<FriendRequest>()
+                .HasOne(fr => fr.Sender)
+                .WithMany()
+                .HasForeignKey(fr => fr.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FriendRequest>()
+                .HasOne(fr => fr.Receiver)
+                .WithMany()
+                .HasForeignKey(fr => fr.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FriendRequest>()
+                .Property(fr => fr.Status)
+                .HasConversion<int>()
+                .IsRequired();
+
+            modelBuilder.Entity<FriendRequest>()
+                .HasIndex(fr => new { fr.SenderId, fr.ReceiverId })
+                .IsUnique();
 
             modelBuilder.Entity<Player>()
                 .HasIndex(p => new { p.FirstName, p.LastName });
