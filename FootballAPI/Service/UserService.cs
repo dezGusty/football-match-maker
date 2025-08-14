@@ -74,7 +74,7 @@ namespace FootballAPI.Service
                 Username = dto.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 11),
                 Role = dto.Role,
-                
+
             };
 
 
@@ -91,7 +91,7 @@ namespace FootballAPI.Service
                 Username = dto.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 11),
                 Role = UserRole.PLAYER,
-                
+
             };
 
             var createdUser = await _userRepository.CreateAsync(user);
@@ -103,7 +103,6 @@ namespace FootballAPI.Service
                 Rating = dto.Rating,
                 Email = dto.Email,
                 IsAvailable = false,
-                IsPublic = true,
                 IsEnabled = true
             };
             await _playerRepository.CreateAsync(player);
