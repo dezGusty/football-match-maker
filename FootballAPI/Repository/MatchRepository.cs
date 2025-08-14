@@ -17,9 +17,7 @@ namespace FootballAPI.Repository
         {
             return await _context.Matches
                 .Include(m => m.TeamA)
-                    .ThenInclude(t => t.CurrentPlayers)
                 .Include(m => m.TeamB)
-                    .ThenInclude(t => t.CurrentPlayers)
                 .Include(m => m.PlayerHistory)
                     .ThenInclude(ph => ph.Player)
                 .OrderByDescending(m => m.MatchDate)
@@ -30,9 +28,7 @@ namespace FootballAPI.Repository
         {
             return await _context.Matches
                 .Include(m => m.TeamA)
-                    .ThenInclude(t => t.CurrentPlayers)
                 .Include(m => m.TeamB)
-                    .ThenInclude(t => t.CurrentPlayers)
                 .Include(m => m.PlayerHistory)
                     .ThenInclude(ph => ph.Player)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -42,9 +38,7 @@ namespace FootballAPI.Repository
         {
             return await _context.Matches
                 .Include(m => m.TeamA)
-                    .ThenInclude(t => t.CurrentPlayers)
                 .Include(m => m.TeamB)
-                    .ThenInclude(t => t.CurrentPlayers)
                 .Include(m => m.PlayerHistory)
                     .ThenInclude(ph => ph.Player)
                 .Where(m => m.MatchDate >= startDate && m.MatchDate <= endDate)
@@ -56,9 +50,7 @@ namespace FootballAPI.Repository
         {
             return await _context.Matches
                 .Include(m => m.TeamA)
-                    .ThenInclude(t => t.CurrentPlayers)
                 .Include(m => m.TeamB)
-                    .ThenInclude(t => t.CurrentPlayers)
                 .Include(m => m.PlayerHistory)
                     .ThenInclude(ph => ph.Player)
                 .Where(m => m.TeamAId == teamId || m.TeamBId == teamId)
@@ -95,33 +87,33 @@ namespace FootballAPI.Repository
         {
             return await _context.Matches.AnyAsync(m => m.Id == id);
         }
-     
-    public async Task<IEnumerable<Match>> GetPastMatchesAsync()
-    {
-        var currentDate = DateTime.Now.Date;
-        return await _context.Matches
-            .Include(m => m.TeamA)
-            .Include(m => m.TeamB)
-            .Include(m => m.PlayerHistory)
-                .ThenInclude(ph => ph.Player)
-            .Where(m => m.MatchDate.Date <= currentDate)
-            .OrderByDescending(m => m.MatchDate)
-            .ToListAsync();
-    }
 
-    
-    public async Task<IEnumerable<Match>> GetFutureMatchesAsync()
-    {
-        var currentDate = DateTime.Now.Date;
-        return await _context.Matches
-            .Include(m => m.TeamA)
-            .Include(m => m.TeamB)
-            .Include(m => m.PlayerHistory)
-                .ThenInclude(ph => ph.Player)
-            .Where(m => m.MatchDate.Date > currentDate)
-            .OrderBy(m => m.MatchDate)
-            .ToListAsync();
-    }
+        public async Task<IEnumerable<Match>> GetPastMatchesAsync()
+        {
+            var currentDate = DateTime.Now.Date;
+            return await _context.Matches
+                .Include(m => m.TeamA)
+                .Include(m => m.TeamB)
+                .Include(m => m.PlayerHistory)
+                    .ThenInclude(ph => ph.Player)
+                .Where(m => m.MatchDate.Date <= currentDate)
+                .OrderByDescending(m => m.MatchDate)
+                .ToListAsync();
+        }
+
+
+        public async Task<IEnumerable<Match>> GetFutureMatchesAsync()
+        {
+            var currentDate = DateTime.Now.Date;
+            return await _context.Matches
+                .Include(m => m.TeamA)
+                .Include(m => m.TeamB)
+                .Include(m => m.PlayerHistory)
+                    .ThenInclude(ph => ph.Player)
+                .Where(m => m.MatchDate.Date > currentDate)
+                .OrderBy(m => m.MatchDate)
+                .ToListAsync();
+        }
 
     }
-} 
+}

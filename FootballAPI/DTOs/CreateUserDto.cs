@@ -19,7 +19,5 @@ namespace FootballAPI.DTOs
 
         [Required]
         public UserRole Role { get; set; }
-
-        public string? ImageUrl { get; set; }
     }
 }

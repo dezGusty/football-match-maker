@@ -7,7 +7,6 @@ namespace FootballAPI.Service
     {
         Task<IEnumerable<PlayerDto>> GetAllPlayersAsync();
         Task<PlayerDto?> GetPlayerByIdAsync(int id);
-        Task<IEnumerable<PlayerDto>> GetPlayersByTeamIdAsync(int teamId);
         Task<IEnumerable<PlayerDto>> GetAvailablePlayersAsync();
         Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto createPlayerDto);
         Task<PlayerDto?> UpdatePlayerAsync(int id, UpdatePlayerDto updatePlayerDto);
@@ -25,5 +24,7 @@ namespace FootballAPI.Service
         Task AddPlayerOrganiserRelationAsync(int playerId, int organiserId);
         Task<bool> SetPlayerPublicAsync(int playerId);
         Task<bool> SetPlayerPrivateAsync(int playerId);
+        Task<string> UpdatePlayerProfileImageAsync(int playerId, IFormFile imageFile);
+        Task<bool> DeletePlayerProfileImageAsync(int playerId);
     }
 }

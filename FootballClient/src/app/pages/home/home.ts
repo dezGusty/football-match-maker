@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player.interface';
 import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
-import { AuthService } from '../../components/auth/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
 
 @Component({
@@ -18,7 +18,7 @@ import { UserRole } from '../../models/user-role.enum';
 export class Home {
   constructor(
     private PlayerService: PlayerService,
-    private authService: AuthService,
+    private authService: AuthService
   ) {}
 
   players: Player[] = [];
@@ -27,8 +27,6 @@ export class Home {
   editIndex: number | null = null;
   editedPlayer: Player | null = null;
   showAddModal = false;
-  selectedFile: File | null = null;
-  selectedFileName: string = '';
 
   async init() {
     const role = this.authService.getUserRole();
@@ -36,7 +34,7 @@ export class Home {
       this.players = await this.PlayerService.getPlayers();
     } else if (role === UserRole.ORGANISER) {
       this.players = await this.PlayerService.getPlayersForOrganiser(
-        this.authService.getUserId()!,
+        this.authService.getUserId()!
       );
     }
     this.filterPlayers();
@@ -50,8 +48,9 @@ export class Home {
     this.filteredPlayers = this.players.filter((player) => {
       const isActive = this.isPlayerEnabled(player);
       const searchTerms = this.searchTerm.toLowerCase().trim().split(' ');
-      const fullName =
-        `${player.firstName || ''} ${player.lastName || ''}`.toLowerCase();
+      const fullName = `${player.firstName || ''} ${
+        player.lastName || ''
+      }`.toLowerCase();
 
       const matchesSearch =
         this.searchTerm.trim() === '' ||
@@ -70,41 +69,15 @@ export class Home {
     lastName: '',
     email: '',
     rating: 0,
-    imageUrl: '',
 
     speed: 2,
     stamina: 2,
     errors: 2,
   };
 
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.selectedFile = file;
-      this.selectedFileName = file.name;
-    }
-  }
-
-  async uploadImage(file: File): Promise<string> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await fetch('http://localhost:5145/api/images/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to upload image');
-    }
-
-    const result = await response.json();
-    return result.imageUrl;
-  }
-
   async addPlayerOrganiserRelation(
     playerId: number,
-    organiserId: number | null = this.authService.getUserId(),
+    organiserId: number | null = this.authService.getUserId()
   ): Promise<void> {
     const response = await fetch('http://localhost:5145/api/playerorganisers', {
       method: 'POST',
@@ -123,22 +96,10 @@ export class Home {
     }
 
     try {
-      if (this.selectedFile) {
-        try {
-          const imageUrl = await this.uploadImage(this.selectedFile);
-          this.newPlayer.imageUrl = imageUrl;
-        } catch (error) {
-          console.error('Error uploading image:', error);
-          alert(
-            'Failed to upload image. Player will be added without an image.',
-          );
-        }
-      }
-
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
       await this.PlayerService.addPlayerOrganiserRelation(
         addedPlayer.id!,
-        this.authService.getUserId()!,
+        this.authService.getUserId()!
       );
 
       this.players.push(addedPlayer);
@@ -147,13 +108,10 @@ export class Home {
         lastName: '',
         email: '',
         rating: 0,
-        imageUrl: '',
         speed: 2,
         stamina: 2,
         errors: 2,
       };
-      this.selectedFile = null;
-      this.selectedFileName = '';
       console.log('Player added:', addedPlayer);
     } catch (error) {
       console.error('Error adding player:', error);
@@ -178,7 +136,7 @@ export class Home {
 
     try {
       const updatedPlayer = await this.PlayerService.editPlayer(
-        this.editedPlayer,
+        this.editedPlayer
       );
       const index = this.players.findIndex((p) => p.id === updatedPlayer.id);
       if (index !== -1) {

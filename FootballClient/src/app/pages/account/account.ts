@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { UserService } from '../../services/user.service';
-import { AuthService } from '../../components/auth/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.interface';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -31,9 +31,6 @@ export class Account {
   showPasswordForm = false;
   showUsernameForm = false;
 
-  images: string[] = [];
-  selectedImage: string = '';
-  showImageSelector = false;
   futureMatches: Match[] = [];
 
   constructor(
@@ -42,10 +39,9 @@ export class Account {
     private router: Router,
     private http: HttpClient,
     private matchService: MatchService,
-    private playerService: PlayerService,
+    private playerService: PlayerService
   ) {
     this.loadUser();
-    this.loadImages();
     this.loadFutureMatches();
   }
 
@@ -53,10 +49,7 @@ export class Account {
     try {
       const userId = this.authService.getUserId();
       if (userId) {
-        this.user = await this.userService.getUserWithImageById(userId);
-      }
-      if (this.user?.imageUrl) {
-        this.selectedImage = this.user.imageUrl;
+        this.user = await this.userService.getUserById(userId);
       }
     } catch (error) {
       console.error('Failed to load user:', error);
@@ -74,7 +67,7 @@ export class Account {
   async beginScheduledMatch(match: Match) {
     try {
       const playerIds = await this.matchService.getPlayersForScheduledMatch(
-        match.id!,
+        match.id!
       );
       await this.playerService.setMultiplePlayersAvailable(playerIds);
       this.router.navigate(['/select-players']);
@@ -82,16 +75,6 @@ export class Account {
       console.error('Failed to begin scheduled match:', error);
       alert('Failed to begin scheduled match. Please try again.');
     }
-  }
-
-  loadImages() {
-    this.http.get<string[]>('http://localhost:5145/api/images').subscribe({
-      next: (imgs) => {
-        this.images = imgs;
-        console.log('Loaded images:', this.images);
-      },
-      error: () => (this.images = []),
-    });
   }
 
   togglePasswordForm() {
@@ -126,7 +109,7 @@ export class Account {
         this.user.id,
         this.currentPassword,
         this.newPassword,
-        this.confirmPassword,
+        this.confirmPassword
       );
       alert(message);
       this.resetForms();
@@ -142,7 +125,7 @@ export class Account {
       const message = await this.userService.changeUsername(
         this.user.id,
         this.newUsername,
-        this.usernamePassword,
+        this.usernamePassword
       );
       alert(message);
       this.user.username = this.newUsername;
@@ -150,18 +133,6 @@ export class Account {
       this.showUsernameForm = false;
     } catch (error: any) {
       alert(error.message || 'Username change failed');
-    }
-  }
-
-  async updateProfileImage() {
-    if (!this.user || !this.selectedImage) return;
-    try {
-      await this.userService.updateUserImage(this.user.id, this.selectedImage);
-      this.user.imageUrl = this.selectedImage;
-      this.showImageSelector = false;
-      alert('Profile image updated!');
-    } catch (err: any) {
-      alert(err.message || 'Failed to update image!');
     }
   }
 
@@ -175,8 +146,4 @@ export class Account {
   }
 
   UserRole = UserRole;
-
-  selectImage(img: string) {
-    this.selectedImage = img;
-  }
 }

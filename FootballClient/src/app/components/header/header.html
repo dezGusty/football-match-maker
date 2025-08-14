@@ -5,11 +5,7 @@
       (click)="navigateTo('/account')"
       title="Account"
     >
-      @if (imageUrl) {
-        <img [src]="imageUrl" alt="Profile" class="header-profile-image" />
-      } @else {
-        <span class="material-icons profile-icon">person</span>
-      }
+      <span class="material-icons profile-icon">person</span>
       <span class="profile-username">{{ username }}</span>
     </div>
   </div>

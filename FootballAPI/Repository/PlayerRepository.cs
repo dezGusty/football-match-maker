@@ -18,30 +18,20 @@ namespace FootballAPI.Repository
         public async Task<IEnumerable<Player>> GetAllAsync()
         {
             return await _context.Players
-                .Include(p => p.CurrentTeam)
                 .ToListAsync();
         }
 
         public async Task<Player?> GetByIdAsync(int id)
         {
             return await _context.Players
-                .Include(p => p.CurrentTeam)
                 .Include(p => p.MatchHistory)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<IEnumerable<Player>> GetByTeamIdAsync(int teamId)
-        {
-            return await _context.Players
-                .Include(p => p.CurrentTeam)
-                .Where(p => p.CurrentTeamId == teamId)
-                .ToListAsync();
-        }
         public async Task<IEnumerable<Player>> GetEnabledPlayersAsync()
         {
             return await _context.Players
                 .Where(p => p.IsEnabled)
-                .Include(p => p.CurrentTeam)
                 .ToListAsync();
         }
 
@@ -49,13 +39,11 @@ namespace FootballAPI.Repository
         {
             return await _context.Players
                 .Where(p => !p.IsEnabled)
-                .Include(p => p.CurrentTeam)
                 .ToListAsync();
         }
         public async Task<IEnumerable<Player>> GetAvailablePlayersAsync()
         {
             return await _context.Players
-                .Include(p => p.CurrentTeam)
                 .Where(p => p.IsAvailable && p.IsEnabled)
                 .ToListAsync();
         }
@@ -93,7 +81,6 @@ namespace FootballAPI.Repository
         public async Task<IEnumerable<Player>> SearchByNameAsync(string searchTerm)
         {
             return await _context.Players
-                .Include(p => p.CurrentTeam)
                 .Where(p => p.IsEnabled &&
                    (p.FirstName.Contains(searchTerm) || p.LastName.Contains(searchTerm)))
                 .ToListAsync();

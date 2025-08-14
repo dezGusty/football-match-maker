@@ -34,21 +34,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpGet("with-image")]
-        public async Task<ActionResult<IEnumerable<UserWithImageDto>>> GetAllUsersWithImage()
-        {
-            try
-            {
-                var users = await _userService.GetAllUsersWithImageAsync();
-                return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting all users with image");
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
-        }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
@@ -66,27 +51,6 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting user by ID: {Id}", id);
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
-        }
-
-        [HttpGet("{id}/with-image")]
-        public async Task<ActionResult<UserWithImageDto>> GetUserWithImageById(int id)
-        {
-            try
-            {
-                var user = await _userService.GetUserWithImageByIdAsync(id);
-
-                if (user == null)
-                {
-                    return NotFound($"User with ID {id} was not found.");
-                }
-
-                return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting user with image by ID: {Id}", id);
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
@@ -133,27 +97,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpGet("username/{username}/with-image")]
-        public async Task<ActionResult<UserWithImageDto>> GetUserWithImageByUsername(string username)
-        {
-            try
-            {
-                var user = await _userService.GetUserWithImageByUsernameAsync(username);
-
-                if (user == null)
-                {
-                    return NotFound($"User with username '{username}' was not found.");
-                }
-
-                return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting user with image by username: {Username}", username);
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
-        }
-
         [HttpGet("role/{role}")]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersByRole(UserRole role)
         {
@@ -165,21 +108,6 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting users by role: {Role}", role);
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
-        }
-
-        [HttpGet("role/{role}/with-image")]
-        public async Task<ActionResult<IEnumerable<UserWithImageDto>>> GetUsersWithImageByRole(UserRole role)
-        {
-            try
-            {
-                var users = await _userService.GetUsersWithImageByRoleAsync(role);
-                return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting users with image by role: {Role}", role);
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
@@ -318,27 +246,6 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error checking username existence");
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
-        }
-
-        [HttpPut("{id}/profile-image")]
-        public async Task<IActionResult> UpdateProfileImage(int id, [FromBody] UpdateProfileImageDto dto)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var updatedUser = await _userService.UpdateUserProfileImageAsync(id, dto.ImageUrl);
-
-                if (updatedUser == null)
-                    return NotFound($"User with ID {id} was not found.");
-
-                return Ok(updatedUser);
-            }
-            catch (Exception ex)
-            {
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }

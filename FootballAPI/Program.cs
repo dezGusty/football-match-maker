@@ -1,10 +1,16 @@
-using Microsoft.EntityFrameworkCore;
 using FootballAPI.Data;
 using FootballAPI.Repository;
 using FootballAPI.Service;
+using FootballAPI.Service.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -31,6 +37,8 @@ builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IPlayerMatchHistoryService, PlayerMatchHistoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();
@@ -54,11 +62,39 @@ builder.Services.AddCors(options =>
     });
 });
 
+
+var jwtKey = builder.Configuration["JWT:SecretKey"] ?? "your_super_secret_key_at_least_32_characters_long";
+var jwtIssuer = builder.Configuration["JWT:Issuer"] ?? "yourdomain.com";
+var jwtAudience = builder.Configuration["JWT:Audience"] ?? "yourdomain.com";
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+        ClockSkew = TimeSpan.Zero // Remove default 5 minute tolerance for token expiry
+    };
+});
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -77,23 +113,25 @@ else
     app.UseCors("AllowAngularApp");
 }
 
+// Serve static files (for uploaded images)
 app.UseStaticFiles();
 
-app.UseStaticFiles(new StaticFileOptions
+// Serve files from uploads directory
+var uploadsPath = Path.Combine(builder.Environment.WebRootPath, "uploads");
+if (!Directory.Exists(uploadsPath))
 {
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "Data", "Images")),
-    RequestPath = "/images"
-});
+    Directory.CreateDirectory(uploadsPath);
+}
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "Data", "Images", "Profile")),
-    RequestPath = "/images/Profile"
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
 });
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 

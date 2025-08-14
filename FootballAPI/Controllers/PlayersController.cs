@@ -25,12 +25,6 @@ namespace FootballAPI.Controllers
             return Ok(players);
         }
 
-        [HttpGet("with-images")]
-        public async Task<ActionResult<IEnumerable<PlayerDto>>> GetAllPlayersWithImages()
-        {
-            var players = await _playerService.GetAllPlayersAsync();
-            return Ok(players);
-        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<PlayerDto>> GetPlayer(int id)
@@ -42,22 +36,6 @@ namespace FootballAPI.Controllers
             return Ok(player);
         }
 
-        [HttpGet("{id}/with-image")]
-        public async Task<ActionResult<PlayerDto>> GetPlayerWithImage(int id)
-        {
-            var player = await _playerService.GetPlayerByIdAsync(id);
-            if (player == null)
-                return NotFound($"Player with ID {id} not found.");
-
-            return Ok(player);
-        }
-
-        [HttpGet("team/{teamId}")]
-        public async Task<ActionResult<IEnumerable<PlayerDto>>> GetPlayersByTeam(int teamId)
-        {
-            var players = await _playerService.GetPlayersByTeamIdAsync(teamId);
-            return Ok(players);
-        }
 
         [HttpGet("available")]
         public async Task<ActionResult<IEnumerable<PlayerDto>>> GetAvailablePlayers()
@@ -261,7 +239,7 @@ namespace FootballAPI.Controllers
         public async Task<IActionResult> AddPlayerOrganiserRelation([FromBody] PlayerOrganiserDto dto)
         {
             if (dto == null)
-                return StatusCode(500, $"Invalid Data." );
+                return StatusCode(500, $"Invalid Data.");
 
             try
             {
@@ -305,6 +283,44 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error setting player private: {ex.Message}");
+            }
+        }
+
+        [HttpPost("{id}/profile-image")]
+        public async Task<ActionResult> UpdatePlayerProfileImage(int id, IFormFile imageFile)
+        {
+            try
+            {
+                if (imageFile == null || imageFile.Length == 0)
+                    return BadRequest("No image file provided.");
+
+                var imageUrl = await _playerService.UpdatePlayerProfileImageAsync(id, imageFile);
+                return Ok(new { message = "Profile image updated successfully.", imageUrl });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error updating profile image: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{id}/profile-image")]
+        public async Task<ActionResult> DeletePlayerProfileImage(int id)
+        {
+            try
+            {
+                var success = await _playerService.DeletePlayerProfileImageAsync(id);
+                if (!success)
+                    return NotFound("Player not found or not enabled.");
+
+                return Ok(new { message = "Profile image deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error deleting profile image: {ex.Message}");
             }
         }
     }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../components/auth/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { MatchService } from '../../services/match.service';
 import { PlayerService } from '../../services/player.service';
 import { PlayerHeaderComponent } from '../../components/player-header/player-header.component';

@@ -11,7 +11,6 @@ namespace FootballAPI.Models
         [StringLength(100)]
         public string Name { get; set; }
 
-        public virtual ICollection<Player> CurrentPlayers { get; set; } = new List<Player>();
         public virtual ICollection<PlayerMatchHistory> PlayerHistory { get; set; } = new List<PlayerMatchHistory>();
 
         public virtual ICollection<Match> HomeMatches { get; set; } = new List<Match>();

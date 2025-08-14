@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.interface';
 
@@ -11,21 +11,19 @@ import { User } from '../../models/user.interface';
 })
 export class Header implements OnInit {
   username: string = '';
-  imageUrl?: string;
   isMenuOpen = false;
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private userService: UserService,
+    private userService: UserService
   ) {}
 
   async ngOnInit() {
     const userId = this.authService.getUserId();
     if (userId) {
-      const user = await this.userService.getUserWithImageById(userId);
+      const user = await this.userService.getUserById(userId);
       this.username = user.username;
-      this.imageUrl = user.imageUrl;
     }
   }
 

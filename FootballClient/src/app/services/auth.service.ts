@@ -1,0 +1,234 @@
+import { Injectable } from '@angular/core';
+import { LoginRequest } from '../models/auth.interface';
+import { UserRole } from '../models/user-role.enum';
+import { HttpClient } from '@angular/common/http';
+import { PlayerUser } from '../models/player-user.interface'; // importă interfața
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthService {
+  private readonly apiUrl = 'http://localhost:5145/api';
+  private isAuthenticated = false;
+  private userId: number | null = null;
+  private userRole: UserRole | null = null;
+  errorMessage: string = '';
+  email: string = '';
+
+  constructor(private http: HttpClient) {
+    this.LoadAuthState();
+  }
+
+  private LoadAuthState() {
+    const token = this.getToken();
+    if (token && !this.isTokenExpired(token)) {
+      this.isAuthenticated = true;
+      const savedUserId = localStorage.getItem('userId');
+      const savedUserRole = localStorage.getItem('userRole');
+
+      if (savedUserId) {
+        this.userId = parseInt(savedUserId, 10);
+      }
+      if (savedUserRole) {
+        this.userRole = parseInt(savedUserRole, 10) as UserRole;
+      }
+    } else {
+      this.logout();
+    }
+  }
+
+  async register(
+    email: string,
+    username: string,
+    password: string,
+    role: UserRole,
+    firstName?: string,
+    lastName?: string,
+    rating?: number
+  ): Promise<void> {
+    try {
+      let response: Response;
+      if (role === UserRole.PLAYER) {
+        const playerUser: PlayerUser = {
+          email,
+          username,
+          password,
+          firstName: firstName || '',
+          lastName: lastName || '',
+          rating: rating ?? 0,
+        };
+        response = await fetch(`${this.apiUrl}/user/create-player-user`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(playerUser),
+        });
+      } else {
+        response = await fetch(`${this.apiUrl}/user`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, username, password, role }),
+        });
+      }
+
+      if (!response.ok) {
+        const text = await response.text();
+        let message = 'Registration failed';
+        try {
+          const error = JSON.parse(text);
+          message = error.message || message;
+        } catch (_) {}
+        throw new Error(message);
+      }
+      const userData = await response.json();
+
+      this.isAuthenticated = true;
+      this.userId = userData.id;
+      this.userRole = userData.role;
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userId', userData.id.toString());
+      localStorage.setItem('userRole', userData.role.toString());
+
+      if (userData.token) {
+        localStorage.setItem('authToken', userData.token);
+      }
+    } catch (error) {
+      console.error('Register error:', error);
+      throw error;
+    }
+  }
+
+  async login(credentials: LoginRequest): Promise<void> {
+    try {
+      const response = await fetch(`${this.apiUrl}/Auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+      });
+
+      if (!response.ok) {
+        let message = 'Failed to login. Please check your credentials.';
+        try {
+          const errorData = await response.json();
+          message = errorData?.message || message;
+        } catch {
+          const text = await response.text();
+          if (text) message = text;
+        }
+        throw new Error(message);
+      }
+
+      const loginResponse = await response.json();
+
+      localStorage.setItem('authToken', loginResponse.token);
+
+      const payload = JSON.parse(atob(loginResponse.token.split('.')[1]));
+      if (payload?.exp) {
+        localStorage.setItem('authExpiresAt', String(payload.exp * 1000));
+      }
+
+      localStorage.setItem('isAuthenticated', 'true');
+
+      localStorage.setItem('userId', loginResponse.user.id.toString());
+      localStorage.setItem('userRole', loginResponse.user.role.toString());
+
+      this.isAuthenticated = true;
+      this.userId = loginResponse.user.id;
+      this.userRole = loginResponse.user.role;
+    } catch (error) {
+      console.error('Failed to login:', error);
+      throw error;
+    }
+  }
+
+  isLoggedIn(): boolean {
+    const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+    const expiresAt = parseInt(
+      localStorage.getItem('authExpiresAt') || '0',
+      10
+    );
+    const now = new Date().getTime();
+
+    if (!isAuth || now > expiresAt) {
+      this.logout();
+      return false;
+    }
+
+    return true;
+  }
+
+  isRegistered(): boolean {
+    return localStorage.getItem('isAuthenticated') === 'true';
+  }
+
+  getUserId(): number | null {
+    return this.userId;
+  }
+
+  getUserRole(): UserRole | null {
+    const role = localStorage.getItem('userRole');
+    if (role !== null) {
+      const roleNum = Number(role);
+      if (!isNaN(roleNum) && UserRole[roleNum] !== undefined) {
+        return roleNum as UserRole;
+      }
+    }
+    return null;
+  }
+
+  forgotPassword(email: string) {
+    if (!email) {
+      throw new Error('Te rog introdu adresa de email.');
+    }
+
+    return this.http.post(`${this.apiUrl}/user/update-forgot-password`, {
+      email,
+    });
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('authToken');
+  }
+
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const exp = payload.exp * 1000;
+      return Date.now() >= exp;
+    } catch (error) {
+      console.error('Error checking token expiration:', error);
+      return true;
+    }
+  }
+
+  private clearAuthState(): void {
+    this.isAuthenticated = false;
+    this.userId = null;
+    this.userRole = null;
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userRole');
+  }
+  async logout(): Promise<void> {
+    try {
+      const token = this.getToken();
+      if (token) {
+        await fetch(`${this.apiUrl}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      this.clearAuthState();
+    }
+  }
+}

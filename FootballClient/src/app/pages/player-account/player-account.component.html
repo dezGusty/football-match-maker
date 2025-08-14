@@ -1,142 +1,115 @@
-<!-- Player Header -->
 <app-player-header></app-player-header>
 
 <div class="account-fullpage">
   <div class="account-avatar-col">
-    <div class="avatar-big">
-      @if (selectedImage) {
-        <img
-          [src]="selectedImage"
-          alt="User profile"
-          class="user-profile-image"
-        />
-      } @else if (user?.imageUrl) {
-        <img
-          [src]="user?.imageUrl"
-          alt="User profile"
-          class="user-profile-image"
-        />
+    <div
+      class="avatar-big"
+      (click)="triggerFileInput()"
+      [style.cursor]="'pointer'"
+    >
+      @if (player && player.profileImageUrl) {
+      <img [src]="player.profileImageUrl" alt="Profile" class="profile-image" />
       } @else {
-        <span class="material-icons avatar-icon-big">person</span>
+      <span class="material-icons avatar-icon-big">person</span>
       }
+      <div class="upload-overlay">
+        <span class="material-icons">camera_alt</span>
+      </div>
     </div>
 
-    <button
-      class="change-image-btn"
-      (click)="showImageSelector = !showImageSelector"
-    >
-      Change Profile Picture
+    <input
+      #fileInput
+      type="file"
+      accept="image/*"
+      (change)="onFileSelected($event)"
+      style="display: none"
+    />
+
+    @if (isUploadingImage) {
+    <div class="upload-status">Uploading...</div>
+    } @if (uploadError) {
+    <div class="upload-error">{{ uploadError }}</div>
+    } @if (player && player.profileImageUrl && !player.profileImageUrl.includes('default-avatar')) {
+    <button class="delete-image-btn" (click)="deleteProfileImage()">
+      Remove Photo
     </button>
-
-    <!-- Back Button moved here -->
-    <button class="back-btn" (click)="goBack()">← Back to Dashboard</button>
-
-    @if (showImageSelector) {
-      <div class="profile-image-selector">
-        @if (images.length > 0) {
-          <div class="image-options">
-            @for (img of images; track img) {
-              <button
-                class="image-option"
-                [class.selected]="selectedImage === img"
-                (click)="selectImage(img)"
-                type="button"
-              >
-                <img [src]="img" alt="profile option" />
-              </button>
-            }
-          </div>
-        } @else {
-          <div>No images available.</div>
-        }
-        <button
-          (click)="updateProfileImage()"
-          [disabled]="!selectedImage"
-          class="save-image-btn"
-        >
-          Save Image
-        </button>
-      </div>
     }
+
+    <button class="back-btn" (click)="goBack()">← Back to Dashboard</button>
   </div>
 
   <div class="account-details-col">
     @if (user) {
-      <div class="account-username">{{ user.username }}</div>
-      <div class="account-role-badge">{{ getRoleString(user.role) }}</div>
+    <div class="account-username">{{ user.username }}</div>
+    <div class="account-role-badge">{{ getRoleString(user.role) }}</div>
 
-      <div class="settings-toggles">
-        <button
-          class="toggle-btn"
-          [class.active]="showPasswordForm"
-          (click)="togglePasswordForm()"
-        >
-          Change Password
-        </button>
-        <button
-          class="toggle-btn"
-          [class.active]="showUsernameForm"
-          (click)="toggleUsernameForm()"
-        >
-          Change Username
-        </button>
-      </div>
+    <div class="settings-toggles">
+      <button
+        class="toggle-btn"
+        [class.active]="showPasswordForm"
+        (click)="togglePasswordForm()"
+      >
+        Change Password
+      </button>
+      <button
+        class="toggle-btn"
+        [class.active]="showUsernameForm"
+        (click)="toggleUsernameForm()"
+      >
+        Change Username
+      </button>
+    </div>
 
-      @if (showPasswordForm) {
-        <form class="account-password-form">
-          <label for="current-password">Current Password</label>
-          <input
-            id="current-password"
-            type="password"
-            placeholder="Enter current password"
-            [(ngModel)]="currentPassword"
-            name="currentPassword"
-          />
-          <label for="new-password">New Password</label>
-          <input
-            id="new-password"
-            type="password"
-            placeholder="Enter new password"
-            [(ngModel)]="newPassword"
-            name="newPassword"
-          />
-          <label for="confirm-password">Confirm Password</label>
-          <input
-            id="confirm-password"
-            type="password"
-            placeholder="Confirm new password"
-            [(ngModel)]="confirmPassword"
-            name="confirmPassword"
-          />
-          <button type="button" (click)="changePassword()">Save Changes</button>
-        </form>
-      }
-
-      @if (showUsernameForm) {
-        <form class="account-password-form">
-          <label for="new-username">New Username</label>
-          <input
-            id="new-username"
-            type="text"
-            placeholder="Enter new username"
-            [(ngModel)]="newUsername"
-            name="newUsername"
-          />
-          <label for="username-password">Password (for confirmation)</label>
-          <input
-            id="username-password"
-            type="password"
-            placeholder="Enter your password"
-            [(ngModel)]="usernamePassword"
-            name="usernamePassword"
-          />
-          <button type="button" (click)="changeUsername()">
-            Save Username
-          </button>
-        </form>
-      }
-    } @else {
-      <div class="loading-message">Loading account details...</div>
+    @if (showPasswordForm) {
+    <form class="account-password-form">
+      <label for="current-password">Current Password</label>
+      <input
+        id="current-password"
+        type="password"
+        placeholder="Enter current password"
+        [(ngModel)]="currentPassword"
+        name="currentPassword"
+      />
+      <label for="new-password">New Password</label>
+      <input
+        id="new-password"
+        type="password"
+        placeholder="Enter new password"
+        [(ngModel)]="newPassword"
+        name="newPassword"
+      />
+      <label for="confirm-password">Confirm Password</label>
+      <input
+        id="confirm-password"
+        type="password"
+        placeholder="Confirm new password"
+        [(ngModel)]="confirmPassword"
+        name="confirmPassword"
+      />
+      <button type="button" (click)="changePassword()">Save Changes</button>
+    </form>
+    } @if (showUsernameForm) {
+    <form class="account-password-form">
+      <label for="new-username">New Username</label>
+      <input
+        id="new-username"
+        type="text"
+        placeholder="Enter new username"
+        [(ngModel)]="newUsername"
+        name="newUsername"
+      />
+      <label for="username-password">Password (for confirmation)</label>
+      <input
+        id="username-password"
+        type="password"
+        placeholder="Enter your password"
+        [(ngModel)]="usernamePassword"
+        name="usernamePassword"
+      />
+      <button type="button" (click)="changeUsername()">Save Username</button>
+    </form>
+    } } @else {
+    <div class="loading-message">Loading account details...</div>
     }
   </div>
 </div>

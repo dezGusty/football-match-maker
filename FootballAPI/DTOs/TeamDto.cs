@@ -4,7 +4,6 @@ namespace FootballAPI.DTOs
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<PlayerDto> CurrentPlayers { get; set; }
     }
 
     public class CreateTeamDto
