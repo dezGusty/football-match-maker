@@ -2,89 +2,21 @@ using System;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using FootballAPI.Service.Interfaces;
 
-public class EmailService
+public class EmailService : IEmailService
 {
-    private readonly string _fromEmail = "foottballmatchmaker@gmail.com";
-    private readonly string _fromPassword = "gjct lndg qgff sxrl";
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<EmailService> _logger;
 
-    public async Task<bool> SendForgottenPasswordEmailAsync(string toEmail, string username, string newPassword)
+    public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
     {
-        var subject = "Resetare Parolă";
-        var body = $@"
-<html>
-<body style='font-family: Arial, sans-serif;'>
-    <h2>Salut, {username}!</h2>
-    <p>Am primit o cerere de resetare a parolei pentru contul tău.</p>
-    <p style='font-size:16px;'>Aceasta este noua ta parolă: 
-        <strong style='color:blue;'>{newPassword}</strong>
-    </p>
-    <p>Cu drag,<br/>Echipa noastră</p>
-</body>
-</html>";
-
-        return await SendEmailAsync(toEmail, subject, body);
+        _configuration = configuration;
+        _logger = logger;
     }
+    
 
-    public async Task<bool> SendNewPasswordPlayerEmailAsync(string toEmail, string username, string newPassword)
-{
-    var subject = "Creare Parolă";
-    var body = $@"
-<html>
-<body style='font-family: Arial, sans-serif;'>
-    <h2>Salut, {username}!</h2>
-    <p>Contul tău a fost creat cu această adresă de email.</p>
-    <p style='font-size:16px;'>Aceasta este parola ta temporară (pentru prima autentificare): 
-        <strong style='color:blue;'>{newPassword}</strong>
-    </p>
-    <p>Poți schimba parola după prima autentificare.</p>
-    <p>Te rugăm să te autentifici și să îți completezi profilul.</p>
-    <p>Cu drag,<br/>Echipa noastră</p>
-</body>
-</html>";
 
-    return await SendEmailAsync(toEmail, subject, body);
 }
 
-    private async Task<bool> SendEmailAsync(string toEmail, string subject, string body)
-    {
-        try
-        {
-            var smtpClient = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential(_fromEmail, _fromPassword),
-                EnableSsl = true
-            };
 
-            var mailMessage = new MailMessage
-            {
-                From = new MailAddress(_fromEmail),
-                Subject = subject,
-                SubjectEncoding = System.Text.Encoding.UTF8,
-                Body = body,
-                BodyEncoding = System.Text.Encoding.UTF8,
-                IsBodyHtml = true
-            };
-
-            mailMessage.To.Add(toEmail);
-
-            await smtpClient.SendMailAsync(mailMessage);
-            Console.WriteLine("[INFO] Email trimis cu succes.");
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[ERROR] Eroare la trimiterea emailului: {ex.Message}");
-            return false;
-        }
-    }
-
-    public string GenerateRandomPassword(int length = 6)
-    {
-        const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%";
-        var random = new Random();
-        return new string(Enumerable.Repeat(chars, length)
-            .Select(s => s[random.Next(s.Length)]).ToArray());
-    }
-}
