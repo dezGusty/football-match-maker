@@ -2,13 +2,15 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: linear-gradient(135deg, #f5f9f6 0%, #e8f5ea 100%);
+  background: var(--gradient);
 }
 
 .carousel-wrapper {
   display: flex;
   width: 100%;
   height: 100%;
+  margin-bottom: 50px;
+  padding: 20px;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -30,11 +32,11 @@
 }
 
 .calendar-container {
-  background: white;
+  background: var(--bg);
   border-radius: 20px;
   padding: 40px;
-  box-shadow: 0 10px 30px rgba(164, 196, 168, 0.3);
-  border: 2px solid rgba(164, 196, 168, 0.2);
+  box-shadow: 0 10px 30px rgba(76, 80, 76, 0.3);
+  border: 2px solid rgba(58, 58, 58, 0.2);
   max-width: 500px;
   width: 100%;
 }
@@ -44,7 +46,7 @@
 }
 
 .calendar-header h2 {
-  color: #2c3e50;
+  color: var(--primary);
   font-size: 2rem;
   font-weight: 700;
   margin: 0 0 10px 0;
@@ -52,7 +54,7 @@
 }
 
 .calendar-header p {
-  color: #6c757d;
+  color: var(--text);
   font-size: 1.1rem;
   margin: 0;
 }
@@ -93,8 +95,8 @@
 }
 
 .next-step-btn {
-  background: #388e3c;
-  color: white;
+  background: var(--primary-600);
+  color: var(--text);
   border: none;
   padding: 16px 32px;
   border-radius: 25px;
@@ -107,7 +109,7 @@
 }
 
 .next-step-btn:hover:not(:disabled) {
-  background: #2e7031;
+  background: var(--primary-700);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(56, 142, 60, 0.3);
 }
@@ -156,10 +158,10 @@
 }
 
 .column {
-  background: rgba(164, 196, 168, 0.15);
+  background: var(--gradient);
   padding: 20px;
   border-radius: 16px;
-  border: 2px solid rgba(164, 196, 168, 0.4);
+  border: 2px solid var(--card);
   width: 550px;
   height: 550px;
   min-width: 0;
@@ -168,12 +170,12 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 4px rgba(164, 196, 168, 0.1);
+  box-shadow: 0 2px 4px rgba(143, 143, 143, 0.1);
   transition: border-color 0.2s ease;
 }
 
 .column:hover {
-  border-color: rgba(164, 196, 168, 0.6);
+  border-color: var(--primary-600);
 }
 
 .column-header {
@@ -182,16 +184,17 @@
   align-items: center;
   margin-bottom: 20px;
   padding: 15px;
-  background: rgba(164, 196, 168, 0.25);
+  background: var(--surface);
   border-radius: 8px;
-  color: #2c3e50;
+  color: var(--text);
+  color: var(--text);
   border: 1px solid rgba(164, 196, 168, 0.2);
   box-shadow: 0 2px 4px rgba(164, 196, 168, 0.05);
   transition: border-color 0.2s ease;
 }
 
 .column-header:hover {
-  border-color: rgba(164, 196, 168, 0.4);
+  border-color: rgba(3, 191, 181, 0.75);
 }
 
 .column-header h3 {
@@ -217,23 +220,24 @@
 .search-input {
   width: 100%;
   padding: 10px 16px;
-  border: 1px solid rgba(164, 196, 168, 0.3);
+  border: 1px solid rgba(99, 99, 99, 0.3);
   border-radius: 10px;
   font-size: 0.95rem;
   transition: all 0.2s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--surface);
   text-align: center;
+  color: var(--text);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: rgba(164, 196, 168, 0.6);
-  box-shadow: 0 0 0 3px rgba(164, 196, 168, 0.1);
-  background: white;
+  border-color: rgba(0, 200, 186, 0.44);
+  box-shadow: 0 0 0 3px rgba(104, 104, 104, 0.1);
+  background: var(--card);
 }
 
 .search-input::placeholder {
-  color: #8fa992;
+  color: var(--text);
 }
 
 .players-list {
@@ -246,28 +250,29 @@
   overflow-x: hidden;
   width: 100%;
   box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--surface);
   border-radius: 12px;
-  border: 1px solid rgba(164, 196, 168, 0.2);
+  border: 1px solid rgba(133, 133, 133, 0.2);
   padding-bottom: 15px;
 }
 
 .player-item {
-  background: #f8f9fa;
+  background: var(--gradient);
   margin: 8px 0;
   padding: 12px 15px;
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: var(--text);
   transition: border-color 0.2s ease;
-  border: 2px solid rgba(164, 196, 168, 0.3);
-  box-shadow: 0 2px 4px rgba(164, 196, 168, 0.1);
+  border: 2px solid rgba(104, 104, 104, 0.3);
+  box-shadow: 0 2px 4px rgba(83, 83, 83, 0.1);
 }
 
 .player-item:hover {
-  background: white;
-  border-color: rgba(164, 196, 168, 0.5);
+  background: var(--surface);
+  border-color: rgba(0, 200, 186, 0.44);
 }
 
 .player-item:last-child {
@@ -292,7 +297,7 @@
 
 .player-rating {
   background: rgba(164, 196, 168, 0.15);
-  color: #2c3e50;
+  color: var(--muted);
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.95rem;
@@ -301,7 +306,7 @@
 }
 
 .select-button {
-  background: #28a745;
+  background: var(--primary-600);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -313,7 +318,7 @@
 }
 
 .select-button:hover {
-  background: #218838;
+  background: var(--primary-700);
 }
 
 .select-button:disabled {
@@ -352,25 +357,25 @@
 }
 
 .nav-btn.primary {
-  background: #388e3c;
+  background: var(--primary-600);
   color: white;
 }
 
 .nav-btn.primary:hover {
-  background: #2e7031;
+  background: var(--primary-700);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(56, 142, 60, 0.3);
 }
 
 .nav-btn.secondary {
-  background: white;
-  color: #2c3e50;
-  border: 2px solid rgba(164, 196, 168, 0.4);
+  background: var(--card);
+  color: var(--text);
+  border: 2px solid rgba(57, 57, 57, 0.4);
 }
 
 .nav-btn.secondary:hover {
-  background: rgba(164, 196, 168, 0.1);
-  border-color: rgba(164, 196, 168, 0.6);
+  background: var(--surface);
+  color: var(--muted);
   transform: translateY(-2px);
 }
 
@@ -384,11 +389,11 @@
   position: absolute;
   top: 5px;
   left: 20px;
-  background: white;
+  background: var(--card);
   padding: 10px 20px;
   border-radius: 20px;
   border: 2px solid rgba(164, 196, 168, 0.3);
-  color: #2c3e50;
+  color: var(--muted);
   font-weight: 600;
   box-shadow: 0 2px 10px rgba(164, 196, 168, 0.2);
   z-index: 100;
@@ -406,17 +411,17 @@
   padding: 20px;
   background-color: transparent;
   border-radius: 8px;
-  border: 1px solid rgba(164, 196, 168, 0.4);
+  border: 1px solid rgba(99, 99, 99, 0.4);
 }
 
 .team:hover {
-  border-color: rgba(164, 196, 168, 0.5);
+  border-color: rgba(85, 85, 85, 0.5);
 }
 
 .team h3 {
   margin-top: 0;
   margin-bottom: 15px;
-  color: #2c3e50;
+  color: var(--text);
   text-align: center;
 }
 
@@ -431,20 +436,20 @@
   padding: 12px 15px;
   margin: 5px 0;
   border-radius: 8px;
-  color: #2c3e50;
+  color: var(--text);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: white;
+  background: var(--surface);
   font-size: 1rem;
   font-weight: 600;
-  border: 2px solid rgba(164, 196, 168, 0.3);
+  border: 2px solid rgba(99, 99, 99, 0.3);
   box-shadow: 0 2px 4px rgba(164, 196, 168, 0.1);
   transition: border-color 0.2s ease;
 }
 
 .team li:hover {
-  border-color: rgba(164, 196, 168, 0.5);
+  border-color: rgba(90, 90, 90, 0.5);
 }
 
 .team li:last-child {
@@ -491,23 +496,23 @@
 
 .begin-match-btn {
   padding: 10px 24px;
-  background: #a4c4a8;
-  color: #2c3e50;
+  background: var(--primary-600);
+  color: var(--text);
   border: none;
   border-radius: 8px;
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  box-shadow: 0 2px 4px rgba(164, 196, 168, 0.2);
+  box-shadow: 0 2px 4px rgba(119, 119, 119, 0.2);
 }
 
 .begin-match-btn:hover {
-  background: #93b397;
+  background: var(--primary-700);
 }
 
 .begin-match-btn:disabled {
-  background: #d1e0d3;
+  background: #777777;
   cursor: not-allowed;
   transform: none;
 }
@@ -516,13 +521,15 @@
   width: 100%;
   padding: 8px;
   margin-bottom: 15px;
-  border: 1px solid #ddd;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid rgba(64, 64, 64, 0.3);
   border-radius: 4px;
   font-size: 16px;
 }
 
 .team-name-input:focus {
-  border-color: rgba(164, 196, 168, 0.7);
+  border-color: rgba(3, 191, 181, 0.75);
   outline: none;
   box-shadow: 0 0 0 3px rgba(164, 196, 168, 0.1);
 }

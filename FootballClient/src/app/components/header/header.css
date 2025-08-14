@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #a4c4a8;
+  background: var(--bg);
   height: 80px;
   padding: 0 18px;
   position: sticky;
@@ -53,13 +53,13 @@
 }
 
 .header-profile:hover {
-  background: #e5e5e5;
+  background: var(--surface);
   border-radius: 18px;
 }
 
 .profile-icon {
   font-size: 2rem;
-  color: #6a866e;
+  color: #949398;
 }
 
 .profile-username {
@@ -113,7 +113,7 @@
   position: fixed;
   top: 80px;
   right: -280px;
-  background-color: #a4c4a8;
+  background-color: var(--bg);
   width: 280px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -143,10 +143,10 @@
 .menu button {
   width: 100%;
   padding: 1rem 1.2rem;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--surface);
   border: none;
   border-radius: 8px;
-  color: #454545;
+  color: var(--muted);
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;

@@ -3,7 +3,7 @@
   margin: 40px auto;
   border-collapse: collapse;
   font-family: "Segoe UI", Arial, sans-serif;
-  background: #e5e5e5;
+  background: var(--surface);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   border-radius: 8px;
   overflow: hidden;
@@ -16,8 +16,8 @@
 }
 
 .matches-table thead {
-  background: #98b79c;
-  color: #454545;
+  background: var(--primary-600);
+  color: var(--text);
 }
 
 .modal-overlay {
@@ -34,7 +34,7 @@
 }
 
 .modal {
-  background: white;
+  background: var(--surface);
   padding: 24px;
   border-radius: 10px;
   width: 90%;
@@ -50,14 +50,14 @@ button {
   margin-top: 20px;
   padding: 8px 16px;
   border: none;
-  background-color: #98b79c;
-  color: white;
+  background-color: var(--primary-600);
+  color: var(--text);
   border-radius: 6px;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #7fa986;
+  background-color: var(--primary-700);
 }
 
 .modal-title {
@@ -77,7 +77,7 @@ button:hover {
 
 .team-section {
   flex: 1;
-  background-color: #f3f3f3;
+  background-color: var(--card);
   padding: 20px;
   border-radius: 12px;
   min-width: 0;
