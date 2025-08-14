@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 
@@ -18,7 +18,8 @@ interface ApiResponse {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    CommonModule // pentru *ngIf, *ngFor etc.
+    CommonModule,
+    RouterModule // pentru routerLink
   ],
   templateUrl: './reset-password.html',
   styleUrls: ['./reset-password.css'],
@@ -31,7 +32,7 @@ export class SetPasswordComponent implements OnInit {
   showPassword = false;
   token = '';
 
-  private readonly API_URL = 'https://localhost:5145/api/Auth'; 
+  private readonly API_URL = 'http://localhost:5145/api/Auth'; 
 
   constructor(
     private fb: FormBuilder,
@@ -46,6 +47,7 @@ export class SetPasswordComponent implements OnInit {
     // Obține token-ul din URL parameters
     this.route.queryParams.subscribe((params) => {
       this.token = params['token'] || '';
+      console.log(this.token);
       if (!this.token) {
         this.errorMessage = 'Token invalid sau lipsă din URL.';
       }
@@ -181,7 +183,8 @@ export class SetPasswordComponent implements OnInit {
           'Eroare server. Te rugăm să încerci din nou mai târziu.';
       } else {
         this.errorMessage =
-          'A apărut o eroare neașteptată. Te rugăm să încerci din nou.';
+          `A apărut o eroare neașteptată. Te rugăm să încerci din nou. Status error:  ${error.status},   ${error} ` ;
+
       }
     } else {
       this.errorMessage =
