@@ -212,8 +212,8 @@ namespace FootballAPI.Controllers
                     return BadRequest(new { message = "Invalid or expired token.", isValid = false });
                 }
 
-                return Ok(new 
-                { 
+                return Ok(new
+                {
                     message = "Token is valid.",
                     isValid = true,
                     userEmail = user.Email,
@@ -226,5 +226,62 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, new { message = "An error occurred while validating the token." });
             }
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+        {
+            try
+            {
+                // Căutăm user-ul după email
+                var user = await _userService.GetUserByEmailAsync(dto.Email);
+
+                // Răspuns generic pentru securitate (să nu dezvăluim dacă email-ul există)
+                var genericResponse = Ok(new
+                {
+                    message = "If an account with that email exists, we've sent password reset instructions to it."
+                });
+
+                if (user == null)
+                {
+                    // Log pentru debugging, dar răspuns generic pentru user
+                    _logger.LogInformation("Password reset requested for non-existent email: {Email}", dto.Email);
+                    return genericResponse;
+                }
+
+                // Verificăm dacă user-ul are deja un token activ
+                var hasActiveToken = await _passwordResetService.HasActiveTokenAsync(user.Id);
+                if (hasActiveToken)
+                {
+                    _logger.LogInformation("Password reset already requested recently for user {UserId}", user.Id);
+                    return Ok(new { message = "Password reset instructions have already been sent recently. Please check your email." });
+                }
+
+                // Generăm token-ul pentru resetarea parolei
+                var resetToken = await _passwordResetService.GeneratePasswordResetTokenAsync(user.Id);
+
+                // Construim link-ul pentru resetarea parolei (același ca pentru set-password)
+                var frontendUrl = _configuration["Frontend:BaseUrl"] ?? "https://yourfrontend.com";
+                var resetPasswordUrl = $"{frontendUrl}/reset-password?token={resetToken}";
+
+                // Trimitem email-ul
+                await _emailService.SendPasswordResetEmailAsync(user.Email, user.Username, resetPasswordUrl);
+
+                _logger.LogInformation("Password reset email sent to {Email}", dto.Email);
+
+                return genericResponse;
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Error sending password reset email to {Email}", dto.Email);
+                return StatusCode(500, new { message = "Unable to send password reset email at this time. Please try again later." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error during password reset for {Email}", dto.Email);
+                return StatusCode(500, new { message = "An error occurred. Please try again later." });
+            }
+        }
+
+
     }
 }

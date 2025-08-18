@@ -9,5 +9,6 @@ namespace FootballAPI.Service.Interfaces
     public interface IEmailService
     {
         Task SendSetPasswordEmailAsync(string email, string username, string setPasswordUrl);
+        Task SendPasswordResetEmailAsync(string email, string username, string resetPasswordUrl);
     }
 }

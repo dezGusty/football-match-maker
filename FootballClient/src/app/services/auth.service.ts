@@ -184,7 +184,7 @@ export class AuthService {
       throw new Error('Te rog introdu adresa de email.');
     }
 
-    return this.http.post(`${this.apiUrl}/user/update-forgot-password`, {
+    return this.http.post(`${this.apiUrl}/Auth/forgot-password`, {
       email,
     });
   }
