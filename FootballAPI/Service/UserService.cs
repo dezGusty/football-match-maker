@@ -87,7 +87,7 @@ namespace FootballAPI.Service
                     FirstName = dto.Username,
                     LastName = "",
                     Rating = 1000.0f,
-                    Email = dto.Email,
+                    UserId = createdUser.Id,
                     IsAvailable = false,
                     IsEnabled = true
                 };
@@ -97,14 +97,17 @@ namespace FootballAPI.Service
             return MapToDto(createdUser);
         }
 
-        public async Task<UserDto> CreatePlayerUserAsync(CreatePlayerUserDto dto, int organizerId)
+        public async Task<UserDto> CreatePlayerUserAsync(CreatePlayerUserDto dto, int? organizerId = null)
         {
-            var organizer = await _userRepository.GetByIdAsync(organizerId);
-            if (organizer == null)
-                throw new ArgumentException("Organizer not found");
+            if (organizerId.HasValue)
+            {
+                var organizer = await _userRepository.GetByIdAsync(organizerId.Value);
+                if (organizer == null)
+                    throw new ArgumentException("Organizer not found");
 
-            if (organizer.Role != UserRole.ORGANISER)
-                throw new ArgumentException("Only organizers can create player users");
+                if (organizer.Role != UserRole.ORGANISER)
+                    throw new ArgumentException("Only organizers can create player users");
+            }
 
             var user = new User
             {
@@ -122,13 +125,16 @@ namespace FootballAPI.Service
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Rating = dto.Rating,
-                Email = dto.Email,
+                UserId = createdUser.Id,
                 IsAvailable = false,
                 IsEnabled = true
             };
             var createdPlayer = await _playerRepository.CreateAsync(player);
 
-            await CreateAutomaticFriendConnectionAsync(organizerId, createdUser.Id);
+            if (organizerId.HasValue)
+            {
+                await CreateAutomaticFriendConnectionAsync(organizerId.Value, createdUser.Id);
+            }
 
             return MapToDto(createdUser);
         }
@@ -147,7 +153,7 @@ namespace FootballAPI.Service
             await _friendRequestRepository.CreateAsync(friendRequest);
 
             var organizer = await _userRepository.GetByIdAsync(organizerId);
-            var player = await _playerRepository.GetByEmailAsync((await _userRepository.GetByIdAsync(playerId)).Email);
+            var player = await _playerRepository.GetByUserIdAsync(playerId);
 
             if (organizer != null && player != null)
             {

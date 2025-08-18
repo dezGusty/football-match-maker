@@ -16,9 +16,11 @@ export class FriendRequestService {
 
   private getAuthHeaders(): HeadersInit {
     const token = this.authService.getToken();
+    const userId = this.authService.getUserId();
     return {
       'Content-Type': 'application/json',
-      Authorization: token ? `Bearer ${token}` : '',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...(userId && { UserId: userId.toString() }),
     };
   }
 
@@ -58,11 +60,7 @@ export class FriendRequestService {
   async getSentRequests(): Promise<FriendRequest[]> {
     const response = await fetch(`${this.baseUrl}/sent`, {
       method: 'GET',
-      headers: {
-        Authorization: this.authService.getToken()
-          ? `Bearer ${this.authService.getToken()}`
-          : '',
-      },
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -81,11 +79,7 @@ export class FriendRequestService {
   async getReceivedRequests(): Promise<FriendRequest[]> {
     const response = await fetch(`${this.baseUrl}/received`, {
       method: 'GET',
-      headers: {
-        Authorization: this.authService.getToken()
-          ? `Bearer ${this.authService.getToken()}`
-          : '',
-      },
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -104,11 +98,7 @@ export class FriendRequestService {
   async getFriends(): Promise<FriendRequest[]> {
     const response = await fetch(`${this.baseUrl}/friends`, {
       method: 'GET',
-      headers: {
-        Authorization: this.authService.getToken()
-          ? `Bearer ${this.authService.getToken()}`
-          : '',
-      },
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -121,11 +111,7 @@ export class FriendRequestService {
   async deleteFriendRequest(requestId: number): Promise<void> {
     const response = await fetch(`${this.baseUrl}/${requestId}`, {
       method: 'DELETE',
-      headers: {
-        Authorization: this.authService.getToken()
-          ? `Bearer ${this.authService.getToken()}`
-          : '',
-      },
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {

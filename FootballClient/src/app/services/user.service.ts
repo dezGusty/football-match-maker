@@ -64,9 +64,16 @@ export class UserService {
   }
 
   async createPlayerUser(playerUser: PlayerUser): Promise<any> {
+    const token = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('userId');
+
     const response = await fetch(`${this.url}/create-player-user`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...(userId && { UserId: userId }),
+      },
       body: JSON.stringify(playerUser),
     });
     const result = await response.json();

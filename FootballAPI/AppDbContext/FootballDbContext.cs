@@ -118,8 +118,7 @@ namespace FootballAPI.Data
             modelBuilder.Entity<Player>()
                 .HasOne(p => p.User)
                 .WithMany()
-                .HasForeignKey(p => p.Email)
-                .HasPrincipalKey(u => u.Email)
+                .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             SeedData(modelBuilder);
@@ -139,7 +138,7 @@ namespace FootballAPI.Data
                     FirstName = "Ion",
                     LastName = "Popescu",
                     Rating = 8.5f,
-                    Email = "ion.popescu@gmail.com",
+                    UserId = 1,
                     IsAvailable = true
                 },
                 new Player
@@ -148,7 +147,7 @@ namespace FootballAPI.Data
                     FirstName = "Marius",
                     LastName = "Ionescu",
                     Rating = 7.8f,
-                    Email = "marius.ionescu@gmail.com",
+                    UserId = 2,
                     IsAvailable = true
                 },
                 new Player
@@ -157,7 +156,7 @@ namespace FootballAPI.Data
                     FirstName = "Alex",
                     LastName = "Georgescu",
                     Rating = 7.2f,
-                    Email = "alex.georgescu@gmail.com",
+                    UserId = 5,
                     IsAvailable = true
                 },
                 new Player
@@ -166,7 +165,7 @@ namespace FootballAPI.Data
                     FirstName = "Razvan",
                     LastName = "Moldovan",
                     Rating = 8.1f,
-                    Email = "razvan.moldovan@gmail.com",
+                    UserId = 6,
                     IsAvailable = true
                 },
                 new Player
@@ -175,7 +174,7 @@ namespace FootballAPI.Data
                     FirstName = "Cristian",
                     LastName = "Stancu",
                     Rating = 6.9f,
-                    Email = "cristian.stancu@gmail.com",
+                    UserId = 7,
                     IsAvailable = true
                 },
                 new Player
@@ -184,7 +183,7 @@ namespace FootballAPI.Data
                     FirstName = "Andrei",
                     LastName = "Vasilescu",
                     Rating = 7.7f,
-                    Email = "andrei.vasilescu@gmail.com",
+                    UserId = 8,
                     IsAvailable = true
                 },
                 new Player
@@ -193,7 +192,7 @@ namespace FootballAPI.Data
                     FirstName = "Florin",
                     LastName = "Dumitru",
                     Rating = 8.3f,
-                    Email = "florin.dumitru@gmail.com",
+                    UserId = 9,
                     IsAvailable = true
                 },
                 new Player
@@ -202,7 +201,7 @@ namespace FootballAPI.Data
                     FirstName = "Gabriel",
                     LastName = "Ciobanu",
                     Rating = 7.4f,
-                    Email = "gabriel.ciobanu@gmail.com",
+                    UserId = 10,
                     IsAvailable = true
                 },
                 new Player
@@ -211,7 +210,7 @@ namespace FootballAPI.Data
                     FirstName = "Lucian",
                     LastName = "Matei",
                     Rating = 6.8f,
-                    Email = "lucian.matei@gmail.com",
+                    UserId = 11,
                     IsAvailable = true
                 },
                 new Player
@@ -220,7 +219,7 @@ namespace FootballAPI.Data
                     FirstName = "Daniel",
                     LastName = "Radu",
                     Rating = 7.9f,
-                    Email = "daniel.radu@gmail.com",
+                    UserId = 12,
                     IsAvailable = true
                 },
                 new Player
@@ -229,7 +228,7 @@ namespace FootballAPI.Data
                     FirstName = "Mihai",
                     LastName = "Popa",
                     Rating = 8.0f,
-                    Email = "mihai.popa@gmail.com",
+                    UserId = 13,
                     IsAvailable = true
                 },
                 new Player
@@ -238,7 +237,7 @@ namespace FootballAPI.Data
                     FirstName = "Stefan",
                     LastName = "Nicolae",
                     Rating = 7.6f,
-                    Email = "stefan.nicolae@gmail.com",
+                    UserId = 14,
                     IsAvailable = true
                 }
             );

@@ -62,6 +62,10 @@ export class AuthService {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...(this.getToken() && {
+              Authorization: `Bearer ${this.getToken()}`,
+            }),
+            ...(this.getUserId() && { UserId: this.getUserId()!.toString() }),
           },
           body: JSON.stringify(playerUser),
         });
@@ -79,6 +83,10 @@ export class AuthService {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...(this.getToken() && {
+              Authorization: `Bearer ${this.getToken()}`,
+            }),
+            ...(this.getUserId() && { UserId: this.getUserId()!.toString() }),
           },
           body: JSON.stringify(organiserUser),
         });

@@ -55,35 +55,42 @@ namespace FootballAPI.Service
         {
             var emailService = new EmailService();
             var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
+            User user;
+
             if (existingUser == null)
             {
                 var password = _passwordGeneratorService.Generate();
-                var user = new User
+                user = new User
                 {
                     Email = dto.Email,
                     Username = dto.FirstName + dto.LastName,
                     Password = password,
                     Role = UserRole.PLAYER
                 };
-                await _userRepository.CreateAsync(user);
+                user = await _userRepository.CreateAsync(user);
                 await emailService.SendNewPasswordPlayerEmailAsync(
                     user.Email,
                     user.Username,
                     password
                 );
             }
+            else
+            {
+                user = existingUser;
+            }
 
+            // Check if player already exists for this user
             var existingPlayer = (await _playerRepository.GetAllAsync())
-                .FirstOrDefault(p => p.Email == dto.Email);
+                .FirstOrDefault(p => p.UserId == user.Id);
             if (existingPlayer != null)
-                throw new InvalidOperationException("Player with this email already exists.");
+                throw new InvalidOperationException("Player with this user already exists.");
 
             var player = new Player
             {
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Rating = dto.Rating,
-                Email = dto.Email,
+                UserId = user.Id,
                 IsAvailable = false,
                 IsEnabled = true,
                 Speed = dto.Speed,
@@ -245,7 +252,8 @@ namespace FootballAPI.Service
                     FirstName = player.FirstName,
                     LastName = player.LastName,
                     Rating = 0.0f,
-                    Email = "",
+                    UserEmail = player.User?.Email ?? "",
+                    Username = player.User?.Username ?? "",
                     IsAvailable = false,
                     IsEnabled = false,
                     Speed = 1,
@@ -262,7 +270,8 @@ namespace FootballAPI.Service
                 Rating = player.Rating,
                 IsAvailable = player.IsAvailable,
                 IsEnabled = true,
-                Email = player.Email,
+                UserEmail = player.User?.Email ?? "",
+                Username = player.User?.Username ?? "",
                 Speed = player.Speed,
                 Stamina = player.Stamina,
                 Errors = player.Errors,
@@ -333,12 +342,19 @@ namespace FootballAPI.Service
             if (player == null || !player.IsEnabled)
                 throw new ArgumentException("Player not found or not enabled");
 
+            // Load User information if needed
+            if (player.User == null)
+            {
+                var user = await _userRepository.GetByIdAsync(player.UserId);
+                player.User = user;
+            }
+
             if (!string.IsNullOrEmpty(player.ProfileImagePath))
             {
                 await _fileService.DeleteProfileImageAsync(player.ProfileImagePath);
             }
 
-            var imagePath = await _fileService.SaveProfileImageAsync(imageFile, player.Email);
+            var imagePath = await _fileService.SaveProfileImageAsync(imageFile, player.User.Email);
 
             player.ProfileImagePath = imagePath;
             await _playerRepository.UpdateAsync(player);

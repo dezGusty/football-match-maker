@@ -44,7 +44,7 @@ export class PlayerHeaderComponent implements OnInit {
         // Get player data for first/last name
         const players = await this.playerService.getPlayers();
         this.currentPlayer =
-          players.find((p) => p.email === user.email) || null;
+          players.find((p) => p.userEmail === user.email) || null;
       } catch (error) {
         console.error('Error loading player data:', error);
       }

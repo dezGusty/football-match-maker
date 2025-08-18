@@ -122,18 +122,23 @@ namespace FootballAPI.Controllers
         }
 
         [HttpPost("create-player-user")]
-        [Authorize]
         public async Task<ActionResult<UserDto>> CreatePlayerUser([FromBody] CreatePlayerUserDto dto)
         {
             try
             {
-                var organizerId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                int? organizerId = null;
+
+                try
+                {
+                    organizerId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    organizerId = null;
+                }
+
                 var user = await _userService.CreatePlayerUserAsync(dto, organizerId);
                 return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(ex.Message);
             }
             catch (ArgumentException ex)
             {

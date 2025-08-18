@@ -62,7 +62,7 @@ export class PlayerDashboardComponent implements OnInit {
           const user = await userResponse.json();
           const players = await this.playerService.getPlayers();
           this.currentPlayer =
-            players.find((p) => p.email === user.email) || null;
+            players.find((p) => p.userEmail === user.email) || null;
         }
       } catch (error) {
         console.error('Error loading player data:', error);

@@ -108,7 +108,7 @@ namespace FootballAPI.Service
             if (sender.Role == UserRole.ORGANISER)
             {
                 organiserId = senderId;
-                var receiverPlayer = await _playerRepository.GetByEmailAsync(receiver.Email);
+                var receiverPlayer = await _playerRepository.GetByUserIdAsync(receiverId);
                 if (receiverPlayer == null)
                     throw new ArgumentException("Receiver player profile not found");
                 playerId = receiverPlayer.Id;
@@ -116,7 +116,7 @@ namespace FootballAPI.Service
             else
             {
                 organiserId = receiverId;
-                var senderPlayer = await _playerRepository.GetByEmailAsync(sender.Email);
+                var senderPlayer = await _playerRepository.GetByUserIdAsync(senderId);
                 if (senderPlayer == null)
                     throw new ArgumentException("Sender player profile not found");
                 playerId = senderPlayer.Id;

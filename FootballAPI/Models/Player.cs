@@ -19,10 +19,10 @@ namespace FootballAPI.Models
         [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
         public float Rating { get; set; } = 0.0f;
 
-        [StringLength(100)]
-        public string Email { get; set; } = string.Empty;
+        [Required]
+        public int UserId { get; set; }
 
-        [ForeignKey("Email")]
+        [ForeignKey("UserId")]
         public virtual User? User { get; set; }
         public bool IsAvailable { get; set; } = false;
         public bool IsEnabled { get; set; } = true;
