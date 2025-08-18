@@ -6,10 +6,10 @@ namespace FootballAPI.DTOs
     {
         [Required]
         [StringLength(100, MinimumLength = 3, ErrorMessage = "Username must be between 3 and 100 characters")]
-        public string NewUsername { get; set; }
+        public string NewUsername { get; set; } = null!;
 
         [Required]
         [StringLength(255, ErrorMessage = "Password is required")]
-        public string Password { get; set; }
+        public string Password { get; set; } = null!;
     }
 }

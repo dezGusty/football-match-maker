@@ -7,15 +7,15 @@ namespace FootballAPI.DTOs
     {
         [Required]
         [StringLength(100)]
-        public string Email { get; set; }
+        public string Email { get; set; } = null!;
 
         [Required]
         [StringLength(100)]
-        public string Username { get; set; }
+        public string Username { get; set; } = null!;
 
         [Required]
         [StringLength(255)]
-        public string Password { get; set; }
+        public string Password { get; set; } = null!;
 
         [Required]
         public UserRole Role { get; set; }

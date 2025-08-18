@@ -8,6 +8,6 @@ namespace FootballAPI.DTOs
         [Required]
         [EmailAddress]
         [StringLength(100)]
-        public string Email { get; set; }
+        public string Email { get; set; } = null!;
     }
 }
