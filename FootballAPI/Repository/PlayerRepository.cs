@@ -28,6 +28,12 @@ namespace FootballAPI.Repository
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task<Player?> GetByEmailAsync(string email)
+        {
+            return await _context.Players
+                .FirstOrDefaultAsync(p => p.Email == email);
+        }
+
         public async Task<IEnumerable<Player>> GetEnabledPlayersAsync()
         {
             return await _context.Players

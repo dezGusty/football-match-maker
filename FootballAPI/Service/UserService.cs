@@ -8,11 +8,13 @@ namespace FootballAPI.Service
     {
         private readonly IUserRepository _userRepository;
         private readonly IPlayerRepository _playerRepository;
+        private readonly IFriendRequestRepository _friendRequestRepository;
 
-        public UserService(IUserRepository userRepository, IPlayerRepository playerRepository)
+        public UserService(IUserRepository userRepository, IPlayerRepository playerRepository, IFriendRequestRepository friendRequestRepository)
         {
             _userRepository = userRepository;
             _playerRepository = playerRepository;
+            _friendRequestRepository = friendRequestRepository;
         }
 
         private UserDto MapToDto(User user)
@@ -74,24 +76,43 @@ namespace FootballAPI.Service
                 Username = dto.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 11),
                 Role = dto.Role,
-                
             };
 
-
             var createdUser = await _userRepository.CreateAsync(user);
+
+            if (dto.Role == UserRole.ORGANISER || dto.Role == UserRole.PLAYER)
+            {
+                var player = new Player
+                {
+                    FirstName = dto.Username,
+                    LastName = "",
+                    Rating = 1000.0f,
+                    Email = dto.Email,
+                    IsAvailable = false,
+                    IsEnabled = true
+                };
+                await _playerRepository.CreateAsync(player);
+            }
 
             return MapToDto(createdUser);
         }
 
-        public async Task<UserDto> CreatePlayerUserAsync(CreatePlayerUserDto dto)
+        public async Task<UserDto> CreatePlayerUserAsync(CreatePlayerUserDto dto, int organizerId)
         {
+            var organizer = await _userRepository.GetByIdAsync(organizerId);
+            if (organizer == null)
+                throw new ArgumentException("Organizer not found");
+
+            if (organizer.Role != UserRole.ORGANISER)
+                throw new ArgumentException("Only organizers can create player users");
+
             var user = new User
             {
                 Email = dto.Email,
                 Username = dto.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 11),
-                Role = UserRole.PLAYER,
-                
+                Role = dto.Role,
+
             };
 
             var createdUser = await _userRepository.CreateAsync(user);
@@ -103,12 +124,42 @@ namespace FootballAPI.Service
                 Rating = dto.Rating,
                 Email = dto.Email,
                 IsAvailable = false,
-                IsPublic = true,
                 IsEnabled = true
             };
-            await _playerRepository.CreateAsync(player);
+            var createdPlayer = await _playerRepository.CreateAsync(player);
+
+            await CreateAutomaticFriendConnectionAsync(organizerId, createdUser.Id);
 
             return MapToDto(createdUser);
+        }
+
+        private async Task CreateAutomaticFriendConnectionAsync(int organizerId, int playerId)
+        {
+            var friendRequest = new FriendRequest
+            {
+                SenderId = organizerId,
+                ReceiverId = playerId,
+                Status = FriendRequestStatus.Accepted,
+                CreatedAt = DateTime.Now,
+                ResponsedAt = DateTime.Now
+            };
+
+            await _friendRequestRepository.CreateAsync(friendRequest);
+
+            var organizer = await _userRepository.GetByIdAsync(organizerId);
+            var player = await _playerRepository.GetByEmailAsync((await _userRepository.GetByIdAsync(playerId)).Email);
+
+            if (organizer != null && player != null)
+            {
+                var relation = new PlayerOrganiser
+                {
+                    OrganiserId = organizerId,
+                    PlayerId = player.Id,
+                    CreatedAt = DateTime.Now
+                };
+
+                await _playerRepository.AddPlayerOrganiserRelationAsync(relation);
+            }
         }
 
         public async Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updateUserDto)
@@ -203,11 +254,9 @@ namespace FootballAPI.Service
             if (user == null)
                 return false;
 
-            // Verifică dacă parola este corectă
             if (user.Password != changeUsernameDto.Password)
                 throw new ArgumentException("Password is incorrect.");
 
-            // Verifică dacă username-ul nou există deja
             if (await _userRepository.UsernameExistsAsync(changeUsernameDto.NewUsername, userId))
                 throw new ArgumentException($"Username '{changeUsernameDto.NewUsername}' already exists.");
 

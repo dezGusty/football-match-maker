@@ -1,0 +1,256 @@
+<div class="friend-requests-container">
+  <button class="friend-requests-btn" (click)="openModal()">
+    <i class="icon-users"></i>
+    Friend Requests
+    <span class="badge" *ngIf="receivedCount > 0">{{ receivedCount }}</span>
+  </button>
+
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Friend Requests</h2>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="action-buttons">
+          <button class="btn btn-primary" (click)="openSendRequestModal()">
+            Send Friend Request
+          </button>
+        </div>
+
+        <div class="messages">
+          <div class="alert alert-success" *ngIf="successMessage">
+            {{ successMessage }}
+          </div>
+          <div class="alert alert-error" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab-buttons">
+            <button
+              class="tab-btn"
+              [class.active]="activeTab === 'received'"
+              (click)="setActiveTab('received')"
+            >
+              Received ({{ receivedCount }})
+            </button>
+            <button
+              class="tab-btn"
+              [class.active]="activeTab === 'sent'"
+              (click)="setActiveTab('sent')"
+            >
+              Sent ({{ sentCount }})
+            </button>
+            <button
+              class="tab-btn"
+              [class.active]="activeTab === 'friends'"
+              (click)="setActiveTab('friends')"
+            >
+              Friends ({{ friends.length }})
+            </button>
+          </div>
+
+          <div
+            *ngIf="activeTab === 'received'"
+            class="tab-content"
+            [class.active]="activeTab === 'received'"
+          >
+            <h3>Received Friend Requests</h3>
+            <div
+              class="requests-list"
+              *ngIf="receivedCount > 0; else noReceivedRequests"
+            >
+              <div
+                class="request-item"
+                *ngFor="let request of pendingReceivedRequests"
+              >
+                <div class="request-info">
+                  <div class="user-details">
+                    <strong>{{ request.senderUsername }}</strong>
+                    <span class="request-date">{{
+                      formatDate(request.createdAt)
+                    }}</span>
+                  </div>
+                  <span
+                    class="status"
+                    [style.color]="getStatusColor(request.status)"
+                  >
+                    {{ request.status }}
+                  </span>
+                </div>
+                <div
+                  class="request-actions"
+                  *ngIf="request.status === 'Pending'"
+                >
+                  <button
+                    class="btn btn-success btn-sm"
+                    (click)="acceptRequest(request)"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm"
+                    (click)="rejectRequest(request)"
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            </div>
+            <ng-template #noReceivedRequests>
+              <p class="no-requests">No friend requests received</p>
+            </ng-template>
+          </div>
+
+          <div
+            *ngIf="activeTab === 'sent'"
+            class="tab-content"
+            [class.active]="activeTab === 'sent'"
+          >
+            <h3>Sent Friend Requests</h3>
+            <div
+              class="requests-list"
+              *ngIf="sentCount > 0; else noSentRequests"
+            >
+              <div
+                class="request-item"
+                *ngFor="let request of pendingSentRequests"
+              >
+                <div class="request-info">
+                  <div class="user-details">
+                    <strong>{{ request.receiverUsername }}</strong>
+                    <span class="request-date">{{
+                      formatDate(request.createdAt)
+                    }}</span>
+                  </div>
+                  <span
+                    class="status"
+                    [style.color]="getStatusColor(request.status)"
+                  >
+                    {{ request.status }}
+                  </span>
+                </div>
+                <div
+                  class="request-actions"
+                  *ngIf="request.status === 'Pending'"
+                >
+                  <button
+                    class="btn btn-secondary btn-sm"
+                    (click)="cancelRequest(request)"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+            <ng-template #noSentRequests>
+              <p class="no-requests">No friend requests sent</p>
+            </ng-template>
+          </div>
+
+          <div
+            *ngIf="activeTab === 'friends'"
+            class="tab-content"
+            [class.active]="activeTab === 'friends'"
+          >
+            <h3>My Friends</h3>
+            <div
+              class="requests-list"
+              *ngIf="friends.length > 0; else noFriends"
+            >
+              <div class="request-item" *ngFor="let friend of friends">
+                <div class="request-info">
+                  <div class="user-details">
+                    <strong>
+                      {{
+                        friend.senderId === currentUserId
+                          ? friend.receiverUsername
+                          : friend.senderUsername
+                      }}
+                    </strong>
+                    <small class="friend-email">
+                      {{
+                        friend.senderId === currentUserId
+                          ? friend.receiverEmail
+                          : friend.senderEmail
+                      }}
+                    </small>
+                    <span class="request-date"
+                      >Friends since
+                      {{
+                        formatDate(friend.responsedAt || friend.createdAt)
+                      }}</span
+                    >
+                  </div>
+                  <span class="status status-accepted"> Connected </span>
+                </div>
+              </div>
+            </div>
+            <ng-template #noFriends>
+              <p class="no-requests">
+                No friends yet. Send some friend requests!
+              </p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal-overlay"
+    *ngIf="showSendRequestModal"
+    (click)="closeSendRequestModal()"
+  >
+    <div class="modal-content modal-sm" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Send Friend Request</h3>
+        <button class="close-btn" (click)="closeSendRequestModal()">
+          &times;
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="messages">
+          <div class="alert alert-success" *ngIf="sendRequestSuccess">
+            {{ sendRequestSuccess }}
+          </div>
+          <div class="alert alert-error" *ngIf="sendRequestError">
+            {{ sendRequestError }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="emailInput">User Email:</label>
+          <input
+            id="emailInput"
+            type="email"
+            [(ngModel)]="selectedReceiverEmail"
+            class="form-control"
+            placeholder="Enter user's email address..."
+            autocomplete="off"
+          />
+          <small class="form-hint"
+            >Enter the email address of the user you want to connect with</small
+          >
+        </div>
+
+        <div class="form-actions">
+          <button
+            class="btn btn-primary"
+            (click)="sendFriendRequest()"
+            [disabled]="!selectedReceiverEmail.trim()"
+          >
+            Send Request
+          </button>
+          <button class="btn btn-secondary" (click)="closeSendRequestModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

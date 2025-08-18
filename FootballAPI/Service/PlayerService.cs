@@ -43,6 +43,13 @@ namespace FootballAPI.Service
             return players.Select(MapToDto);
         }
 
+        public async Task<IEnumerable<PlayerDto>> GetAvailablePlayersByOrganiserAsync(int organiserId)
+        {
+            var organiserPlayers = await _userRepository.GetPlayersByOrganiserAsync(organiserId);
+            var availablePlayers = organiserPlayers.Where(p => p.IsAvailable && p.IsEnabled);
+            return availablePlayers.Select(MapToDto);
+        }
+
 
         public async Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto dto)
         {
@@ -78,7 +85,6 @@ namespace FootballAPI.Service
                 Rating = dto.Rating,
                 Email = dto.Email,
                 IsAvailable = false,
-                IsPublic = true,
                 IsEnabled = true,
                 Speed = dto.Speed,
                 Stamina = dto.Stamina,
@@ -100,7 +106,6 @@ namespace FootballAPI.Service
             existingPlayer.LastName = updatePlayerDto.LastName;
             existingPlayer.Rating = updatePlayerDto.Rating;
             existingPlayer.IsAvailable = updatePlayerDto.IsAvailable;
-            existingPlayer.IsPublic = updatePlayerDto.IsPublic;
             existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
             existingPlayer.Speed = updatePlayerDto.Speed;
             existingPlayer.Stamina = updatePlayerDto.Stamina;
@@ -242,7 +247,6 @@ namespace FootballAPI.Service
                     Rating = 0.0f,
                     Email = "",
                     IsAvailable = false,
-                    IsPublic = player.IsPublic,
                     IsEnabled = false,
                     Speed = 1,
                     Stamina = 1,
@@ -257,7 +261,6 @@ namespace FootballAPI.Service
                 LastName = player.LastName,
                 Rating = player.Rating,
                 IsAvailable = player.IsAvailable,
-                IsPublic = player.IsPublic,
                 IsEnabled = true,
                 Email = player.Email,
                 Speed = player.Speed,
@@ -322,28 +325,6 @@ namespace FootballAPI.Service
             };
 
             await _playerRepository.AddPlayerOrganiserRelationAsync(relation);
-        }
-
-        public async Task<bool> SetPlayerPublicAsync(int playerId)
-        {
-            var player = await _playerRepository.GetByIdAsync(playerId);
-            if (player == null || !player.IsEnabled)
-                return false;
-
-            player.IsPublic = true;
-            await _playerRepository.UpdateAsync(player);
-            return true;
-        }
-
-        public async Task<bool> SetPlayerPrivateAsync(int playerId)
-        {
-            var player = await _playerRepository.GetByIdAsync(playerId);
-            if (player == null || !player.IsEnabled)
-                return false;
-
-            player.IsPublic = false;
-            await _playerRepository.UpdateAsync(player);
-            return true;
         }
 
         public async Task<string> UpdatePlayerProfileImageAsync(int playerId, IFormFile imageFile)

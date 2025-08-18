@@ -1,5 +1,6 @@
 <!-- Player Header -->
 <app-player-header (tabChange)="setActiveTab($event)"></app-player-header>
+<app-friend-requests></app-friend-requests>
 
 <!-- Main Container -->
 <div class="dashboard-container">
@@ -24,7 +25,9 @@
           <div class="col-team">
             {{ match.teamAName }} vs {{ match.teamBName }}
           </div>
-          <div class="col-date">{{ match.matchDate | date: "dd/MM/yyyy" }}</div>
+          <div class="col-date">
+            {{ match.matchDate | date : "dd/MM/yyyy" }}
+          </div>
           <div class="col-your-team">{{ getPlayerTeamName(match) }}</div>
           <div class="col-action">
             <button class="action-btn" (click)="openPlayersModal(match)">
@@ -55,7 +58,9 @@
           <div class="col-team">
             {{ match.teamAName }} vs {{ match.teamBName }}
           </div>
-          <div class="col-date">{{ match.matchDate | date: "dd/MM/yyyy" }}</div>
+          <div class="col-date">
+            {{ match.matchDate | date : "dd/MM/yyyy" }}
+          </div>
           <div class="col-score">{{ match.scoreA }} - {{ match.scoreB }}</div>
           <div class="col-your-team">{{ getPlayerTeamName(match) }}</div>
           <div class="col-action">
