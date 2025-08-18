@@ -8,6 +8,7 @@ import {
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 interface SetPasswordRequest {
   token: string;
@@ -39,7 +40,8 @@ export class SetPasswordComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private auth: AuthService
   ) {
     this.setPasswordForm = this.createForm();
   }
@@ -161,10 +163,8 @@ export class SetPasswordComponent implements OnInit {
         response?.message || 'Password has been successfully set!';
       this.setPasswordForm.reset();
 
-      // Optionally redirect to login after 3 seconds
-      setTimeout(() => {
-        this.router.navigate(['/login']);
-      }, 3000);
+      await this.auth.logout();
+      this.router.navigate(['/login']);
     } catch (error) {
       this.handleError(error);
     } finally {
