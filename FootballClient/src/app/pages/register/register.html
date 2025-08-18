@@ -2,10 +2,14 @@
   <!-- Left Side - Football Theme -->
   <div class="login-left">
     <div class="slideshow">
-      <img src="/assets/background0.jpg" class="slide active" alt="Football Image 1">
-      <img src="/assets/background1.jpg" class="slide" alt="Football Image 2">
-      <img src="/assets/background2.jpg" class="slide" alt="Football Image 3">
-      <img src="/assets/background3.jpg" class="slide" alt="Football Image 4">
+      <img
+        src="/assets/background0.jpg"
+        class="slide active"
+        alt="Football Image 1"
+      />
+      <img src="/assets/background1.jpg" class="slide" alt="Football Image 2" />
+      <img src="/assets/background2.jpg" class="slide" alt="Football Image 3" />
+      <img src="/assets/background3.jpg" class="slide" alt="Football Image 4" />
     </div>
     <div class="overlay"></div>
     <div class="left-content">
@@ -21,45 +25,97 @@
       <h2>Register</h2>
 
       <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
 
       <label>Email</label>
-      <input type="email" [(ngModel)]="email" name="email" placeholder="Enter your email" />
+      <input
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        placeholder="Enter your email"
+      />
 
       <label>Username</label>
-      <input type="text" [(ngModel)]="username" name="username" placeholder="Enter your username" />
+      <input
+        type="text"
+        [(ngModel)]="username"
+        name="username"
+        placeholder="Enter your username"
+      />
 
       <label>Password</label>
-      <input type="password" [(ngModel)]="password" name="password" placeholder="Enter your password" />
+      <input
+        type="password"
+        [(ngModel)]="password"
+        name="password"
+        placeholder="Enter your password"
+      />
 
       <label>Confirm Password</label>
-      <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm your password" />
+      <input
+        type="password"
+        [(ngModel)]="confirmPassword"
+        name="confirmPassword"
+        placeholder="Confirm your password"
+      />
+
+      <div class="player-extra-fields">
+        <div class="player-fields-row">
+          <div class="player-field">
+            <label>First Name</label>
+            <input
+              type="text"
+              [(ngModel)]="firstName"
+              name="firstName"
+              placeholder="First Name"
+            />
+          </div>
+          <div class="player-field">
+            <label>Last Name</label>
+            <input
+              type="text"
+              [(ngModel)]="lastName"
+              name="lastName"
+              placeholder="Last Name"
+            />
+          </div>
+          <div class="player-field rating-field">
+            <label>Rating</label>
+            <input
+              type="number"
+              [(ngModel)]="rating"
+              name="rating"
+              min="0"
+              max="10000"
+              step="0.1"
+              placeholder="Rating"
+            />
+          </div>
+        </div>
+      </div>
 
       <label>Account Type</label>
       <div class="radio-group">
         <label>
-          <input type="radio" name="role" [(ngModel)]="role" [value]="UserRole.ORGANISER" /> Organiser
+          <input
+            type="radio"
+            name="role"
+            [(ngModel)]="role"
+            [value]="UserRole.ORGANISER"
+          />
+          Organiser
         </label>
         <label>
-          <input type="radio" name="role" [(ngModel)]="role" [value]="UserRole.PLAYER" /> Player
+          <input
+            type="radio"
+            name="role"
+            [(ngModel)]="role"
+            [value]="UserRole.PLAYER"
+          />
+          Player
         </label>
-      </div>
-
-      <div *ngIf="role === UserRole.PLAYER" class="player-extra-fields">
-        <div class="player-fields-row">
-          <div class="player-field">
-            <label>First Name</label>
-            <input type="text" [(ngModel)]="firstName" name="firstName" placeholder="First Name" />
-          </div>
-          <div class="player-field">
-            <label>Last Name</label>
-            <input type="text" [(ngModel)]="lastName" name="lastName" placeholder="Last Name" />
-          </div>
-          <div class="player-field rating-field">
-            <label>Rating</label>
-            <input type="number" [(ngModel)]="rating" name="rating" min="0" max="10000" step="0.1" placeholder="Rating" />
-          </div>
-        </div>
       </div>
 
       <button type="submit" class="btn-login">Register</button>

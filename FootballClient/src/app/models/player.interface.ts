@@ -7,7 +7,8 @@ export interface Player {
   isEnabled?: boolean;
   isSelected?: boolean;
   locked?: boolean;
-  email: string;
+  userEmail?: string;
+  username?: string;
   speed: number; // 1 = Low, 2 = Medium, 3 = High
   stamina: number; // 1 = Low, 2 = Medium, 3 = High
   errors: number; // 1 = Low, 2 = Medium, 3 = High (Low = Few errors, High = Many errors)

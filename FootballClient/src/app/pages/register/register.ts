@@ -16,7 +16,7 @@ export class Register {
   username: string = '';
   firstName: string = '';
   lastName: string = '';
-  rating: number | null = null;
+  rating: number = 1000;
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
@@ -25,10 +25,10 @@ export class Register {
   successMessage: string = '';
   UserRole = UserRole;
 
-
   ngOnInit(): void {
     let index = 0;
-    const slides = document.querySelectorAll<HTMLImageElement>('.slideshow .slide');
+    const slides =
+      document.querySelectorAll<HTMLImageElement>('.slideshow .slide');
 
     setInterval(() => {
       slides.forEach((slide, i) => {
@@ -38,10 +38,7 @@ export class Register {
     }, 4000);
   }
 
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-  ) {
+  constructor(private router: Router, private authService: AuthService) {
     if (this.authService.isLoggedIn()) {
       this.redirectBasedOnRole();
     }
@@ -52,20 +49,13 @@ export class Register {
       !this.username ||
       !this.email ||
       !this.password ||
-      !this.confirmPassword
+      !this.confirmPassword ||
+      !this.firstName ||
+      !this.lastName
     ) {
       this.errorMessage = 'Complete all fields!';
       this.successMessage = '';
       return;
-    }
-
-    if (this.role === UserRole.PLAYER) {
-      if (!this.firstName || !this.lastName) {
-        this.errorMessage =
-          'First Name and Last Name are required for players!';
-        this.successMessage = '';
-        return;
-      }
     }
 
     if (this.password !== this.confirmPassword) {
@@ -92,15 +82,14 @@ export class Register {
         this.username,
         this.password,
         this.role,
-        this.firstName || undefined,
-        this.lastName || undefined,
-        this.rating || undefined,
+        this.firstName,
+        this.lastName,
+        this.rating || 1000
       );
 
       this.successMessage = 'Registration successful!';
       this.errorMessage = '';
 
-      // Redirect based on the registered role
       this.redirectBasedOnRole();
 
       this.clearForm();
@@ -113,13 +102,11 @@ export class Register {
   private redirectBasedOnRole() {
     const userRole = this.authService.getUserRole();
 
-    // Redirect based on role
     if (userRole === UserRole.PLAYER) {
       this.router.navigate(['/player-dashboard']);
     } else if (userRole === UserRole.ORGANISER) {
       this.router.navigate(['/home']);
     } else {
-      // Default fallback for ADMIN or unknown roles
       this.router.navigate(['/home']);
     }
   }
@@ -128,7 +115,7 @@ export class Register {
     this.username = '';
     this.firstName = '';
     this.lastName = '';
-    this.rating = null;
+    this.rating = 1000;
     this.email = '';
     this.password = '';
     this.confirmPassword = '';

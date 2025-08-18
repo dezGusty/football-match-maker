@@ -4,6 +4,7 @@ using FootballAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250818102918_ChangePlayerEmailToUserId")]
+    partial class ChangePlayerEmailToUserId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -351,50 +354,6 @@ namespace FootballAPI.Migrations
                     b.ToTable("PlayerOrganisers");
                 });
 
-            modelBuilder.Entity("FootballAPI.Models.ResetPasswordToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TokenHash")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("UsedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExpiresAt")
-                        .HasDatabaseName("IX_PasswordResetTokens_ExpiresAt");
-
-                    b.HasIndex("TokenHash")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("IX_PasswordResetTokens_UserId");
-
-                    b.HasIndex("TokenHash", "ExpiresAt", "UsedAt")
-                        .HasDatabaseName("IX_PasswordResetTokens_TokenHash_ExpiresAt_UsedAt");
-
-                    b.ToTable("ResetPasswordTokens");
-                });
-
             modelBuilder.Entity("FootballAPI.Models.Team", b =>
                 {
                     b.Property<int>("Id")
@@ -671,17 +630,6 @@ namespace FootballAPI.Migrations
                     b.Navigation("Organiser");
 
                     b.Navigation("Player");
-                });
-
-            modelBuilder.Entity("FootballAPI.Models.ResetPasswordToken", b =>
-                {
-                    b.HasOne("FootballAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.Match", b =>

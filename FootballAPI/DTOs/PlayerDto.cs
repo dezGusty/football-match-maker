@@ -10,9 +10,7 @@ namespace FootballAPI.DTOs
         [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
         public float Rating { get; set; }
 
-        public string Email { get; set; } = string.Empty;
         public bool IsAvailable { get; set; }
-        public bool IsPublic { get; set; }
         public bool IsEnabled { get; set; }
 
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
@@ -25,27 +23,20 @@ namespace FootballAPI.DTOs
         public int Errors { get; set; }
 
         public string? ProfileImageUrl { get; set; }
+        public string? UserEmail { get; set; }
+        public string? Username { get; set; }
     }
 
 
 
-    // public class CreatePlayerDto
-    // {
-    //     public string FirstName { get; set; } = string.Empty;
-    //     public string LastName { get; set; } = string.Empty;
-    //     public float Rating { get; set; }
-    //     public string Email { get; set; } = string.Empty;
+    public class CreatePlayerDto
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public float Rating { get; set; }
+        public string Email { get; set; } = string.Empty; // Still need email to create user
 
-    //     [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
-    //     public int Speed { get; set; } = 2;
-
-    //     [Range(1, 3, ErrorMessage = "Stamina must be between 1 (Low) and 3 (High)")]
-    //     public int Stamina { get; set; } = 2;
-
-    //     [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
-    //     public int Errors { get; set; } = 2;
-
-    // }
+    }
 
     public class UpdatePlayerDto
     {
@@ -54,7 +45,6 @@ namespace FootballAPI.DTOs
         public float Rating { get; set; }
         public bool IsAvailable { get; set; }
         public bool IsEnabled { get; set; }
-        public bool IsPublic { get; set; }
 
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
         public int Speed { get; set; }

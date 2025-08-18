@@ -28,6 +28,7 @@ builder.Services.AddScoped<IPlayerMatchHistoryRepository, PlayerMatchHistoryRepo
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IResetPasswordTokenRepository, ResetPasswordTokenRepository>();
 
+builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
 
 // Service Registration
 builder.Services.AddScoped<IPlayerService, PlayerService>();
@@ -40,6 +41,7 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IResetPasswordService, ResetPasswordService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
 
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();
@@ -57,7 +59,7 @@ builder.Services.AddCors(options =>
 
     options.AddPolicy("AllowAngularApp", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") // Angular dev server
+        policy.WithOrigins("http://localhost:4200")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

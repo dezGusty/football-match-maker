@@ -68,7 +68,7 @@ export class PlayerAccountComponent {
       if (this.user?.email) {
         const players = await this.playerService.getPlayers();
         this.player =
-          players.find((p: Player) => p.email === this.user?.email) || null;
+          players.find((p: Player) => p.userEmail === this.user?.email) || null;
       }
     } catch (error) {
       console.error('Failed to load player data:', error);

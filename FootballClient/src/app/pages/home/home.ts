@@ -7,11 +7,18 @@ import { Player } from '../../models/player.interface';
 import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
 import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
+import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [Header, FormsModule, CommonModule, PlayerStatsComponent],
+  imports: [
+    Header,
+    FormsModule,
+    CommonModule,
+    PlayerStatsComponent,
+    FriendRequestsComponent,
+  ],
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
 })

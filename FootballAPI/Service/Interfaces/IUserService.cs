@@ -10,7 +10,7 @@ namespace FootballAPI.Service
         Task<UserDto> GetUserByUsernameAsync(string username);
         Task<UserDto?> GetUserByEmailAsync(string email);
         Task<UserDto> CreateUserAsync(CreateUserDto createUserDto);
-        Task<UserDto> CreatePlayerUserAsync(CreatePlayerUserDto dto);
+        Task<UserDto> CreatePlayerUserAsync(CreatePlayerUserDto dto, int? organizerId = null);
         Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updateUserDto);
         Task<bool> DeleteUserAsync(int id);
         Task<UserResponseDto> AuthenticateAsync(LoginDto loginDto);

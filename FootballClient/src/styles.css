@@ -1,9 +1,32 @@
-html,
-body {
-  margin: 0;
-  padding: 0;
+:root{
+  --bg: #0b0f14;
+  --surface: #11161d;
+  --card: #151c24;
+  --muted: #c9d1dc;
+  --text: #f2f4f6;
+  --primary: #7cf2d0;
+  --primary-600: #3ad7b2;
+  --primary-700: #22b297;
+  --success: #4ade80;
+  --danger: #ff6b6b;
+  --warning: #f7c948;
+  --ring: rgba(124, 242, 208, 0.25);
+  --gradient: radial-gradient(1200px 600px at 100% -10%, rgba(124,242,208,.12), rgba(58,215,178,.08) 30%, transparent 60%),
+  radial-gradient(900px 500px at -10% 110%, rgba(100,149,237,.10), transparent 60%);
+}
+@media (prefers-color-scheme: light){
+  :root{ --bg:#f6f8fb; --surface:#fff; --card:#ffffff; --text:#0b1220; --muted:#556070; --ring: rgba(34,178,151,.18);}
 }
 
-* {
-  outline: none;
+* { box-sizing: border-box; margin: 0}
+body { background: var(--bg);
+  color: var(--text);
 }
+
+.page{
+  padding: 24px clamp(16px, 3vw, 40px);
+  background: var(--gradient);
+  min-height: 100vh;
+}
+
+

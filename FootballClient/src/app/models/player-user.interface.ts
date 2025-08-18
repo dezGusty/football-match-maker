@@ -1,3 +1,5 @@
+import { UserRole } from './user-role.enum';
+
 export interface PlayerUser {
   email: string;
   username: string;
@@ -5,4 +7,5 @@ export interface PlayerUser {
   firstName: string;
   lastName: string;
   rating: number;
+  role: UserRole;
 }

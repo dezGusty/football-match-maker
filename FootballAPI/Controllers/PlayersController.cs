@@ -44,6 +44,13 @@ namespace FootballAPI.Controllers
             return Ok(players);
         }
 
+        [HttpGet("available/organiser/{organiserId}")]
+        public async Task<ActionResult<IEnumerable<PlayerDto>>> GetAvailablePlayersByOrganiser(int organiserId)
+        {
+            var players = await _playerService.GetAvailablePlayersByOrganiserAsync(organiserId);
+            return Ok(players);
+        }
+
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<PlayerDto>>> SearchPlayers([FromQuery] string searchTerm)
         {
@@ -236,40 +243,6 @@ namespace FootballAPI.Controllers
             catch
             {
                 return BadRequest("A player cannot create another player.");
-            }
-        }
-
-        [HttpPatch("{id}/set-public")]
-        public async Task<ActionResult> SetPlayerPublic(int id)
-        {
-            try
-            {
-                var result = await _playerService.SetPlayerPublicAsync(id);
-                if (!result)
-                    return NotFound($"Player with ID {id} not found or is disabled.");
-
-                return Ok(new { message = "Player set as public successfully." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error setting player public: {ex.Message}");
-            }
-        }
-
-        [HttpPatch("{id}/set-private")]
-        public async Task<ActionResult> SetPlayerPrivate(int id)
-        {
-            try
-            {
-                var result = await _playerService.SetPlayerPrivateAsync(id);
-                if (!result)
-                    return NotFound($"Player with ID {id} not found or is disabled.");
-
-                return Ok(new { message = "Player set as private successfully." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error setting player private: {ex.Message}");
             }
         }
 

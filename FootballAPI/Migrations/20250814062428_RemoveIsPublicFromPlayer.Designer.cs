@@ -4,6 +4,7 @@ using FootballAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250814062428_RemoveIsPublicFromPlayer")]
+    partial class RemoveIsPublicFromPlayer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,39 +24,6 @@ namespace FootballAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("FootballAPI.Models.FriendRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ReceiverId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ResponsedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SenderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId", "ReceiverId")
-                        .IsUnique();
-
-                    b.ToTable("FriendRequests");
-                });
 
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
                 {
@@ -97,6 +67,11 @@ namespace FootballAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<int>("Errors")
                         .HasColumnType("int");
 
@@ -129,12 +104,9 @@ namespace FootballAPI.Migrations
                     b.Property<int>("Stamina")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Email");
 
                     b.HasIndex("FirstName", "LastName");
 
@@ -144,6 +116,7 @@ namespace FootballAPI.Migrations
                         new
                         {
                             Id = 1,
+                            Email = "ion.popescu@gmail.com",
                             Errors = 2,
                             FirstName = "Ion",
                             IsAvailable = true,
@@ -151,12 +124,12 @@ namespace FootballAPI.Migrations
                             LastName = "Popescu",
                             Rating = 8.5,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 1
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 2,
+                            Email = "marius.ionescu@gmail.com",
                             Errors = 2,
                             FirstName = "Marius",
                             IsAvailable = true,
@@ -164,12 +137,12 @@ namespace FootballAPI.Migrations
                             LastName = "Ionescu",
                             Rating = 7.8000001907348633,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 2
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 3,
+                            Email = "alex.georgescu@gmail.com",
                             Errors = 2,
                             FirstName = "Alex",
                             IsAvailable = true,
@@ -177,12 +150,12 @@ namespace FootballAPI.Migrations
                             LastName = "Georgescu",
                             Rating = 7.1999998092651367,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 5
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 4,
+                            Email = "razvan.moldovan@gmail.com",
                             Errors = 2,
                             FirstName = "Razvan",
                             IsAvailable = true,
@@ -190,12 +163,12 @@ namespace FootballAPI.Migrations
                             LastName = "Moldovan",
                             Rating = 8.1000003814697266,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 6
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 5,
+                            Email = "cristian.stancu@gmail.com",
                             Errors = 2,
                             FirstName = "Cristian",
                             IsAvailable = true,
@@ -203,12 +176,12 @@ namespace FootballAPI.Migrations
                             LastName = "Stancu",
                             Rating = 6.9000000953674316,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 7
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 6,
+                            Email = "andrei.vasilescu@gmail.com",
                             Errors = 2,
                             FirstName = "Andrei",
                             IsAvailable = true,
@@ -216,12 +189,12 @@ namespace FootballAPI.Migrations
                             LastName = "Vasilescu",
                             Rating = 7.6999998092651367,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 8
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 7,
+                            Email = "florin.dumitru@gmail.com",
                             Errors = 2,
                             FirstName = "Florin",
                             IsAvailable = true,
@@ -229,12 +202,12 @@ namespace FootballAPI.Migrations
                             LastName = "Dumitru",
                             Rating = 8.3000001907348633,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 9
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 8,
+                            Email = "gabriel.ciobanu@gmail.com",
                             Errors = 2,
                             FirstName = "Gabriel",
                             IsAvailable = true,
@@ -242,12 +215,12 @@ namespace FootballAPI.Migrations
                             LastName = "Ciobanu",
                             Rating = 7.4000000953674316,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 10
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 9,
+                            Email = "lucian.matei@gmail.com",
                             Errors = 2,
                             FirstName = "Lucian",
                             IsAvailable = true,
@@ -255,12 +228,12 @@ namespace FootballAPI.Migrations
                             LastName = "Matei",
                             Rating = 6.8000001907348633,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 11
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 10,
+                            Email = "daniel.radu@gmail.com",
                             Errors = 2,
                             FirstName = "Daniel",
                             IsAvailable = true,
@@ -268,12 +241,12 @@ namespace FootballAPI.Migrations
                             LastName = "Radu",
                             Rating = 7.9000000953674316,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 12
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 11,
+                            Email = "mihai.popa@gmail.com",
                             Errors = 2,
                             FirstName = "Mihai",
                             IsAvailable = true,
@@ -281,12 +254,12 @@ namespace FootballAPI.Migrations
                             LastName = "Popa",
                             Rating = 8.0,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 13
+                            Stamina = 2
                         },
                         new
                         {
                             Id = 12,
+                            Email = "stefan.nicolae@gmail.com",
                             Errors = 2,
                             FirstName = "Stefan",
                             IsAvailable = true,
@@ -294,8 +267,7 @@ namespace FootballAPI.Migrations
                             LastName = "Nicolae",
                             Rating = 7.5999999046325684,
                             Speed = 2,
-                            Stamina = 2,
-                            UserId = 14
+                            Stamina = 2
                         });
                 });
 
@@ -341,58 +313,11 @@ namespace FootballAPI.Migrations
                     b.Property<int>("PlayerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("OrganiserId", "PlayerId");
 
                     b.HasIndex("PlayerId");
 
                     b.ToTable("PlayerOrganisers");
-                });
-
-            modelBuilder.Entity("FootballAPI.Models.ResetPasswordToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TokenHash")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("UsedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExpiresAt")
-                        .HasDatabaseName("IX_PasswordResetTokens_ExpiresAt");
-
-                    b.HasIndex("TokenHash")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("IX_PasswordResetTokens_UserId");
-
-                    b.HasIndex("TokenHash", "ExpiresAt", "UsedAt")
-                        .HasDatabaseName("IX_PasswordResetTokens_TokenHash_ExpiresAt_UsedAt");
-
-                    b.ToTable("ResetPasswordTokens");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.Team", b =>
@@ -578,25 +503,6 @@ namespace FootballAPI.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FootballAPI.Models.FriendRequest", b =>
-                {
-                    b.HasOne("FootballAPI.Models.User", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("FootballAPI.Models.User", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
-                });
-
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
                 {
                     b.HasOne("FootballAPI.Models.Team", "TeamA")
@@ -620,7 +526,8 @@ namespace FootballAPI.Migrations
                 {
                     b.HasOne("FootballAPI.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("Email")
+                        .HasPrincipalKey("Email")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -671,17 +578,6 @@ namespace FootballAPI.Migrations
                     b.Navigation("Organiser");
 
                     b.Navigation("Player");
-                });
-
-            modelBuilder.Entity("FootballAPI.Models.ResetPasswordToken", b =>
-                {
-                    b.HasOne("FootballAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.Match", b =>

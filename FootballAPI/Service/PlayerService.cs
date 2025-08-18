@@ -43,8 +43,66 @@ namespace FootballAPI.Service
             return players.Select(MapToDto);
         }
 
+        public async Task<IEnumerable<PlayerDto>> GetAvailablePlayersByOrganiserAsync(int organiserId)
+        {
+            var organiserPlayers = await _userRepository.GetPlayersByOrganiserAsync(organiserId);
+            var availablePlayers = organiserPlayers.Where(p => p.IsAvailable && p.IsEnabled);
+            return availablePlayers.Select(MapToDto);
+        }
+
 
        
+        public async Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto dto)
+        {
+            var emailService = new EmailService();
+            var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
+            User user;
+
+            if (existingUser == null)
+            {
+                var password = _passwordGeneratorService.Generate();
+                user = new User
+                {
+                    Email = dto.Email,
+                    Username = dto.FirstName + dto.LastName,
+                    Password = password,
+                    Role = UserRole.PLAYER
+                };
+                user = await _userRepository.CreateAsync(user);
+                await emailService.SendNewPasswordPlayerEmailAsync(
+                    user.Email,
+                    user.Username,
+                    password
+                );
+            }
+            else
+            {
+                user = existingUser;
+            }
+
+            // Check if player already exists for this user
+            var existingPlayer = (await _playerRepository.GetAllAsync())
+                .FirstOrDefault(p => p.UserId == user.Id);
+            if (existingPlayer != null)
+                throw new InvalidOperationException("Player with this user already exists.");
+
+            var player = new Player
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Rating = dto.Rating,
+                UserId = user.Id,
+                IsAvailable = false,
+                IsEnabled = true,
+                Speed = dto.Speed,
+                Stamina = dto.Stamina,
+                Errors = dto.Errors
+            };
+            var createdPlayer = await _playerRepository.CreateAsync(player);
+
+            return MapToDto(createdPlayer);
+        }
+
 
         public async Task<PlayerDto?> UpdatePlayerAsync(int id, UpdatePlayerDto updatePlayerDto)
         {
@@ -56,7 +114,6 @@ namespace FootballAPI.Service
             existingPlayer.LastName = updatePlayerDto.LastName;
             existingPlayer.Rating = updatePlayerDto.Rating;
             existingPlayer.IsAvailable = updatePlayerDto.IsAvailable;
-            existingPlayer.IsPublic = updatePlayerDto.IsPublic;
             existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
             existingPlayer.Speed = updatePlayerDto.Speed;
             existingPlayer.Stamina = updatePlayerDto.Stamina;
@@ -196,9 +253,9 @@ namespace FootballAPI.Service
                     FirstName = player.FirstName,
                     LastName = player.LastName,
                     Rating = 0.0f,
-                    Email = "",
+                    UserEmail = player.User?.Email ?? "",
+                    Username = player.User?.Username ?? "",
                     IsAvailable = false,
-                    IsPublic = player.IsPublic,
                     IsEnabled = false,
                     Speed = 1,
                     Stamina = 1,
@@ -213,9 +270,9 @@ namespace FootballAPI.Service
                 LastName = player.LastName,
                 Rating = player.Rating,
                 IsAvailable = player.IsAvailable,
-                IsPublic = player.IsPublic,
                 IsEnabled = true,
-                Email = player.Email,
+                UserEmail = player.User?.Email ?? "",
+                Username = player.User?.Username ?? "",
                 Speed = player.Speed,
                 Stamina = player.Stamina,
                 Errors = player.Errors,
@@ -280,40 +337,25 @@ namespace FootballAPI.Service
             await _playerRepository.AddPlayerOrganiserRelationAsync(relation);
         }
 
-        public async Task<bool> SetPlayerPublicAsync(int playerId)
-        {
-            var player = await _playerRepository.GetByIdAsync(playerId);
-            if (player == null || !player.IsEnabled)
-                return false;
-
-            player.IsPublic = true;
-            await _playerRepository.UpdateAsync(player);
-            return true;
-        }
-
-        public async Task<bool> SetPlayerPrivateAsync(int playerId)
-        {
-            var player = await _playerRepository.GetByIdAsync(playerId);
-            if (player == null || !player.IsEnabled)
-                return false;
-
-            player.IsPublic = false;
-            await _playerRepository.UpdateAsync(player);
-            return true;
-        }
-
         public async Task<string> UpdatePlayerProfileImageAsync(int playerId, IFormFile imageFile)
         {
             var player = await _playerRepository.GetByIdAsync(playerId);
             if (player == null || !player.IsEnabled)
                 throw new ArgumentException("Player not found or not enabled");
 
+            // Load User information if needed
+            if (player.User == null)
+            {
+                var user = await _userRepository.GetByIdAsync(player.UserId);
+                player.User = user;
+            }
+
             if (!string.IsNullOrEmpty(player.ProfileImagePath))
             {
                 await _fileService.DeleteProfileImageAsync(player.ProfileImagePath);
             }
 
-            var imagePath = await _fileService.SaveProfileImageAsync(imageFile, player.Email);
+            var imagePath = await _fileService.SaveProfileImageAsync(imageFile, player.User.Email);
 
             player.ProfileImagePath = imagePath;
             await _playerRepository.UpdateAsync(player);
