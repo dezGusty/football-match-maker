@@ -2,8 +2,8 @@
 .back-btn {
   margin: 12px 0 8px 0;
   padding: 10px 20px;
-  background: #6a866e;
-  color: white;
+  background: var(--primary-700);
+  color: var(--text);
   border: none;
   border-radius: 8px;
   font-size: 14px;
@@ -12,12 +12,13 @@
   transition:
     background 0.2s,
     transform 0.1s;
-  box-shadow: 0 2px 8px rgba(106, 134, 110, 0.2);
+  box-shadow: 0 2px 8px var(--primary-700);
   width: 200px;
 }
 
 .back-btn:hover {
-  background: #55705a;
+  background: var(--primary-600);
+  box-shadow: 0 2px 8px var(--primary-600);
   transform: translateY(-1px);
 }
 
@@ -28,7 +29,7 @@
   justify-content: center;
   height: calc(100vh - 80px);
   /* Adjust for header height */
-  background: linear-gradient(120deg, #e5e5e5 0%, #f8f9fa 100%);
+  background: var(--gradient);
   padding: 0;
   gap: 0;
 }
@@ -39,7 +40,7 @@
   align-items: center;
   justify-content: flex-start;
   min-width: 340px;
-  background: #b5c7b8;
+  background: transparent;
   height: calc(100vh - 80px);
   /* Match the container height */
   padding-top: 64px;
@@ -49,12 +50,12 @@
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background: #6a866e;
+  background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 140px;
-  color: #fff;
+  color: var(--text);
   box-shadow: 0 4px 24px rgba(106, 134, 110, 0.13);
   margin-bottom: 0;
   position: relative;
@@ -78,8 +79,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
+  background: var(--bg);
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,7 +95,7 @@
 
 .upload-status {
   margin-top: 10px;
-  color: #6a866e;
+  color: var(--primary-600);
   font-weight: 600;
   font-size: 14px;
 }
@@ -137,8 +138,9 @@
   justify-content: flex-start;
   align-items: flex-start;
   padding: 64px 48px;
-  background: #fff;
+  background: transparent;
   height: calc(100vh - 80px);
+  border-left: 2px dashed var(--primary-700);
   /* Match the container height */
   overflow-y: auto;
 }
@@ -146,12 +148,12 @@
 .account-username {
   font-size: 2.1rem;
   font-weight: 700;
-  color: #454545;
+  color: var(--text);
   margin-bottom: 18px;
 }
 
 .account-role-badge {
-  background: #6a866e;
+  background: var(--primary-600);
   color: #fff;
   padding: 8px 28px;
   border-radius: 14px;
@@ -160,7 +162,7 @@
   letter-spacing: 1px;
   text-transform: uppercase;
   margin-bottom: 36px;
-  box-shadow: 0 1px 4px rgba(106, 134, 110, 0.08);
+  box-shadow: 0 1px 4px var(--primary-700);
   display: inline-block;
 }
 
@@ -174,31 +176,32 @@
 
 .account-password-form label {
   font-size: 1rem;
-  color: #6a866e;
+  color: var(--text);
   font-weight: 500;
   margin-bottom: 2px;
 }
 
 .account-password-form input {
   padding: 10px 12px;
-  border: 2px solid #b5c7b8;
+  border: 2px solid var(--primary-700);
   border-radius: 6px;
   font-size: 15px;
   font-family: inherit;
   outline: none;
   transition: border-color 0.2s;
-  background: #f8f9fa;
+  background: var(--surface);
 }
 
 .account-password-form input:focus {
-  border-color: #6a866e;
+  border-color:var(--primary-600);
+  filter: drop-shadow(0px 2px 8px var(--primary-700));
 }
 
 .account-password-form button {
   margin-top: 12px;
   padding: 12px 0;
-  background: #6a866e;
-  color: #fff;
+  background: var(--primary-700);
+  color: var(--text);
   border: none;
   border-radius: 6px;
   font-size: 1.08rem;
@@ -208,7 +211,10 @@
 }
 
 .account-password-form button:hover {
-  background: #3e5c43;
+  background: var(--primary-600);
+  filter: drop-shadow(0px 2px 8px var(--primary-700));
+  transition: background 0.2s;
+  transform: scale(102%);
 }
 
 .user-profile-image {
@@ -221,8 +227,8 @@
 .change-image-btn {
   margin: 18px 0 8px 0;
   padding: 8px 18px;
-  background: #6a866e;
-  color: #fff;
+  background: var(--primary-700);
+  color: var(--text);
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -231,7 +237,7 @@
 }
 
 .change-image-btn:hover {
-  background: #55705a;
+  background: var(--primary-700);
 }
 
 .profile-image-selector {
@@ -263,35 +269,6 @@
   justify-content: center;
 }
 
-.image-option.selected,
-.image-option:hover {
-  border: 2px solid #6a866e;
-  background: #e5ede7;
-}
-
-.image-option img {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.save-image-btn {
-  margin-top: 8px;
-  padding: 8px 22px;
-  background: #6a866e;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.save-image-btn:disabled {
-  background: #b5c7b8;
-  cursor: not-allowed;
-}
 
 .settings-toggles {
   display: flex;
@@ -304,9 +281,9 @@
 .toggle-btn {
   flex: 1;
   padding: 10px 16px;
-  background: #f8f9fa;
-  color: #6a866e;
-  border: 2px solid #b5c7b8;
+  background: var(--primary-700);
+  color: var(--text);
+  border: 2px solid var(--primary-700);
   border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 500;
@@ -316,15 +293,17 @@
 }
 
 .toggle-btn:hover {
-  background: #e5ede7;
-  border-color: #6a866e;
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  filter: drop-shadow(0px 2px 8px var(--primary-600));
 }
 
 .toggle-btn.active {
-  background: #6a866e;
-  color: #fff;
-  border-color: #3e5c43;
+  background: var(--primary-600);
+  color: var(--text);
+  border-color: var(--primary-600);
   box-shadow: 0 2px 8px rgba(106, 134, 110, 0.15);
+  filter: drop-shadow(0px 2px 8px var(--primary-600));
 }
 
 .loading-message {
