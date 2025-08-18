@@ -95,16 +95,6 @@ export class Home {
       alert('A player cannot add another player.');
     }
   }
-  selectedFileName: string | null = null;
-
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input?.files && input.files.length > 0) {
-      this.selectedFileName = input.files[0].name;
-    } else {
-      this.selectedFileName = null;
-    }
-  }
 
   async addPlayer() {
     if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10000) {
