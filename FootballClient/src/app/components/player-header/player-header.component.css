@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #a8c3ab;
+  background: var(--bg);
   height: 80px;
   padding: 0 18px;
   position: sticky;
@@ -40,7 +40,7 @@
 .app-title {
   font-size: 24px;
   font-weight: 700;
-  color: #2d4a32;
+  color: var(--text);
   margin: 0;
   text-align: center;
   cursor: pointer;
@@ -58,7 +58,7 @@
 }
 
 .header-profile:hover {
-  background: #e5e5e5;
+  background: var(--card);
   border-radius: 18px;
 }
 
@@ -71,7 +71,7 @@
 .profile-username {
   font-size: 1.08rem;
   font-weight: 600;
-  color: #454545;
+  color: var(--muted);
   letter-spacing: 0.5px;
   line-height: 1.2;
 }
@@ -79,13 +79,13 @@
 .profile-playername {
   font-size: 0.85rem;
   font-weight: 400;
-  color: #6a866e;
+  color: var(--muted);
   line-height: 1.2;
 }
 
 .profile-icon {
   font-size: 2rem;
-  color: #6a866e;
+  color: var(--muted);
 }
 
 .header-profile-image {
@@ -94,7 +94,7 @@
   border-radius: 50%;
   object-fit: cover;
   margin-right: 8px;
-  border: 2px solid #6a866e;
+  border: 2px solid var(--primary);
   background: #fff;
 }
 
@@ -142,7 +142,7 @@
   position: fixed;
   top: 80px;
   right: -280px;
-  background-color: #a4c4a8;
+  background-color: var(--surface);
   width: 280px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -172,10 +172,11 @@
 .menu button {
   width: 100%;
   padding: 1rem 1.2rem;
-  background-color: rgba(0, 0, 0, 0.1);
-  border: none;
+  background-color: var(--card);
+  border: 1px solid var(--bg);
+  filter: drop-shadow(0px 1px 2px var(--card));
   border-radius: 8px;
-  color: #454545;
+  color: var(--text);
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -190,15 +191,9 @@
 
 .menu button.logout-btn {
   color: #d32f2f;
-  margin-top: 1rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
-  padding-top: 1.5rem;
 }
 
-.menu button.logout-btn:hover {
-  background-color: rgba(211, 47, 47, 0.1);
-  color: #b71c1c;
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {
