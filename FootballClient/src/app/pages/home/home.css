@@ -53,6 +53,14 @@
   outline: none;
   transition: box-shadow .2s ease, border-color .2s ease, transform .06s ease;
 }
+.stats-controls{
+  margin-top: 20px;
+}
+.stats-controls h4{
+  font-size: 18px;
+  align-content: center;
+  justify-self: center;
+}
 .stat-control-group{
   margin-top: 10px;
   display: flex;
