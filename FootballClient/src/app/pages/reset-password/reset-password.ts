@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -16,11 +21,7 @@ interface ApiResponse {
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CommonModule,
-    RouterModule // pentru routerLink
-  ],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule],
   templateUrl: './reset-password.html',
   styleUrls: ['./reset-password.css'],
 })
@@ -32,7 +33,7 @@ export class SetPasswordComponent implements OnInit {
   showPassword = false;
   token = '';
 
-  private readonly API_URL = 'http://localhost:5145/api/Auth'; 
+  private readonly API_URL = 'http://localhost:5145/api/Auth';
 
   constructor(
     private fb: FormBuilder,
@@ -44,12 +45,11 @@ export class SetPasswordComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Obține token-ul din URL parameters
     this.route.queryParams.subscribe((params) => {
       this.token = params['token'] || '';
       console.log(this.token);
       if (!this.token) {
-        this.errorMessage = 'Token invalid sau lipsă din URL.';
+        this.errorMessage = 'Invalid or missing token in URL.';
       }
     });
   }
@@ -129,10 +129,10 @@ export class SetPasswordComponent implements OnInit {
   getPasswordStrengthText(): string {
     const strength = this.getPasswordStrength();
     const texts = {
-      weak: 'Slabă',
-      fair: 'Acceptabilă',
-      good: 'Bună',
-      strong: 'Puternică',
+      weak: 'Weak',
+      fair: 'Fair',
+      good: 'Good',
+      strong: 'Strong',
     };
     return texts[strength as keyof typeof texts] || '';
   }
@@ -158,10 +158,10 @@ export class SetPasswordComponent implements OnInit {
         .toPromise();
 
       this.successMessage =
-        response?.message || 'Parola a fost setată cu succes!';
+        response?.message || 'Password has been successfully set!';
       this.setPasswordForm.reset();
 
-      // Opțional: redirecționează la login după 3 secunde
+      // Optionally redirect to login after 3 seconds
       setTimeout(() => {
         this.router.navigate(['/login']);
       }, 3000);
@@ -177,18 +177,16 @@ export class SetPasswordComponent implements OnInit {
       if (error.error?.message) {
         this.errorMessage = error.error.message;
       } else if (error.status === 400) {
-        this.errorMessage = 'Date invalide. Verifică informațiile introduse.';
+        this.errorMessage =
+          'Invalid data. Please check the entered information.';
       } else if (error.status === 500) {
-        this.errorMessage =
-          'Eroare server. Te rugăm să încerci din nou mai târziu.';
+        this.errorMessage = 'Server error. Please try again later.';
       } else {
-        this.errorMessage =
-          `A apărut o eroare neașteptată. Te rugăm să încerci din nou. Status error:  ${error.status},   ${error} ` ;
-
+        this.errorMessage = `Unexpected error. Please try again. Status: ${error.status}, ${error}`;
       }
     } else {
       this.errorMessage =
-        'Eroare de conectare. Verifică conexiunea la internet.';
+        'Connection error. Please check your internet connection.';
     }
 
     console.error('Set password error:', error);
