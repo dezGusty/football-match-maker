@@ -5,17 +5,16 @@
 .login-wrapper {
   display: flex;
   height: 100vh;
-  font-family: "Poppins", sans-serif;
 }
 
 /* Left Football Theme Section */
-.login-left {
+/* .login-left {
   flex: 1;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-}
+} */
 
 .login-left .overlay {
   position: absolute;
@@ -260,8 +259,6 @@
   opacity: 1;
 }
 
-
-
 .radio-group {
   display: flex;
   align-content: center;
@@ -284,7 +281,7 @@
 .player-extra-fields {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(255,255,255,0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .player-fields-row {

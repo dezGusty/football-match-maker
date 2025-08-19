@@ -3,7 +3,6 @@
 .login-wrapper {
   display: flex;
   height: 100vh;
-  font-family: "Poppins", sans-serif;
   justify-content: center;
   top: 40px;
   left: 50%;
@@ -87,7 +86,7 @@
 .login-form label {
   margin-bottom: 5px;
   display: block;
-  font-size: 14px;
+  font-size: 17px;
 }
 
 .login-form input {
@@ -128,7 +127,7 @@
 .register-prompt {
   text-align: center;
   margin-top: 12px;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .register-prompt a {
@@ -143,7 +142,7 @@
   padding: 10px;
   border-radius: 6px;
   text-align: center;
-  font-size: 13px;
+  font-size: 15px;
   margin-bottom: 15px;
 }
 

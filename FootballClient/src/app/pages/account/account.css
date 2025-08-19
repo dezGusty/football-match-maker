@@ -83,7 +83,6 @@
   border: 2px solid #b5c7b8;
   border-radius: 6px;
   font-size: 15px;
-  font-family: inherit;
   outline: none;
   transition: border-color 0.2s;
   background: var(--card);
@@ -203,7 +202,6 @@
   border: 2px solid var(--surface);
   border-radius: 6px;
   font-size: 15px;
-  font-family: inherit;
   outline: none;
   transition: border-color 0.2s;
   background: var(--card);
@@ -240,10 +238,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    background 0.2s,
-    color 0.2s,
-    border-color 0.2s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
   box-shadow: 0 2px 8px rgba(106, 134, 110, 0.08);
 }
 
@@ -385,7 +380,6 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-
 }
 
 .future-match-item {
@@ -396,9 +390,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition:
-    border-color 0.2s,
-    background 0.2s;
+  transition: border-color 0.2s, background 0.2s;
 }
 
 .future-match-item:hover {

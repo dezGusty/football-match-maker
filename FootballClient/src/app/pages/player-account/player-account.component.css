@@ -9,9 +9,7 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    background 0.2s,
-    transform 0.1s;
+  transition: background 0.2s, transform 0.1s;
   box-shadow: 0 2px 8px var(--primary-700);
   width: 200px;
 }
@@ -186,14 +184,13 @@
   border: 2px solid var(--primary-700);
   border-radius: 6px;
   font-size: 15px;
-  font-family: inherit;
   outline: none;
   transition: border-color 0.2s;
   background: var(--surface);
 }
 
 .account-password-form input:focus {
-  border-color:var(--primary-600);
+  border-color: var(--primary-600);
   filter: drop-shadow(0px 2px 8px var(--primary-700));
 }
 
@@ -268,7 +265,6 @@
   align-items: center;
   justify-content: center;
 }
-
 
 .settings-toggles {
   display: flex;
