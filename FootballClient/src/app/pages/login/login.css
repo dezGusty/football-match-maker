@@ -67,9 +67,9 @@
 
 .login-form {
   width: 100%;
-  max-width: 390px;
+  max-width: 370px;
   background: var(--gradient);
-  padding: 40px;
+  padding: 20px;
   border-radius: 16px;
   box-shadow: 0 10px 50px rgba(3, 191, 181, 0.75);
   backdrop-filter: blur(12px);
@@ -81,6 +81,7 @@
   text-align: center;
   margin-bottom: 25px;
   font-weight: 730;
+  margin-top: 10px;
 }
 
 .login-form label {
@@ -126,12 +127,12 @@
 
 .register-prompt {
   text-align: center;
-  margin-top: 12px;
+  margin-top: 10px;
   font-size: 15px;
 }
 
 .register-prompt a {
-  color: #00ff88;
+  color: var(--primary-600);
   cursor: pointer;
   text-decoration: underline;
 }
@@ -142,7 +143,7 @@
   padding: 10px;
   border-radius: 6px;
   text-align: center;
-  font-size: 15px;
+  font-size: 16px;
   margin-bottom: 15px;
 }
 
