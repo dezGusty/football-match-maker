@@ -311,14 +311,11 @@ export class PlayerService {
   }
 
   async addPlayerOrganiserRelation(
-    playerId: number,
-    organiserId: number
+    playerId: number
   ): Promise<void> {
     const body = { playerId };
     const headers = this.getAuthHeaders();
 
-    console.log('Headers being sent:', headers);
-    console.log('Token from authService:', this.authService.getToken());
 
     const response = await fetch(`${this.url}/player-organiser`, {
       method: 'POST',
