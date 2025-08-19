@@ -147,14 +147,41 @@
 }
 
 .modal-content {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.6);
   padding: 25px;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(255, 0, 0, 0.25);
+  box-shadow: 0 10px 50px rgba(3, 191, 181, 0.75);
   color: white;
   width: 90%;
   max-width: 350px;
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.5s ease;
+}
+
+.modal-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.modal-content p {
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  opacity: 0.9;
+}
+
+.modal-content input {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s;
 }
 
 .modal-buttons {
@@ -177,7 +204,7 @@
 }
 
 .modal-buttons button:not(.cancel) {
-  background: #00b33c;
+  background: rgba(3, 191, 181, 0.75);
   color: white;
 }
 
@@ -258,4 +285,3 @@
 .slideshow img.active {
   opacity: 1;
 }
-
