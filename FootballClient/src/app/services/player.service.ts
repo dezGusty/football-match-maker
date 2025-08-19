@@ -310,12 +310,9 @@ export class PlayerService {
     }
   }
 
-  async addPlayerOrganiserRelation(
-    playerId: number
-  ): Promise<void> {
+  async addPlayerOrganiserRelation(playerId: number): Promise<void> {
     const body = { playerId };
     const headers = this.getAuthHeaders();
-
 
     const response = await fetch(`${this.url}/player-organiser`, {
       method: 'POST',

@@ -11,13 +11,7 @@ namespace FootballAPI.Utils
 
             if (string.IsNullOrEmpty(userIdClaim))
             {
-                if (headers.TryGetValue("UserId", out var userIdHeader))
-                {
-                    if (int.TryParse(userIdHeader.FirstOrDefault(), out var userId))
-                        return userId;
-                }
-
-                throw new UnauthorizedAccessException("User ID not found in token or header");
+                throw new UnauthorizedAccessException("User ID not found in token");
             }
 
             if (int.TryParse(userIdClaim, out var userIdFromClaim))

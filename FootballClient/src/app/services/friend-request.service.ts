@@ -16,11 +16,9 @@ export class FriendRequestService {
 
   private getAuthHeaders(): HeadersInit {
     const token = this.authService.getToken();
-    const userId = this.authService.getUserId();
     return {
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),
-      ...(userId && { UserId: userId.toString() }),
     };
   }
 
