@@ -4,16 +4,19 @@
   display: flex;
   height: 100vh;
   font-family: "Poppins", sans-serif;
+  justify-content: center;
+  top: 40px;
+  left: 50%;
 }
 
 /* Left Football Theme Section */
-.login-left {
+/* .login-left {
   flex: 1;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-}
+} */
 
 .login-left .overlay {
   position: absolute;
@@ -34,14 +37,36 @@
 .left-content h1 {
   font-size: 2.2rem;
   margin-bottom: 10px;
+  justify-content: center;
+  align-items: center;
 }
 
 .left-content p {
   font-size: 1.1rem;
   opacity: 0.9;
 }
+.page-title {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #fff;
+  z-index: 2;
+  animation: fadeIn 1.2s ease-out;
+}
 
-/* Right Login Form Section */
+.page-title h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.page-title p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
 .login-right {
   flex: 1;
   background: var(--gradient);
