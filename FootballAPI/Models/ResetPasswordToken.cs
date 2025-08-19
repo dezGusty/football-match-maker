@@ -13,10 +13,7 @@ namespace FootballAPI.Models
 
     [Required]
     [StringLength(255)]
-    public string TokenHash
-    {
-      get; set;
-    }
+    public string TokenHash { get; set; } = null!;
     [Required]
     public DateTime ExpiresAt { get; set; }
 
@@ -26,15 +23,15 @@ namespace FootballAPI.Models
     public DateTime CreatedAt { get; set; }
 
     [ForeignKey("UserId")]
-    public virtual User User { get; set; }
+    public virtual User User { get; set; } = null!;
 
     public bool IsValid()
     {
       return UsedAt == null && DateTime.UtcNow <= ExpiresAt;
     }
-     public void MarkAsUsed()
-        {
-            UsedAt = DateTime.UtcNow;
-        }
+    public void MarkAsUsed()
+    {
+      UsedAt = DateTime.UtcNow;
+    }
   }
 }

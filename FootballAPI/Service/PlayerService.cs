@@ -51,58 +51,7 @@ namespace FootballAPI.Service
         }
 
 
-       
-        public async Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto dto)
-        {
-            var emailService = new EmailService();
-            var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
-            User user;
-
-            if (existingUser == null)
-            {
-                var password = _passwordGeneratorService.Generate();
-                user = new User
-                {
-                    Email = dto.Email,
-                    Username = dto.FirstName + dto.LastName,
-                    Password = password,
-                    Role = UserRole.PLAYER
-                };
-                user = await _userRepository.CreateAsync(user);
-                await emailService.SendNewPasswordPlayerEmailAsync(
-                    user.Email,
-                    user.Username,
-                    password
-                );
-            }
-            else
-            {
-                user = existingUser;
-            }
-
-            // Check if player already exists for this user
-            var existingPlayer = (await _playerRepository.GetAllAsync())
-                .FirstOrDefault(p => p.UserId == user.Id);
-            if (existingPlayer != null)
-                throw new InvalidOperationException("Player with this user already exists.");
-
-            var player = new Player
-            {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Rating = dto.Rating,
-                UserId = user.Id,
-                IsAvailable = false,
-                IsEnabled = true,
-                Speed = dto.Speed,
-                Stamina = dto.Stamina,
-                Errors = dto.Errors
-            };
-            var createdPlayer = await _playerRepository.CreateAsync(player);
-
-            return MapToDto(createdPlayer);
-        }
-
+        
 
         public async Task<PlayerDto?> UpdatePlayerAsync(int id, UpdatePlayerDto updatePlayerDto)
         {
