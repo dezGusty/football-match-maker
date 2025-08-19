@@ -106,7 +106,7 @@ export class Home {
     try {
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
       await this.PlayerService.addPlayerOrganiserRelation(
-        addedPlayer.id,
+        addedPlayer.id!,
         this.authService.getUserId()!
       );
 
