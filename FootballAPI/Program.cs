@@ -52,10 +52,12 @@ try
     builder.Services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
     builder.Services.AddScoped<IFileService, FileService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<IResetPasswordTokenRepository, ResetPasswordTokenRepository>();
+    builder.Services.AddScoped<IResetPasswordService, ResetPasswordService>();
     builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
 
     // Email Service Registration
-    builder.Services.AddScoped<EmailService>();
+    builder.Services.AddScoped<IEmailService, EmailService>();
 
     // CORS Configuration - UPDATED FOR SWAGGER
     builder.Services.AddCors(options =>
