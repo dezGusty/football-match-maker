@@ -19,7 +19,6 @@
       </svg>
     </button>
 
-    <!-- Search FAB that expands into an input -->
     <div class="fab search-fab" [class.expanded]="searchTerm">
       <button
         class="fab"
@@ -235,12 +234,13 @@
           placeholder="Last Name"
           [(ngModel)]="newPlayer.lastName"
         />
+        <input
+          type="text"
+          placeholder="Username"
+          [(ngModel)]="newPlayer.username"
+        />
       </div>
-      <input
-        type="email"
-        placeholder="Email (optional)"
-        [(ngModel)]="newPlayer.email"
-      />
+      <input type="email" placeholder="Email" [(ngModel)]="newPlayer.email" />
       <input
         type="number"
         placeholder="Rating"

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Player } from '../models/player.interface';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,15 @@ export class PlayerService {
   private readonly MAX_RATING = 10000;
   private readonly MIN_RATING = 0;
 
-  constructor() {}
+  constructor(private authService: AuthService) {}
+
+  private getAuthHeaders(): HeadersInit {
+    const token = this.authService.getToken();
+    return {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+  }
 
   private validateRating(rating: number): void {
     if (rating < this.MIN_RATING || rating > this.MAX_RATING) {
@@ -43,14 +52,18 @@ export class PlayerService {
     lastName: string;
     email?: string;
     rating: number;
+    username: string;
   }): Promise<Player> {
     this.validateRating(player.rating);
 
-    const response = await fetch(this.url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(player),
-    });
+    const response = await fetch(
+      'http://localhost:5145/api/Auth/create-player-account',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(player),
+      }
+    );
 
     if (!response.ok) {
       throw new Error('Failed to add player');
@@ -298,19 +311,24 @@ export class PlayerService {
   }
 
   async addPlayerOrganiserRelation(
-    playerId: number,
-    organiserId: number
+    playerId: number
   ): Promise<void> {
-    const body = { playerId, organiserId };
+    const body = { playerId };
+    const headers = this.getAuthHeaders();
+
 
     const response = await fetch(`${this.url}/player-organiser`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(body),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to add player-organiser relation');
+      const errorText = await response.text();
+      console.error('Response error:', response.status, errorText);
+      throw new Error(
+        `Failed to add player-organiser relation: ${response.status} ${errorText}`
+      );
     }
   }
 }

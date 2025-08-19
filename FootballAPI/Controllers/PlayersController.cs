@@ -4,6 +4,7 @@ using FootballAPI.Service;
 using FootballAPI.Repository;
 using FootballAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using FootballAPI.Utils;
 
 namespace FootballAPI.Controllers
 {
@@ -61,20 +62,7 @@ namespace FootballAPI.Controllers
             return Ok(players);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<PlayerDto>> CreatePlayer(CreatePlayerDto createPlayerDto)
-        {
-            try
-            {
-                var player = await _playerService.CreatePlayerAsync(createPlayerDto);
-                return CreatedAtAction(nameof(GetPlayer), new { id = player.Id }, player);
-            }
-            catch (Exception ex)
-            {
-                var msg = ex.InnerException?.Message ?? ex.Message;
-                return BadRequest($"Error creating player: {msg}");
-            }
-        }
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult<PlayerDto>> UpdatePlayer(int id, UpdatePlayerDto updatePlayerDto)
@@ -243,6 +231,7 @@ namespace FootballAPI.Controllers
         }
 
         [HttpPost("player-organiser")]
+        [Authorize]
         public async Task<IActionResult> AddPlayerOrganiserRelation([FromBody] PlayerOrganiserDto dto)
         {
             if (dto == null)
@@ -250,8 +239,13 @@ namespace FootballAPI.Controllers
 
             try
             {
-                await _playerService.AddPlayerOrganiserRelationAsync(dto.PlayerId, dto.OrganiserId);
+                var organiserId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                await _playerService.AddPlayerOrganiserRelationAsync(dto.PlayerId, organiserId);
                 return Ok();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
             }
             catch
             {

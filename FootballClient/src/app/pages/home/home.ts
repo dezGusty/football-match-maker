@@ -76,25 +76,12 @@ export class Home {
     lastName: '',
     email: '',
     rating: 0,
+    username: '',
 
     speed: 2,
     stamina: 2,
     errors: 2,
   };
-
-  async addPlayerOrganiserRelation(
-    playerId: number,
-    organiserId: number | null = this.authService.getUserId()
-  ): Promise<void> {
-    const response = await fetch('http://localhost:5145/api/playerorganisers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerId, organiserId }),
-    });
-    if (!response.ok) {
-      alert('A player cannot add another player.');
-    }
-  }
 
   async addPlayer() {
     if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10000) {
@@ -106,7 +93,6 @@ export class Home {
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
       await this.PlayerService.addPlayerOrganiserRelation(
         addedPlayer.id!,
-        this.authService.getUserId()!
       );
 
       this.players.push(addedPlayer);
@@ -114,6 +100,7 @@ export class Home {
         firstName: '',
         lastName: '',
         email: '',
+        username: '',
         rating: 0,
         speed: 2,
         stamina: 2,
