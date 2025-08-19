@@ -83,20 +83,6 @@ export class Home {
     errors: 2,
   };
 
-  async addPlayerOrganiserRelation(
-    playerId: number,
-    organiserId: number | null = this.authService.getUserId()
-  ): Promise<void> {
-    const response = await fetch('http://localhost:5145/api/playerorganisers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerId, organiserId }),
-    });
-    if (!response.ok) {
-      alert('A player cannot add another player.');
-    }
-  }
-
   async addPlayer() {
     if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10000) {
       alert('Rating must be between 0 and 10000.');

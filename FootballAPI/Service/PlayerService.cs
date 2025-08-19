@@ -37,6 +37,12 @@ namespace FootballAPI.Service
             return player != null ? MapToDto(player) : null;
         }
 
+        public async Task<PlayerDto?> GetPlayerByUserIdAsync(int userId)
+        {
+            var player = await _playerRepository.GetByUserIdAsync(userId);
+            return player != null ? MapToDto(player) : null;
+        }
+
         public async Task<IEnumerable<PlayerDto>> GetAvailablePlayersAsync()
         {
             var players = await _playerRepository.GetAvailablePlayersAsync();
@@ -51,7 +57,7 @@ namespace FootballAPI.Service
         }
 
 
-        
+
 
         public async Task<PlayerDto?> UpdatePlayerAsync(int id, UpdatePlayerDto updatePlayerDto)
         {
@@ -292,7 +298,6 @@ namespace FootballAPI.Service
             if (player == null || !player.IsEnabled)
                 throw new ArgumentException("Player not found or not enabled");
 
-            // Load User information if needed
             if (player.User == null)
             {
                 var user = await _userRepository.GetByIdAsync(player.UserId);

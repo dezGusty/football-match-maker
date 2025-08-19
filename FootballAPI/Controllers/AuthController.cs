@@ -14,6 +14,7 @@ namespace FootballAPI.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
+        private readonly IPlayerService _playerService;
         private readonly IResetPasswordService _passwordResetService;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
@@ -22,6 +23,7 @@ namespace FootballAPI.Controllers
         public AuthController(
             IAuthService authService,
             IUserService userService,
+            IPlayerService playerService,
             IResetPasswordService passwordResetService,
             IEmailService emailService,
             IConfiguration configuration,
@@ -29,6 +31,7 @@ namespace FootballAPI.Controllers
         {
             _authService = authService;
             _userService = userService;
+            _playerService = playerService;
             _passwordResetService = passwordResetService;
             _emailService = emailService;
             _configuration = configuration;
@@ -137,6 +140,8 @@ namespace FootballAPI.Controllers
 
                 var createdUser = await _userService.CreateUserAsync(user);
 
+                var createdPlayer = await _playerService.GetPlayerByUserIdAsync(createdUser.Id);
+
                 var resetToken = await _passwordResetService.GeneratePasswordResetTokenAsync(createdUser.Id);
 
                 var frontendUrl = _configuration["Frontend:BaseUrl"];
@@ -151,7 +156,9 @@ namespace FootballAPI.Controllers
                 return Ok(new
                 {
                     message = "Player account created successfully. Password setup email sent.",
-                    userId = createdUser.Id
+                    id = createdPlayer?.Id,
+                    userId = createdUser.Id,
+
                 });
             }
             catch (InvalidOperationException ex)
