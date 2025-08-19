@@ -110,6 +110,7 @@
 
 .btn-login {
   padding: 12px;
+  margin-top: 8px;
   background: linear-gradient(to right, var(--primary-700), var(--primary-600));
   border: none;
   border-radius: 8px;
@@ -154,7 +155,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.82);
   display: flex;
   justify-content: center;
   align-items: center;

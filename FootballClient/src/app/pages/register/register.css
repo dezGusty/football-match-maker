@@ -263,7 +263,7 @@
   font-size: 17px;
   cursor: pointer;
   display: flex;
-  padding: 8px;
+  padding: 2px;
 }
 
 .radio-group input[type="radio"] {
