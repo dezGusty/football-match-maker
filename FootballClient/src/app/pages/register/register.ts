@@ -87,10 +87,12 @@ export class Register {
         this.rating || 1000
       );
 
-      this.successMessage = 'Registration successful!';
+      this.successMessage = 'Registration successful! Redirecting to login...';
       this.errorMessage = '';
 
-      this.redirectBasedOnRole();
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 1500);
 
       this.clearForm();
     } catch (error: any) {

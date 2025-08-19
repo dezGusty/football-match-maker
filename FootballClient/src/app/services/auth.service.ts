@@ -3,6 +3,7 @@ import { LoginRequest } from '../models/auth.interface';
 import { UserRole } from '../models/user-role.enum';
 import { HttpClient } from '@angular/common/http';
 import { PlayerUser } from '../models/player-user.interface'; // importă interfața
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class AuthService {
   errorMessage: string = '';
   email: string = '';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     this.LoadAuthState();
   }
 
@@ -100,18 +101,6 @@ export class AuthService {
           message = error.message || message;
         } catch (_) {}
         throw new Error(message);
-      }
-      const userData = await response.json();
-
-      this.isAuthenticated = true;
-      this.userId = userData.id;
-      this.userRole = userData.role;
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('userId', userData.id.toString());
-      localStorage.setItem('userRole', userData.role.toString());
-
-      if (userData.token) {
-        localStorage.setItem('authToken', userData.token);
       }
     } catch (error) {
       console.error('Register error:', error);
@@ -247,6 +236,7 @@ export class AuthService {
       console.error('Logout error:', error);
     } finally {
       this.clearAuthState();
+      this.router.navigate(['/login']);
     }
   }
 }
