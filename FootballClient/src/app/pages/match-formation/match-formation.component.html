@@ -36,7 +36,9 @@
           <div class="stars-container">
             <span
               *ngFor="
-                let star of getStarArray(team1Players[i]?.rating || 0);
+                let star of getStarArray(
+                  (team1Players[i] && team1Players[i].rating) || 0
+                );
                 let starIndex = index
               "
               class="star"
@@ -45,7 +47,10 @@
             ></span>
           </div>
           <div class="rating-number">
-            {{ team1Players[i]?.rating || 0 | number: "1.0-2" }}
+            {{
+              (team1Players[i] && team1Players[i].rating) || 0
+                | number : "1.0-2"
+            }}
           </div>
         </div>
       </div>
@@ -75,7 +80,9 @@
           <div class="stars-container">
             <span
               *ngFor="
-                let star of getStarArray(team2Players[i]?.rating || 0);
+                let star of getStarArray(
+                  (team2Players[i] && team2Players[i].rating) || 0
+                );
                 let starIndex = index
               "
               class="star"
@@ -84,7 +91,10 @@
             ></span>
           </div>
           <div class="rating-number">
-            {{ team2Players[i]?.rating || 0 | number: "1.0-2" }}
+            {{
+              (team2Players[i] && team2Players[i].rating) || 0
+                | number : "1.0-2"
+            }}
           </div>
         </div>
       </div>
@@ -124,8 +134,10 @@
                 <div class="manual-rating-container">
                   <div class="rating-display">
                     <span
-                      >{{ player.rating || 0 | number: "1.0-2" }} →
-                      {{ getFinalRating(player, true) | number: "1.0-2" }}</span
+                      >{{ player.rating || 0 | number : "1.0-2" }} →
+                      {{
+                        getFinalRating(player, true) | number : "1.0-2"
+                      }}</span
                     >
                     <span
                       [class.positive]="getTotalRatingChange(player, true) > 0"
@@ -133,7 +145,7 @@
                     >
                       ({{ getTotalRatingChange(player, true) > 0 ? "+" : ""
                       }}{{
-                        getTotalRatingChange(player, true) | number: "1.0-2"
+                        getTotalRatingChange(player, true) | number : "1.0-2"
                       }})
                     </span>
                   </div>
@@ -177,9 +189,9 @@
                 <div class="manual-rating-container">
                   <div class="rating-display">
                     <span
-                      >{{ player.rating || 0 | number: "1.0-2" }} →
+                      >{{ player.rating || 0 | number : "1.0-2" }} →
                       {{
-                        getFinalRating(player, false) | number: "1.0-2"
+                        getFinalRating(player, false) | number : "1.0-2"
                       }}</span
                     >
                     <span
@@ -188,7 +200,7 @@
                     >
                       ({{ getTotalRatingChange(player, false) > 0 ? "+" : ""
                       }}{{
-                        getTotalRatingChange(player, false) | number: "1.0-2"
+                        getTotalRatingChange(player, false) | number : "1.0-2"
                       }})
                     </span>
                   </div>
