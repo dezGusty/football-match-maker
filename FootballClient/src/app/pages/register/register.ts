@@ -39,7 +39,7 @@ export class Register {
   }
 
   constructor(private router: Router, private authService: AuthService) {
-    if (this.authService.isLoggedIn()) {
+    if (this.authService.isLoggedIn(false)) {
       this.redirectBasedOnRole();
     }
   }

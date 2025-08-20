@@ -151,7 +151,7 @@ export class AuthService {
     }
   }
 
-  isLoggedIn(): boolean {
+  isLoggedIn(allowRedirect: boolean = true): boolean {
     const isAuth = localStorage.getItem('isAuthenticated') === 'true';
     const expiresAt = parseInt(
       localStorage.getItem('authExpiresAt') || '0',
@@ -160,7 +160,11 @@ export class AuthService {
     const now = new Date().getTime();
 
     if (!isAuth || now > expiresAt) {
-      this.logout();
+      if (allowRedirect) {
+        this.logout();
+      } else {
+        this.clearAuthState();
+      }
       return false;
     }
 
@@ -219,8 +223,10 @@ export class AuthService {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('userId');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('authExpiresAt');
+    console.log('Auth state cleared');
   }
-  async logout(): Promise<void> {
+  async logout(redirect: boolean = true): Promise<void> {
     try {
       const token = this.getToken();
       if (token) {
@@ -236,7 +242,9 @@ export class AuthService {
       console.error('Logout error:', error);
     } finally {
       this.clearAuthState();
-      this.router.navigate(['/login']);
+      if (redirect) {
+        this.router.navigate(['/login']);
+      }
     }
   }
 }
