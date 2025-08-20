@@ -186,23 +186,47 @@ export class MatchFormationComponent implements OnInit {
     return this.scoreB > this.scoreA;
   }
 
-  getRatingChange(isTeam1: boolean): number {
+  getRatingChange(
+    isTeam1: boolean,
+    player: Player
+  ): number {
     if (this.isDraw()) {
       return 0;
     }
 
     const isWinningTeam =
-      (isTeam1 && this.isTeam1Winner()) || (!isTeam1 && this.isTeam2Winner());
+      (isTeam1 && this.isTeam1Winner()) ||
+      (!isTeam1 && this.isTeam2Winner());
 
-    const baseRatingChange = isWinningTeam ? 0.05 : -0.05;
+    // Errors change mapping
+    let playerErrorsChange = 0;
+    switch (player.errors) {
+      case 1:
+        playerErrorsChange = 0.025;
+        break;
+      case 2:
+        playerErrorsChange = 0.05;
+        break;
+      case 3:
+        playerErrorsChange = 0.075;
+        break;
+      case 4:
+        playerErrorsChange = 0.1;
+        break;
+      default:
+        playerErrorsChange = 0;
+        break;
+    }
 
-    const goalDifference = Math.abs(this.scoreA - this.scoreB);
-    const goalDifferenceBonus = goalDifference * 0.02;
+    const totalRating =
+      (player.rating ?? 0) * 0.01 +
+      (player.speed ?? 0) * 0.025 +
+      (player.stamina ?? 0) * 0.025 +
+      playerErrorsChange;
 
-    return (
-      baseRatingChange +
-      (isWinningTeam ? goalDifferenceBonus : -goalDifferenceBonus)
-    );
+    const totalRatingChange = isWinningTeam ? totalRating : -totalRating;
+
+    return totalRatingChange;
   }
 
   getManualAdjustment(player: Player): number {
@@ -233,7 +257,7 @@ export class MatchFormationComponent implements OnInit {
   }
 
   getTotalRatingChange(player: Player, isTeam1: boolean): number {
-    const automaticChange = this.getRatingChange(isTeam1);
+    const automaticChange = this.getRatingChange(isTeam1, player);
     const manualChange = this.getManualAdjustment(player);
     return automaticChange + manualChange;
   }
