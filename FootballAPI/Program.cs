@@ -41,6 +41,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IResetPasswordTokenRepository, ResetPasswordTokenRepository>();
 
 builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
+builder.Services.AddScoped<IMatchTeamsRepository, MatchTeamsRepository>();
+builder.Services.AddScoped<ITeamPlayersRepository, TeamPlayersRepository>();
 
 // Service Registration
 builder.Services.AddScoped<IPlayerService, PlayerService>();
@@ -48,12 +50,13 @@ builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IPlayerMatchHistoryService, PlayerMatchHistoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IPasswordGeneratorService, PasswordGeneratorService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IResetPasswordService, ResetPasswordService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
+builder.Services.AddScoped<IMatchTeamsService, MatchTeamsService>();
+builder.Services.AddScoped<ITeamPlayersService, TeamPlayersService>();
 
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();

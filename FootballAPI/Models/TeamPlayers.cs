@@ -15,7 +15,7 @@ namespace FootballAPI.Models
     [Required]
     public int PlayerId { get; set; }
 
-    public Status Status { get; set; }
+    public PlayerStatus Status { get; set; }
 
     [ForeignKey("MatchTeamId")]
     public virtual MatchTeams MatchTeam { get; set; } = null!;
@@ -23,7 +23,7 @@ namespace FootballAPI.Models
     [ForeignKey("PlayerId")]
     public virtual Player Player { get; set; } = null!;
   }
-  public enum Status
+  public enum PlayerStatus
   {
     addedByOrganiser = 1,
     joined = 2,

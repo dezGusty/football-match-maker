@@ -15,6 +15,8 @@ namespace FootballAPI.Data
         public DbSet<PlayerOrganiser> PlayerOrganisers { get; set; }
         public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
         public DbSet<FriendRequest> FriendRequests { get; set; }
+        public DbSet<MatchTeams> MatchTeams { get; set; }
+        public DbSet<TeamPlayers> TeamPlayers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -84,7 +86,40 @@ namespace FootballAPI.Data
             modelBuilder.Entity<Match>()
                 .HasIndex(m => m.MatchDate);
 
+            // MatchTeams configuration
+            modelBuilder.Entity<MatchTeams>()
+                .HasOne(mt => mt.Match)
+                .WithMany()
+                .HasForeignKey(mt => mt.MatchId)
+                .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<MatchTeams>()
+                .HasOne(mt => mt.Team)
+                .WithMany()
+                .HasForeignKey(mt => mt.TeamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // TeamPlayers configuration
+            modelBuilder.Entity<TeamPlayers>()
+                .HasOne(tp => tp.MatchTeam)
+                .WithMany()
+                .HasForeignKey(tp => tp.MatchTeamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TeamPlayers>()
+                .HasOne(tp => tp.Player)
+                .WithMany()
+                .HasForeignKey(tp => tp.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes for performance
+            modelBuilder.Entity<MatchTeams>()
+                .HasIndex(mt => new { mt.MatchId, mt.TeamId })
+                .IsUnique();
+
+            modelBuilder.Entity<TeamPlayers>()
+                .HasIndex(tp => new { tp.MatchTeamId, tp.PlayerId })
+                .IsUnique();
 
             modelBuilder.Entity<Player>()
                 .Property(p => p.Rating)

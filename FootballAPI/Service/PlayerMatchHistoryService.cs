@@ -38,20 +38,8 @@ namespace FootballAPI.Service
                 {
                     Id = playerMatchHistory.Match.Id,
                     MatchDate = playerMatchHistory.Match.MatchDate,
-                    TeamAId = playerMatchHistory.Match.TeamAId,
-                    TeamA = playerMatchHistory.Match.TeamA != null ? new TeamDto
-                    {
-                        Id = playerMatchHistory.Match.TeamA.Id,
-                        Name = playerMatchHistory.Match.TeamA.Name
-                    } : null,
-                    TeamBId = playerMatchHistory.Match.TeamBId,
-                    TeamB = playerMatchHistory.Match.TeamB != null ? new TeamDto
-                    {
-                        Id = playerMatchHistory.Match.TeamB.Id,
-                        Name = playerMatchHistory.Match.TeamB.Name
-                    } : null,
-                    TeamAGoals = playerMatchHistory.Match.TeamAGoals,
-                    TeamBGoals = playerMatchHistory.Match.TeamBGoals
+                    IsPublic = playerMatchHistory.Match.IsPublic,
+                    Status = playerMatchHistory.Match.Status
                 } : null,
                 PerformanceRating = playerMatchHistory.PerformanceRating,
                 RecordDate = playerMatchHistory.RecordDate

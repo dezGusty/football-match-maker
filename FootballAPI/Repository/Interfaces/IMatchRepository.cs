@@ -11,7 +11,8 @@ namespace FootballAPI.Repository
         Task<bool> DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
         Task<IEnumerable<Match>> GetMatchesByDateRangeAsync(DateTime startDate, DateTime endDate);
-        Task<IEnumerable<Match>> GetMatchesByTeamIdAsync(int teamId);
+        Task<IEnumerable<Match>> GetPublicMatchesAsync();
+        Task<IEnumerable<Match>> GetMatchesByStatusAsync(Status status);
         Task<IEnumerable<Match>> GetPastMatchesAsync();
         Task<IEnumerable<Match>> GetFutureMatchesAsync();
     }

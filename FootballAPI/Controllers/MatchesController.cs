@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using FootballAPI.DTOs;
+using FootballAPI.Models;
 using FootballAPI.Service;
 
 namespace FootballAPI.Controllers
@@ -41,10 +42,17 @@ namespace FootballAPI.Controllers
             return Ok(matches);
         }
 
-        [HttpGet("team/{teamId}")]
-        public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatchesByTeam(int teamId)
+        [HttpGet("public")]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetPublicMatches()
         {
-            var matches = await _matchService.GetMatchesByTeamIdAsync(teamId);
+            var matches = await _matchService.GetPublicMatchesAsync();
+            return Ok(matches);
+        }
+
+        [HttpGet("status/{status}")]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatchesByStatus(Status status)
+        {
+            var matches = await _matchService.GetMatchesByStatusAsync(status);
             return Ok(matches);
         }
 

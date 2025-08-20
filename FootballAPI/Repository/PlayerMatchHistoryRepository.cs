@@ -19,9 +19,6 @@ namespace FootballAPI.Repository
                 .Include(pmh => pmh.Player)
                 .Include(pmh => pmh.Team)
                 .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamA)
-                .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamB)
                 .OrderByDescending(pmh => pmh.RecordDate)
                 .ToListAsync();
         }
@@ -32,9 +29,6 @@ namespace FootballAPI.Repository
                 .Include(pmh => pmh.Player)
                 .Include(pmh => pmh.Team)
                 .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamA)
-                .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamB)
                 .FirstOrDefaultAsync(pmh => pmh.Id == id);
         }
 
@@ -44,9 +38,6 @@ namespace FootballAPI.Repository
                 .Include(pmh => pmh.Player)
                 .Include(pmh => pmh.Team)
                 .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamA)
-                .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamB)
                 .Where(pmh => pmh.PlayerId == playerId)
                 .OrderByDescending(pmh => pmh.RecordDate)
                 .ToListAsync();
@@ -58,9 +49,6 @@ namespace FootballAPI.Repository
                 .Include(pmh => pmh.Player)
                 .Include(pmh => pmh.Team)
                 .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamA)
-                .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamB)
                 .Where(pmh => pmh.TeamId == teamId)
                 .OrderByDescending(pmh => pmh.RecordDate)
                 .ToListAsync();
@@ -72,9 +60,6 @@ namespace FootballAPI.Repository
                 .Include(pmh => pmh.Player)
                 .Include(pmh => pmh.Team)
                 .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamA)
-                .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamB)
                 .Where(pmh => pmh.MatchId == matchId)
                 .OrderByDescending(pmh => pmh.PerformanceRating)
                 .ToListAsync();
@@ -96,9 +81,6 @@ namespace FootballAPI.Repository
                 .Include(pmh => pmh.Player)
                 .Include(pmh => pmh.Team)
                 .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamA)
-                .Include(pmh => pmh.Match)
-                    .ThenInclude(m => m.TeamB)
                 .OrderByDescending(pmh => pmh.PerformanceRating)
                 .Take(count)
                 .ToListAsync();

@@ -11,7 +11,8 @@ namespace FootballAPI.Service
         Task<MatchDto> UpdateMatchAsync(int id, UpdateMatchDto updateMatchDto);
         Task<bool> DeleteMatchAsync(int id);
         Task<IEnumerable<MatchDto>> GetMatchesByDateRangeAsync(DateTime startDate, DateTime endDate);
-        Task<IEnumerable<MatchDto>> GetMatchesByTeamIdAsync(int teamId);
+        Task<IEnumerable<MatchDto>> GetPublicMatchesAsync();
+        Task<IEnumerable<MatchDto>> GetMatchesByStatusAsync(Status status);
         Task<IEnumerable<MatchDto>> GetFutureMatchesAsync();
         Task<IEnumerable<MatchDto>> GetPastMatchesAsync();
     }

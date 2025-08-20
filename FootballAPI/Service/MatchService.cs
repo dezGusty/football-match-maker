@@ -1,23 +1,16 @@
 using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Repository;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FootballAPI.Service
 {
     public class MatchService : IMatchService
     {
         private readonly IMatchRepository _matchRepository;
-        private readonly IPlayerMatchHistoryRepository _playerMatchHistoryRepository;
-        private readonly IPlayerRepository _playerRepository;
 
-        public MatchService(IMatchRepository matchRepository, IPlayerMatchHistoryRepository playerMatchHistoryRepository, IPlayerRepository playerRepository)
+        public MatchService(IMatchRepository matchRepository)
         {
             _matchRepository = matchRepository;
-            _playerMatchHistoryRepository = playerMatchHistoryRepository;
-            _playerRepository = playerRepository;
         }
 
         private MatchDto MapToDto(Match match)
@@ -26,20 +19,8 @@ namespace FootballAPI.Service
             {
                 Id = match.Id,
                 MatchDate = match.MatchDate,
-                TeamAId = match.TeamAId,
-                TeamA = match.TeamA != null ? new TeamDto
-                {
-                    Id = match.TeamA.Id,
-                    Name = match.TeamA.Name
-                } : null,
-                TeamBId = match.TeamBId,
-                TeamB = match.TeamB != null ? new TeamDto
-                {
-                    Id = match.TeamB.Id,
-                    Name = match.TeamB.Name
-                } : null,
-                TeamAGoals = match.TeamAGoals,
-                TeamBGoals = match.TeamBGoals,
+                IsPublic = match.IsPublic,
+                Status = match.Status,
                 PlayerHistory = match.PlayerHistory?.Select(ph => new PlayerMatchHistoryDto
                 {
                     Id = ph.Id,
@@ -77,9 +58,15 @@ namespace FootballAPI.Service
             return matches.Select(MapToDto);
         }
 
-        public async Task<IEnumerable<MatchDto>> GetMatchesByTeamIdAsync(int teamId)
+        public async Task<IEnumerable<MatchDto>> GetPublicMatchesAsync()
         {
-            var matches = await _matchRepository.GetMatchesByTeamIdAsync(teamId);
+            var matches = await _matchRepository.GetPublicMatchesAsync();
+            return matches.Select(MapToDto);
+        }
+
+        public async Task<IEnumerable<MatchDto>> GetMatchesByStatusAsync(Status status)
+        {
+            var matches = await _matchRepository.GetMatchesByStatusAsync(status);
             return matches.Select(MapToDto);
         }
 
@@ -88,10 +75,8 @@ namespace FootballAPI.Service
             var match = new Match
             {
                 MatchDate = createMatchDto.MatchDate,
-                TeamAId = createMatchDto.TeamAId,
-                TeamBId = createMatchDto.TeamBId,
-                TeamAGoals = 0,
-                TeamBGoals = 0
+                IsPublic = createMatchDto.IsPublic,
+                Status = createMatchDto.Status
             };
 
             var createdMatch = await _matchRepository.CreateAsync(match);
@@ -104,54 +89,9 @@ namespace FootballAPI.Service
             if (existingMatch == null)
                 return null;
 
-            var playerMatchHistories = await _playerMatchHistoryRepository.GetByMatchIdAsync(id);
-
-            bool isTeamAWinner = updateMatchDto.TeamAGoals > updateMatchDto.TeamBGoals;
-            bool isDraw = updateMatchDto.TeamAGoals == updateMatchDto.TeamBGoals;
-
-            foreach (var history in playerMatchHistories)
-            {
-                var player = await _playerRepository.GetByIdAsync(history.PlayerId);
-                if (player != null)
-                {
-                    if (!isDraw)
-                    {
-                        bool isPlayerInTeamA = history.TeamId == updateMatchDto.TeamAId;
-                        bool isPlayerInWinningTeam = (isTeamAWinner && isPlayerInTeamA) || (!isTeamAWinner && !isPlayerInTeamA);
-
-                        float baseRatingChange = isPlayerInWinningTeam ? 0.05f : -0.05f;
-
-                        int goalDifference = Math.Abs(updateMatchDto.TeamAGoals - updateMatchDto.TeamBGoals);
-                        float goalDifferenceBonus = goalDifference * 0.02f;
-
-                        float totalRatingChange = baseRatingChange + (isPlayerInWinningTeam ? goalDifferenceBonus : -goalDifferenceBonus);
-
-                        player.Rating += totalRatingChange;
-
-                        await _playerRepository.UpdateAsync(player);
-
-                        history.PerformanceRating = player.Rating;
-                        await _playerMatchHistoryRepository.UpdateAsync(history);
-                    }
-                }
-            }
-
-            foreach (var history in playerMatchHistories)
-            {
-                var player = await _playerRepository.GetByIdAsync(history.PlayerId);
-                if (player != null)
-                {
-
-                    player.IsAvailable = false;
-                    await _playerRepository.UpdateAsync(player);
-                }
-            }
-
             existingMatch.MatchDate = updateMatchDto.MatchDate;
-            existingMatch.TeamAId = updateMatchDto.TeamAId;
-            existingMatch.TeamBId = updateMatchDto.TeamBId;
-            existingMatch.TeamAGoals = updateMatchDto.TeamAGoals;
-            existingMatch.TeamBGoals = updateMatchDto.TeamBGoals;
+            existingMatch.IsPublic = updateMatchDto.IsPublic;
+            existingMatch.Status = updateMatchDto.Status;
 
             var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
             return MapToDto(updatedMatch);
