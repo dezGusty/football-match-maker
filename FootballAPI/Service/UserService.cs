@@ -225,38 +225,6 @@ namespace FootballAPI.Service
             return await _userRepository.UsernameExistsAsync(username, excludeUserId);
         }
 
-        public async Task<bool> UpdateUserPasswordAsync(string email)
-        {
-            // var _emailService = new EmailService();
-
-            // // Caută user-ul în DB
-            // var user = await _userRepository.GetByEmailAsync(email);
-            // if (user == null)
-            // {
-            //     Console.WriteLine($"[ERROR] Nu există user cu email: {email}");
-            //     return false;
-            // }
-
-            // var newPassword = _emailService.GenerateRandomPassword();
-            // if (string.IsNullOrWhiteSpace(newPassword))
-            // {
-            //     Console.WriteLine("[ERROR] Parola generată este goală!");
-            //     return false;
-            // }
-
-            // user.Password = newPassword;
-            // await _userRepository.UpdateAsync(user);
-
-            // return await _emailService.SendForgottenPasswordEmailAsync(
-            //     email,
-            //     user.Username ?? "User",
-            //     newPassword
-            // );
-            return false;
-        }
-
-
-
 
         public async Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto changeUsernameDto)
         {

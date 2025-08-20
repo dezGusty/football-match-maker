@@ -18,13 +18,9 @@ namespace FootballAPI.Service
         Task<IEnumerable<UserDto>> GetUsersByRoleAsync(UserRole role);
         Task<bool> UsernameExistsAsync(string username);
         Task<bool> UsernameExistsAsync(string username, int excludeUserId);
-        Task<bool> UpdateUserPasswordAsync(string email);
-
         Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto changeUsernameDto);
         Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int id);
 
-
     }
-
 
 }

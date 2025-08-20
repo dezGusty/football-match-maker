@@ -307,20 +307,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpPost("update-forgot-password")]
-        public async Task<IActionResult> UpdateForgotPassword([FromBody] ForgottenPasswordDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var success = await _userService.UpdateUserPasswordAsync(dto.Email);
-
-            if (!success)
-                return NotFound("User not found or email sending failed.");
-
-            return Ok(new { message = "Password updated and email sent successfully" });
-        }
-
         [HttpGet("{id}/players")]
         public async Task<ActionResult> GetPlayersForOrganiser(int id)
         {
