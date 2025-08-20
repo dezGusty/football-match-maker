@@ -26,7 +26,8 @@ namespace FootballAPI.Models
   public enum Status
   {
     addedByOrganiser = 1,
-    joined = 2
+    joined = 2,
+    Open = 3
   }
 }
 
