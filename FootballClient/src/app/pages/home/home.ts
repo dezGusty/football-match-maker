@@ -106,7 +106,6 @@ export class Home {
         stamina: 2,
         errors: 2,
       };
-      console.log('Player added:', addedPlayer);
     } catch (error) {
       console.error('Error adding player:', error);
       alert('Failed to add player. Please try again.');
