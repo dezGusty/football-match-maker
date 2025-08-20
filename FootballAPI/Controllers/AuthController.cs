@@ -129,16 +129,10 @@ namespace FootballAPI.Controllers
                     return BadRequest(new { message = "User with this email already exists." });
                 }
 
-                var user = new CreateUserDto
-                {
-                    Email = dto.Email,
-                    Username = dto.Username,
-                    Role = UserRole.PLAYER,
-                    Password = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString())
+                dto.Password = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString());
+                dto.Role = UserRole.PLAYER;
 
-                };
-
-                var createdUser = await _userService.CreateUserAsync(user);
+                var createdUser = await _userService.CreatePlayerUserAsync(dto);
 
                 var createdPlayer = await _playerService.GetPlayerByUserIdAsync(createdUser.Id);
 
@@ -158,7 +152,14 @@ namespace FootballAPI.Controllers
                     message = "Player account created successfully. Password setup email sent.",
                     id = createdPlayer?.Id,
                     userId = createdUser.Id,
-
+                    firstName = dto.FirstName,
+                    lastName = dto.LastName,
+                    email = dto.Email,
+                    username = dto.Username,
+                    rating = dto.Rating,
+                    speed = dto.Speed,
+                    stamina = dto.Stamina,
+                    errors = dto.Errors
                 });
             }
             catch (InvalidOperationException ex)

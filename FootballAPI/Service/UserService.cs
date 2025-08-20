@@ -125,6 +125,9 @@ namespace FootballAPI.Service
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Rating = dto.Rating,
+                Speed = dto.Speed ?? 2,
+                Stamina = dto.Stamina,
+                Errors = dto.Errors ?? 2,
                 UserId = createdUser.Id,
                 IsAvailable = false,
                 IsEnabled = true

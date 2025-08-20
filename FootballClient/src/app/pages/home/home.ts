@@ -91,11 +91,11 @@ export class Home {
 
     try {
       const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
-      await this.PlayerService.addPlayerOrganiserRelation(
-        addedPlayer.id!,
-      );
+      await this.PlayerService.addPlayerOrganiserRelation(addedPlayer.id!);
 
       this.players.push(addedPlayer);
+      this.filterPlayers();
+      this.showAddModal = false;
       this.newPlayer = {
         firstName: '',
         lastName: '',
@@ -109,6 +109,7 @@ export class Home {
       console.log('Player added:', addedPlayer);
     } catch (error) {
       console.error('Error adding player:', error);
+      alert('Failed to add player. Please try again.');
     }
   }
 
