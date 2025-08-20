@@ -3,6 +3,7 @@ using FootballAPI.Models;
 using FootballAPI.Repository;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
 
 namespace FootballAPI.Service
@@ -118,14 +119,20 @@ namespace FootballAPI.Service
                     {
                         bool isPlayerInTeamA = history.TeamId == updateMatchDto.TeamAId;
                         bool isPlayerInWinningTeam = (isTeamAWinner && isPlayerInTeamA) || (!isTeamAWinner && !isPlayerInTeamA);
-
-                        float baseRatingChange = isPlayerInWinningTeam ? 0.05f : -0.05f;
-
-                        int goalDifference = Math.Abs(updateMatchDto.TeamAGoals - updateMatchDto.TeamBGoals);
-                        float goalDifferenceBonus = goalDifference * 0.02f;
-
-                        float totalRatingChange = baseRatingChange + (isPlayerInWinningTeam ? goalDifferenceBonus : -goalDifferenceBonus);
-
+                        
+                        float playerErorrsChange = player.Errors switch
+                        {
+                            1 => 0.025f,
+                            2 => 0.05f,
+                            3 => 0.075f,
+                            4 => 0.1f,
+                            _ => 0
+                        };
+                        
+                        float totalRating = player.Rating * 0.01f + player.Speed * 0.025f + player.Stamina * 0.025f + playerErorrsChange;
+                        
+                        float totalRatingChange = isPlayerInWinningTeam ? totalRating : -totalRating;
+                        
                         player.Rating += totalRatingChange;
 
                         await _playerRepository.UpdateAsync(player);
