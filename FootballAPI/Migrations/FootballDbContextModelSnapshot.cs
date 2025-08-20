@@ -63,30 +63,57 @@ namespace FootballAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("MatchDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TeamAGoals")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("TeamAId")
+                    b.Property<int?>("TeamId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TeamBGoals")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeamBId")
+                    b.Property<int?>("TeamId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MatchDate");
 
-                    b.HasIndex("TeamAId");
+                    b.HasIndex("TeamId");
 
-                    b.HasIndex("TeamBId");
+                    b.HasIndex("TeamId1");
 
                     b.ToTable("Matches");
+                });
+
+            modelBuilder.Entity("FootballAPI.Models.MatchTeams", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Goals")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MatchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasIndex("MatchId", "TeamId")
+                        .IsUnique();
+
+                    b.ToTable("MatchTeams");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.Player", b =>
@@ -310,6 +337,9 @@ namespace FootballAPI.Migrations
                     b.Property<int>("MatchId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MatchTeamsId")
+                        .HasColumnType("int");
+
                     b.Property<double>("PerformanceRating")
                         .HasColumnType("float");
 
@@ -325,6 +355,8 @@ namespace FootballAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("MatchId");
+
+                    b.HasIndex("MatchTeamsId");
 
                     b.HasIndex("PlayerId");
 
@@ -425,6 +457,33 @@ namespace FootballAPI.Migrations
                             Id = 2,
                             Name = "Steaua Bucuresti"
                         });
+                });
+
+            modelBuilder.Entity("FootballAPI.Models.TeamPlayers", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MatchTeamId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("MatchTeamId", "PlayerId")
+                        .IsUnique();
+
+                    b.ToTable("TeamPlayers");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.User", b =>
@@ -599,21 +658,32 @@ namespace FootballAPI.Migrations
 
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
                 {
-                    b.HasOne("FootballAPI.Models.Team", "TeamA")
-                        .WithMany("HomeMatches")
-                        .HasForeignKey("TeamAId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("FootballAPI.Models.Team", "TeamB")
+                    b.HasOne("FootballAPI.Models.Team", null)
                         .WithMany("AwayMatches")
-                        .HasForeignKey("TeamBId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("TeamId");
+
+                    b.HasOne("FootballAPI.Models.Team", null)
+                        .WithMany("HomeMatches")
+                        .HasForeignKey("TeamId1");
+                });
+
+            modelBuilder.Entity("FootballAPI.Models.MatchTeams", b =>
+                {
+                    b.HasOne("FootballAPI.Models.Match", "Match")
+                        .WithMany()
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("TeamA");
+                    b.HasOne("FootballAPI.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("TeamB");
+                    b.Navigation("Match");
+
+                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.Player", b =>
@@ -634,6 +704,10 @@ namespace FootballAPI.Migrations
                         .HasForeignKey("MatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FootballAPI.Models.MatchTeams", null)
+                        .WithMany("PlayerHistory")
+                        .HasForeignKey("MatchTeamsId");
 
                     b.HasOne("FootballAPI.Models.Player", "Player")
                         .WithMany("MatchHistory")
@@ -684,7 +758,31 @@ namespace FootballAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FootballAPI.Models.TeamPlayers", b =>
+                {
+                    b.HasOne("FootballAPI.Models.MatchTeams", "MatchTeam")
+                        .WithMany()
+                        .HasForeignKey("MatchTeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FootballAPI.Models.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MatchTeam");
+
+                    b.Navigation("Player");
+                });
+
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
+                {
+                    b.Navigation("PlayerHistory");
+                });
+
+            modelBuilder.Entity("FootballAPI.Models.MatchTeams", b =>
                 {
                     b.Navigation("PlayerHistory");
                 });
