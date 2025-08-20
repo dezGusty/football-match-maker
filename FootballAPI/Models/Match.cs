@@ -11,18 +11,6 @@ namespace FootballAPI.Models
         [Required]
         public DateTime MatchDate { get; set; }
 
-        [Required]
-        public int TeamAId { get; set; }
-        [ForeignKey("TeamAId")]
-        public virtual Team TeamA { get; set; }
-
-        [Required]
-        public int TeamBId { get; set; }
-        [ForeignKey("TeamBId")]
-        public virtual Team TeamB { get; set; }
-
-        public int TeamAGoals { get; set; }
-        public int TeamBGoals { get; set; } 
 
         public virtual ICollection<PlayerMatchHistory> PlayerHistory { get; set; } = new List<PlayerMatchHistory>();
     }

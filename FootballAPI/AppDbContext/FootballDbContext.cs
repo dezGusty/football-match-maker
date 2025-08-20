@@ -20,17 +20,6 @@ namespace FootballAPI.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Match>()
-                .HasOne(m => m.TeamA)
-                .WithMany(t => t.HomeMatches)
-                .HasForeignKey(m => m.TeamAId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Match>()
-                .HasOne(m => m.TeamB)
-                .WithMany(t => t.AwayMatches)
-                .HasForeignKey(m => m.TeamBId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PlayerMatchHistory>()
                 .HasOne(pmh => pmh.Player)
@@ -95,7 +84,7 @@ namespace FootballAPI.Data
             modelBuilder.Entity<Match>()
                 .HasIndex(m => m.MatchDate);
 
-            
+
 
             modelBuilder.Entity<Player>()
                 .Property(p => p.Rating)
@@ -112,7 +101,7 @@ namespace FootballAPI.Data
                 .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            
+
 
             modelBuilder.Entity<User>(entity =>
             {
@@ -125,41 +114,44 @@ namespace FootballAPI.Data
                 entity.Property(e => e.Role).HasConversion<int>().IsRequired();
             });
 
-          modelBuilder.Entity<ResetPasswordToken>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                
-                entity.HasIndex(e => e.TokenHash).IsUnique();
-                
-                entity.Property(e => e.TokenHash)
-                    .IsRequired()
-                    .HasMaxLength(255);
-                
-                entity.Property(e => e.CreatedAt)
-                    .IsRequired()
-                    .HasDefaultValueSql("GETUTCDATE()"); 
-                
-                entity.Property(e => e.ExpiresAt)
-                    .IsRequired();
-                
-                entity.Property(e => e.UsedAt)
-                    .IsRequired(false);
+            modelBuilder.Entity<ResetPasswordToken>(entity =>
+              {
+                  entity.HasKey(e => e.Id);
 
-             
-                entity.HasOne(e => e.User)
-                    .WithMany()
-                    .HasForeignKey(e => e.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                  entity.HasIndex(e => e.TokenHash).IsUnique();
 
-                entity.HasIndex(e => new { e.TokenHash, e.ExpiresAt, e.UsedAt })
-                    .HasDatabaseName("IX_PasswordResetTokens_TokenHash_ExpiresAt_UsedAt");
-                
-                entity.HasIndex(e => e.UserId)
-                    .HasDatabaseName("IX_PasswordResetTokens_UserId");
-                
-                entity.HasIndex(e => e.ExpiresAt)
-                    .HasDatabaseName("IX_PasswordResetTokens_ExpiresAt");
-            });
+                  entity.Property(e => e.TokenHash)
+                      .IsRequired()
+                      .HasMaxLength(255);
+
+                  entity.Property(e => e.CreatedAt)
+                      .IsRequired()
+                      .HasDefaultValueSql("GETUTCDATE()");
+
+                  entity.Property(e => e.ExpiresAt)
+                      .IsRequired();
+
+                  entity.Property(e => e.UsedAt)
+                      .IsRequired(false);
+
+
+                  entity.HasOne(e => e.User)
+                      .WithMany()
+                      .HasForeignKey(e => e.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                  entity.HasIndex(e => new { e.TokenHash, e.ExpiresAt, e.UsedAt })
+                      .HasDatabaseName("IX_PasswordResetTokens_TokenHash_ExpiresAt_UsedAt");
+
+                  entity.HasIndex(e => e.UserId)
+                      .HasDatabaseName("IX_PasswordResetTokens_UserId");
+
+                  entity.HasIndex(e => e.ExpiresAt)
+                      .HasDatabaseName("IX_PasswordResetTokens_ExpiresAt");
+              });
+
+
+
             SeedData(modelBuilder);
         }
 
