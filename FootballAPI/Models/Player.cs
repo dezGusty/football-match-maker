@@ -39,6 +39,5 @@ namespace FootballAPI.Models
         [StringLength(500)]
         public string? ProfileImagePath { get; set; }
 
-        public virtual ICollection<PlayerMatchHistory> MatchHistory { get; set; } = new List<PlayerMatchHistory>();
     }
 }

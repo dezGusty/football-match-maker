@@ -26,7 +26,6 @@ namespace FootballAPI.Repository
         {
             return await _context.Players
                 .Include(p => p.User)
-                .Include(p => p.MatchHistory)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 

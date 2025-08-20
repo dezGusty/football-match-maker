@@ -8,9 +8,6 @@ namespace FootballAPI.Data
         public FootballDbContext(DbContextOptions<FootballDbContext> options) : base(options) { }
 
         public DbSet<Player> Players { get; set; }
-        public DbSet<Team> Teams { get; set; }
-        public DbSet<Match> Matches { get; set; }
-        public DbSet<PlayerMatchHistory> PlayerMatchHistory { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<PlayerOrganiser> PlayerOrganisers { get; set; }
         public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
@@ -20,35 +17,7 @@ namespace FootballAPI.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Match>()
-                .HasOne(m => m.TeamA)
-                .WithMany(t => t.HomeMatches)
-                .HasForeignKey(m => m.TeamAId)
-                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Match>()
-                .HasOne(m => m.TeamB)
-                .WithMany(t => t.AwayMatches)
-                .HasForeignKey(m => m.TeamBId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<PlayerMatchHistory>()
-                .HasOne(pmh => pmh.Player)
-                .WithMany(p => p.MatchHistory)
-                .HasForeignKey(pmh => pmh.PlayerId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<PlayerMatchHistory>()
-                .HasOne(pmh => pmh.Team)
-                .WithMany(t => t.PlayerHistory)
-                .HasForeignKey(pmh => pmh.TeamId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<PlayerMatchHistory>()
-                .HasOne(pmh => pmh.Match)
-                .WithMany(m => m.PlayerHistory)
-                .HasForeignKey(pmh => pmh.MatchId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PlayerOrganiser>()
                 .HasOne(po => po.Organiser)
@@ -89,22 +58,9 @@ namespace FootballAPI.Data
             modelBuilder.Entity<Player>()
                 .HasIndex(p => new { p.FirstName, p.LastName });
 
-            modelBuilder.Entity<Team>()
-                .HasIndex(t => t.Name);
-
-            modelBuilder.Entity<Match>()
-                .HasIndex(m => m.MatchDate);
-
-            
-
             modelBuilder.Entity<Player>()
                 .Property(p => p.Rating)
                 .HasColumnType("float");
-
-            modelBuilder.Entity<PlayerMatchHistory>()
-                .Property(pmh => pmh.PerformanceRating)
-                .HasColumnType("float");
-
 
             modelBuilder.Entity<Player>()
                 .HasOne(p => p.User)
@@ -112,7 +68,7 @@ namespace FootballAPI.Data
                 .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            
+
 
             modelBuilder.Entity<User>(entity =>
             {
@@ -125,51 +81,46 @@ namespace FootballAPI.Data
                 entity.Property(e => e.Role).HasConversion<int>().IsRequired();
             });
 
-          modelBuilder.Entity<ResetPasswordToken>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                
-                entity.HasIndex(e => e.TokenHash).IsUnique();
-                
-                entity.Property(e => e.TokenHash)
-                    .IsRequired()
-                    .HasMaxLength(255);
-                
-                entity.Property(e => e.CreatedAt)
-                    .IsRequired()
-                    .HasDefaultValueSql("GETUTCDATE()"); 
-                
-                entity.Property(e => e.ExpiresAt)
-                    .IsRequired();
-                
-                entity.Property(e => e.UsedAt)
-                    .IsRequired(false);
+            modelBuilder.Entity<ResetPasswordToken>(entity =>
+              {
+                  entity.HasKey(e => e.Id);
 
-             
-                entity.HasOne(e => e.User)
-                    .WithMany()
-                    .HasForeignKey(e => e.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                  entity.HasIndex(e => e.TokenHash).IsUnique();
 
-                entity.HasIndex(e => new { e.TokenHash, e.ExpiresAt, e.UsedAt })
-                    .HasDatabaseName("IX_PasswordResetTokens_TokenHash_ExpiresAt_UsedAt");
-                
-                entity.HasIndex(e => e.UserId)
-                    .HasDatabaseName("IX_PasswordResetTokens_UserId");
-                
-                entity.HasIndex(e => e.ExpiresAt)
-                    .HasDatabaseName("IX_PasswordResetTokens_ExpiresAt");
-            });
+                  entity.Property(e => e.TokenHash)
+                      .IsRequired()
+                      .HasMaxLength(255);
+
+                  entity.Property(e => e.CreatedAt)
+                      .IsRequired()
+                      .HasDefaultValueSql("GETUTCDATE()");
+
+                  entity.Property(e => e.ExpiresAt)
+                      .IsRequired();
+
+                  entity.Property(e => e.UsedAt)
+                      .IsRequired(false);
+
+
+                  entity.HasOne(e => e.User)
+                      .WithMany()
+                      .HasForeignKey(e => e.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                  entity.HasIndex(e => new { e.TokenHash, e.ExpiresAt, e.UsedAt })
+                      .HasDatabaseName("IX_PasswordResetTokens_TokenHash_ExpiresAt_UsedAt");
+
+                  entity.HasIndex(e => e.UserId)
+                      .HasDatabaseName("IX_PasswordResetTokens_UserId");
+
+                  entity.HasIndex(e => e.ExpiresAt)
+                      .HasDatabaseName("IX_PasswordResetTokens_ExpiresAt");
+              });
             SeedData(modelBuilder);
         }
 
         private void SeedData(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Team>().HasData(
-                new Team { Id = 1, Name = "FC Brasov" },
-                new Team { Id = 2, Name = "Steaua Bucuresti" }
-            );
-
             modelBuilder.Entity<Player>().HasData(
                 new Player
                 {

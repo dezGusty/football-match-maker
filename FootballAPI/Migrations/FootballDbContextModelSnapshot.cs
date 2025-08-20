@@ -55,40 +55,6 @@ namespace FootballAPI.Migrations
                     b.ToTable("FriendRequests");
                 });
 
-            modelBuilder.Entity("FootballAPI.Models.Match", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("MatchDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TeamAGoals")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeamAId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeamBGoals")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeamBId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MatchDate");
-
-                    b.HasIndex("TeamAId");
-
-                    b.HasIndex("TeamBId");
-
-                    b.ToTable("Matches");
-                });
-
             modelBuilder.Entity("FootballAPI.Models.Player", b =>
                 {
                     b.Property<int>("Id")
@@ -299,40 +265,6 @@ namespace FootballAPI.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FootballAPI.Models.PlayerMatchHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("MatchId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("PerformanceRating")
-                        .HasColumnType("float");
-
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("RecordDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TeamId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MatchId");
-
-                    b.HasIndex("PlayerId");
-
-                    b.HasIndex("TeamId");
-
-                    b.ToTable("PlayerMatchHistory");
-                });
-
             modelBuilder.Entity("FootballAPI.Models.PlayerOrganiser", b =>
                 {
                     b.Property<int>("OrganiserId")
@@ -393,38 +325,6 @@ namespace FootballAPI.Migrations
                         .HasDatabaseName("IX_PasswordResetTokens_TokenHash_ExpiresAt_UsedAt");
 
                     b.ToTable("ResetPasswordTokens");
-                });
-
-            modelBuilder.Entity("FootballAPI.Models.Team", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name");
-
-                    b.ToTable("Teams");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "FC Brasov"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Steaua Bucuresti"
-                        });
                 });
 
             modelBuilder.Entity("FootballAPI.Models.User", b =>
@@ -597,25 +497,6 @@ namespace FootballAPI.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("FootballAPI.Models.Match", b =>
-                {
-                    b.HasOne("FootballAPI.Models.Team", "TeamA")
-                        .WithMany("HomeMatches")
-                        .HasForeignKey("TeamAId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("FootballAPI.Models.Team", "TeamB")
-                        .WithMany("AwayMatches")
-                        .HasForeignKey("TeamBId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("TeamA");
-
-                    b.Navigation("TeamB");
-                });
-
             modelBuilder.Entity("FootballAPI.Models.Player", b =>
                 {
                     b.HasOne("FootballAPI.Models.User", "User")
@@ -625,33 +506,6 @@ namespace FootballAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FootballAPI.Models.PlayerMatchHistory", b =>
-                {
-                    b.HasOne("FootballAPI.Models.Match", "Match")
-                        .WithMany("PlayerHistory")
-                        .HasForeignKey("MatchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FootballAPI.Models.Player", "Player")
-                        .WithMany("MatchHistory")
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FootballAPI.Models.Team", "Team")
-                        .WithMany("PlayerHistory")
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Match");
-
-                    b.Navigation("Player");
-
-                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.PlayerOrganiser", b =>
@@ -682,25 +536,6 @@ namespace FootballAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FootballAPI.Models.Match", b =>
-                {
-                    b.Navigation("PlayerHistory");
-                });
-
-            modelBuilder.Entity("FootballAPI.Models.Player", b =>
-                {
-                    b.Navigation("MatchHistory");
-                });
-
-            modelBuilder.Entity("FootballAPI.Models.Team", b =>
-                {
-                    b.Navigation("AwayMatches");
-
-                    b.Navigation("HomeMatches");
-
-                    b.Navigation("PlayerHistory");
                 });
 #pragma warning restore 612, 618
         }
