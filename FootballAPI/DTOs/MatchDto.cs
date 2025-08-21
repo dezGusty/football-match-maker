@@ -8,7 +8,6 @@ namespace FootballAPI.DTOs
         public DateTime MatchDate { get; set; }
         public bool IsPublic { get; set; }
         public Status Status { get; set; }
-        public List<PlayerMatchHistoryDto> PlayerHistory { get; set; } = new List<PlayerMatchHistoryDto>();
     }
 
     public class CreateMatchDto

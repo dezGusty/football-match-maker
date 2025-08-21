@@ -10,17 +10,16 @@ namespace FootballAPI.DTOs
         public int Goals { get; set; }
         public MatchDto Match { get; set; }
         public TeamDto Team { get; set; }
-        public List<PlayerMatchHistoryDto> PlayerHistory { get; set; } = new List<PlayerMatchHistoryDto>();
     }
 
     public class CreateMatchTeamsDto
     {
         [Required]
         public int MatchId { get; set; }
-        
+
         [Required]
         public int TeamId { get; set; }
-        
+
         public int Goals { get; set; } = 0;
     }
 
@@ -28,10 +27,10 @@ namespace FootballAPI.DTOs
     {
         [Required]
         public int MatchId { get; set; }
-        
+
         [Required]
         public int TeamId { get; set; }
-        
+
         public int Goals { get; set; }
     }
 }

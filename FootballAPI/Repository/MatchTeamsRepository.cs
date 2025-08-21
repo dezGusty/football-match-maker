@@ -18,7 +18,6 @@ namespace FootballAPI.Repository
             return await _context.MatchTeams
                 .Include(mt => mt.Match)
                 .Include(mt => mt.Team)
-                .Include(mt => mt.PlayerHistory)
                 .ToListAsync();
         }
 
@@ -27,7 +26,6 @@ namespace FootballAPI.Repository
             return await _context.MatchTeams
                 .Include(mt => mt.Match)
                 .Include(mt => mt.Team)
-                .Include(mt => mt.PlayerHistory)
                 .FirstOrDefaultAsync(mt => mt.Id == id);
         }
 
@@ -67,7 +65,7 @@ namespace FootballAPI.Repository
         {
             return await _context.MatchTeams
                 .Include(mt => mt.Team)
-                .Include(mt => mt.PlayerHistory)
+                .Include(mt => mt.Match)
                 .Where(mt => mt.MatchId == matchId)
                 .ToListAsync();
         }
@@ -76,7 +74,7 @@ namespace FootballAPI.Repository
         {
             return await _context.MatchTeams
                 .Include(mt => mt.Match)
-                .Include(mt => mt.PlayerHistory)
+                .Include(mt => mt.Team)
                 .Where(mt => mt.TeamId == teamId)
                 .ToListAsync();
         }
@@ -86,7 +84,6 @@ namespace FootballAPI.Repository
             return await _context.MatchTeams
                 .Include(mt => mt.Match)
                 .Include(mt => mt.Team)
-                .Include(mt => mt.PlayerHistory)
                 .FirstOrDefaultAsync(mt => mt.MatchId == matchId && mt.TeamId == teamId);
         }
     }

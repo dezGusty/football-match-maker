@@ -10,7 +10,6 @@ namespace FootballAPI.Data
         public DbSet<Player> Players { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<Match> Matches { get; set; }
-        public DbSet<PlayerMatchHistory> PlayerMatchHistory { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<PlayerOrganiser> PlayerOrganisers { get; set; }
         public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
@@ -22,24 +21,6 @@ namespace FootballAPI.Data
         {
             base.OnModelCreating(modelBuilder);
 
-
-            modelBuilder.Entity<PlayerMatchHistory>()
-                .HasOne(pmh => pmh.Player)
-                .WithMany(p => p.MatchHistory)
-                .HasForeignKey(pmh => pmh.PlayerId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<PlayerMatchHistory>()
-                .HasOne(pmh => pmh.Team)
-                .WithMany(t => t.PlayerHistory)
-                .HasForeignKey(pmh => pmh.TeamId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<PlayerMatchHistory>()
-                .HasOne(pmh => pmh.Match)
-                .WithMany(m => m.PlayerHistory)
-                .HasForeignKey(pmh => pmh.MatchId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PlayerOrganiser>()
                 .HasOne(po => po.Organiser)
@@ -125,9 +106,6 @@ namespace FootballAPI.Data
                 .Property(p => p.Rating)
                 .HasColumnType("float");
 
-            modelBuilder.Entity<PlayerMatchHistory>()
-                .Property(pmh => pmh.PerformanceRating)
-                .HasColumnType("float");
 
 
             modelBuilder.Entity<Player>()

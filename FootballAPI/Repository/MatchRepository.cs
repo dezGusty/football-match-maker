@@ -16,8 +16,6 @@ namespace FootballAPI.Repository
         public async Task<IEnumerable<Match>> GetAllAsync()
         {
             return await _context.Matches
-                .Include(m => m.PlayerHistory)
-                    .ThenInclude(ph => ph.Player)
                 .OrderByDescending(m => m.MatchDate)
                 .ToListAsync();
         }
@@ -25,16 +23,12 @@ namespace FootballAPI.Repository
         public async Task<Match> GetByIdAsync(int id)
         {
             return await _context.Matches
-                .Include(m => m.PlayerHistory)
-                    .ThenInclude(ph => ph.Player)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task<IEnumerable<Match>> GetMatchesByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
             return await _context.Matches
-                .Include(m => m.PlayerHistory)
-                    .ThenInclude(ph => ph.Player)
                 .Where(m => m.MatchDate >= startDate && m.MatchDate <= endDate)
                 .OrderByDescending(m => m.MatchDate)
                 .ToListAsync();
@@ -43,8 +37,6 @@ namespace FootballAPI.Repository
         public async Task<IEnumerable<Match>> GetPublicMatchesAsync()
         {
             return await _context.Matches
-                .Include(m => m.PlayerHistory)
-                    .ThenInclude(ph => ph.Player)
                 .Where(m => m.IsPublic)
                 .OrderByDescending(m => m.MatchDate)
                 .ToListAsync();
@@ -53,8 +45,6 @@ namespace FootballAPI.Repository
         public async Task<IEnumerable<Match>> GetMatchesByStatusAsync(Status status)
         {
             return await _context.Matches
-                .Include(m => m.PlayerHistory)
-                    .ThenInclude(ph => ph.Player)
                 .Where(m => m.Status == status)
                 .OrderByDescending(m => m.MatchDate)
                 .ToListAsync();
@@ -94,8 +84,6 @@ namespace FootballAPI.Repository
         {
             var currentDate = DateTime.Now.Date;
             return await _context.Matches
-                .Include(m => m.PlayerHistory)
-                    .ThenInclude(ph => ph.Player)
                 .Where(m => m.MatchDate.Date <= currentDate)
                 .OrderByDescending(m => m.MatchDate)
                 .ToListAsync();
@@ -106,8 +94,6 @@ namespace FootballAPI.Repository
         {
             var currentDate = DateTime.Now.Date;
             return await _context.Matches
-                .Include(m => m.PlayerHistory)
-                    .ThenInclude(ph => ph.Player)
                 .Where(m => m.MatchDate.Date > currentDate)
                 .OrderBy(m => m.MatchDate)
                 .ToListAsync();

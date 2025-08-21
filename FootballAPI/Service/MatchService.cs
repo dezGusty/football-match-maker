@@ -21,22 +21,7 @@ namespace FootballAPI.Service
                 MatchDate = match.MatchDate,
                 IsPublic = match.IsPublic,
                 Status = match.Status,
-                PlayerHistory = match.PlayerHistory?.Select(ph => new PlayerMatchHistoryDto
-                {
-                    Id = ph.Id,
-                    PlayerId = ph.PlayerId,
-                    Player = ph.Player != null ? new PlayerDto
-                    {
-                        Id = ph.Player.Id,
-                        FirstName = ph.Player.FirstName,
-                        LastName = ph.Player.LastName,
-                        Rating = ph.Player.Rating,
-                        IsAvailable = ph.Player.IsAvailable
-                    } : null,
-                    TeamId = ph.TeamId,
-                    PerformanceRating = ph.PerformanceRating,
-                    RecordDate = ph.RecordDate
-                }).ToList() ?? new List<PlayerMatchHistoryDto>()
+
             };
         }
 

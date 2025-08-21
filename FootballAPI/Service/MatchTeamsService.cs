@@ -10,8 +10,8 @@ namespace FootballAPI.Service
         private readonly IMatchRepository _matchRepository;
         private readonly ITeamRepository _teamRepository;
 
-        public MatchTeamsService(IMatchTeamsRepository matchTeamsRepository, 
-                                IMatchRepository matchRepository, 
+        public MatchTeamsService(IMatchTeamsRepository matchTeamsRepository,
+                                IMatchRepository matchRepository,
                                 ITeamRepository teamRepository)
         {
             _matchTeamsRepository = matchTeamsRepository;
@@ -103,14 +103,7 @@ namespace FootballAPI.Service
                     Id = matchTeam.Team.Id,
                     Name = matchTeam.Team.Name
                 },
-                PlayerHistory = matchTeam.PlayerHistory?.Select(ph => new PlayerMatchHistoryDto
-                {
-                    Id = ph.Id,
-                    PlayerId = ph.PlayerId,
-                    TeamId = ph.TeamId,
-                    MatchId = ph.MatchId,
-                    PerformanceRating = ph.PerformanceRating
-                }).ToList() ?? new List<PlayerMatchHistoryDto>()
+
             };
         }
     }

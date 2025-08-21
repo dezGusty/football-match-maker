@@ -23,7 +23,6 @@ namespace FootballAPI.Models
         public bool IsPublic { get; set; } = false;
 
         public Status Status { get; set; } = Status.Open;
-        public virtual ICollection<PlayerMatchHistory> PlayerHistory { get; set; } = new List<PlayerMatchHistory>();
     }
 
 
