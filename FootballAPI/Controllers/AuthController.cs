@@ -136,24 +136,16 @@ namespace FootballAPI.Controllers
 
                 var createdPlayer = await _playerService.GetPlayerByUserIdAsync(createdUser.Id);
 
-                _ = Task.Run(async () =>
-                {
-                    try
-                    {
-                        var resetToken = await _passwordResetService.GeneratePasswordResetTokenAsync(createdUser.Id);
-                        var frontendUrl = _configuration["Frontend:BaseUrl"];
-                        var setPasswordUrl = $"{frontendUrl}/reset-password?token={resetToken}";
+                var resetToken = await _passwordResetService.GeneratePasswordResetTokenAsync(createdUser.Id);
 
-                        await _emailService.SendSetPasswordEmailAsync(dto.Email, dto.Username, setPasswordUrl);
-                        _logger.LogInformation("Password setup email sent successfully to {Email}", dto.Email);
-                    }
-                    catch (Exception emailEx)
-                    {
-                        _logger.LogError(emailEx, "Failed to send password setup email to {Email}", dto.Email);
-                    }
-                });
+                var frontendUrl = _configuration["Frontend:BaseUrl"];
 
-                _logger.LogInformation("Player account created for {Email}", dto.Email);
+                var setPasswordUrl = $"{frontendUrl}/reset-password?token={resetToken}";
+
+                // Trimitem email-ul
+                await _emailService.SendSetPasswordEmailAsync(dto.Email, dto.Username, setPasswordUrl);
+
+                _logger.LogInformation("Player account created and password reset email sent to {Email}", dto.Email);
 
                 return Ok(new
                 {

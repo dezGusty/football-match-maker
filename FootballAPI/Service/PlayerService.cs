@@ -10,18 +10,18 @@ namespace FootballAPI.Service
     {
         private readonly IPlayerRepository _playerRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IPasswordGeneratorService _passwordGeneratorService;
+
         private readonly IFileService _fileService;
 
         public PlayerService(
             IPlayerRepository playerRepository,
             IUserRepository userRepository,
-            IPasswordGeneratorService passwordGeneratorService,
+
             IFileService fileService)
         {
             _playerRepository = playerRepository;
             _userRepository = userRepository;
-            _passwordGeneratorService = passwordGeneratorService;
+
             _fileService = fileService;
         }
 
