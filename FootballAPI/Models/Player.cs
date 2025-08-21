@@ -39,5 +39,9 @@ namespace FootballAPI.Models
         [StringLength(500)]
         public string? ProfileImagePath { get; set; }
 
+        // Navigation properties
+        public virtual ICollection<TeamPlayers> TeamPlayers { get; set; } = new List<TeamPlayers>();
+        public virtual ICollection<PlayerOrganiser> PlayerOrganisers { get; set; } = new List<PlayerOrganiser>();
+
     }
 }

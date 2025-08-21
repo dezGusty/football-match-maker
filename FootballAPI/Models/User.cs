@@ -22,5 +22,11 @@ namespace FootballAPI.Models
 
         [Required]
         public UserRole Role { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<FriendRequest> SentFriendRequests { get; set; } = new List<FriendRequest>();
+        public virtual ICollection<FriendRequest> ReceivedFriendRequests { get; set; } = new List<FriendRequest>();
+        public virtual ICollection<ResetPasswordToken> ResetPasswordTokens { get; set; } = new List<ResetPasswordToken>();
+        public virtual ICollection<PlayerOrganiser> OrganisedPlayers { get; set; } = new List<PlayerOrganiser>();
     }
 }

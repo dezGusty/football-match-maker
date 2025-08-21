@@ -10,5 +10,8 @@ namespace FootballAPI.Models
         [Required]
         [StringLength(100)]
         public string Name { get; set; } = null!;
+        
+        // Navigation properties
+        public virtual ICollection<MatchTeams> MatchTeams { get; set; } = new List<MatchTeams>();
     }
 }
