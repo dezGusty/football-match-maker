@@ -33,7 +33,7 @@ namespace FootballAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 8, 21, 10, 33, 24, 593, DateTimeKind.Local).AddTicks(3718));
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int>("ReceiverId")
                         .HasColumnType("int");
@@ -174,7 +174,7 @@ namespace FootballAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 8, 21, 10, 33, 24, 600, DateTimeKind.Local).AddTicks(6403));
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.HasKey("OrganiserId", "PlayerId");
 
@@ -350,7 +350,7 @@ namespace FootballAPI.Migrations
                     b.HasOne("FootballAPI.Models.User", "Organiser")
                         .WithMany("OrganisedPlayers")
                         .HasForeignKey("OrganiserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("FootballAPI.Models.Player", "Player")
