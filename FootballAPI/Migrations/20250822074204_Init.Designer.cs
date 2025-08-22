@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    [Migration("20250821073810_CreateDatabaseWithNavigationProperties")]
-    partial class CreateDatabaseWithNavigationProperties
+    [Migration("20250822074204_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,12 +77,17 @@ namespace FootballAPI.Migrations
                     b.Property<DateTime>("MatchDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("OrganiserId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(1);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrganiserId");
 
                     b.ToTable("Matches");
                 });
@@ -164,6 +169,164 @@ namespace FootballAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("Players");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Errors = 2,
+                            FirstName = "Ion",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Popescu",
+                            Rating = 8.5f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Errors = 2,
+                            FirstName = "Marius",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Ionescu",
+                            Rating = 7.8f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Errors = 2,
+                            FirstName = "Alex",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Georgescu",
+                            Rating = 7.2f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 5
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Errors = 2,
+                            FirstName = "Razvan",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Moldovan",
+                            Rating = 8.1f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 6
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Errors = 2,
+                            FirstName = "Cristian",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Stancu",
+                            Rating = 6.9f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 7
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Errors = 2,
+                            FirstName = "Andrei",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Vasilescu",
+                            Rating = 7.7f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 8
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Errors = 2,
+                            FirstName = "Florin",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Dumitru",
+                            Rating = 8.3f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 9
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Errors = 2,
+                            FirstName = "Gabriel",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Ciobanu",
+                            Rating = 7.4f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 10
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Errors = 2,
+                            FirstName = "Lucian",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Matei",
+                            Rating = 6.8f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 11
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Errors = 2,
+                            FirstName = "Daniel",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Radu",
+                            Rating = 7.9f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 12
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Errors = 2,
+                            FirstName = "Mihai",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Popa",
+                            Rating = 8f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 13
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Errors = 2,
+                            FirstName = "Stefan",
+                            IsAvailable = true,
+                            IsEnabled = true,
+                            LastName = "Nicolae",
+                            Rating = 7.6f,
+                            Speed = 2,
+                            Stamina = 2,
+                            UserId = 14
+                        });
                 });
 
             modelBuilder.Entity("FootballAPI.Models.PlayerOrganiser", b =>
@@ -234,6 +397,18 @@ namespace FootballAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Teams");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "FC Brasov"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Steaua Bucuresti"
+                        });
                 });
 
             modelBuilder.Entity("FootballAPI.Models.TeamPlayers", b =>
@@ -297,6 +472,120 @@ namespace FootballAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "ion.popescu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "IonPopescu"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "marius.ionescu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "MariusIonescu"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "admin@gmail.com",
+                            Password = "default123",
+                            Role = 0,
+                            Username = "Admin"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Email = "organiser@gmail.com",
+                            Password = "default123",
+                            Role = 1,
+                            Username = "Organiser"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Email = "alex.georgescu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "AlexGeorgescu"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Email = "razvan.moldovan@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "RazvanMoldovan"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Email = "cristian.stancu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "CristianStancu"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Email = "andrei.vasilescu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "AndreiVasilescu"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Email = "florin.dumitru@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "FlorinDumitru"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Email = "gabriel.ciobanu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "GabrielCiobanu"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Email = "lucian.matei@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "LucianMatei"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Email = "daniel.radu@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "DanielRadu"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Email = "mihai.popa@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "MihaiPopa"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Email = "stefan.nicolae@gmail.com",
+                            Password = "default123",
+                            Role = 2,
+                            Username = "StefanNicolae"
+                        });
                 });
 
             modelBuilder.Entity("FootballAPI.Models.FriendRequest", b =>
@@ -316,6 +605,17 @@ namespace FootballAPI.Migrations
                     b.Navigation("Receiver");
 
                     b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("FootballAPI.Models.Match", b =>
+                {
+                    b.HasOne("FootballAPI.Models.User", "Organiser")
+                        .WithMany()
+                        .HasForeignKey("OrganiserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Organiser");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.MatchTeams", b =>

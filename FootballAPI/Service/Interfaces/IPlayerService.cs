@@ -15,12 +15,8 @@ namespace FootballAPI.Service
         Task<bool> DeletePlayerAsync(int id);
         Task<IEnumerable<PlayerDto>> SearchPlayersByNameAsync(string searchTerm);
         Task<bool> PlayerExistsAsync(int id);
-        Task<bool> EnablePlayerAsync(int id);
-        Task<bool> SetPlayerAvailableAsync(int playerId);
-        Task<bool> SetPlayerUnavailableAsync(int playerId);
-        Task<bool> SetMultiplePlayersAvailableAsync(int[] playerIds);
-        Task<bool> SetMultiplePlayersUnavailableAsync(int[] playerIds);
-        Task<bool> ClearAllAvailablePlayersAsync();
+        Task<bool> RestorePlayerAsync(int id);
+        Task<bool> HardDeletePlayerAsync(int id);
         Task<bool> UpdatePlayerRatingAsync(int playerId, float ratingChange);
         Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates);
         Task AddPlayerOrganiserRelationAsync(int playerId, int organiserId);

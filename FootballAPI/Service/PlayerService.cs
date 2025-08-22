@@ -48,7 +48,7 @@ namespace FootballAPI.Service
         public async Task<IEnumerable<PlayerDto>> GetAvailablePlayersByOrganiserAsync(int organiserId)
         {
             var organiserPlayers = await _userRepository.GetPlayersByOrganiserAsync(organiserId);
-            var availablePlayers = organiserPlayers.Where(p => p.IsAvailable && p.IsEnabled);
+            var availablePlayers = organiserPlayers.Where(p => p.DeletedAt == null);
             return availablePlayers.Select(MapToDto);
         }
 
@@ -64,8 +64,6 @@ namespace FootballAPI.Service
             existingPlayer.FirstName = updatePlayerDto.FirstName;
             existingPlayer.LastName = updatePlayerDto.LastName;
             existingPlayer.Rating = updatePlayerDto.Rating;
-            existingPlayer.IsAvailable = updatePlayerDto.IsAvailable;
-            existingPlayer.IsEnabled = updatePlayerDto.IsEnabled;
             existingPlayer.Speed = updatePlayerDto.Speed;
             existingPlayer.Stamina = updatePlayerDto.Stamina;
             existingPlayer.Errors = updatePlayerDto.Errors;
@@ -75,29 +73,24 @@ namespace FootballAPI.Service
         }
         public async Task<bool> DeletePlayerAsync(int id)
         {
-            var existingPlayer = await _playerRepository.GetByIdAsync(id);
-            if (existingPlayer == null)
-                return false;
-
-            existingPlayer.IsEnabled = false;
-            await _playerRepository.UpdateAsync(existingPlayer);
-            return true;
+            return await _playerRepository.DeleteAsync(id);
         }
 
-        public async Task<bool> EnablePlayerAsync(int id)
+        public async Task<bool> RestorePlayerAsync(int id)
         {
             var existingPlayer = await _playerRepository.GetByIdAsync(id);
-            if (existingPlayer == null)
+            if (existingPlayer == null || existingPlayer.DeletedAt == null)
                 return false;
 
-            existingPlayer.IsEnabled = true;
+            existingPlayer.DeletedAt = null;
+            existingPlayer.UpdatedAt = DateTime.UtcNow;
             await _playerRepository.UpdateAsync(existingPlayer);
             return true;
         }
 
         public async Task<bool> HardDeletePlayerAsync(int id)
         {
-            return await _playerRepository.DeleteAsync(id);
+            return await _playerRepository.HardDeleteAsync(id);
         }
 
         public async Task<IEnumerable<PlayerDto>> SearchPlayersByNameAsync(string searchTerm)
@@ -111,92 +104,11 @@ namespace FootballAPI.Service
             return await _playerRepository.ExistsAsync(id);
         }
 
-        public async Task<bool> SetPlayerAvailableAsync(int playerId)
-        {
-            var player = await _playerRepository.GetByIdAsync(playerId);
-            if (player == null || !player.IsEnabled)
-                return false;
-
-            player.IsAvailable = true;
-            await _playerRepository.UpdateAsync(player);
-            return true;
-        }
-
-        public async Task<bool> SetPlayerUnavailableAsync(int playerId)
-        {
-            var player = await _playerRepository.GetByIdAsync(playerId);
-            if (player == null)
-                return false;
-
-            player.IsAvailable = false;
-            await _playerRepository.UpdateAsync(player);
-            return true;
-        }
-
-        public async Task<bool> SetMultiplePlayersAvailableAsync(int[] playerIds)
-        {
-            try
-            {
-                foreach (var playerId in playerIds)
-                {
-                    var player = await _playerRepository.GetByIdAsync(playerId);
-                    if (player != null && player.IsEnabled)
-                    {
-                        player.IsAvailable = true;
-                        await _playerRepository.UpdateAsync(player);
-                    }
-                }
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public async Task<bool> SetMultiplePlayersUnavailableAsync(int[] playerIds)
-        {
-            try
-            {
-                foreach (var playerId in playerIds)
-                {
-                    var player = await _playerRepository.GetByIdAsync(playerId);
-                    if (player != null)
-                    {
-                        player.IsAvailable = false;
-                        await _playerRepository.UpdateAsync(player);
-                    }
-                }
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public async Task<bool> ClearAllAvailablePlayersAsync()
-        {
-            try
-            {
-                var availablePlayers = await _playerRepository.GetAvailablePlayersAsync();
-                foreach (var player in availablePlayers)
-                {
-                    player.IsAvailable = false;
-                    await _playerRepository.UpdateAsync(player);
-                }
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
 
 
         private PlayerDto MapToDto(Player player)
         {
-            if (!player.IsEnabled)
+            if (player.DeletedAt != null)
             {
                 return new PlayerDto
                 {
@@ -206,12 +118,14 @@ namespace FootballAPI.Service
                     Rating = 0.0f,
                     UserEmail = player.User?.Email ?? "",
                     Username = player.User?.Username ?? "",
-                    IsAvailable = false,
-                    IsEnabled = false,
+                    IsDeleted = true,
                     Speed = 1,
                     Stamina = 1,
                     Errors = 1,
-                    ProfileImageUrl = "http://localhost:5145/assets/default-avatar.png"
+                    ProfileImageUrl = "http://localhost:5145/assets/default-avatar.png",
+                    CreatedAt = player.CreatedAt,
+                    UpdatedAt = player.UpdatedAt,
+                    DeletedAt = player.DeletedAt
                 };
             }
             return new PlayerDto
@@ -220,8 +134,10 @@ namespace FootballAPI.Service
                 FirstName = player.FirstName,
                 LastName = player.LastName,
                 Rating = player.Rating,
-                IsAvailable = player.IsAvailable,
-                IsEnabled = true,
+                IsDeleted = false,
+                CreatedAt = player.CreatedAt,
+                UpdatedAt = player.UpdatedAt,
+                DeletedAt = player.DeletedAt,
                 UserEmail = player.User?.Email ?? "",
                 Username = player.User?.Username ?? "",
                 Speed = player.Speed,
@@ -236,7 +152,7 @@ namespace FootballAPI.Service
             try
             {
                 var player = await _playerRepository.GetByIdAsync(playerId);
-                if (player == null || !player.IsEnabled)
+                if (player == null || player.DeletedAt != null)
                     return false;
 
                 var newRating = Math.Max(0.0f, Math.Min(10000.0f, player.Rating + ratingChange));
@@ -258,7 +174,7 @@ namespace FootballAPI.Service
                 foreach (var update in playerRatingUpdates)
                 {
                     var player = await _playerRepository.GetByIdAsync(update.PlayerId);
-                    if (player != null && player.IsEnabled)
+                    if (player != null && player.DeletedAt == null)
                     {
                         var newRating = Math.Max(0.0f, Math.Min(10000.0f, player.Rating + update.RatingChange));
                         player.Rating = newRating;
@@ -291,7 +207,7 @@ namespace FootballAPI.Service
         public async Task<string> UpdatePlayerProfileImageAsync(int playerId, IFormFile imageFile)
         {
             var player = await _playerRepository.GetByIdAsync(playerId);
-            if (player == null || !player.IsEnabled)
+            if (player == null || player.DeletedAt != null)
                 throw new ArgumentException("Player not found or not enabled");
 
             if (player.User == null)
@@ -316,7 +232,7 @@ namespace FootballAPI.Service
         public async Task<bool> DeletePlayerProfileImageAsync(int playerId)
         {
             var player = await _playerRepository.GetByIdAsync(playerId);
-            if (player == null || !player.IsEnabled)
+            if (player == null || player.DeletedAt != null)
                 return false;
 
             if (!string.IsNullOrEmpty(player.ProfileImagePath))

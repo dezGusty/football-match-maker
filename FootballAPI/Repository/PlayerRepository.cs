@@ -36,26 +36,26 @@ namespace FootballAPI.Repository
                 .FirstOrDefaultAsync(p => p.UserId == userId);
         }
 
-        public async Task<IEnumerable<Player>> GetEnabledPlayersAsync()
+        public async Task<IEnumerable<Player>> GetActivePlayersAsync()
         {
             return await _context.Players
                 .Include(p => p.User)
-                .Where(p => p.IsEnabled)
+                .Where(p => p.DeletedAt == null)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Player>> GetDisabledPlayersAsync()
+        public async Task<IEnumerable<Player>> GetDeletedPlayersAsync()
         {
             return await _context.Players
                 .Include(p => p.User)
-                .Where(p => !p.IsEnabled)
+                .Where(p => p.DeletedAt != null)
                 .ToListAsync();
         }
         public async Task<IEnumerable<Player>> GetAvailablePlayersAsync()
         {
             return await _context.Players
                 .Include(p => p.User)
-                .Where(p => p.IsAvailable && p.IsEnabled)
+                .Where(p => p.DeletedAt == null)
                 .ToListAsync();
         }
 
@@ -68,12 +68,26 @@ namespace FootballAPI.Repository
 
         public async Task<Player> UpdateAsync(Player player)
         {
+            player.UpdatedAt = DateTime.UtcNow;
             _context.Entry(player).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return player;
         }
 
         public async Task<bool> DeleteAsync(int id)
+        {
+            var player = await _context.Players.FindAsync(id);
+            if (player == null)
+                return false;
+
+            player.DeletedAt = DateTime.UtcNow;
+            player.UpdatedAt = DateTime.UtcNow;
+            _context.Entry(player).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> HardDeleteAsync(int id)
         {
             var player = await _context.Players.FindAsync(id);
             if (player == null)
@@ -93,7 +107,7 @@ namespace FootballAPI.Repository
         {
             return await _context.Players
                 .Include(p => p.User)
-                .Where(p => p.IsEnabled &&
+                .Where(p => p.DeletedAt == null &&
                    (p.FirstName.Contains(searchTerm) || p.LastName.Contains(searchTerm)))
                 .ToListAsync();
         }

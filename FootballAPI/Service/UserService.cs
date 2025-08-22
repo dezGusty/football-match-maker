@@ -88,8 +88,8 @@ namespace FootballAPI.Service
                     LastName = "",
                     Rating = 1000.0f,
                     UserId = createdUser.Id,
-                    IsAvailable = false,
-                    IsEnabled = true
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
                 await _playerRepository.CreateAsync(player);
             }
@@ -129,8 +129,8 @@ namespace FootballAPI.Service
                 Stamina = dto.Stamina,
                 Errors = dto.Errors ?? 2,
                 UserId = createdUser.Id,
-                IsAvailable = false,
-                IsEnabled = true
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
             var createdPlayer = await _playerRepository.CreateAsync(player);
 

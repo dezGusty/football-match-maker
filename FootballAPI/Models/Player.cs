@@ -24,8 +24,12 @@ namespace FootballAPI.Models
 
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
-        public bool IsAvailable { get; set; } = false;
-        public bool IsEnabled { get; set; } = true;
+        
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        
+        public DateTime? DeletedAt { get; set; }
 
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
         public int Speed { get; set; } = 2; // 1 = Low, 2 = Medium, 3 = High

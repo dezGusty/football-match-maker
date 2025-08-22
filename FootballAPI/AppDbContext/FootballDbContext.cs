@@ -40,6 +40,8 @@ namespace FootballAPI.Data
                 entity.Property(e => e.FirstName).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.LastName).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.ProfileImagePath).HasMaxLength(500);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
 
                 entity.HasOne(e => e.User)
                     .WithOne()
@@ -61,6 +63,13 @@ namespace FootballAPI.Data
                 entity.Property(e => e.MatchDate).IsRequired();
                 entity.Property(e => e.IsPublic).HasDefaultValue(false);
                 entity.Property(e => e.Status).HasDefaultValue(Status.Open);
+                entity.Property(e => e.Location).HasMaxLength(255);
+                entity.Property(e => e.Cost).HasColumnType("decimal(10,2)");
+
+                entity.HasOne(e => e.Organiser)
+                    .WithMany(u => u.OrganisedMatches)
+                    .HasForeignKey(e => e.OrganiserId)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
 
             // MatchTeams configurations (Many-to-Many between Match and Team)
@@ -165,7 +174,8 @@ namespace FootballAPI.Data
                     LastName = "Popescu",
                     Rating = 8.5f,
                     UserId = 1,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new Player
                 {
@@ -174,7 +184,8 @@ namespace FootballAPI.Data
                     LastName = "Ionescu",
                     Rating = 7.8f,
                     UserId = 2,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new Player
                 {
@@ -183,7 +194,8 @@ namespace FootballAPI.Data
                     LastName = "Georgescu",
                     Rating = 7.2f,
                     UserId = 5,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new Player
                 {
@@ -192,7 +204,8 @@ namespace FootballAPI.Data
                     LastName = "Moldovan",
                     Rating = 8.1f,
                     UserId = 6,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new Player
                 {
@@ -201,7 +214,8 @@ namespace FootballAPI.Data
                     LastName = "Stancu",
                     Rating = 6.9f,
                     UserId = 7,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new Player
                 {
@@ -210,7 +224,8 @@ namespace FootballAPI.Data
                     LastName = "Vasilescu",
                     Rating = 7.7f,
                     UserId = 8,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new Player
                 {
@@ -219,7 +234,8 @@ namespace FootballAPI.Data
                     LastName = "Dumitru",
                     Rating = 8.3f,
                     UserId = 9,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new Player
                 {
@@ -228,7 +244,8 @@ namespace FootballAPI.Data
                     LastName = "Ciobanu",
                     Rating = 7.4f,
                     UserId = 10,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new Player
                 {
@@ -237,7 +254,8 @@ namespace FootballAPI.Data
                     LastName = "Matei",
                     Rating = 6.8f,
                     UserId = 11,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new Player
                 {
@@ -246,7 +264,8 @@ namespace FootballAPI.Data
                     LastName = "Radu",
                     Rating = 7.9f,
                     UserId = 12,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new Player
                 {
@@ -255,7 +274,8 @@ namespace FootballAPI.Data
                     LastName = "Popa",
                     Rating = 8.0f,
                     UserId = 13,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new Player
                 {
@@ -264,7 +284,8 @@ namespace FootballAPI.Data
                     LastName = "Nicolae",
                     Rating = 7.6f,
                     UserId = 14,
-                    IsAvailable = true
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }
             );
 

@@ -21,7 +21,9 @@ namespace FootballAPI.Service
                 MatchDate = match.MatchDate,
                 IsPublic = match.IsPublic,
                 Status = match.Status,
-
+                Location = match.Location,
+                Cost = match.Cost,
+                OrganiserId = match.OrganiserId
             };
         }
 
@@ -60,12 +62,37 @@ namespace FootballAPI.Service
             var match = new Match
             {
                 MatchDate = createMatchDto.MatchDate,
-                IsPublic = createMatchDto.IsPublic,
-                Status = createMatchDto.Status
+                IsPublic = false,
+                Status = createMatchDto.Status,
+                Location = createMatchDto.Location,
+                Cost = createMatchDto.Cost,
+                OrganiserId = createMatchDto.OrganiserId
             };
 
             var createdMatch = await _matchRepository.CreateAsync(match);
             return await GetMatchByIdAsync(createdMatch.Id);
+        }
+
+        public async Task<MatchDto> MakeMatchPublicAsync(int matchId)
+        {
+            var existingMatch = await _matchRepository.GetByIdAsync(matchId);
+            if (existingMatch == null)
+                return null;
+
+            existingMatch.IsPublic = true;
+            var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
+            return MapToDto(updatedMatch);
+        }
+
+        public async Task<MatchDto> MakeMatchPrivateAsync(int matchId)
+        {
+            var existingMatch = await _matchRepository.GetByIdAsync(matchId);
+            if (existingMatch == null)
+                return null;
+
+            existingMatch.IsPublic = false;
+            var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
+            return MapToDto(updatedMatch);
         }
 
         public async Task<MatchDto> UpdateMatchAsync(int id, UpdateMatchDto updateMatchDto)
@@ -77,6 +104,8 @@ namespace FootballAPI.Service
             existingMatch.MatchDate = updateMatchDto.MatchDate;
             existingMatch.IsPublic = updateMatchDto.IsPublic;
             existingMatch.Status = updateMatchDto.Status;
+            existingMatch.Location = updateMatchDto.Location;
+            existingMatch.Cost = updateMatchDto.Cost;
 
             var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
             return MapToDto(updatedMatch);
@@ -96,6 +125,24 @@ namespace FootballAPI.Service
         {
             var pastMatches = await _matchRepository.GetPastMatchesAsync();
             return pastMatches.Select(MapToDto);
+        }
+
+        public async Task<IEnumerable<MatchDto>> GetMatchesByOrganiserAsync(int organiserId)
+        {
+            var matches = await _matchRepository.GetMatchesByOrganiserAsync(organiserId);
+            return matches.Select(MapToDto);
+        }
+
+        public async Task<IEnumerable<MatchDto>> GetMatchesByLocationAsync(string location)
+        {
+            var matches = await _matchRepository.GetMatchesByLocationAsync(location);
+            return matches.Select(MapToDto);
+        }
+
+        public async Task<IEnumerable<MatchDto>> GetMatchesByCostRangeAsync(decimal? minCost, decimal? maxCost)
+        {
+            var matches = await _matchRepository.GetMatchesByCostRangeAsync(minCost, maxCost);
+            return matches.Select(MapToDto);
         }
     }
 }

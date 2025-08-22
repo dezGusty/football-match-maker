@@ -99,5 +99,36 @@ namespace FootballAPI.Repository
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Match>> GetMatchesByOrganiserAsync(int organiserId)
+        {
+            return await _context.Matches
+                .Where(m => m.OrganiserId == organiserId)
+                .OrderByDescending(m => m.MatchDate)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Match>> GetMatchesByLocationAsync(string location)
+        {
+            return await _context.Matches
+                .Where(m => m.Location != null && m.Location.Contains(location))
+                .OrderByDescending(m => m.MatchDate)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Match>> GetMatchesByCostRangeAsync(decimal? minCost, decimal? maxCost)
+        {
+            var query = _context.Matches.AsQueryable();
+
+            if (minCost.HasValue)
+                query = query.Where(m => m.Cost >= minCost.Value);
+
+            if (maxCost.HasValue)
+                query = query.Where(m => m.Cost <= maxCost.Value);
+
+            return await query
+                .OrderByDescending(m => m.MatchDate)
+                .ToListAsync();
+        }
+
     }
 }

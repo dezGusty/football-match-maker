@@ -8,13 +8,18 @@ namespace FootballAPI.DTOs
         public DateTime MatchDate { get; set; }
         public bool IsPublic { get; set; }
         public Status Status { get; set; }
+        public string? Location { get; set; }
+        public decimal? Cost { get; set; }
+        public int OrganiserId { get; set; }
     }
 
     public class CreateMatchDto
     {
         public DateTime MatchDate { get; set; }
-        public bool IsPublic { get; set; } = false;
         public Status Status { get; set; } = Status.Open;
+        public string? Location { get; set; }
+        public decimal? Cost { get; set; }
+        public int OrganiserId { get; set; }
     }
 
     public class UpdateMatchDto
@@ -22,5 +27,7 @@ namespace FootballAPI.DTOs
         public DateTime MatchDate { get; set; }
         public bool IsPublic { get; set; }
         public Status Status { get; set; }
+        public string? Location { get; set; }
+        public decimal? Cost { get; set; }
     }
 }

@@ -3,29 +3,16 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace FootballAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDatabaseWithNavigationProperties : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Matches",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    MatchDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsPublic = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Matches", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Teams",
                 columns: table => new
@@ -56,33 +43,6 @@ namespace FootballAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MatchTeams",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    MatchId = table.Column<int>(type: "int", nullable: false),
-                    TeamId = table.Column<int>(type: "int", nullable: false),
-                    Goals = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MatchTeams", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MatchTeams_Matches_MatchId",
-                        column: x => x.MatchId,
-                        principalTable: "Matches",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MatchTeams_Teams_TeamId",
-                        column: x => x.TeamId,
-                        principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "FriendRequests",
                 columns: table => new
                 {
@@ -109,6 +69,27 @@ namespace FootballAPI.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Matches",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MatchDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsPublic = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    OrganiserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Matches", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Matches_Users_OrganiserId",
+                        column: x => x.OrganiserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -158,6 +139,33 @@ namespace FootballAPI.Migrations
                         name: "FK_ResetPasswordTokens_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MatchTeams",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MatchId = table.Column<int>(type: "int", nullable: false),
+                    TeamId = table.Column<int>(type: "int", nullable: false),
+                    Goals = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MatchTeams", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MatchTeams_Matches_MatchId",
+                        column: x => x.MatchId,
+                        principalTable: "Matches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MatchTeams_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -213,6 +221,55 @@ namespace FootballAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Teams",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "FC Brasov" },
+                    { 2, "Steaua Bucuresti" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Email", "Password", "Role", "Username" },
+                values: new object[,]
+                {
+                    { 1, "ion.popescu@gmail.com", "default123", 2, "IonPopescu" },
+                    { 2, "marius.ionescu@gmail.com", "default123", 2, "MariusIonescu" },
+                    { 3, "admin@gmail.com", "default123", 0, "Admin" },
+                    { 4, "organiser@gmail.com", "default123", 1, "Organiser" },
+                    { 5, "alex.georgescu@gmail.com", "default123", 2, "AlexGeorgescu" },
+                    { 6, "razvan.moldovan@gmail.com", "default123", 2, "RazvanMoldovan" },
+                    { 7, "cristian.stancu@gmail.com", "default123", 2, "CristianStancu" },
+                    { 8, "andrei.vasilescu@gmail.com", "default123", 2, "AndreiVasilescu" },
+                    { 9, "florin.dumitru@gmail.com", "default123", 2, "FlorinDumitru" },
+                    { 10, "gabriel.ciobanu@gmail.com", "default123", 2, "GabrielCiobanu" },
+                    { 11, "lucian.matei@gmail.com", "default123", 2, "LucianMatei" },
+                    { 12, "daniel.radu@gmail.com", "default123", 2, "DanielRadu" },
+                    { 13, "mihai.popa@gmail.com", "default123", 2, "MihaiPopa" },
+                    { 14, "stefan.nicolae@gmail.com", "default123", 2, "StefanNicolae" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Players",
+                columns: new[] { "Id", "Errors", "FirstName", "IsAvailable", "IsEnabled", "LastName", "ProfileImagePath", "Rating", "Speed", "Stamina", "UserId" },
+                values: new object[,]
+                {
+                    { 1, 2, "Ion", true, true, "Popescu", null, 8.5f, 2, 2, 1 },
+                    { 2, 2, "Marius", true, true, "Ionescu", null, 7.8f, 2, 2, 2 },
+                    { 3, 2, "Alex", true, true, "Georgescu", null, 7.2f, 2, 2, 5 },
+                    { 4, 2, "Razvan", true, true, "Moldovan", null, 8.1f, 2, 2, 6 },
+                    { 5, 2, "Cristian", true, true, "Stancu", null, 6.9f, 2, 2, 7 },
+                    { 6, 2, "Andrei", true, true, "Vasilescu", null, 7.7f, 2, 2, 8 },
+                    { 7, 2, "Florin", true, true, "Dumitru", null, 8.3f, 2, 2, 9 },
+                    { 8, 2, "Gabriel", true, true, "Ciobanu", null, 7.4f, 2, 2, 10 },
+                    { 9, 2, "Lucian", true, true, "Matei", null, 6.8f, 2, 2, 11 },
+                    { 10, 2, "Daniel", true, true, "Radu", null, 7.9f, 2, 2, 12 },
+                    { 11, 2, "Mihai", true, true, "Popa", null, 8f, 2, 2, 13 },
+                    { 12, 2, "Stefan", true, true, "Nicolae", null, 7.6f, 2, 2, 14 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_FriendRequests_ReceiverId",
                 table: "FriendRequests",
@@ -222,6 +279,11 @@ namespace FootballAPI.Migrations
                 name: "IX_FriendRequests_SenderId",
                 table: "FriendRequests",
                 column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Matches_OrganiserId",
+                table: "Matches",
+                column: "OrganiserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MatchTeams_MatchId",

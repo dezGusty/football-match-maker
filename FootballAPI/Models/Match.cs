@@ -23,6 +23,18 @@ namespace FootballAPI.Models
         public bool IsPublic { get; set; } = false;
 
         public Status Status { get; set; } = Status.Open;
+
+        [StringLength(255)]
+        public string? Location { get; set; }
+
+        public decimal? Cost { get; set; }
+
+        [Required]
+        public int OrganiserId { get; set; }
+
+        [ForeignKey("OrganiserId")]
+        public virtual User Organiser { get; set; }
+
         public virtual ICollection<MatchTeams> MatchTeams { get; set; } = new List<MatchTeams>();
     }
 

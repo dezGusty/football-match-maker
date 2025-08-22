@@ -122,7 +122,10 @@ namespace FootballAPI.Service
                     FirstName = teamPlayer.Player.FirstName,
                     LastName = teamPlayer.Player.LastName,
                     Rating = teamPlayer.Player.Rating,
-                    IsAvailable = teamPlayer.Player.IsAvailable
+                    IsDeleted = teamPlayer.Player.DeletedAt != null,
+                    CreatedAt = teamPlayer.Player.CreatedAt,
+                    UpdatedAt = teamPlayer.Player.UpdatedAt,
+                    DeletedAt = teamPlayer.Player.DeletedAt
                 }
             };
         }

@@ -15,5 +15,8 @@ namespace FootballAPI.Repository
         Task<IEnumerable<Match>> GetMatchesByStatusAsync(Status status);
         Task<IEnumerable<Match>> GetPastMatchesAsync();
         Task<IEnumerable<Match>> GetFutureMatchesAsync();
+        Task<IEnumerable<Match>> GetMatchesByOrganiserAsync(int organiserId);
+        Task<IEnumerable<Match>> GetMatchesByLocationAsync(string location);
+        Task<IEnumerable<Match>> GetMatchesByCostRangeAsync(decimal? minCost, decimal? maxCost);
     }
 }

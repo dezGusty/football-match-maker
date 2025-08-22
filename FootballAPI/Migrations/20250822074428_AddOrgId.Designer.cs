@@ -4,6 +4,7 @@ using FootballAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250822074428_AddOrgId")]
+    partial class AddOrgId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,17 +69,10 @@ namespace FootballAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("Cost")
-                        .HasColumnType("decimal(10,2)");
-
                     b.Property<bool>("IsPublic")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
-
-                    b.Property<string>("Location")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime>("MatchDate")
                         .HasColumnType("datetime2");
@@ -132,14 +128,6 @@ namespace FootballAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Errors")
                         .HasColumnType("int");
 
@@ -147,6 +135,12 @@ namespace FootballAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -166,11 +160,6 @@ namespace FootballAPI.Migrations
                     b.Property<int>("Stamina")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -185,157 +174,157 @@ namespace FootballAPI.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Ion",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Popescu",
                             Rating = 8.5f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 1
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Marius",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Ionescu",
                             Rating = 7.8f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 2
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Alex",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Georgescu",
                             Rating = 7.2f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 5
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Razvan",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Moldovan",
                             Rating = 8.1f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 6
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Cristian",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Stancu",
                             Rating = 6.9f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 7
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Andrei",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Vasilescu",
                             Rating = 7.7f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 8
                         },
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Florin",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Dumitru",
                             Rating = 8.3f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 9
                         },
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Gabriel",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Ciobanu",
                             Rating = 7.4f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 10
                         },
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Lucian",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Matei",
                             Rating = 6.8f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 11
                         },
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Daniel",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Radu",
                             Rating = 7.9f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 12
                         },
                         new
                         {
                             Id = 11,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Mihai",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Popa",
                             Rating = 8f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 13
                         },
                         new
                         {
                             Id = 12,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Stefan",
+                            IsAvailable = true,
+                            IsEnabled = true,
                             LastName = "Nicolae",
                             Rating = 7.6f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 14
                         });
                 });
