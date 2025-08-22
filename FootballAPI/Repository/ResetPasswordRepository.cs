@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using FootballAPI.Data;
+using FootballAPI.AppDbContext;
 using FootballAPI.Models;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using static FootballAPI.Repository.UserRepository;
@@ -86,7 +86,7 @@ namespace FootballAPI.Repository
             return await _context.ResetPasswordTokens
                 .AnyAsync(t =>
                      t.UserId == userId &&
-                     t.UsedAt == null && 
+                     t.UsedAt == null &&
                      t.ExpiresAt > DateTime.UtcNow);
         }
     }

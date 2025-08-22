@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using FootballAPI.Data;
+using FootballAPI.AppDbContext;
 using FootballAPI.Models;
 
 namespace FootballAPI.Repository
@@ -18,5 +18,6 @@ namespace FootballAPI.Repository
         Task<IEnumerable<Player>> GetEnabledPlayersAsync();
         Task<IEnumerable<Player>> GetDisabledPlayersAsync();
         Task AddPlayerOrganiserRelationAsync(PlayerOrganiser relation);
+        Task<PlayerOrganiser?> GetPlayerOrganiserAsync(int playerId, int organiserId);
     }
 }

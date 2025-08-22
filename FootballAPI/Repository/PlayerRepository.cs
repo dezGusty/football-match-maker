@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using FootballAPI.Data;
+using FootballAPI.AppDbContext;
 using FootballAPI.Models;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using static FootballAPI.Repository.UserRepository;
@@ -101,6 +101,12 @@ namespace FootballAPI.Repository
         {
             _context.PlayerOrganisers.Add(relation);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<PlayerOrganiser?> GetPlayerOrganiserAsync(int playerId, int organiserId)
+        {
+            return await _context.PlayerOrganisers
+                .FirstOrDefaultAsync(po => po.PlayerId == playerId && po.OrganiserId == organiserId);
         }
     }
 }

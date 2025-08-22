@@ -1,11 +1,13 @@
-using FootballAPI.Data;
+using FootballAPI.AppDbContext;
 using FootballAPI.Repository;
+using FootballAPI.Repository.Interfaces;
 using FootballAPI.Service;
 using FootballAPI.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
 
@@ -22,11 +24,36 @@ builder.Host.UseSerilog((context, configuration) =>
 var logger = Log.ForContext<Program>();
 logger.Information("Starting Football API application");
 
-// Add services to the container.
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Introdu token-ul JWT în formatul: Bearer {token}",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 // Database Context - Using SQL Server
 builder.Services.AddDbContext<FootballDbContext>(options =>
@@ -36,8 +63,11 @@ builder.Services.AddDbContext<FootballDbContext>(options =>
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IResetPasswordTokenRepository, ResetPasswordTokenRepository>();
-
 builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
+builder.Services.AddScoped<IMatchRepository, MatchRepository>();
+builder.Services.AddScoped<IMatchPlayerRepository, MatchPlayerRepository>();
+builder.Services.AddScoped<IMatchHistoryRepository, MatchHistoryRepository>();
+builder.Services.AddScoped<IPlayerMatchStatsRepository, PlayerMatchStatsRepository>();
 
 // Service Registration
 builder.Services.AddScoped<IPlayerService, PlayerService>();
@@ -47,6 +77,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IResetPasswordService, ResetPasswordService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
+builder.Services.AddScoped<IMatchService, MatchService>();
+builder.Services.AddScoped<IMatchHistoryService, MatchHistoryService>();
 
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using FootballAPI.Data;
+using FootballAPI.AppDbContext;
 using FootballAPI.Models;
 
 namespace FootballAPI.Repository

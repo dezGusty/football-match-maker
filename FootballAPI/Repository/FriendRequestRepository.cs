@@ -1,4 +1,4 @@
-using FootballAPI.Data;
+using FootballAPI.AppDbContext;
 using FootballAPI.Models;
 using Microsoft.EntityFrameworkCore;
 

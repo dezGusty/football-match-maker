@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using FootballAPI.Data;
+using FootballAPI.AppDbContext;
 using FootballAPI.Models;
 
 namespace FootballAPI.Repository
-{ 
+{
     public interface IResetPasswordTokenRepository
     {
         Task<ResetPasswordToken> CreateTokenAsync(int userId, string tokenHash, DateTime expiresAt);

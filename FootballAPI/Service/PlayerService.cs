@@ -1,5 +1,5 @@
 using System.Diagnostics.Tracing;
-using FootballAPI.Data;
+using FootballAPI.AppDbContext;
 using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Repository;

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using FootballAPI.Models;
 
-namespace FootballAPI.Data
+namespace FootballAPI.AppDbContext
 {
     public class FootballDbContext : DbContext
     {
@@ -12,6 +12,10 @@ namespace FootballAPI.Data
         public DbSet<PlayerOrganiser> PlayerOrganisers { get; set; }
         public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
         public DbSet<FriendRequest> FriendRequests { get; set; }
+        public DbSet<Match> Matches { get; set; }
+        public DbSet<MatchPlayer> MatchPlayers { get; set; }
+        public DbSet<MatchHistory> MatchHistories { get; set; }
+        public DbSet<PlayerMatchStats> PlayerMatchStats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -68,7 +72,49 @@ namespace FootballAPI.Data
                 .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Match>()
+                .HasOne(m => m.Organiser)
+                .WithMany()
+                .HasForeignKey(m => m.OrganiserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Match>()
+                .Property(m => m.Status)
+                .HasConversion<int>()
+                .IsRequired();
+
+            modelBuilder.Entity<MatchPlayer>()
+                .HasKey(mp => new { mp.MatchId, mp.PlayerId });
+
+            modelBuilder.Entity<MatchPlayer>()
+                .HasOne(mp => mp.Match)
+                .WithMany(m => m.MatchPlayers)
+                .HasForeignKey(mp => mp.MatchId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MatchPlayer>()
+                .HasOne(mp => mp.Player)
+                .WithMany()
+                .HasForeignKey(mp => mp.PlayerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MatchHistory>()
+                .HasOne(mh => mh.Match)
+                .WithOne(m => m.MatchHistory)
+                .HasForeignKey<MatchHistory>(mh => mh.MatchId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PlayerMatchStats>()
+                .HasOne(pms => pms.MatchHistory)
+                .WithMany(mh => mh.PlayerStats)
+                .HasForeignKey(pms => pms.MatchHistoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PlayerMatchStats>()
+                .HasOne(pms => pms.Player)
+                .WithMany()
+                .HasForeignKey(pms => pms.PlayerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<User>(entity =>
             {
