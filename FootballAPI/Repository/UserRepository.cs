@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using FootballAPI.Data;
 using FootballAPI.Models;
+using FootballAPI.Models.Enums;
 
 namespace FootballAPI.Repository
 {
@@ -120,14 +121,14 @@ namespace FootballAPI.Repository
             return true;
         }
 
-        public async Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int id)
+        public async Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id)
         {
-            var players = await _context.PlayerOrganisers
+            var users = await _context.PlayerOrganisers
             .Where(po => po.OrganiserId == id)
             .Select(po => po.Player)
             .ToListAsync();
 
-            return players;
+            return users;
         }
         public async Task<User?> GetUserByEmail(string email, bool includeDeleted = false, bool tracking = false)
         {

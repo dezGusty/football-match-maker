@@ -1,5 +1,6 @@
 using FootballAPI.DTOs;
 using FootballAPI.Models;
+using FootballAPI.Models.Enums;
 using FootballAPI.Service;
 using FootballAPI.Utils;
 using Microsoft.AspNetCore.Authorization;

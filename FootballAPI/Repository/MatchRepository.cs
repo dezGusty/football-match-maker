@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using FootballAPI.Data;
 using FootballAPI.Models;
+using FootballAPI.Models.Enums;
 
 namespace FootballAPI.Repository
 {

@@ -1,10 +1,7 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace FootballAPI.DTOs
 {
-    public class CreateFriendRequestDto
-    {
-        public string ReceiverEmail { get; set; } = string.Empty;
-    }
-
     public class FriendRequestDto
     {
         public int Id { get; set; }
@@ -19,8 +16,17 @@ namespace FootballAPI.DTOs
         public DateTime? ResponsedAt { get; set; }
     }
 
+    public class CreateFriendRequestDto
+    {
+        [Required]
+        [EmailAddress]
+        [StringLength(100)]
+        public string ReceiverEmail { get; set; } = null!;
+    }
+
     public class FriendRequestResponseDto
     {
+        [Required]
         public bool Accept { get; set; }
     }
 }

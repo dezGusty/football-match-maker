@@ -1,3 +1,4 @@
+using FootballAPI.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using FootballAPI.Data;
 using FootballAPI.Models;

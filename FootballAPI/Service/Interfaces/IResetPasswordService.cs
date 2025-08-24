@@ -1,3 +1,4 @@
+using FootballAPI.Models.Enums;
 using FootballAPI.Models;
 namespace FootballAPI.Service.Interfaces
 {

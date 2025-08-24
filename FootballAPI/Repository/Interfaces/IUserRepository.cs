@@ -1,3 +1,4 @@
+using FootballAPI.Models.Enums;
 using FootballAPI.Models;
 using FootballAPI.DTOs;
 
@@ -19,7 +20,7 @@ namespace FootballAPI.Repository
         Task<bool> ChangePasswordAsync(int userId, string newPassword);
         Task<IEnumerable<User>> GetUsersByRoleAsync(UserRole role);
         Task<bool> ChangeUsernameAsync(int userId, string newUsername);
-        Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int id);
+        Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id);
         Task<User?> GetUserByEmail(string email, bool includeDeleted = false, bool tracking = false);
     }
 }

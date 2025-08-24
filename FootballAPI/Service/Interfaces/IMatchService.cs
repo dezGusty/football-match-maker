@@ -1,3 +1,4 @@
+using FootballAPI.Models.Enums;
 using FootballAPI.DTOs;
 using FootballAPI.Repository;
 
@@ -7,7 +8,7 @@ namespace FootballAPI.Service
     {
         Task<IEnumerable<MatchDto>> GetAllMatchesAsync();
         Task<MatchDto> GetMatchByIdAsync(int id);
-        Task<MatchDto> CreateMatchAsync(CreateMatchDto createMatchDto);
+        Task<MatchDto> CreateMatchAsync(CreateMatchDto createMatchDto, int organiserId);
         Task<MatchDto> UpdateMatchAsync(int id, UpdateMatchDto updateMatchDto);
         Task<bool> DeleteMatchAsync(int id);
         Task<IEnumerable<MatchDto>> GetMatchesByDateRangeAsync(DateTime startDate, DateTime endDate);
@@ -18,5 +19,15 @@ namespace FootballAPI.Service
         Task<IEnumerable<MatchDto>> GetMatchesByOrganiserAsync(int organiserId);
         Task<IEnumerable<MatchDto>> GetMatchesByLocationAsync(string location);
         Task<IEnumerable<MatchDto>> GetMatchesByCostRangeAsync(decimal? minCost, decimal? maxCost);
+        Task<MatchDto> MakeMatchPublicAsync(int matchId);
+        Task<MatchDto> MakeMatchPrivateAsync(int matchId);
+        
+        Task<bool> AddPlayerToTeamAsync(int matchId, int playerId, int teamId);
+        Task<bool> JoinPublicMatchAsync(int matchId, int playerId);
+        Task<bool> MovePlayerBetweenTeamsAsync(int matchId, int playerId, int newTeamId);
+        Task<MatchDto> PublishMatchAsync(int matchId);
+        Task<MatchDetailsDto> GetMatchDetailsAsync(int matchId);
+        Task<bool> LeaveMatchAsync(int matchId, int playerId);
+        Task<IEnumerable<MatchDto>> GetPlayerMatchesAsync(int playerId);
     }
 }

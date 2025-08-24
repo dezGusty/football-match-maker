@@ -45,7 +45,6 @@ namespace FootballAPI.Models
 
         // Navigation properties
         public virtual ICollection<TeamPlayers> TeamPlayers { get; set; } = new List<TeamPlayers>();
-        public virtual ICollection<PlayerOrganiser> PlayerOrganisers { get; set; } = new List<PlayerOrganiser>();
 
     }
 }

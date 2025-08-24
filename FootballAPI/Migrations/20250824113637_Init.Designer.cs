@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    [Migration("20250822081643_updatedDatabase2")]
-    partial class updatedDatabase2
+    [Migration("20250824113637_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -188,157 +188,157 @@ namespace FootballAPI.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(7831),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Ion",
                             LastName = "Popescu",
                             Rating = 8.5f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(7833),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 1
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9423),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Marius",
                             LastName = "Ionescu",
                             Rating = 7.8f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9423),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 2
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9426),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Alex",
                             LastName = "Georgescu",
                             Rating = 7.2f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9427),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 5
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9428),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Razvan",
                             LastName = "Moldovan",
                             Rating = 8.1f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9428),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 6
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9429),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Cristian",
                             LastName = "Stancu",
                             Rating = 6.9f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9430),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 7
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9431),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Andrei",
                             LastName = "Vasilescu",
                             Rating = 7.7f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9431),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 8
                         },
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9433),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Florin",
                             LastName = "Dumitru",
                             Rating = 8.3f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9433),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 9
                         },
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9434),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Gabriel",
                             LastName = "Ciobanu",
                             Rating = 7.4f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9434),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 10
                         },
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9436),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Lucian",
                             LastName = "Matei",
                             Rating = 6.8f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9436),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 11
                         },
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9437),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Daniel",
                             LastName = "Radu",
                             Rating = 7.9f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9438),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 12
                         },
                         new
                         {
                             Id = 11,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9439),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Mihai",
                             LastName = "Popa",
                             Rating = 8f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9439),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 13
                         },
                         new
                         {
                             Id = 12,
-                            CreatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9440),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Errors = 2,
                             FirstName = "Stefan",
                             LastName = "Nicolae",
                             Rating = 7.6f,
                             Speed = 2,
                             Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 8, 22, 8, 16, 43, 30, DateTimeKind.Utc).AddTicks(9441),
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 14
                         });
                 });
@@ -670,8 +670,8 @@ namespace FootballAPI.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("FootballAPI.Models.Player", "Player")
-                        .WithMany("PlayerOrganisers")
+                    b.HasOne("FootballAPI.Models.User", "Player")
+                        .WithMany("PlayerRelations")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -723,8 +723,6 @@ namespace FootballAPI.Migrations
 
             modelBuilder.Entity("FootballAPI.Models.Player", b =>
                 {
-                    b.Navigation("PlayerOrganisers");
-
                     b.Navigation("TeamPlayers");
                 });
 
@@ -738,6 +736,8 @@ namespace FootballAPI.Migrations
                     b.Navigation("OrganisedMatches");
 
                     b.Navigation("OrganisedPlayers");
+
+                    b.Navigation("PlayerRelations");
 
                     b.Navigation("ReceivedFriendRequests");
 

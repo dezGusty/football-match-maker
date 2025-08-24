@@ -667,8 +667,8 @@ namespace FootballAPI.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("FootballAPI.Models.Player", "Player")
-                        .WithMany("PlayerOrganisers")
+                    b.HasOne("FootballAPI.Models.User", "Player")
+                        .WithMany("PlayerRelations")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -720,8 +720,6 @@ namespace FootballAPI.Migrations
 
             modelBuilder.Entity("FootballAPI.Models.Player", b =>
                 {
-                    b.Navigation("PlayerOrganisers");
-
                     b.Navigation("TeamPlayers");
                 });
 
@@ -735,6 +733,8 @@ namespace FootballAPI.Migrations
                     b.Navigation("OrganisedMatches");
 
                     b.Navigation("OrganisedPlayers");
+
+                    b.Navigation("PlayerRelations");
 
                     b.Navigation("ReceivedFriendRequests");
 

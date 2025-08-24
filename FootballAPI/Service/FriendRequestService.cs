@@ -1,5 +1,6 @@
 using FootballAPI.DTOs;
 using FootballAPI.Models;
+using FootballAPI.Models.Enums;
 using FootballAPI.Repository;
 
 namespace FootballAPI.Service
@@ -103,29 +104,23 @@ namespace FootballAPI.Service
             if (sender == null || receiver == null)
                 throw new ArgumentException("Sender or receiver not found");
 
-            int organiserId, playerId;
+            int organiserId, userId;
 
             if (sender.Role == UserRole.ORGANISER)
             {
                 organiserId = senderId;
-                var receiverPlayer = await _playerRepository.GetByUserIdAsync(receiverId);
-                if (receiverPlayer == null)
-                    throw new ArgumentException("Receiver player profile not found");
-                playerId = receiverPlayer.Id;
+                userId = receiverId;
             }
             else
             {
                 organiserId = receiverId;
-                var senderPlayer = await _playerRepository.GetByUserIdAsync(senderId);
-                if (senderPlayer == null)
-                    throw new ArgumentException("Sender player profile not found");
-                playerId = senderPlayer.Id;
+                userId = senderId;
             }
 
             var relation = new PlayerOrganiser
             {
                 OrganiserId = organiserId,
-                PlayerId = playerId,
+                PlayerId = userId,
                 CreatedAt = DateTime.Now
             };
 

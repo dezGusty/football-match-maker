@@ -1,3 +1,4 @@
+using FootballAPI.Models.Enums;
 using FootballAPI.DTOs;
 using FootballAPI.Models;
 
@@ -19,7 +20,7 @@ namespace FootballAPI.Service
         Task<bool> UsernameExistsAsync(string username);
         Task<bool> UsernameExistsAsync(string username, int excludeUserId);
         Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto changeUsernameDto);
-        Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int id);
+        Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id);
 
     }
 

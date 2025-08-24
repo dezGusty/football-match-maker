@@ -2,6 +2,7 @@ using System.Diagnostics.Tracing;
 using FootballAPI.Data;
 using FootballAPI.DTOs;
 using FootballAPI.Models;
+using FootballAPI.Models.Enums;
 using FootballAPI.Repository;
 using FootballAPI.Service.Interfaces;
 namespace FootballAPI.Service
@@ -47,9 +48,19 @@ namespace FootballAPI.Service
 
         public async Task<IEnumerable<PlayerDto>> GetAvailablePlayersByOrganiserAsync(int organiserId)
         {
-            var organiserPlayers = await _userRepository.GetPlayersByOrganiserAsync(organiserId);
-            var availablePlayers = organiserPlayers.Where(p => p.DeletedAt == null);
-            return availablePlayers.Select(MapToDto);
+            var organiserUsers = await _userRepository.GetPlayersByOrganiserAsync(organiserId);
+            var playerDtos = new List<PlayerDto>();
+            
+            foreach (var user in organiserUsers)
+            {
+                var player = await _playerRepository.GetByUserIdAsync(user.Id);
+                if (player != null && player.DeletedAt == null)
+                {
+                    playerDtos.Add(MapToDto(player));
+                }
+            }
+            
+            return playerDtos;
         }
 
 
@@ -194,6 +205,10 @@ namespace FootballAPI.Service
             var organiser = await _userRepository.GetByIdAsync(organiserId);
             if (organiser == null || organiser.Role != UserRole.ORGANISER)
                 throw new InvalidOperationException("OrganiserId does not correspond to a valid organiser user.");
+
+            var player = await _userRepository.GetByIdAsync(playerId);
+            if (player == null || player.Role != UserRole.PLAYER)
+                throw new InvalidOperationException("PlayerId does not correspond to a valid player user.");
 
             var relation = new PlayerOrganiser
             {

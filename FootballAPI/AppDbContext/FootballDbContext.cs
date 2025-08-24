@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using FootballAPI.Models;
+using FootballAPI.Models.Enums;
 
 namespace FootballAPI.Data
 {
@@ -138,7 +139,7 @@ namespace FootballAPI.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // PlayerOrganiser configurations (Many-to-Many between User as Organiser and Player)
+            // PlayerOrganiser configurations (Many-to-Many between User as Organiser and User as Player)
             modelBuilder.Entity<PlayerOrganiser>(entity =>
             {
                 entity.HasKey(e => new { e.OrganiserId, e.PlayerId });
@@ -150,7 +151,7 @@ namespace FootballAPI.Data
                     .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(e => e.Player)
-                    .WithMany(p => p.PlayerOrganisers)
+                    .WithMany(u => u.PlayerRelations)
                     .HasForeignKey(e => e.PlayerId)
                     .OnDelete(DeleteBehavior.Cascade);
             });

@@ -1,14 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FootballAPI.Models.Enums;
 
-public enum Status
-{
-    Open = 1,
-    Closed = 2,
-    Finalized = 4,
-    Cancelled = 8
-
-}
 namespace FootballAPI.Models
 {
 

@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using FootballAPI.DTOs;
 using FootballAPI.Models;
+using FootballAPI.Models.Enums;
 using FootballAPI.Service;
+using Microsoft.AspNetCore.Authorization;
+using FootballAPI.Utils;
+using System.Security.Claims;
 
 namespace FootballAPI.Controllers
 {
@@ -57,12 +61,18 @@ namespace FootballAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<MatchDto>> CreateMatch(CreateMatchDto createMatchDto)
         {
             try
             {
-                var match = await _matchService.CreateMatchAsync(createMatchDto);
+                var organiserId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var match = await _matchService.CreateMatchAsync(createMatchDto, organiserId);
                 return CreatedAtAction(nameof(GetMatch), new { id = match.Id }, match);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
             }
             catch (Exception ex)
             {
@@ -120,6 +130,144 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("{id}/players")]
+        [Authorize]
+        public async Task<ActionResult> AddPlayerToMatch(int id, AddPlayerToMatchDto addPlayerDto)
+        {
+            try
+            {
+                var result = await _matchService.AddPlayerToTeamAsync(id, addPlayerDto.PlayerId, addPlayerDto.TeamId);
+                if (!result)
+                    return BadRequest("Could not add player to team. Team might be full or player already exists.");
+
+                return Ok("Player added successfully to team.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error adding player to match: {ex.Message}");
+            }
+        }
+
+        [HttpPost("{id}/join")]
+        [Authorize]
+        public async Task<ActionResult> JoinPublicMatch(int id)
+        {
+            try
+            {
+                var playerId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var result = await _matchService.JoinPublicMatchAsync(id, playerId);
+                if (!result)
+                    return BadRequest("Could not join match. Match might be full, private, or player already in match.");
+
+                return Ok("Successfully joined the match.");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error joining match: {ex.Message}");
+            }
+        }
+
+        [HttpPut("{id}/players/{playerId}/move")]
+        [Authorize]
+        public async Task<ActionResult> MovePlayerBetweenTeams(int id, int playerId, MovePlayerDto movePlayerDto)
+        {
+            try
+            {
+                var result = await _matchService.MovePlayerBetweenTeamsAsync(id, playerId, movePlayerDto.NewTeamId);
+                if (!result)
+                    return BadRequest("Could not move player. Target team might be full or player not found.");
+
+                return Ok("Player moved successfully between teams.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error moving player: {ex.Message}");
+            }
+        }
+
+        [HttpPost("{id}/publish")]
+        [Authorize]
+        public async Task<ActionResult<MatchDto>> PublishMatch(int id)
+        {
+            try
+            {
+                var result = await _matchService.PublishMatchAsync(id);
+                if (result == null)
+                    return BadRequest("Could not publish match. Match needs at least 10 players.");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error publishing match: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{id}/details")]
+        public async Task<ActionResult<MatchDetailsDto>> GetMatchDetails(int id)
+        {
+            try
+            {
+                var result = await _matchService.GetMatchDetailsAsync(id);
+                if (result == null)
+                    return NotFound($"Match with ID {id} not found.");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error getting match details: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{id}/leave")]
+        [Authorize]
+        public async Task<ActionResult> LeaveMatch(int id)
+        {
+            try
+            {
+                var playerId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var result = await _matchService.LeaveMatchAsync(id, playerId);
+                
+                if (!result)
+                    return BadRequest("Could not leave match. You might not be part of this match.");
+
+                return Ok("Successfully left the match.");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error leaving match: {ex.Message}");
+            }
+        }
+
+        [HttpGet("my-matches")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetMyMatches()
+        {
+            try
+            {
+                var playerId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var matches = await _matchService.GetPlayerMatchesAsync(playerId);
+                return Ok(matches);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error getting player matches: {ex.Message}");
             }
         }
     }

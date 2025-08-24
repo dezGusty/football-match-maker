@@ -1,4 +1,6 @@
+using FootballAPI.Models.Enums;
 using FootballAPI.Models;
+using FootballAPI.Models.Enums;
 
 namespace FootballAPI.Repository
 {

@@ -1,4 +1,4 @@
-namespace FootballAPI.Models
+namespace FootballAPI.Models.Enums
 {
     public enum UserRole
     {

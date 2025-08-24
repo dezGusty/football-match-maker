@@ -1,5 +1,6 @@
 using FootballAPI.DTOs;
 using FootballAPI.Models;
+using FootballAPI.Models.Enums;
 using FootballAPI.Repository;
 
 namespace FootballAPI.Service
@@ -125,9 +126,9 @@ namespace FootballAPI.Service
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Rating = dto.Rating,
-                Speed = dto.Speed ?? 2,
+                Speed = dto.Speed,
                 Stamina = dto.Stamina,
-                Errors = dto.Errors ?? 2,
+                Errors = dto.Errors,
                 UserId = createdUser.Id,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
@@ -156,14 +157,14 @@ namespace FootballAPI.Service
             await _friendRequestRepository.CreateAsync(friendRequest);
 
             var organizer = await _userRepository.GetByIdAsync(organizerId);
-            var player = await _playerRepository.GetByUserIdAsync(playerId);
+            var player = await _userRepository.GetByIdAsync(playerId);
 
             if (organizer != null && player != null)
             {
                 var relation = new PlayerOrganiser
                 {
                     OrganiserId = organizerId,
-                    PlayerId = player.Id,
+                    PlayerId = playerId,
                     CreatedAt = DateTime.Now
                 };
 
@@ -241,10 +242,10 @@ namespace FootballAPI.Service
             return await _userRepository.ChangeUsernameAsync(userId, changeUsernameDto.NewUsername);
         }
 
-        public async Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int id)
+        public async Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id)
         {
-            var players = await _userRepository.GetPlayersByOrganiserAsync(id);
-            return players;
+            var users = await _userRepository.GetPlayersByOrganiserAsync(id);
+            return users;
         }
     }
 }

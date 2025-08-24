@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using FootballAPI.Models.Enums;
 
 namespace FootballAPI.Models
 {
@@ -22,12 +22,6 @@ namespace FootballAPI.Models
 
     [ForeignKey("PlayerId")]
     public virtual Player Player { get; set; } = null!;
-  }
-  public enum PlayerStatus
-  {
-    addedByOrganiser = 1,
-    joined = 2,
-    Open = 3
   }
 }
 

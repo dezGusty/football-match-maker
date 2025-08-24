@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FootballAPI.Models.Enums;
 
 namespace FootballAPI.Models
 {
@@ -25,12 +26,5 @@ namespace FootballAPI.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public DateTime? ResponsedAt { get; set; }
-    }
-
-    public enum FriendRequestStatus
-    {
-        Pending = 0,
-        Accepted = 1,
-        Rejected = 2
     }
 }
