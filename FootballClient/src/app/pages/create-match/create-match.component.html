@@ -1,0 +1,116 @@
+<div class="create-match-container">
+  <div class="form-card">
+    <h2>Creează un meci nou</h2>
+
+    <form (ngSubmit)="onSubmit()" #matchFormRef="ngForm">
+      <div class="form-group">
+        <label for="matchDate">Data și ora meciului *</label>
+        <input
+          type="datetime-local"
+          id="matchDate"
+          name="matchDate"
+          [(ngModel)]="matchForm.matchDate"
+          required
+          class="form-control"
+          [min]="matchForm.matchDate"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="location">Locația *</label>
+        <input
+          type="text"
+          id="location"
+          name="location"
+          [(ngModel)]="matchForm.location"
+          placeholder="Ex: Stadion Central, Teren Sintetic..."
+          required
+          class="form-control"
+          maxlength="100"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="cost">Cost per jucător (Lei)</label>
+        <input
+          type="number"
+          id="cost"
+          name="cost"
+          [(ngModel)]="matchForm.cost"
+          placeholder="Ex: 30"
+          class="form-control"
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+      <div class="teams-row">
+        <div class="form-group">
+          <label for="teamAName">Numele primei echipe</label>
+          <input
+            type="text"
+            id="teamAName"
+            name="teamAName"
+            [(ngModel)]="matchForm.teamAName"
+            placeholder="Dacă nu completezi, va fi 'TeamA'"
+            class="form-control"
+            maxlength="50"
+          />
+        </div>
+
+        <div class="vs-divider">VS</div>
+
+        <div class="form-group">
+          <label for="teamBName">Numele celei de-a doua echipe</label>
+          <input
+            type="text"
+            id="teamBName"
+            name="teamBName"
+            [(ngModel)]="matchForm.teamBName"
+            placeholder="Dacă nu completezi, va fi 'TeamB'"
+            class="form-control"
+            maxlength="50"
+          />
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+
+      <div class="button-group">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="loading"
+        >
+          Anulează
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="loading || !matchFormRef.valid"
+        >
+          <span *ngIf="loading">Se creează...</span>
+          <span *ngIf="!loading">Creează meciul</span>
+        </button>
+      </div>
+    </form>
+
+    <div class="info-box">
+      <h4>📋 Ce se întâmplă după creare?</h4>
+      <ul>
+        <li>Meciul va fi creat ca <strong>privat</strong> inițial</li>
+        <li>Vei putea adăuga jucători din lista ta de prieteni</li>
+        <li>După ce ai minim 10 jucători, poți face meciul public</li>
+        <li>Jucătorii se vor putea înscrie la meciurile publice</li>
+      </ul>
+    </div>
+  </div>
+</div>

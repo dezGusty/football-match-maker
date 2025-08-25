@@ -1,7 +1,7 @@
 import { PlayerHistory } from './player-history.interface';
 
 export interface Match {
-  id?: number;
+  id: number;
   matchDate?: string;
   teamAId: number;
   teamBId: number;
@@ -11,5 +11,6 @@ export interface Match {
   scoreB?: number;
   teamAGoals?: number;
   teamBGoals?: number;
+  isPublic?: boolean;
   playerHistory: PlayerHistory[];
 }

@@ -125,6 +125,7 @@ namespace FootballAPI.Repository
         {
             var users = await _context.PlayerOrganisers
             .Where(po => po.OrganiserId == id)
+            .Include(po => po.Player)
             .Select(po => po.Player)
             .ToListAsync();
 

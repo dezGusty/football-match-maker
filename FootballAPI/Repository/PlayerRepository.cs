@@ -116,5 +116,17 @@ namespace FootballAPI.Repository
             _context.PlayerOrganisers.Add(relation);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int organiserId)
+        {
+            return await _context.PlayerOrganisers
+                .Where(po => po.OrganiserId == organiserId)
+                .Join(_context.Players,
+                      po => po.PlayerId,
+                      p => p.UserId,
+                      (po, p) => p)
+                .Where(p => p.DeletedAt == null) // Only active players
+                .ToListAsync();
+        }
     }
 }

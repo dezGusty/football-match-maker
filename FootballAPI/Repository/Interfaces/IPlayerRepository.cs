@@ -20,5 +20,6 @@ namespace FootballAPI.Repository
         Task<IEnumerable<Player>> GetDeletedPlayersAsync();
         Task<bool> HardDeleteAsync(int id);
         Task AddPlayerOrganiserRelationAsync(PlayerOrganiser relation);
+        Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int organiserId);
     }
 }

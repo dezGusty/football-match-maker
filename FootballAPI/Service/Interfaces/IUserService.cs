@@ -20,7 +20,7 @@ namespace FootballAPI.Service
         Task<bool> UsernameExistsAsync(string username);
         Task<bool> UsernameExistsAsync(string username, int excludeUserId);
         Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto changeUsernameDto);
-        Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id);
+        Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int id);
 
     }
 

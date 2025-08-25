@@ -38,6 +38,43 @@
       </div>
     </div>
 
+    <!-- Available Matches Content -->
+    <div *ngIf="activeTab === 'available'" class="content-section">
+      <h2>Available Matches</h2>
+      <p class="subtitle">Public matches and private matches from friends you can join</p>
+      <div *ngIf="availableMatches.length === 0" class="empty-state">
+        No available matches to join.
+      </div>
+
+      <div class="matches-table" *ngIf="availableMatches.length > 0">
+        <div class="table-header">
+          <div class="col-team">Teams</div>
+          <div class="col-date">Date</div>
+          <div class="col-type">Type</div>
+          <div class="col-action">Action</div>
+        </div>
+
+        <div class="table-row" *ngFor="let match of availableMatches">
+          <div class="col-team">
+            {{ match.teamAName }} vs {{ match.teamBName }}
+          </div>
+          <div class="col-date">
+            {{ match.matchDate | date : "dd/MM/yyyy" }}
+          </div>
+          <div class="col-type">
+            <span class="match-type" [class]="match.isPublic ? 'public' : 'private'">
+              {{ match.isPublic ? 'Public' : 'Private' }}
+            </span>
+          </div>
+          <div class="col-action">
+            <button class="action-btn" (click)="openJoinMatchModal(match)">
+              View & Join
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Past Matches Content -->
     <div *ngIf="activeTab === 'past'" class="content-section">
       <h2>Past Matches</h2>
@@ -73,8 +110,8 @@
     </div>
   </div>
 
-  <!-- Modal -->
-  <div *ngIf="modalOpen" class="modal-backdrop" (click)="closeModal()">
+  <!-- Regular Modal (View Teams) -->
+  <div *ngIf="modalOpen && modalType === 'view'" class="modal-backdrop" (click)="closeModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <button class="close-modal-btn" (click)="closeModal()">×</button>
       <h3>{{ selectedTeamAName }} vs {{ selectedTeamBName }}</h3>
@@ -92,6 +129,51 @@
           <ul>
             <li *ngFor="let player of selectedTeamBPlayers">{{ player }}</li>
           </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Join Match Modal -->
+  <div *ngIf="modalOpen && modalType === 'join'" class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-content join-modal" (click)="$event.stopPropagation()">
+      <button class="close-modal-btn" (click)="closeModal()">×</button>
+      <h3>Join Match: {{ selectedTeamAName }} vs {{ selectedTeamBName }}</h3>
+      <p class="modal-subtitle">Choose which team to join</p>
+
+      <div class="join-teams-container">
+        <div class="join-team-card" (click)="joinTeam(selectedMatch!.teamAId)">
+          <div class="team-header">
+            <h4>{{ selectedTeamAName }}</h4>
+            <span class="team-count">{{ selectedTeamAPlayers.length }} players</span>
+          </div>
+          <div class="team-players">
+            <div *ngFor="let player of selectedTeamAPlayers" class="player-item">
+              {{ player }}
+            </div>
+            <div *ngIf="selectedTeamAPlayers.length === 0" class="no-players">
+              No players yet
+            </div>
+          </div>
+          <button class="join-team-btn">Join {{ selectedTeamAName }}</button>
+        </div>
+
+        <div class="vs-divider-join">VS</div>
+
+        <div class="join-team-card" (click)="joinTeam(selectedMatch!.teamBId)">
+          <div class="team-header">
+            <h4>{{ selectedTeamBName }}</h4>
+            <span class="team-count">{{ selectedTeamBPlayers.length }} players</span>
+          </div>
+          <div class="team-players">
+            <div *ngFor="let player of selectedTeamBPlayers" class="player-item">
+              {{ player }}
+            </div>
+            <div *ngIf="selectedTeamBPlayers.length === 0" class="no-players">
+              No players yet
+            </div>
+          </div>
+          <button class="join-team-btn">Join {{ selectedTeamBName }}</button>
         </div>
       </div>
     </div>

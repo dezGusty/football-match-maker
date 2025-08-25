@@ -72,6 +72,7 @@ namespace FootballAPI.Repository
         {
             return await _context.TeamPlayers
                 .Include(tp => tp.Player)
+                    .ThenInclude(p => p.User)
                 .Where(tp => tp.MatchTeamId == matchTeamId)
                 .ToListAsync();
         }

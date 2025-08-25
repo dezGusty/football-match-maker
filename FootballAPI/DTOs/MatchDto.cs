@@ -11,6 +11,8 @@ namespace FootballAPI.DTOs
         public string? Location { get; set; }
         public decimal? Cost { get; set; }
         public int OrganiserId { get; set; }
+        public string? TeamAName { get; set; }
+        public string? TeamBName { get; set; }
     }
 
     public class CreateMatchDto
@@ -67,9 +69,16 @@ namespace FootballAPI.DTOs
 
     public class PlayerInMatchDto
     {
+        public int Id { get; set; }
         public int PlayerId { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
         public string PlayerName { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
+        public decimal Rating { get; set; }
+        public int Speed { get; set; }
+        public int Stamina { get; set; }
+        public int Errors { get; set; }
         public PlayerStatus Status { get; set; }
     }
 }

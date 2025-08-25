@@ -143,7 +143,7 @@ namespace FootballAPI.Controllers
                 if (!result)
                     return BadRequest("Could not add player to team. Team might be full or player already exists.");
 
-                return Ok("Player added successfully to team.");
+                return Ok(new { message = "Player added successfully to team." });
             }
             catch (Exception ex)
             {
@@ -162,7 +162,7 @@ namespace FootballAPI.Controllers
                 if (!result)
                     return BadRequest("Could not join match. Match might be full, private, or player already in match.");
 
-                return Ok("Successfully joined the match.");
+                return Ok(new { message = "Successfully joined the match." });
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -171,6 +171,29 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"Error joining match: {ex.Message}");
+            }
+        }
+
+        [HttpPost("{matchId}/teams/{teamId}/join")]
+        [Authorize]
+        public async Task<ActionResult> JoinTeam(int matchId, int teamId)
+        {
+            try
+            {
+                var playerId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var result = await _matchService.AddPlayerToTeamAsync(matchId, playerId, teamId);
+                if (!result)
+                    return BadRequest("Could not join team. Team might be full or player already in match.");
+
+                return Ok(new { message = "Successfully joined the team." });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error joining team: {ex.Message}");
             }
         }
 
@@ -184,7 +207,7 @@ namespace FootballAPI.Controllers
                 if (!result)
                     return BadRequest("Could not move player. Target team might be full or player not found.");
 
-                return Ok("Player moved successfully between teams.");
+                return Ok(new { message = "Player moved successfully between teams." });
             }
             catch (Exception ex)
             {
@@ -239,7 +262,7 @@ namespace FootballAPI.Controllers
                 if (!result)
                     return BadRequest("Could not leave match. You might not be part of this match.");
 
-                return Ok("Successfully left the match.");
+                return Ok(new { message = "Successfully left the match." });
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -270,5 +293,52 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Error getting player matches: {ex.Message}");
             }
         }
+
+        [HttpGet("available")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetAvailableMatches()
+        {
+            try
+            {
+                var playerId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var matches = await _matchService.GetAvailableMatchesForPlayerAsync(playerId);
+                return Ok(matches);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error getting available matches: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{matchId}/players/{playerId}")]
+        [Authorize]
+        public async Task<ActionResult> RemovePlayerFromMatch(int matchId, int playerId)
+        {
+            try
+            {
+                var result = await _matchService.RemovePlayerFromMatchAsync(matchId, playerId);
+                if (!result)
+                    return BadRequest("Could not remove player from match. Player might not be in this match.");
+
+                return Ok(new { message = "Player removed successfully from match." });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error removing player from match: {ex.Message}");
+            }
+        }
+
     }
 }

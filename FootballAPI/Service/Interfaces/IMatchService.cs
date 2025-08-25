@@ -29,5 +29,7 @@ namespace FootballAPI.Service
         Task<MatchDetailsDto> GetMatchDetailsAsync(int matchId);
         Task<bool> LeaveMatchAsync(int matchId, int playerId);
         Task<IEnumerable<MatchDto>> GetPlayerMatchesAsync(int playerId);
+        Task<IEnumerable<MatchDto>> GetAvailableMatchesForPlayerAsync(int playerId);
+        Task<bool> RemovePlayerFromMatchAsync(int matchId, int playerId);
     }
 }

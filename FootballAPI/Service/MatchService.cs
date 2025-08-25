@@ -2,6 +2,7 @@ using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Models.Enums;
 using FootballAPI.Repository;
+using FootballAPI.Data;
 
 namespace FootballAPI.Service
 {
@@ -12,20 +13,25 @@ namespace FootballAPI.Service
         private readonly IMatchTeamsService _matchTeamsService;
         private readonly ITeamPlayersService _teamPlayersService;
         private readonly IUserService _userService;
+        private readonly FootballDbContext _context;
 
         public MatchService(IMatchRepository matchRepository, ITeamService teamService,
                            IMatchTeamsService matchTeamsService, ITeamPlayersService teamPlayersService,
-                           IUserService userService)
+                           IUserService userService, FootballDbContext context)
         {
             _matchRepository = matchRepository;
             _teamService = teamService;
             _matchTeamsService = matchTeamsService;
             _teamPlayersService = teamPlayersService;
             _userService = userService;
+            _context = context;
         }
 
-        private MatchDto MapToDto(Match match)
+        private async Task<MatchDto> MapToDtoAsync(Match match)
         {
+            var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(match.Id);
+            var teams = matchTeams.ToList();
+
             return new MatchDto
             {
                 Id = match.Id,
@@ -34,38 +40,60 @@ namespace FootballAPI.Service
                 Status = match.Status,
                 Location = match.Location,
                 Cost = match.Cost,
-                OrganiserId = match.OrganiserId
+                OrganiserId = match.OrganiserId,
+                TeamAName = teams.Count > 0 ? teams[0].Team?.Name : null,
+                TeamBName = teams.Count > 1 ? teams[1].Team?.Name : null
             };
         }
 
         public async Task<IEnumerable<MatchDto>> GetAllMatchesAsync()
         {
             var matches = await _matchRepository.GetAllAsync();
-            return matches.Select(MapToDto);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in matches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
         }
 
         public async Task<MatchDto> GetMatchByIdAsync(int id)
         {
             var match = await _matchRepository.GetByIdAsync(id);
-            return match == null ? null : MapToDto(match);
+            return match == null ? null : await MapToDtoAsync(match);
         }
 
         public async Task<IEnumerable<MatchDto>> GetMatchesByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
             var matches = await _matchRepository.GetMatchesByDateRangeAsync(startDate, endDate);
-            return matches.Select(MapToDto);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in matches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
         }
 
         public async Task<IEnumerable<MatchDto>> GetPublicMatchesAsync()
         {
             var matches = await _matchRepository.GetPublicMatchesAsync();
-            return matches.Select(MapToDto);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in matches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
         }
 
         public async Task<IEnumerable<MatchDto>> GetMatchesByStatusAsync(Status status)
         {
             var matches = await _matchRepository.GetMatchesByStatusAsync(status);
-            return matches.Select(MapToDto);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in matches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
         }
 
         public async Task<MatchDto> CreateMatchAsync(CreateMatchDto createMatchDto, int organiserId)
@@ -116,7 +144,7 @@ namespace FootballAPI.Service
 
             existingMatch.IsPublic = true;
             var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
-            return MapToDto(updatedMatch);
+            return await MapToDtoAsync(updatedMatch);
         }
 
         public async Task<MatchDto> MakeMatchPrivateAsync(int matchId)
@@ -127,7 +155,7 @@ namespace FootballAPI.Service
 
             existingMatch.IsPublic = false;
             var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
-            return MapToDto(updatedMatch);
+            return await MapToDtoAsync(updatedMatch);
         }
 
         public async Task<MatchDto> UpdateMatchAsync(int id, UpdateMatchDto updateMatchDto)
@@ -143,7 +171,7 @@ namespace FootballAPI.Service
             existingMatch.Cost = updateMatchDto.Cost;
 
             var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
-            return MapToDto(updatedMatch);
+            return await MapToDtoAsync(updatedMatch);
         }
 
         public async Task<bool> DeleteMatchAsync(int id)
@@ -153,31 +181,56 @@ namespace FootballAPI.Service
         public async Task<IEnumerable<MatchDto>> GetFutureMatchesAsync()
         {
             var futureMatches = await _matchRepository.GetFutureMatchesAsync();
-            return futureMatches.Select(MapToDto);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in futureMatches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
 
         }
         public async Task<IEnumerable<MatchDto>> GetPastMatchesAsync()
         {
             var pastMatches = await _matchRepository.GetPastMatchesAsync();
-            return pastMatches.Select(MapToDto);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in pastMatches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
         }
 
         public async Task<IEnumerable<MatchDto>> GetMatchesByOrganiserAsync(int organiserId)
         {
             var matches = await _matchRepository.GetMatchesByOrganiserAsync(organiserId);
-            return matches.Select(MapToDto);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in matches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
         }
 
         public async Task<IEnumerable<MatchDto>> GetMatchesByLocationAsync(string location)
         {
             var matches = await _matchRepository.GetMatchesByLocationAsync(location);
-            return matches.Select(MapToDto);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in matches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
         }
 
         public async Task<IEnumerable<MatchDto>> GetMatchesByCostRangeAsync(decimal? minCost, decimal? maxCost)
         {
             var matches = await _matchRepository.GetMatchesByCostRangeAsync(minCost, maxCost);
-            return matches.Select(MapToDto);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in matches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
         }
 
         public async Task<bool> AddPlayerToTeamAsync(int matchId, int playerId, int teamId)
@@ -283,21 +336,10 @@ namespace FootballAPI.Service
             var match = await _matchRepository.GetByIdAsync(matchId);
             if (match == null) return null;
 
-            var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(matchId);
-            var totalPlayers = 0;
-
-            foreach (var matchTeam in matchTeams)
-            {
-                var players = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(matchTeam.Id);
-                totalPlayers += players.Count();
-            }
-
-            if (totalPlayers < 10) return null;
-
             match.IsPublic = true;
             await _matchRepository.UpdateAsync(match);
 
-            return MapToDto(match);
+            return await MapToDtoAsync(match);
         }
 
         public async Task<MatchDetailsDto> GetMatchDetailsAsync(int matchId)
@@ -314,9 +356,16 @@ namespace FootballAPI.Service
                 var teamPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(matchTeam.Id);
                 var playersDto = teamPlayers.Select(tp => new PlayerInMatchDto
                 {
+                    Id = tp.Player?.Id ?? 0,
                     PlayerId = tp.PlayerId,
+                    FirstName = tp.Player?.FirstName ?? "",
+                    LastName = tp.Player?.LastName ?? "",
                     PlayerName = $"{tp.Player?.FirstName ?? ""} {tp.Player?.LastName ?? ""}".Trim(),
                     Username = tp.Player?.Username ?? "Unknown",
+                    Rating = (decimal)(tp.Player?.Rating ?? 0f),
+                    Speed = tp.Player?.Speed ?? 2,
+                    Stamina = tp.Player?.Stamina ?? 2,
+                    Errors = tp.Player?.Errors ?? 2,
                     Status = tp.Status
                 }).ToList();
 
@@ -383,7 +432,75 @@ namespace FootballAPI.Service
                 }
             }
 
-            return playerMatches.Select(MapToDto);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in playerMatches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
         }
+
+        public async Task<IEnumerable<MatchDto>> GetAvailableMatchesForPlayerAsync(int playerId)
+        {
+            var availableMatches = new List<Match>();
+            
+            // Get all future matches
+            var allMatches = await _matchRepository.GetAllAsync();
+            var futureMatches = allMatches.Where(m => m.MatchDate > DateTime.Now).ToList();
+
+            foreach (var match in futureMatches)
+            {
+                // Check if player is already in this match
+                var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(match.Id);
+                bool playerAlreadyInMatch = false;
+                
+                foreach (var matchTeam in matchTeams)
+                {
+                    var teamPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(matchTeam.Id);
+                    if (teamPlayers.Any(tp => tp.PlayerId == playerId))
+                    {
+                        playerAlreadyInMatch = true;
+                        break;
+                    }
+                }
+
+                if (!playerAlreadyInMatch)
+                {
+                    // For now, just add public matches
+                    // TODO: Add logic to check for private matches from friends
+                    if (match.IsPublic)
+                    {
+                        availableMatches.Add(match);
+                    }
+                }
+            }
+
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in availableMatches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            
+            return matchDtos;
+        }
+
+        public async Task<bool> RemovePlayerFromMatchAsync(int matchId, int playerId)
+        {
+            var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(matchId);
+
+            foreach (var matchTeam in matchTeams)
+            {
+                var teamPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(matchTeam.Id);
+                var playerInTeam = teamPlayers.FirstOrDefault(tp => tp.PlayerId == playerId);
+
+                if (playerInTeam != null)
+                {
+                    return await _teamPlayersService.DeleteTeamPlayerAsync(playerInTeam.Id);
+                }
+            }
+
+            return false;
+        }
+
     }
 }

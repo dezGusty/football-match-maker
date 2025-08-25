@@ -13,14 +13,16 @@ export const routes: Routes = [
   },
   {
     path: 'reset-password',
-    loadComponent: () => import('./pages/reset-password/reset-password').then((m) => m.SetPasswordComponent),
-  
+    loadComponent: () =>
+      import('./pages/reset-password/reset-password').then(
+        (m) => m.SetPasswordComponent
+      ),
   },
   {
     path: 'select-players',
     loadComponent: () =>
       import('./pages/selectPlayers/select-players.component').then(
-        (m) => m.SelectPlayersComponent,
+        (m) => m.SelectPlayersComponent
       ),
     canActivate: [authGuard],
   },
@@ -43,7 +45,7 @@ export const routes: Routes = [
     path: 'match-formation',
     loadComponent: () =>
       import('./pages/match-formation/match-formation.component').then(
-        (m) => m.MatchFormationComponent,
+        (m) => m.MatchFormationComponent
       ),
     canActivate: [authGuard],
   },
@@ -51,7 +53,7 @@ export const routes: Routes = [
     path: 'matches-history',
     loadComponent: () =>
       import('./pages/matches-history/matches-history').then(
-        (m) => m.MatchesHistory,
+        (m) => m.MatchesHistory
       ),
     canActivate: [authGuard],
   },
@@ -59,7 +61,7 @@ export const routes: Routes = [
     path: 'player-dashboard',
     loadComponent: () =>
       import('./pages/player-dashboard/player-dashboard.component').then(
-        (m) => m.PlayerDashboardComponent,
+        (m) => m.PlayerDashboardComponent
       ),
     canActivate: [authGuard],
   },
@@ -67,7 +69,15 @@ export const routes: Routes = [
     path: 'player-account',
     loadComponent: () =>
       import('./pages/player-account/player-account.component').then(
-        (m) => m.PlayerAccountComponent,
+        (m) => m.PlayerAccountComponent
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'create-match',
+    loadComponent: () =>
+      import('./pages/create-match/create-match.component').then(
+        (m) => m.CreateMatchComponent
       ),
     canActivate: [authGuard],
   },

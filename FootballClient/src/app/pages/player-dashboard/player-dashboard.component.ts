@@ -25,14 +25,16 @@ import { PlayerHistory } from '../../models/player-history.interface';
   styleUrls: ['./player-dashboard.component.css'],
 })
 export class PlayerDashboardComponent implements OnInit {
-  activeTab: string = 'future'; // 'future', 'past'
+  activeTab: string = 'future'; // 'future', 'past', 'available'
   currentPlayer: Player | null = null;
 
   upcomingMatches: Match[] = [];
   matchHistory: Match[] = [];
+  availableMatches: Match[] = [];
 
   // Modal pentru afișarea jucătorilor
   modalOpen: boolean = false;
+  modalType: 'view' | 'join' = 'view';
   selectedMatch: Match | null = null;
   selectedTeamAName: string = '';
   selectedTeamBName: string = '';
@@ -49,6 +51,7 @@ export class PlayerDashboardComponent implements OnInit {
   async ngOnInit() {
     await this.loadPlayerData();
     await this.loadMatches();
+    await this.loadAvailableMatches();
   }
 
   async loadPlayerData() {
@@ -106,16 +109,67 @@ export class PlayerDashboardComponent implements OnInit {
     }
   }
 
+  async loadAvailableMatches() {
+    try {
+      // Load available matches (public + private from friends)
+      const availableMatches = await this.matchService.getAvailableMatches();
+      this.availableMatches = availableMatches;
+
+      // Add team names for available matches
+      for (const match of this.availableMatches) {
+        match.teamAName = await this.matchService.getTeamById(match.teamAId);
+        match.teamBName = await this.matchService.getTeamById(match.teamBId);
+      }
+    } catch (error) {
+      console.error('Error loading available matches:', error);
+    }
+  }
+
   setActiveTab(tab: string) {
     this.activeTab = tab;
   }
 
   async openPlayersModal(match: Match) {
     try {
-      this.selectedMatch = match;
-      this.selectedTeamAName = match.teamAName!;
-      this.selectedTeamBName = match.teamBName!;
+      this.modalType = 'view';
+      await this.loadMatchDetails(match);
+      this.modalOpen = true;
+    } catch (error) {
+      console.error('Error loading player data:', error);
+    }
+  }
 
+  async openJoinMatchModal(match: Match) {
+    try {
+      this.modalType = 'join';
+      await this.loadMatchDetails(match);
+      this.modalOpen = true;
+    } catch (error) {
+      console.error('Error loading match details:', error);
+    }
+  }
+
+  async loadMatchDetails(match: Match) {
+    this.selectedMatch = match;
+    this.selectedTeamAName = match.teamAName!;
+    this.selectedTeamBName = match.teamBName!;
+
+    // Get detailed match information to show players
+    try {
+      const matchDetails = await this.matchService.getMatchDetails(match.id);
+      
+      const teamA = matchDetails.teams.find((t: any) => t.teamId === match.teamAId);
+      const teamB = matchDetails.teams.find((t: any) => t.teamId === match.teamBId);
+
+      this.selectedTeamAPlayers = teamA ? teamA.players.map((p: any) => 
+        `${p.firstName} ${p.lastName} - ${p.rating}`
+      ) : [];
+
+      this.selectedTeamBPlayers = teamB ? teamB.players.map((p: any) => 
+        `${p.firstName} ${p.lastName} - ${p.rating}`
+      ) : [];
+    } catch (error) {
+      // Fallback to match.playerHistory if available
       this.selectedTeamAPlayers = match.playerHistory
         .filter((p) => p.teamId === match.teamAId && p.player)
         .map(
@@ -129,10 +183,6 @@ export class PlayerDashboardComponent implements OnInit {
           (p) =>
             `${p.player.firstName} ${p.player.lastName} - ${p.player.rating}`
         );
-
-      this.modalOpen = true;
-    } catch (error) {
-      console.error('Error loading player data:', error);
     }
   }
 
@@ -159,5 +209,42 @@ export class PlayerDashboardComponent implements OnInit {
 
   goToAccount() {
     this.router.navigate(['/player-account']);
+  }
+
+  async joinMatch(match: Match) {
+    try {
+      if (!match.id) {
+        console.error('Match ID is missing');
+        return;
+      }
+      await this.matchService.joinMatch(match.id);
+      // Refresh the matches after joining
+      await this.loadMatches();
+      await this.loadAvailableMatches();
+    } catch (error) {
+      console.error('Error joining match:', error);
+      alert('Failed to join match. Please try again.');
+    }
+  }
+
+  async joinTeam(teamId: number) {
+    try {
+      if (!this.selectedMatch?.id) {
+        console.error('Match ID is missing');
+        return;
+      }
+      
+      await this.matchService.joinTeam(this.selectedMatch.id, teamId);
+      
+      // Close modal and refresh matches
+      this.closeModal();
+      await this.loadMatches();
+      await this.loadAvailableMatches();
+      
+      alert('Successfully joined the team!');
+    } catch (error) {
+      console.error('Error joining team:', error);
+      alert('Failed to join team. Please try again.');
+    }
   }
 }
