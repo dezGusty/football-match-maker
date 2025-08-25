@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./FootballAPI
+      dockerfile: Dockerfile
+    ports:
+      - "5145:5145"
+    env_file:
+      - ./prod.env
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5145/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql_server_db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${SA_PASSWORD}
+    ports:
+      - "5000:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./FootballClient
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    env_file:
+      - ./prod.env
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  sql_data:
+
+    
+
