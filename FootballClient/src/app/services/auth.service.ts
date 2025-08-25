@@ -145,6 +145,16 @@ export class AuthService {
       this.isAuthenticated = true;
       this.userId = loginResponse.user.id;
       this.userRole = loginResponse.user.role;
+
+      // Redirect based on user role
+      if (loginResponse.user.role === UserRole.PLAYER) {
+        this.router.navigate(['/player-dashboard']);
+      } else if (loginResponse.user.role === UserRole.ORGANISER || loginResponse.user.role === UserRole.ADMIN) {
+        this.router.navigate(['/organizer-dashboard']);
+      } else {
+        // Default fallback to root which will redirect based on role
+        this.router.navigate(['/']);
+      }
     } catch (error) {
       console.error('Failed to login:', error);
       throw error;

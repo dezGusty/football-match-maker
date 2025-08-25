@@ -12,12 +12,11 @@
   <div class="header-center">
     <div
       class="logo-container"
-      (click)="navigateTo('/home')"
+      (click)="navigateToDashboard()"
       style="cursor: pointer"
-      title="Go to Home"
+      title="Go to Dashboard"
     >
       <h1 class="app-title">Football Match Maker</h1>
-
     </div>
   </div>
   <div class="header-right">
@@ -35,12 +34,18 @@
 
   <div class="menu" [class.open]="isMenuOpen">
     <ul>
-      <li>
-        <button (click)="navigateTo('/select-players')">Generate Match</button>
+      <li *ngIf="isOrganizer()">
+        <button (click)="navigateToDashboard()">
+          Manage Players & Matches
+        </button>
       </li>
-      <li>
-        <button (click)="navigateTo('/home')">Manage Players</button>
+
+      <!-- Player Menu Items -->
+      <li *ngIf="isPlayer()">
+        <button (click)="navigateToDashboard()">My Matches</button>
       </li>
+
+      <!-- Common Menu Items -->
       <li>
         <button (click)="navigateTo('/matches-history')">
           Matches History

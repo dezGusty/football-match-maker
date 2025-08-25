@@ -52,6 +52,7 @@ export class PlayerDashboardComponent implements OnInit {
     await this.loadPlayerData();
     await this.loadMatches();
     await this.loadAvailableMatches();
+    await this.loadPublicMatches();
   }
 
   async loadPlayerData() {
@@ -122,6 +123,17 @@ export class PlayerDashboardComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error loading available matches:', error);
+    }
+  }
+
+  // Load public matches that player can join
+  async loadPublicMatches() {
+    try {
+      const publicMatches = await this.matchService.getPublicMatches();
+      // Merge with available matches or handle separately if needed
+      // For now, we use the existing availableMatches which should include public matches
+    } catch (error) {
+      console.error('Error loading public matches:', error);
     }
   }
 

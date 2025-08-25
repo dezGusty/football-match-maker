@@ -1,15 +1,14 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './components/auth/auth.guard';
+import { playerGuard } from './guards/player.guard';
+import { organizerGuard } from './guards/organizer.guard';
+import { roleRedirectGuard } from './guards/role-redirect.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/login/login').then((m) => m.Login),
-  },
-  {
-    path: 'home',
-    loadComponent: () => import('./pages/home/home').then((m) => m.Home),
-    canActivate: [authGuard],
+    canActivate: [roleRedirectGuard],
+    children: [],
   },
   {
     path: 'reset-password',
@@ -18,14 +17,7 @@ export const routes: Routes = [
         (m) => m.SetPasswordComponent
       ),
   },
-  {
-    path: 'select-players',
-    loadComponent: () =>
-      import('./pages/selectPlayers/select-players.component').then(
-        (m) => m.SelectPlayersComponent
-      ),
-    canActivate: [authGuard],
-  },
+
   {
     path: 'account',
     loadComponent: () =>
@@ -63,7 +55,20 @@ export const routes: Routes = [
       import('./pages/player-dashboard/player-dashboard.component').then(
         (m) => m.PlayerDashboardComponent
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, playerGuard],
+  },
+  {
+    path: 'organizer-dashboard',
+    loadComponent: () =>
+      import('./pages/organizer-dashboard/organizer-dashboard.component').then(
+        (m) => m.OrganizerDashboardComponent
+      ),
+    canActivate: [authGuard, organizerGuard],
+  },
+  {
+    path: 'home',
+    redirectTo: '/',
+    pathMatch: 'full',
   },
   {
     path: 'player-account',

@@ -3,7 +3,7 @@
 
 <div class="page">
   <!-- Tab Navigation -->
-  <div class="tab-navigation" *ngIf="!isPlayer">
+  <div class="tab-navigation">
     <button
       class="tab-btn"
       [class.active]="activeTab === 'matches'"
@@ -20,26 +20,8 @@
     </button>
   </div>
 
-  <!-- Player Tab Navigation -->
-  <div class="tab-navigation" *ngIf="isPlayer">
-    <button
-      class="tab-btn"
-      [class.active]="activeTab === 'matches'"
-      (click)="activeTab = 'matches'"
-    >
-      My Matches
-    </button>
-    <button
-      class="tab-btn"
-      [class.active]="activeTab === 'public'"
-      (click)="activeTab = 'public'"
-    >
-      Join Match
-    </button>
-  </div>
-
-  <!-- Floating Actions - Only for Organizers -->
-  <div class="fab-stack" *ngIf="!isPlayer">
+  <!-- Floating Actions - Organizer Only -->
+  <div class="fab-stack">
     <button
       *ngIf="activeTab === 'matches'"
       class="fab primary"
@@ -57,25 +39,51 @@
     </button>
 
     <button
-      *ngIf="activeTab === 'players'"
       class="fab primary"
       (click)="showAddModal = true"
       aria-label="Add new player"
     >
       <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+        <!-- Player icon -->
         <path
-          d="M12 5v14M5 12h14"
+          d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
           stroke="currentColor"
           stroke-width="2"
-          stroke-linecap="round"
+          fill="none"
+        />
+        <circle
+          cx="8.5"
+          cy="7"
+          r="4"
+          stroke="currentColor"
+          stroke-width="2"
+          fill="none"
+        />
+        <!-- Plus sign for adding -->
+        <line
+          x1="20"
+          y1="8"
+          x2="20"
+          y2="14"
+          stroke="currentColor"
+          stroke-width="2"
+        />
+        <line
+          x1="17"
+          y1="11"
+          x2="23"
+          y2="11"
+          stroke="currentColor"
+          stroke-width="2"
         />
       </svg>
     </button>
+
   </div>
 
   <!-- Organizer Matches Table -->
   <div
-    *ngIf="activeTab === 'matches' && !isPlayer"
+    *ngIf="activeTab === 'matches'"
     class="table-wrapper"
     role="region"
     aria-label="Matches table"
@@ -147,136 +155,6 @@
               (click)="openEditMatchModal(match)"
             >
               Edit
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Player's Matches Table -->
-  <div
-    *ngIf="activeTab === 'matches' && isPlayer"
-    class="player-matches-section"
-  >
-    <!-- My Matches Section -->
-    <div class="table-wrapper">
-      <div class="section-header">
-        <h3>My Matches</h3>
-        <p>Matches you're already registered for</p>
-      </div>
-      <table class="matches-table modern">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Date & Time</th>
-            <th>Teams</th>
-            <th>Location</th>
-            <th>Cost</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngIf="playerMatches.length === 0">
-            <td colspan="7" class="no-matches">
-              You're not registered for any matches yet
-            </td>
-          </tr>
-          <tr
-            *ngFor="let match of playerMatches; let i = index"
-            class="row-anim"
-            [style.animationDelay]="i * 40 + 'ms'"
-          >
-            <td>{{ i + 1 }}</td>
-            <td>{{ match.matchDate | date : "short" }}</td>
-            <td class="teams-cell">
-              <div class="team-names">
-                <span class="team-a">{{ match.teamAName || "TeamA" }}</span>
-                <span class="vs">vs</span>
-                <span class="team-b">{{ match.teamBName || "TeamB" }}</span>
-              </div>
-            </td>
-            <td>{{ match.location || "TBD" }}</td>
-            <td>{{ match.cost ? match.cost + " Lei total" : "Free" }}</td>
-            <td>
-              <span
-                class="status-badge"
-                [ngClass]="getStatusClass(match.status)"
-              >
-                {{ getStatusText(match.status) }}
-              </span>
-            </td>
-            <td class="actions">
-              <button class="action-btn view-btn" title="View Details">
-                View Details
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Public Matches to Join -->
-  <div
-    *ngIf="activeTab === 'public' && isPlayer"
-    class="table-wrapper"
-    role="region"
-    aria-label="Public matches table"
-    tabindex="0"
-  >
-    <div class="section-header">
-      <h3>Public Matches</h3>
-      <p>Join these public matches</p>
-    </div>
-    <table class="matches-table modern">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Date & Time</th>
-          <th>Teams</th>
-          <th>Location</th>
-          <th>Cost</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngIf="publicMatches.length === 0">
-          <td colspan="7" class="no-matches">
-            No public matches available to join
-          </td>
-        </tr>
-        <tr
-          *ngFor="let match of publicMatches; let i = index"
-          class="row-anim"
-          [style.animationDelay]="i * 40 + 'ms'"
-        >
-          <td>{{ i + 1 }}</td>
-          <td>{{ match.matchDate | date : "short" }}</td>
-          <td class="teams-cell">
-            <div class="team-names">
-              <span class="team-a">{{ match.teamAName || "TeamA" }}</span>
-              <span class="vs">vs</span>
-              <span class="team-b">{{ match.teamBName || "TeamB" }}</span>
-            </div>
-          </td>
-          <td>{{ match.location || "TBD" }}</td>
-          <td>{{ match.cost ? match.cost + " Lei total" : "Free" }}</td>
-          <td>
-            <span class="status-badge" [ngClass]="getStatusClass(match.status)">
-              {{ getStatusText(match.status) }}
-            </span>
-          </td>
-          <td class="actions">
-            <button
-              class="action-btn join-btn"
-              title="Join Match"
-              (click)="joinMatch(match.id)"
-              [disabled]="match.status !== 1"
-            >
-              {{ match.status === 1 ? "Join" : "Closed" }}
             </button>
           </td>
         </tr>
@@ -443,7 +321,8 @@
     </table>
   </div>
 
-  <!-- Modal -->
+
+  <!-- Add Player Modal -->
   @if (showAddModal) {
   <div class="modal-backdrop" (click)="showAddModal = false">
     <div class="modal-content glass" (click)="$event.stopPropagation()">
@@ -455,31 +334,42 @@
         &times;
       </button>
       <h3>Add New Player</h3>
+      <p class="modal-subtitle">
+        Add a new player to your team roster
+      </p>
+
       <div class="grid two">
         <input
           type="text"
-          placeholder="First Name"
+          placeholder="First Name *"
           [(ngModel)]="newPlayer.firstName"
         />
         <input
           type="text"
-          placeholder="Last Name"
+          placeholder="Last Name *"
           [(ngModel)]="newPlayer.lastName"
         />
-        <input
-          type="text"
-          placeholder="Username"
-          [(ngModel)]="newPlayer.username"
-        />
       </div>
-      <input type="email" placeholder="Email" [(ngModel)]="newPlayer.email" />
+      
+      <input 
+        type="email" 
+        placeholder="Email *" 
+        [(ngModel)]="newPlayer.email" 
+      />
+      
+      <input
+        type="text"
+        placeholder="Username *"
+        [(ngModel)]="newPlayer.username"
+      />
+      
       <input
         type="number"
-        placeholder="Rating"
+        placeholder="Rating (0-10000)"
         [(ngModel)]="newPlayer.rating"
         min="0"
         max="10000"
-        step="0.1"
+        step="1"
       />
 
       <div class="stats-controls">
@@ -514,8 +404,22 @@
           </div>
         </div>
       </div>
-      <button class="primary-cta" (click)="addPlayer(); showAddModal = false">
-        Add Player
+      <!-- Messages -->
+      <div *ngIf="playerErrorMessage" class="error-message">
+        {{ playerErrorMessage }}
+      </div>
+
+      <div *ngIf="playerSuccessMessage" class="success-message">
+        {{ playerSuccessMessage }}
+      </div>
+
+      <button 
+        class="primary-cta" 
+        (click)="addPlayer()" 
+        [disabled]="playerLoading"
+      >
+        <span *ngIf="playerLoading">Adding Player...</span>
+        <span *ngIf="!playerLoading">Add Player</span>
       </button>
     </div>
   </div>

@@ -311,7 +311,12 @@ export class PlayerService {
   }
 
   async addPlayerOrganiserRelation(playerId: number): Promise<void> {
-    const body = { playerId };
+    const organiserId = this.authService.getUserId();
+    if (!organiserId) {
+      throw new Error('User not authenticated or organiser ID not available');
+    }
+
+    const body = { playerId, organiserId };
     const headers = this.getAuthHeaders();
 
     const response = await fetch(`${this.url}/player-organiser`, {
