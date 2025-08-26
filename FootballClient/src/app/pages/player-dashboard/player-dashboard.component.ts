@@ -52,7 +52,6 @@ export class PlayerDashboardComponent implements OnInit {
     await this.loadAvailableMatches();
     await this.loadPublicMatches();
     await this.loadPlayerSpecificMatches();
-    // await this.loadMatchesByFiltering();
   }
 
   async loadPlayerData() {
@@ -189,6 +188,7 @@ export class PlayerDashboardComponent implements OnInit {
   async loadMatchDetails(match: Match) {
     this.selectedMatch = match;
     this.selectedTeamAName = match.teamAName!;
+
     this.selectedTeamBName = match.teamBName!;
 
     try {
