@@ -30,17 +30,13 @@ export class Account {
   showPasswordForm = false;
   showUsernameForm = false;
 
-  futureMatches: Match[] = [];
-
   constructor(
     private userService: UserService,
     private authService: AuthService,
     private router: Router,
-    private http: HttpClient,
-    private matchService: MatchService,
+    private http: HttpClient
   ) {
     this.loadUser();
-    this.loadFutureMatches();
   }
 
   async loadUser() {
@@ -51,27 +47,6 @@ export class Account {
       }
     } catch (error) {
       console.error('Failed to load user:', error);
-    }
-  }
-
-  async loadFutureMatches() {
-    try {
-      this.futureMatches = await this.matchService.getFutureMatches();
-    } catch (error) {
-      console.error('Failed to load future matches:', error);
-    }
-  }
-
-  async beginScheduledMatch(match: Match) {
-    try {
-      const playerIds = await this.matchService.getPlayersForScheduledMatch(
-        match.id!
-      );
-      await this.userService.setMultiplePlayersAvailable(playerIds);
-      this.router.navigate(['/select-players']);
-    } catch (error) {
-      console.error('Failed to begin scheduled match:', error);
-      alert('Failed to begin scheduled match. Please try again.');
     }
   }
 
