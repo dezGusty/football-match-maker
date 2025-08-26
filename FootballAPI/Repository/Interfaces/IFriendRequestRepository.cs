@@ -9,7 +9,7 @@ namespace FootballAPI.Repository
         Task<FriendRequest?> GetByIdAsync(int id);
         Task<IEnumerable<FriendRequest>> GetSentRequestsAsync(int senderId);
         Task<IEnumerable<FriendRequest>> GetReceivedRequestsAsync(int receiverId);
-        Task<IEnumerable<FriendRequest>> GetFriendsAsync(int userId);
+        Task<IEnumerable<User>> GetFriendsFromPlayerOrganiserAsync(int userId);
         Task<IEnumerable<FriendRequest>> GetPendingRequestsBetweenUsersAsync(int user1Id, int user2Id);
         Task<FriendRequest> UpdateAsync(FriendRequest friendRequest);
         Task<bool> DeleteAsync(int id);
