@@ -129,18 +129,28 @@ namespace FootballAPI.Controllers
                     return BadRequest(new { message = "User with this email already exists." });
                 }
 
-                var user = new CreateUserDto
+                Console.WriteLine($"dto----------------> {dto.FirstName} {dto.LastName}");
+                var userDto = new CreateUserDto
                 {
                     Email = dto.Email,
                     Username = dto.Username,
                     Role = UserRole.PLAYER,
                     Password = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString())
-
                 };
 
-                var createdUser = await _userService.CreateUserAsync(user);
+                var createdUser = await _userService.CreateUserAsync(userDto);
+                var playerDto = new CreatePlayerDto
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Rating = dto.Rating,
+                    Speed = dto.Speed,
+                    Stamina = dto.Stamina,
+                    Errors = dto.Errors,
+                    UserId = createdUser.Id
+                };
 
-                var createdPlayer = await _playerService.GetPlayerByUserIdAsync(createdUser.Id);
+        var createdPlayer = await _playerService.CreatePlayerAsync(playerDto);
 
                 var resetToken = await _passwordResetService.GeneratePasswordResetTokenAsync(createdUser.Id);
 

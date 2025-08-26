@@ -57,6 +57,7 @@ export class PlayerService {
     stamina: number;
     errors: number;
   }): Promise<Player> {
+    console.log('Adding player in service:', player);
     this.validateRating(player.rating);
 
     const payload = {

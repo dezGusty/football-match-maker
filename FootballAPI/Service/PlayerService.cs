@@ -33,6 +33,24 @@ namespace FootballAPI.Service
             var player = await _playerRepository.GetByIdAsync(id);
             return player != null ? MapToDto(player) : null;
         }
+        public async Task<PlayerDto> CreatePlayerAsync(CreatePlayerDto dto)
+        {
+            var player = new Player
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Rating = dto.Rating,
+                Speed = dto.Speed,
+                Stamina = dto.Stamina,
+                Errors = dto.Errors,
+                UserId = dto.UserId,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            var createdPlayer = await _playerRepository.CreateAsync(player);
+            return MapToDto(createdPlayer);
+        }
 
         public async Task<PlayerDto?> GetPlayerByUserIdAsync(int userId)
         {
@@ -56,7 +74,7 @@ namespace FootballAPI.Service
         {
             var organiserUsers = await _userRepository.GetPlayersByOrganiserAsync(organiserId);
             var playerDtos = new List<PlayerDto>();
-            
+
             foreach (var user in organiserUsers)
             {
                 var player = await _playerRepository.GetByUserIdAsync(user.Id);
@@ -65,7 +83,7 @@ namespace FootballAPI.Service
                     playerDtos.Add(MapToDto(player));
                 }
             }
-            
+
             return playerDtos;
         }
 
