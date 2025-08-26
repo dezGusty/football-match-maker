@@ -10,6 +10,7 @@ import { FriendRequestsComponent } from '../../components/friend-requests/friend
 import { Match } from '../../models/match.interface';
 import { Player } from '../../models/player.interface';
 import { PlayerHistory } from '../../models/player-history.interface';
+import { User } from '../../models/user.interface';
 
 @Component({
   selector: 'app-player-dashboard',
@@ -48,9 +49,12 @@ export class PlayerDashboardComponent implements OnInit {
 
   async ngOnInit() {
     await this.loadPlayerData();
+
     await this.loadMatches();
     await this.loadAvailableMatches();
     await this.loadPublicMatches();
+    await this.loadPlayerSpecificMatches();
+    // await this.loadMatchesByFiltering();
   }
 
   async loadPlayerData() {
@@ -150,6 +154,12 @@ export class PlayerDashboardComponent implements OnInit {
   async loadPublicMatches() {
     try {
       const publicMatches = await this.matchService.getPublicMatches();
+      const now = new Date();
+      this.availableMatches = publicMatches.filter(
+        (match: any) =>
+          new Date(match.matchDate) > new Date() &&
+          !this.upcomingMatches.some((up) => up.id === match.id)
+      );
     } catch (error) {
       console.error('Error loading public matches:', error);
     }
