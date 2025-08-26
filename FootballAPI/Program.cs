@@ -131,7 +131,11 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
+
+app.MapHealthChecks("/api/health");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

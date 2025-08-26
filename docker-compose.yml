@@ -1,0 +1,79 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./FootballAPI
+      dockerfile: Dockerfile
+    ports:
+      - "5145:5145"
+    env_file:
+      - ./prod.env
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5145/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql_server_db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${SA_PASSWORD}
+    ports:
+      - "5000:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./FootballClient
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    env_file:
+      - ./prod.env
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # Only for testing purposes
+  # k6 load testing tool
+  # InfluxDB 1.8
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      INFLUXDB_DB: k6
+      INFLUXDB_ADMIN_ENABLED: "true"
+      INFLUXDB_ADMIN_USER: admin
+      INFLUXDB_ADMIN_PASSWORD: admin123
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    restart: unless-stopped
+
+  # Grafana
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    depends_on:
+      - influxdb
+    restart: unless-stopped
+
+volumes:
+  sql_data:
+  influxdb_data:
+
+    
+
