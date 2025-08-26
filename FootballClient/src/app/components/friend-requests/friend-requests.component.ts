@@ -75,8 +75,9 @@ export class FriendRequestsComponent implements OnInit {
     this.friends = await this.friendRequestService.getFriends();
   }
 
-  openModal() {
+  async openModal() {
     this.showModal = true;
+    await this.loadData();
   }
 
   closeModal() {

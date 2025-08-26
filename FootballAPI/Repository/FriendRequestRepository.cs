@@ -49,17 +49,6 @@ namespace FootballAPI.Repository
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<FriendRequest>> GetFriendsAsync(int userId)
-        {
-            return await _context.FriendRequests
-                .Include(fr => fr.Sender)
-                .Include(fr => fr.Receiver)
-                .Where(fr => fr.Status == FriendRequestStatus.Accepted &&
-                           (fr.SenderId == userId || fr.ReceiverId == userId))
-                .OrderByDescending(fr => fr.ResponsedAt)
-                .ToListAsync();
-        }
-
         public async Task<IEnumerable<FriendRequest>> GetPendingRequestsBetweenUsersAsync(int user1Id, int user2Id)
         {
             return await _context.FriendRequests
@@ -93,6 +82,23 @@ namespace FootballAPI.Repository
                 .AnyAsync(fr => fr.SenderId == senderId &&
                                fr.ReceiverId == receiverId &&
                                fr.Status == FriendRequestStatus.Pending);
+        }
+
+        public async Task<IEnumerable<User>> GetFriendsFromPlayerOrganiserAsync(int userId)
+        {
+            var asOrganiser = await _context.PlayerOrganisers
+                .Where(po => po.OrganiserId == userId)
+                .Include(po => po.Player)
+                .Select(po => po.Player)
+                .ToListAsync();
+
+            var asPlayer = await _context.PlayerOrganisers
+                .Where(po => po.PlayerId == userId)
+                .Include(po => po.Organiser)
+                .Select(po => po.Organiser)
+                .ToListAsync();
+
+            return [.. asOrganiser.Union(asPlayer).OrderBy(u => u.Username)];
         }
     }
 }

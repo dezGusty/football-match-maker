@@ -138,8 +138,20 @@ namespace FootballAPI.Service
 
         public async Task<IEnumerable<FriendRequestDto>> GetFriendsAsync(int userId)
         {
-            var friendRequests = await _friendRequestRepository.GetFriendsAsync(userId);
-            return friendRequests.Select(MapToDto);
+            var friends = await _friendRequestRepository.GetFriendsFromPlayerOrganiserAsync(userId);
+            return friends.Select(user => new FriendRequestDto
+            {
+                Id = 0, // Not applicable for PlayerOrganiser relationships
+                SenderId = userId,
+                SenderUsername = "",
+                SenderEmail = "",
+                ReceiverId = user.Id,
+                ReceiverUsername = user.Username,
+                ReceiverEmail = user.Email,
+                Status = "Connected", // Custom status for active connections
+                CreatedAt = DateTime.Now,
+                ResponsedAt = DateTime.Now
+            });
         }
 
         public async Task<bool> DeleteFriendRequestAsync(int requestId, int userId)
