@@ -12,18 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-<<<<<<<< HEAD:FootballAPI/Migrations/20250826072402_Init.Designer.cs
-<<<<<<<< HEAD:FootballAPI/Migrations/20250826072402_Init.Designer.cs
-    [Migration("20250826072402_Init")]
+    [Migration("20250826102135_Init")]
     partial class Init
-========
-    [Migration("20250826073057_InitialCraete")]
-    partial class InitialCraete
->>>>>>>> 6db0cef98e2bb55fe8aa96d53f99d799d2ce6e2b:FootballAPI/Migrations/20250826073057_InitialCraete.Designer.cs
-========
-    [Migration("20250821101709_initial")]
-    partial class initial
->>>>>>>> 348dcea70425232308f0b85eb9f8e8ec11882c58:FootballAPI/Migrations/20250821101709_initial.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
