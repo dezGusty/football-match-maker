@@ -543,12 +543,14 @@
         <div class="available-players-panel">
           <div class="panel-header">
             <h4><i class="icon-users"></i>Available Players</h4>
-            <span class="players-count">{{ players.length }} players</span>
+            <span class="players-count"
+              >{{ availablePlayers.length }} players</span
+            >
           </div>
 
           <div class="players-list-simple">
             <div
-              *ngFor="let player of players; let i = index"
+              *ngFor="let player of availablePlayers; let i = index"
               class="player-row-simple"
               [class.already-added]="isPlayerInAnyTeam(player)"
             >
