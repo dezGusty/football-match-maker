@@ -53,13 +53,9 @@ export class CreateMatchComponent {
         throw new Error('Locația este obligatorie');
       }
 
-      // Convert local date/time to UTC so hour is saved correctly
-      const localDate = new Date(this.matchForm.matchDate);
-      const utcDate = new Date(
-        localDate.getTime() - localDate.getTimezoneOffset() * 60000
-      );
+      // Send the datetime-local value as-is without timezone conversion
       const createMatchRequest: CreateMatchRequest = {
-        matchDate: utcDate.toISOString(),
+        matchDate: this.matchForm.matchDate,
         status: 1, // Open status
         location: this.matchForm.location,
         cost: this.matchForm.cost || undefined,

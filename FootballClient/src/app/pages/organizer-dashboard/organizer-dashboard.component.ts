@@ -68,9 +68,8 @@ export class OrganizerDashboardComponent {
       this.players = await this.PlayerService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
-      await this.loadMatches();
+      this.loadMatches();
     }
-
   }
 
   async loadMatches() {
@@ -93,12 +92,10 @@ export class OrganizerDashboardComponent {
 
   ngOnInit() {
     this.init();
+    this.loadMatches();
   }
 
-  
-
-  onSearchChange() {
-  }
+  onSearchChange() {}
 
   newPlayer = {
     firstName: '',
@@ -146,7 +143,7 @@ export class OrganizerDashboardComponent {
       this.players = await this.PlayerService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
-      
+
       setTimeout(() => {
         this.showAddModal = false;
         this.playerSuccessMessage = '';
@@ -160,18 +157,17 @@ export class OrganizerDashboardComponent {
     }
   }
 
-
   resetPlayer() {
     this.newPlayer = {
-        firstName: '',
-        lastName: '',
-        email: '',
-        username: '',
-        rating: 0,
-        speed: 2,
-        stamina: 2,
-        errors: 2,
-      };
+      firstName: '',
+      lastName: '',
+      email: '',
+      username: '',
+      rating: 0,
+      speed: 2,
+      stamina: 2,
+      errors: 2,
+    };
   }
   setEditIndex(index: number) {
     this.editIndex = index;
