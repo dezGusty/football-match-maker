@@ -25,14 +25,12 @@ import { PlayerHistory } from '../../models/player-history.interface';
   styleUrls: ['./player-dashboard.component.css'],
 })
 export class PlayerDashboardComponent implements OnInit {
-  activeTab: string = 'future'; // 'future', 'past', 'available'
+  activeTab: string = 'future';
   currentPlayer: Player | null = null;
 
   upcomingMatches: Match[] = [];
-  matchHistory: Match[] = [];
   availableMatches: Match[] = [];
 
-  // Modal pentru afișarea jucătorilor
   modalOpen: boolean = false;
   modalType: 'view' | 'join' = 'view';
   selectedMatch: Match | null = null;
@@ -57,6 +55,7 @@ export class PlayerDashboardComponent implements OnInit {
 
   async loadPlayerData() {
     const userId = this.authService.getUserId();
+
     if (userId) {
       try {
         const userResponse = await fetch(
@@ -67,6 +66,8 @@ export class PlayerDashboardComponent implements OnInit {
           const players = await this.playerService.getPlayers();
           this.currentPlayer =
             players.find((p) => p.userEmail === user.email) || null;
+        } else {
+          console.error('Failed to fetch user data:', userResponse.status);
         }
       } catch (error) {
         console.error('Error loading player data:', error);
@@ -75,48 +76,68 @@ export class PlayerDashboardComponent implements OnInit {
   }
 
   async loadMatches() {
-    if (!this.currentPlayer?.id) return;
+    if (!this.currentPlayer?.id) {
+      return;
+    }
 
     try {
-      // Încarcă meciurile viitoare
-      const futureMatches = await this.matchService.getFutureMatches();
-      this.upcomingMatches = futureMatches.filter((match) =>
-        match.playerHistory?.some(
-          (ph) => ph.player.id === this.currentPlayer?.id
-        )
-      );
+      await this.loadPlayerSpecificMatches();
 
-      // Adaugă numele echipelor pentru meciurile viitoare
-      for (const match of this.upcomingMatches) {
-        match.teamAName = await this.matchService.getTeamById(match.teamAId);
-        match.teamBName = await this.matchService.getTeamById(match.teamBId);
-      }
-
-      // Încarcă istoricul meciurilor
-      const pastMatches = await this.matchService.getPastMatches();
-      this.matchHistory = pastMatches.filter((match) =>
-        match.playerHistory?.some(
-          (ph) => ph.player.id === this.currentPlayer?.id
-        )
-      );
-
-      // Adaugă numele echipelor pentru istoricul meciurilor
-      for (const match of this.matchHistory) {
-        match.teamAName = await this.matchService.getTeamById(match.teamAId);
-        match.teamBName = await this.matchService.getTeamById(match.teamBId);
+      if (this.upcomingMatches.length === 0) {
+        await this.loadMatchesByFiltering();
       }
     } catch (error) {
       console.error('Error loading matches:', error);
+      await this.loadMatchesByFiltering();
+    }
+  }
+
+  async loadPlayerSpecificMatches() {
+    try {
+      const response = await fetch(
+        `http://localhost:5145/api/players/${this.currentPlayer!.id}/matches`
+      );
+      if (response.ok) {
+        const playerMatches = await response.json();
+
+        this.upcomingMatches = playerMatches.filter(
+          (match: any) => new Date(match.matchDate) > new Date()
+        );
+
+        return;
+      }
+    } catch (error) {}
+  }
+
+  async loadMatchesByFiltering() {
+    try {
+      const futureMatches = await this.matchService.getFutureMatches();
+
+      this.upcomingMatches = futureMatches.filter((match) => {
+        const isPlayerInMatch = match.playerHistory?.some(
+          (ph) => ph.player && ph.player.id === this.currentPlayer?.id
+        );
+        return isPlayerInMatch;
+      });
+
+      for (const match of this.upcomingMatches) {
+        if (!match.teamAName) {
+          match.teamAName = match.teamAName || 'Team A';
+        }
+        if (!match.teamBName) {
+          match.teamBName = match.teamBName || 'Team B';
+        }
+      }
+    } catch (error) {
+      console.error('Error in loadMatchesByFiltering:', error);
     }
   }
 
   async loadAvailableMatches() {
     try {
-      // Load available matches (public + private from friends)
       const availableMatches = await this.matchService.getAvailableMatches();
       this.availableMatches = availableMatches;
 
-      // Add team names for available matches
       for (const match of this.availableMatches) {
         match.teamAName = await this.matchService.getTeamById(match.teamAId);
         match.teamBName = await this.matchService.getTeamById(match.teamBId);
@@ -126,12 +147,9 @@ export class PlayerDashboardComponent implements OnInit {
     }
   }
 
-  // Load public matches that player can join
   async loadPublicMatches() {
     try {
       const publicMatches = await this.matchService.getPublicMatches();
-      // Merge with available matches or handle separately if needed
-      // For now, we use the existing availableMatches which should include public matches
     } catch (error) {
       console.error('Error loading public matches:', error);
     }
@@ -166,22 +184,28 @@ export class PlayerDashboardComponent implements OnInit {
     this.selectedTeamAName = match.teamAName!;
     this.selectedTeamBName = match.teamBName!;
 
-    // Get detailed match information to show players
     try {
       const matchDetails = await this.matchService.getMatchDetails(match.id);
-      
-      const teamA = matchDetails.teams.find((t: any) => t.teamId === match.teamAId);
-      const teamB = matchDetails.teams.find((t: any) => t.teamId === match.teamBId);
 
-      this.selectedTeamAPlayers = teamA ? teamA.players.map((p: any) => 
-        `${p.firstName} ${p.lastName} - ${p.rating}`
-      ) : [];
+      const teamA = matchDetails.teams.find(
+        (t: any) => t.teamId === match.teamAId
+      );
+      const teamB = matchDetails.teams.find(
+        (t: any) => t.teamId === match.teamBId
+      );
 
-      this.selectedTeamBPlayers = teamB ? teamB.players.map((p: any) => 
-        `${p.firstName} ${p.lastName} - ${p.rating}`
-      ) : [];
+      this.selectedTeamAPlayers = teamA
+        ? teamA.players.map(
+            (p: any) => `${p.firstName} ${p.lastName} - ${p.rating}`
+          )
+        : [];
+
+      this.selectedTeamBPlayers = teamB
+        ? teamB.players.map(
+            (p: any) => `${p.firstName} ${p.lastName} - ${p.rating}`
+          )
+        : [];
     } catch (error) {
-      // Fallback to match.playerHistory if available
       this.selectedTeamAPlayers = match.playerHistory
         .filter((p) => p.teamId === match.teamAId && p.player)
         .map(
@@ -205,13 +229,20 @@ export class PlayerDashboardComponent implements OnInit {
 
   getPlayerTeamName(match: Match): string {
     const playerHistory = match.playerHistory?.find(
-      (ph) => ph.player.id === this.currentPlayer?.id
+      (ph) => ph.player && ph.player.id === this.currentPlayer?.id
     );
     if (!playerHistory) return '';
 
     return playerHistory.teamId === match.teamAId
       ? match.teamAName || 'Team A'
       : match.teamBName || 'Team B';
+  }
+
+  canLeaveMatch(match: Match): boolean {
+    const playerHistory = match.playerHistory?.find(
+      (ph) => ph.player && ph.player.id === this.currentPlayer?.id
+    );
+    return playerHistory?.status === 2;
   }
 
   logout() {
@@ -230,7 +261,6 @@ export class PlayerDashboardComponent implements OnInit {
         return;
       }
       await this.matchService.joinMatch(match.id);
-      // Refresh the matches after joining
       await this.loadMatches();
       await this.loadAvailableMatches();
     } catch (error) {
@@ -245,18 +275,48 @@ export class PlayerDashboardComponent implements OnInit {
         console.error('Match ID is missing');
         return;
       }
-      
-      await this.matchService.joinTeam(this.selectedMatch.id, teamId);
-      
-      // Close modal and refresh matches
+
+      if (teamId === undefined || teamId === null) {
+        console.log('Team ID is undefined, using general joinMatch instead');
+        await this.matchService.joinMatch(this.selectedMatch.id);
+      } else {
+        await this.matchService.joinTeam(this.selectedMatch.id, teamId);
+      }
+
       this.closeModal();
       await this.loadMatches();
       await this.loadAvailableMatches();
-      
-      alert('Successfully joined the team!');
+
+      alert('Successfully joined the match!');
     } catch (error) {
-      console.error('Error joining team:', error);
-      alert('Failed to join team. Please try again.');
+      console.error('Error joining match:', error);
+      alert('Failed to join match. Please try again.');
+    }
+  }
+
+  async leaveMatch(match: Match) {
+    try {
+      if (!match.id) {
+        console.error('Match ID is missing');
+        return;
+      }
+
+      if (!this.canLeaveMatch(match)) {
+        alert(
+          'You cannot leave this match because you were added by the organizer.'
+        );
+        return;
+      }
+
+      if (confirm('Are you sure you want to leave this match?')) {
+        await this.matchService.leaveMatch(match.id);
+        await this.loadMatches();
+        await this.loadAvailableMatches();
+        alert('Successfully left the match!');
+      }
+    } catch (error) {
+      console.error('Error leaving match:', error);
+      alert('Failed to leave match. Please try again.');
     }
   }
 }

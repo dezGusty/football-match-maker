@@ -13,10 +13,12 @@ namespace FootballAPI.Controllers
     public class PlayersController : ControllerBase
     {
         private readonly IPlayerService _playerService;
+        private readonly IMatchService _matchService;
 
-        public PlayersController(IPlayerService playerService)
+        public PlayersController(IPlayerService playerService, IMatchService matchService)
         {
             _playerService = playerService;
+            _matchService = matchService;
         }
 
         [HttpGet]
@@ -197,6 +199,26 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error deleting profile image: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{id}/matches")]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetPlayerMatches(int id)
+        {
+            try
+            {
+                var player = await _playerService.GetPlayerByIdAsync(id);
+                if (player == null)
+                    return NotFound($"Player with ID {id} not found.");
+
+
+                var matches = await _matchService.GetPlayerMatchesAsync(id);
+
+                return Ok(matches);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error getting player matches: {ex.Message}");
             }
         }
     }

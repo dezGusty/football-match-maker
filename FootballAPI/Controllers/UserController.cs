@@ -275,7 +275,6 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
-        // Adaugă acest endpoint în UserController.cs
 
         [HttpPost("{id}/change-username")]
         public async Task<ActionResult> ChangeUsername(int id, [FromBody] ChangeUsernameDto changeUsernameDto)

@@ -22,7 +22,6 @@ namespace FootballAPI.Models
     [ForeignKey("TeamId")]
     public virtual Team Team { get; set; } = null!;
 
-    // Navigation properties
     public virtual ICollection<TeamPlayers> TeamPlayers { get; set; } = new List<TeamPlayers>();
 
   }

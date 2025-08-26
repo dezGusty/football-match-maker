@@ -50,23 +50,42 @@ export class PlayerService {
   async addPlayer(player: {
     firstName: string;
     lastName: string;
-    email?: string;
+    email: string;
     rating: number;
     username: string;
+    speed: number;
+    stamina: number;
+    errors: number;
   }): Promise<Player> {
     this.validateRating(player.rating);
+
+    const payload = {
+      firstName: player.firstName,
+      lastName: player.lastName,
+      email: player.email,
+      rating: player.rating,
+      username: player.username,
+      speed: player.speed,
+      stamina: player.stamina,
+      errors: player.errors,
+    };
 
     const response = await fetch(
       'http://localhost:5145/api/Auth/create-player-account',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(player),
+        body: JSON.stringify(payload),
       }
     );
 
     if (!response.ok) {
-      throw new Error('Failed to add player');
+      let errorMsg = 'Failed to add player';
+      try {
+        const err = await response.json();
+        if (err && err.message) errorMsg = err.message;
+      } catch {}
+      throw new Error(errorMsg);
     }
 
     return await response.json();

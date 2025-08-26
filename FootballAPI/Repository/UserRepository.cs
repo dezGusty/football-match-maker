@@ -138,9 +138,6 @@ namespace FootballAPI.Repository
             if (!tracking)
                 query = query.AsNoTracking();
 
-            //if (!includeDeleted)
-            //    query = query.Where(u => u.DeletedAt == null);
-
             return await query.FirstOrDefaultAsync(u => u.Email == email);
         }
     }

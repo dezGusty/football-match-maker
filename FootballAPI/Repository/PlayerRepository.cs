@@ -125,7 +125,7 @@ namespace FootballAPI.Repository
                       po => po.PlayerId,
                       p => p.UserId,
                       (po, p) => p)
-                .Where(p => p.DeletedAt == null) // Only active players
+                .Where(p => p.DeletedAt == null)
                 .ToListAsync();
         }
     }

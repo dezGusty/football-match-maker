@@ -40,6 +40,12 @@ namespace FootballAPI.Service
             return player != null ? MapToDto(player) : null;
         }
 
+        public async Task<int?> GetPlayerIdByUserIdAsync(int userId)
+        {
+            var player = await _playerRepository.GetByUserIdAsync(userId);
+            return player?.Id;
+        }
+
         public async Task<IEnumerable<PlayerDto>> GetAvailablePlayersAsync()
         {
             var players = await _playerRepository.GetAvailablePlayersAsync();

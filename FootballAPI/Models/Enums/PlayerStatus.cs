@@ -2,8 +2,8 @@ namespace FootballAPI.Models.Enums
 {
     public enum PlayerStatus
     {
-        addedByOrganiser = 1,
-        joined = 2,
+        AddedByOrganiser = 1,
+        Joined = 2,
         Open = 3
     }
 }

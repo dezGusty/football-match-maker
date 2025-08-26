@@ -23,6 +23,7 @@ namespace FootballAPI.Service
         Task<MatchDto> MakeMatchPrivateAsync(int matchId);
         
         Task<bool> AddPlayerToTeamAsync(int matchId, int playerId, int teamId);
+        Task<bool> JoinSpecificTeamAsync(int matchId, int userId, int teamId);
         Task<bool> JoinPublicMatchAsync(int matchId, int playerId);
         Task<bool> MovePlayerBetweenTeamsAsync(int matchId, int playerId, int newTeamId);
         Task<MatchDto> PublishMatchAsync(int matchId);

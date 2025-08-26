@@ -13,17 +13,19 @@ namespace FootballAPI.Service
         private readonly IMatchTeamsService _matchTeamsService;
         private readonly ITeamPlayersService _teamPlayersService;
         private readonly IUserService _userService;
+        private readonly IPlayerService _playerService;
         private readonly FootballDbContext _context;
 
         public MatchService(IMatchRepository matchRepository, ITeamService teamService,
                            IMatchTeamsService matchTeamsService, ITeamPlayersService teamPlayersService,
-                           IUserService userService, FootballDbContext context)
+                           IUserService userService, IPlayerService playerService, FootballDbContext context)
         {
             _matchRepository = matchRepository;
             _teamService = teamService;
             _matchTeamsService = matchTeamsService;
             _teamPlayersService = teamPlayersService;
             _userService = userService;
+            _playerService = playerService;
             _context = context;
         }
 
@@ -31,6 +33,38 @@ namespace FootballAPI.Service
         {
             var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(match.Id);
             var teams = matchTeams.ToList();
+
+            var playerHistory = new List<PlayerHistoryDto>();
+            foreach (var matchTeam in teams)
+            {
+                var teamPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(matchTeam.Id);
+                foreach (var teamPlayer in teamPlayers)
+                {
+                    if (teamPlayer.Player != null)
+                    {
+                        var playerDto = new PlayerDto
+                        {
+                            Id = teamPlayer.Player.Id,
+                            FirstName = teamPlayer.Player.FirstName,
+                            LastName = teamPlayer.Player.LastName,
+                            Rating = teamPlayer.Player.Rating,
+                            Speed = teamPlayer.Player.Speed,
+                            Stamina = teamPlayer.Player.Stamina,
+                            Errors = teamPlayer.Player.Errors,
+                            UserEmail = teamPlayer.Player.UserEmail,
+                            Username = teamPlayer.Player.Username
+                        };
+
+                        playerHistory.Add(new PlayerHistoryDto
+                        {
+                            PlayerId = teamPlayer.PlayerId,
+                            TeamId = matchTeam.TeamId,
+                            Status = teamPlayer.Status,
+                            Player = playerDto
+                        });
+                    }
+                }
+            }
 
             return new MatchDto
             {
@@ -42,7 +76,12 @@ namespace FootballAPI.Service
                 Cost = match.Cost,
                 OrganiserId = match.OrganiserId,
                 TeamAName = teams.Count > 0 ? teams[0].Team?.Name : null,
-                TeamBName = teams.Count > 1 ? teams[1].Team?.Name : null
+                TeamBName = teams.Count > 1 ? teams[1].Team?.Name : null,
+                TeamAId = teams.Count > 0 ? teams[0].TeamId : null,
+                TeamBId = teams.Count > 1 ? teams[1].TeamId : null,
+                ScoreA = teams.Count > 0 ? teams[0].Goals : null,
+                ScoreB = teams.Count > 1 ? teams[1].Goals : null,
+                PlayerHistory = playerHistory
             };
         }
 
@@ -255,15 +294,54 @@ namespace FootballAPI.Service
             {
                 MatchTeamId = matchTeam.Id,
                 PlayerId = playerId,
-                Status = PlayerStatus.addedByOrganiser
+                Status = PlayerStatus.AddedByOrganiser
             };
 
             var result = await _teamPlayersService.CreateTeamPlayerAsync(createTeamPlayerDto);
             return result != null;
         }
 
-        public async Task<bool> JoinPublicMatchAsync(int matchId, int playerId)
+        public async Task<bool> JoinSpecificTeamAsync(int matchId, int userId, int teamId)
         {
+            var realPlayerId = await _playerService.GetPlayerIdByUserIdAsync(userId);
+            if (realPlayerId == null) return false;
+
+            var match = await _matchRepository.GetByIdAsync(matchId);
+            if (match == null || !match.IsPublic) return false;
+
+            var matchTeam = await _matchTeamsService.GetMatchTeamByMatchIdAndTeamIdAsync(matchId, teamId);
+            if (matchTeam == null) return false;
+
+            var existingPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(matchTeam.Id);
+            if (existingPlayers.Count() >= 6) return false;
+
+            var existingPlayer = await _teamPlayersService.GetTeamPlayerByMatchTeamIdAndPlayerIdAsync(matchTeam.Id, realPlayerId.Value);
+            if (existingPlayer != null) return false;
+
+            var allMatchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(matchId);
+            foreach (var mt in allMatchTeams)
+            {
+                var playersInTeam = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(mt.Id);
+                if (playersInTeam.Any(p => p.PlayerId == realPlayerId.Value))
+                    return false;
+            }
+
+            var createTeamPlayerDto = new CreateTeamPlayersDto
+            {
+                MatchTeamId = matchTeam.Id,
+                PlayerId = realPlayerId.Value,
+                Status = PlayerStatus.Joined
+            };
+
+            var result = await _teamPlayersService.CreateTeamPlayerAsync(createTeamPlayerDto);
+            return result != null;
+        }
+
+        public async Task<bool> JoinPublicMatchAsync(int matchId, int userId)
+        {
+            var realPlayerId = await _playerService.GetPlayerIdByUserIdAsync(userId);
+            if (realPlayerId == null) return false;
+
             var match = await _matchRepository.GetByIdAsync(matchId);
             if (match == null || !match.IsPublic) return false;
 
@@ -284,15 +362,15 @@ namespace FootballAPI.Service
             if (teamACounts + teamBCounts >= 12) return false;
 
             var allPlayers = teamAPlayers.Concat(teamBPlayers);
-            if (allPlayers.Any(p => p.PlayerId == playerId)) return false;
+            if (allPlayers.Any(p => p.PlayerId == realPlayerId)) return false;
 
             int targetTeamId = teamBCounts < teamACounts ? teamBId : (teamACounts == teamBCounts ? teamBId : teamAId);
 
             var createTeamPlayerDto = new CreateTeamPlayersDto
             {
                 MatchTeamId = targetTeamId,
-                PlayerId = playerId,
-                Status = PlayerStatus.joined
+                PlayerId = realPlayerId.Value,
+                Status = PlayerStatus.Joined
             };
 
             var result = await _teamPlayersService.CreateTeamPlayerAsync(createTeamPlayerDto);
@@ -443,17 +521,15 @@ namespace FootballAPI.Service
         public async Task<IEnumerable<MatchDto>> GetAvailableMatchesForPlayerAsync(int playerId)
         {
             var availableMatches = new List<Match>();
-            
-            // Get all future matches
+
             var allMatches = await _matchRepository.GetAllAsync();
             var futureMatches = allMatches.Where(m => m.MatchDate > DateTime.Now).ToList();
 
             foreach (var match in futureMatches)
             {
-                // Check if player is already in this match
                 var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(match.Id);
                 bool playerAlreadyInMatch = false;
-                
+
                 foreach (var matchTeam in matchTeams)
                 {
                     var teamPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(matchTeam.Id);
@@ -466,8 +542,6 @@ namespace FootballAPI.Service
 
                 if (!playerAlreadyInMatch)
                 {
-                    // For now, just add public matches
-                    // TODO: Add logic to check for private matches from friends
                     if (match.IsPublic)
                     {
                         availableMatches.Add(match);
@@ -480,7 +554,7 @@ namespace FootballAPI.Service
             {
                 matchDtos.Add(await MapToDtoAsync(match));
             }
-            
+
             return matchDtos;
         }
 

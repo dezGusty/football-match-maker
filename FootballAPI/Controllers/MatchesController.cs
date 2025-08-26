@@ -14,10 +14,12 @@ namespace FootballAPI.Controllers
     public class MatchesController : ControllerBase
     {
         private readonly IMatchService _matchService;
+        private readonly IPlayerService _playerService;
 
-        public MatchesController(IMatchService matchService)
+        public MatchesController(IMatchService matchService, IPlayerService playerService)
         {
             _matchService = matchService;
+            _playerService = playerService;
         }
 
         [HttpGet]
@@ -180,8 +182,8 @@ namespace FootballAPI.Controllers
         {
             try
             {
-                var playerId = UserUtils.GetCurrentUserId(User, Request.Headers);
-                var result = await _matchService.AddPlayerToTeamAsync(matchId, playerId, teamId);
+                var userId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var result = await _matchService.JoinSpecificTeamAsync(matchId, userId, teamId);
                 if (!result)
                     return BadRequest("Could not join team. Team might be full or player already in match.");
 
@@ -300,8 +302,13 @@ namespace FootballAPI.Controllers
         {
             try
             {
-                var playerId = UserUtils.GetCurrentUserId(User, Request.Headers);
-                var matches = await _matchService.GetAvailableMatchesForPlayerAsync(playerId);
+                var userId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var playerId = await _playerService.GetPlayerIdByUserIdAsync(userId);
+                if (playerId == null)
+                {
+                    return BadRequest("Player not found for current user.");
+                }
+                var matches = await _matchService.GetAvailableMatchesForPlayerAsync(playerId.Value);
                 return Ok(matches);
             }
             catch (UnauthorizedAccessException ex)

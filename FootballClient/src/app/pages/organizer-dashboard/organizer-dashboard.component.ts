@@ -68,7 +68,6 @@ export class OrganizerDashboardComponent {
       this.players = await this.PlayerService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
-      // Load matches for organiser
       await this.loadMatches();
     }
 
@@ -129,9 +128,14 @@ export class OrganizerDashboardComponent {
   };
 
   async addPlayer() {
-    if (!this.newPlayer.firstName || !this.newPlayer.lastName || 
-        !this.newPlayer.email || !this.newPlayer.username) {
-      this.playerErrorMessage = 'First Name, Last Name, Email, and Username are required';
+    if (
+      !this.newPlayer.firstName ||
+      !this.newPlayer.lastName ||
+      !this.newPlayer.email ||
+      !this.newPlayer.username
+    ) {
+      this.playerErrorMessage =
+        'First Name, Last Name, Email, and Username are required';
       return;
     }
 
@@ -150,10 +154,9 @@ export class OrganizerDashboardComponent {
 
       this.players.push(addedPlayer);
       this.filterPlayers();
-      
+
       this.playerSuccessMessage = `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`;
-      
-      // Reset form
+
       this.newPlayer = {
         firstName: '',
         lastName: '',
@@ -165,14 +168,13 @@ export class OrganizerDashboardComponent {
         errors: 2,
       };
 
-      // Close modal after 2 seconds
       setTimeout(() => {
         this.showAddModal = false;
         this.playerSuccessMessage = '';
       }, 2000);
-
     } catch (error: any) {
-      this.playerErrorMessage = error.message || 'Failed to add player. Please try again.';
+      this.playerErrorMessage =
+        error.message || 'Failed to add player. Please try again.';
       console.error('Error adding player:', error);
     } finally {
       this.playerLoading = false;
@@ -261,7 +263,6 @@ export class OrganizerDashboardComponent {
     return player.isEnabled !== false;
   }
 
-  // Create match functionality
   newMatch = {
     matchDate: this.getDefaultDateTime(),
     location: '',
@@ -287,7 +288,7 @@ export class OrganizerDashboardComponent {
     try {
       const createMatchRequest: CreateMatchRequest = {
         matchDate: new Date(this.newMatch.matchDate).toISOString(),
-        status: 1, // Open status
+        status: 1,
         location: this.newMatch.location,
         cost: this.newMatch.cost || undefined,
         teamAName: this.newMatch.teamAName || undefined,
@@ -299,10 +300,8 @@ export class OrganizerDashboardComponent {
       );
       this.matchSuccessMessage = 'Match created successfully!';
 
-      // Reload matches
       await this.loadMatches();
 
-      // Reset form
       this.newMatch = {
         matchDate: this.getDefaultDateTime(),
         location: '',
@@ -311,7 +310,6 @@ export class OrganizerDashboardComponent {
         teamBName: '',
       };
 
-      // Close modal after 1.5 seconds
       setTimeout(() => {
         this.showCreateMatchModal = false;
         this.matchSuccessMessage = '';
@@ -354,25 +352,21 @@ export class OrganizerDashboardComponent {
     }
   }
 
-  // Add Players Modal Functions
   async openAddPlayersModal(match: MatchDisplay) {
     this.selectedMatch = match;
     this.addPlayersErrorMessage = '';
     this.addPlayersSuccessMessage = '';
 
     try {
-      // Load match details to get team IDs and existing players
       this.matchDetails = await this.matchService.getMatchDetails(match.id);
       console.log('Match details received:', this.matchDetails);
 
-      // Initialize team players arrays with original data
       this.originalTeamAPlayers = this.matchDetails.teams[0]?.players || [];
       this.originalTeamBPlayers = this.matchDetails.teams[1]?.players || [];
 
       console.log('Team A players:', this.originalTeamAPlayers);
       console.log('Team B players:', this.originalTeamBPlayers);
 
-      // Copy to working arrays that will be modified locally
       this.teamAPlayers = [...this.originalTeamAPlayers];
       this.teamBPlayers = [...this.originalTeamBPlayers];
 
@@ -389,7 +383,6 @@ export class OrganizerDashboardComponent {
       return;
     }
 
-    // Check if player is already in either team
     const isInTeamA = this.teamAPlayers.some((p) => p.id === player.id);
     const isInTeamB = this.teamBPlayers.some((p) => p.id === player.id);
 
@@ -399,7 +392,6 @@ export class OrganizerDashboardComponent {
       return;
     }
 
-    // Check team capacity
     const targetTeam = team === 'teamA' ? this.teamAPlayers : this.teamBPlayers;
     if (targetTeam.length >= 6) {
       this.addPlayersErrorMessage = `${
@@ -415,7 +407,6 @@ export class OrganizerDashboardComponent {
     this.addPlayersErrorMessage = '';
 
     try {
-      // Get team ID and add to backend immediately
       const teamIndex = team === 'teamA' ? 0 : 1;
       const teamId = this.matchDetails.teams[teamIndex].teamId;
 
@@ -425,7 +416,6 @@ export class OrganizerDashboardComponent {
         teamId
       );
 
-      // Add to local array only after successful backend call
       if (team === 'teamA') {
         this.teamAPlayers.push(player);
         this.originalTeamAPlayers.push(player);
@@ -460,13 +450,11 @@ export class OrganizerDashboardComponent {
     this.addPlayersErrorMessage = '';
 
     try {
-      // Remove from backend immediately
       await this.matchService.removePlayerFromMatch(
         this.selectedMatch.id,
         player.id
       );
 
-      // Remove from local arrays only after successful backend call
       if (team === 'teamA') {
         this.teamAPlayers = this.teamAPlayers.filter((p) => p.id !== player.id);
         this.originalTeamAPlayers = this.originalTeamAPlayers.filter(
@@ -505,7 +493,6 @@ export class OrganizerDashboardComponent {
     const otherTeamPlayers =
       otherTeam === 'teamA' ? this.teamAPlayers : this.teamBPlayers;
 
-    // Check if other team is full
     if (otherTeamPlayers.length >= 6) {
       this.addPlayersErrorMessage = `${
         otherTeam === 'teamA'
@@ -520,13 +507,11 @@ export class OrganizerDashboardComponent {
     this.addPlayersErrorMessage = '';
 
     try {
-      // First remove from current team
       await this.matchService.removePlayerFromMatch(
         this.selectedMatch.id,
         player.id
       );
 
-      // Then add to other team
       const otherTeamIndex = otherTeam === 'teamA' ? 0 : 1;
       const otherTeamId = this.matchDetails.teams[otherTeamIndex].teamId;
       await this.matchService.addPlayerToMatch(
@@ -535,7 +520,6 @@ export class OrganizerDashboardComponent {
         otherTeamId
       );
 
-      // Update local arrays
       if (currentTeam === 'teamA') {
         this.teamAPlayers = this.teamAPlayers.filter((p) => p.id !== player.id);
         this.originalTeamAPlayers = this.originalTeamAPlayers.filter(
@@ -575,7 +559,6 @@ export class OrganizerDashboardComponent {
     this.addPlayersSuccessMessage = '';
   }
 
-  // Helper methods for new design
   isPlayerInAnyTeam(player: Player): boolean {
     return (
       this.teamAPlayers.some((p) => p.id === player.id) ||
@@ -604,22 +587,19 @@ export class OrganizerDashboardComponent {
 
   getDefaultDateTime(): string {
     const now = new Date();
-    now.setHours(now.getHours() + 2); // Set to 2 hours from now
-    return now.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
+    now.setHours(now.getHours() + 2);
+    return now.toISOString().slice(0, 16);
   }
 
   getMinDateTime(): string {
     const now = new Date();
-    return now.toISOString().slice(0, 16); // Current time as minimum
+    return now.toISOString().slice(0, 16);
   }
 
-
-  // Make Match Public
   async makeMatchPublic(matchId: number) {
     try {
       await this.matchService.publishMatch(matchId);
 
-      // Update local match data
       const matchIndex = this.matches.findIndex((m) => m.id === matchId);
       if (matchIndex > -1) {
         this.matches[matchIndex].isPublic = true;
@@ -632,10 +612,7 @@ export class OrganizerDashboardComponent {
     }
   }
 
-  // Edit Match Modal (placeholder for future implementation)
   openEditMatchModal(match: MatchDisplay) {
     alert('Edit match functionality coming soon!');
-    // TODO: Implement edit match modal
   }
-
 }

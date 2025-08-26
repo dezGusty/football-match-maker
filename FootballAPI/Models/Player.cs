@@ -24,11 +24,11 @@ namespace FootballAPI.Models
 
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
-        
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        
+
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        
+
         public DateTime? DeletedAt { get; set; }
 
         [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
@@ -43,7 +43,6 @@ namespace FootballAPI.Models
         [StringLength(500)]
         public string? ProfileImagePath { get; set; }
 
-        // Navigation properties
         public virtual ICollection<TeamPlayers> TeamPlayers { get; set; } = new List<TeamPlayers>();
 
     }

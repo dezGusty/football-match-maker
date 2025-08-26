@@ -13,6 +13,19 @@ namespace FootballAPI.DTOs
         public int OrganiserId { get; set; }
         public string? TeamAName { get; set; }
         public string? TeamBName { get; set; }
+        public int? TeamAId { get; set; }
+        public int? TeamBId { get; set; }
+        public int? ScoreA { get; set; }
+        public int? ScoreB { get; set; }
+        public List<PlayerHistoryDto> PlayerHistory { get; set; } = new List<PlayerHistoryDto>();
+    }
+    
+    public class PlayerHistoryDto
+    {
+        public int PlayerId { get; set; }
+        public int TeamId { get; set; }
+        public PlayerStatus Status { get; set; }
+        public PlayerDto Player { get; set; } = null!;
     }
 
     public class CreateMatchDto

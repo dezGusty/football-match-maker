@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Match } from '../models/match.interface';
 import { MatchCreated } from '../models/matchCreated.interface';
-import { CreateMatchRequest, CreateMatchResponse } from '../models/create-match.interface';
+import {
+  CreateMatchRequest,
+  CreateMatchResponse,
+} from '../models/create-match.interface';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -9,7 +12,6 @@ import { AuthService } from './auth.service';
 })
 export class MatchService {
   private readonly baseUrl: string = 'http://localhost:5145/api';
-  // Cache pentru numele echipelor pentru a reduce request-urile
   private teamNamesCache: Map<number, string> = new Map();
 
   constructor(private authService: AuthService) {}
@@ -22,7 +24,6 @@ export class MatchService {
 
     const rawMatches = await response.json();
 
-    // Pentru fiecare match, obține numele echipelor dacă lipsesc
     const matches: Match[] = await Promise.all(
       (rawMatches as Match[]).map(async (m) => ({
         id: m.id,
@@ -34,7 +35,7 @@ export class MatchService {
         scoreA: m.scoreA,
         scoreB: m.scoreB,
         playerHistory: m.playerHistory,
-      })),
+      }))
     );
 
     return matches;
@@ -57,32 +58,24 @@ export class MatchService {
 
       const rawMatches = await response.json();
 
-      // Pentru fiecare match, asigură-te că ai numele echipelor
       const matches: Match[] = await Promise.all(
-        (rawMatches as Match[]).map(async (m) => {
-          let teamAName = m.teamAName;
-          let teamBName = m.teamBName;
-
-          // Dacă numele nu vin din API sau sunt default values, obține-le
-          if (!teamAName || teamAName === 'Team A') {
-            teamAName = await this.getTeamById(m.teamAId);
-          }
-          if (!teamBName || teamBName === 'Team B') {
-            teamBName = await this.getTeamById(m.teamBId);
-          }
-
+        (rawMatches as any[]).map(async (m) => {
           return {
             id: m.id,
             matchDate: m.matchDate,
-            teamAId: m.teamAId,
-            teamBId: m.teamBId,
-            teamAName: teamAName,
-            teamBName: teamBName,
+            teamAId: m.teamAId, // These might be undefined
+            teamBId: m.teamBId, // These might be undefined
+            teamAName: m.teamAName || 'Team A',
+            teamBName: m.teamBName || 'Team B',
             scoreA: m.teamAGoals || m.scoreA || 0,
             scoreB: m.teamBGoals || m.scoreB || 0,
             playerHistory: m.playerHistory || [],
+            isPublic: m.isPublic,
+            location: m.location,
+            cost: m.cost,
+            organiserId: m.organiserId,
           };
-        }),
+        })
       );
 
       return matches;
@@ -94,7 +87,7 @@ export class MatchService {
 
   async getPlayersForScheduledMatch(matchId: number): Promise<number[]> {
     const response = await fetch(
-      `${this.baseUrl}/playermatchhistory/match/${matchId}`,
+      `${this.baseUrl}/playermatchhistory/match/${matchId}`
     );
     if (!response.ok) {
       throw new Error('Failed to fetch players for scheduled match');
@@ -105,7 +98,6 @@ export class MatchService {
   }
 
   async getTeamById(teamId: number): Promise<string> {
-    // Verifică cache-ul mai întâi
     if (this.teamNamesCache.has(teamId)) {
       return this.teamNamesCache.get(teamId)!;
     }
@@ -122,7 +114,6 @@ export class MatchService {
       const team = await response.json();
       const teamName = team.name || `Team ${teamId}`;
 
-      // Salvează în cache
       this.teamNamesCache.set(teamId, teamName);
       return teamName;
     } catch (error) {
@@ -136,7 +127,7 @@ export class MatchService {
   async createMatch(
     teamAId: number,
     teamBId: number,
-    matchDate: Date,
+    matchDate: Date
   ): Promise<MatchCreated> {
     const response = await fetch(`${this.baseUrl}/matches`, {
       method: 'POST',
@@ -163,7 +154,7 @@ export class MatchService {
 
   async updateMatch(
     matchId: number,
-    updateData: { teamAGoals: number; teamBGoals: number },
+    updateData: { teamAGoals: number; teamBGoals: number }
   ): Promise<Match> {
     const currentMatch = await this.getMatchById(matchId);
     if (!currentMatch) {
@@ -199,7 +190,6 @@ export class MatchService {
 
     const match = await response.json();
 
-    // Asigură-te că și aici obții numele echipelor dacă lipsesc
     if (!match.teamAName) {
       match.teamAName = await this.getTeamById(match.teamAId);
     }
@@ -233,7 +223,6 @@ export class MatchService {
 
       const rawMatches = await response.json();
 
-      // Pentru match-urile din trecut, obține numele echipelor dacă lipsesc
       const matches: Match[] = await Promise.all(
         (rawMatches as Match[]).map(async (m) => {
           let teamAName = m.teamAName;
@@ -257,7 +246,7 @@ export class MatchService {
             scoreB: m.teamBGoals || m.scoreB || 0,
             playerHistory: m.playerHistory || [],
           };
-        }),
+        })
       );
 
       return matches;
@@ -267,12 +256,10 @@ export class MatchService {
     }
   }
 
-  // Metodă pentru a curăța cache-ul dacă este necesar
   clearTeamNamesCache(): void {
     this.teamNamesCache.clear();
   }
 
-  // Metodă pentru a pre-încărca numele echipelor (opțională)
   async preloadTeamNames(teamIds: number[]): Promise<void> {
     const promises = teamIds
       .filter((id) => !this.teamNamesCache.has(id))
@@ -289,10 +276,11 @@ export class MatchService {
     };
   }
 
-  // New method for creating matches with the updated API
-  async createNewMatch(createMatchRequest: CreateMatchRequest): Promise<CreateMatchResponse> {
+  async createNewMatch(
+    createMatchRequest: CreateMatchRequest
+  ): Promise<CreateMatchResponse> {
     const token = this.authService.getToken();
-    
+
     if (!token) {
       throw new Error('Nu ești autentificat');
     }
@@ -300,7 +288,7 @@ export class MatchService {
     const response = await fetch(`${this.baseUrl}/matches`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
-      body: JSON.stringify(createMatchRequest)
+      body: JSON.stringify(createMatchRequest),
     });
 
     if (!response.ok) {
@@ -314,10 +302,9 @@ export class MatchService {
     return await response.json();
   }
 
-  // Get all matches for organiser
   async getAllMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -327,15 +314,18 @@ export class MatchService {
     return await response.json();
   }
 
-  // Add player to match
-  async addPlayerToMatch(matchId: number, playerId: number, teamId: number): Promise<any> {
+  async addPlayerToMatch(
+    matchId: number,
+    playerId: number,
+    teamId: number
+  ): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}/players`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify({
         playerId: playerId,
-        teamId: teamId
-      })
+        teamId: teamId,
+      }),
     });
 
     if (!response.ok) {
@@ -349,11 +339,10 @@ export class MatchService {
     return await response.json();
   }
 
-  // Publish match (make public)
   async publishMatch(matchId: number): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}/publish`, {
       method: 'POST',
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -370,10 +359,9 @@ export class MatchService {
     return await response.json();
   }
 
-  // Get matches for a specific player (where they're already added)
   async getPlayerMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/my-matches`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -383,10 +371,9 @@ export class MatchService {
     return await response.json();
   }
 
-  // Get public matches that player can join
   async getPublicMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/public`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -396,10 +383,9 @@ export class MatchService {
     return await response.json();
   }
 
-  // Get available matches for player (public + private from friends where player is not already added)
   async getAvailableMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/available`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -409,11 +395,10 @@ export class MatchService {
     return await response.json();
   }
 
-  // Join a public match
   async joinMatch(matchId: number): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}/join`, {
       method: 'POST',
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -422,7 +407,9 @@ export class MatchService {
         throw new Error('Not authenticated');
       }
       if (response.status === 400) {
-        throw new Error('Could not join match. Match might be full, private, or you might already be in it.');
+        throw new Error(
+          'Could not join match. Match might be full, private, or you might already be in it.'
+        );
       }
       throw new Error(`Error joining match: ${errorText}`);
     }
@@ -430,12 +417,14 @@ export class MatchService {
     return await response.json();
   }
 
-  // Join a specific team in a match
   async joinTeam(matchId: number, teamId: number): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}/teams/${teamId}/join`, {
-      method: 'POST',
-      headers: this.getAuthHeaders()
-    });
+    const response = await fetch(
+      `${this.baseUrl}/matches/${matchId}/teams/${teamId}/join`,
+      {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -443,7 +432,9 @@ export class MatchService {
         throw new Error('Not authenticated');
       }
       if (response.status === 400) {
-        throw new Error('Could not join team. Team might be full or you might already be in the match.');
+        throw new Error(
+          'Could not join team. Team might be full or you might already be in the match.'
+        );
       }
       throw new Error(`Error joining team: ${errorText}`);
     }
@@ -451,10 +442,9 @@ export class MatchService {
     return await response.json();
   }
 
-  // Get match details with team information
   async getMatchDetails(matchId: number): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}/details`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -464,12 +454,14 @@ export class MatchService {
     return await response.json();
   }
 
-  // Remove player from match
   async removePlayerFromMatch(matchId: number, playerId: number): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}/players/${playerId}`, {
-      method: 'DELETE',
-      headers: this.getAuthHeaders()
-    });
+    const response = await fetch(
+      `${this.baseUrl}/matches/${matchId}/players/${playerId}`,
+      {
+        method: 'DELETE',
+        headers: this.getAuthHeaders(),
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -482,4 +474,25 @@ export class MatchService {
     return await response.json();
   }
 
+  async leaveMatch(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/leave`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error(
+          'Could not leave match. You might not be part of this match.'
+        );
+      }
+      throw new Error(`Error leaving match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
 }

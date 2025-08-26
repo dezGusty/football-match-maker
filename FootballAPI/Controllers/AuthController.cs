@@ -118,7 +118,6 @@ namespace FootballAPI.Controllers
             });
         }
 
-        // [Authorize] //Roles = "Admin" "Organiser")
         [HttpPost("create-player-account")]
         public async Task<IActionResult> CreatePlayerAccount([FromBody] CreatePlayerUserDto dto)
         {
@@ -130,45 +129,35 @@ namespace FootballAPI.Controllers
                     return BadRequest(new { message = "User with this email already exists." });
                 }
 
-                dto.Password = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString());
-                dto.Role = UserRole.PLAYER;
+                var user = new CreateUserDto
+                {
+                    Email = dto.Email,
+                    Username = dto.Username,
+                    Role = UserRole.PLAYER,
+                    Password = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString())
 
-                var createdUser = await _userService.CreatePlayerUserAsync(dto);
+                };
+
+                var createdUser = await _userService.CreateUserAsync(user);
 
                 var createdPlayer = await _playerService.GetPlayerByUserIdAsync(createdUser.Id);
 
-                _ = Task.Run(async () =>
-                {
-                    try
-                    {
-                        var resetToken = await _passwordResetService.GeneratePasswordResetTokenAsync(createdUser.Id);
-                        var frontendUrl = _configuration["Frontend:BaseUrl"];
-                        var setPasswordUrl = $"{frontendUrl}/reset-password?token={resetToken}";
+                var resetToken = await _passwordResetService.GeneratePasswordResetTokenAsync(createdUser.Id);
 
-                        await _emailService.SendSetPasswordEmailAsync(dto.Email, dto.Username, setPasswordUrl);
-                        _logger.LogInformation("Password setup email sent successfully to {Email}", dto.Email);
-                    }
-                    catch (Exception emailEx)
-                    {
-                        _logger.LogError(emailEx, "Failed to send password setup email to {Email}", dto.Email);
-                    }
-                });
+                var frontendUrl = _configuration["Frontend:BaseUrl"];
 
-                _logger.LogInformation("Player account created for {Email}", dto.Email);
+                var setPasswordUrl = $"{frontendUrl}/reset-password?token={resetToken}";
+
+                await _emailService.SendSetPasswordEmailAsync(dto.Email, dto.Username, setPasswordUrl);
+
+                _logger.LogInformation("Player account created and password reset email sent to {Email}", dto.Email);
 
                 return Ok(new
                 {
                     message = "Player account created successfully. Password setup email sent.",
                     id = createdPlayer?.Id,
                     userId = createdUser.Id,
-                    firstName = dto.FirstName,
-                    lastName = dto.LastName,
-                    email = dto.Email,
-                    username = dto.Username,
-                    rating = dto.Rating,
-                    speed = dto.Speed,
-                    stamina = dto.Stamina,
-                    errors = dto.Errors
+
                 });
             }
             catch (InvalidOperationException ex)
@@ -249,10 +238,8 @@ namespace FootballAPI.Controllers
         {
             try
             {
-                // Căutăm user-ul după email
                 var user = await _userService.GetUserByEmailAsync(dto.Email);
 
-                // Răspuns generic pentru securitate (să nu dezvăluim dacă email-ul există)
                 var genericResponse = Ok(new
                 {
                     message = "If an account with that email exists, we've sent password reset instructions to it."
@@ -260,12 +247,10 @@ namespace FootballAPI.Controllers
 
                 if (user == null)
                 {
-                    // Log pentru debugging, dar răspuns generic pentru user
                     _logger.LogInformation("Password reset requested for non-existent email: {Email}", dto.Email);
                     return genericResponse;
                 }
 
-                // Verificăm dacă user-ul are deja un token activ
                 var hasActiveToken = await _passwordResetService.HasActiveTokenAsync(user.Id);
                 if (hasActiveToken)
                 {
@@ -273,14 +258,11 @@ namespace FootballAPI.Controllers
                     return Ok(new { message = "Password reset instructions have already been sent recently. Please check your email." });
                 }
 
-                // Generăm token-ul pentru resetarea parolei
                 var resetToken = await _passwordResetService.GeneratePasswordResetTokenAsync(user.Id);
 
-                // Construim link-ul pentru resetarea parolei (același ca pentru set-password)
                 var frontendUrl = _configuration["Frontend:BaseUrl"] ?? "https://yourfrontend.com";
                 var resetPasswordUrl = $"{frontendUrl}/reset-password?token={resetToken}";
 
-                // Trimitem email-ul
                 await _emailService.SendPasswordResetEmailAsync(user.Email, user.Username, resetPasswordUrl);
 
                 _logger.LogInformation("Password reset email sent to {Email}", dto.Email);
