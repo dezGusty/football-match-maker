@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    [Migration("20250824113637_Init")]
+    [Migration("20250826072402_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -127,222 +127,6 @@ namespace FootballAPI.Migrations
                     b.ToTable("MatchTeams");
                 });
 
-            modelBuilder.Entity("FootballAPI.Models.Player", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Errors")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ProfileImagePath")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<float>("Rating")
-                        .HasColumnType("real");
-
-                    b.Property<int>("Speed")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Stamina")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Players");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Ion",
-                            LastName = "Popescu",
-                            Rating = 8.5f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Marius",
-                            LastName = "Ionescu",
-                            Rating = 7.8f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Alex",
-                            LastName = "Georgescu",
-                            Rating = 7.2f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 5
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Razvan",
-                            LastName = "Moldovan",
-                            Rating = 8.1f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 6
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Cristian",
-                            LastName = "Stancu",
-                            Rating = 6.9f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 7
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Andrei",
-                            LastName = "Vasilescu",
-                            Rating = 7.7f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 8
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Florin",
-                            LastName = "Dumitru",
-                            Rating = 8.3f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 9
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Gabriel",
-                            LastName = "Ciobanu",
-                            Rating = 7.4f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 10
-                        },
-                        new
-                        {
-                            Id = 9,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Lucian",
-                            LastName = "Matei",
-                            Rating = 6.8f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 11
-                        },
-                        new
-                        {
-                            Id = 10,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Daniel",
-                            LastName = "Radu",
-                            Rating = 7.9f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 12
-                        },
-                        new
-                        {
-                            Id = 11,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Mihai",
-                            LastName = "Popa",
-                            Rating = 8f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 13
-                        },
-                        new
-                        {
-                            Id = 12,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Errors = 2,
-                            FirstName = "Stefan",
-                            LastName = "Nicolae",
-                            Rating = 7.6f,
-                            Speed = 2,
-                            Stamina = 2,
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 14
-                        });
-                });
-
             modelBuilder.Entity("FootballAPI.Models.PlayerOrganiser", b =>
                 {
                     b.Property<int>("OrganiserId")
@@ -436,17 +220,17 @@ namespace FootballAPI.Migrations
                     b.Property<int>("MatchTeamId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PlayerId")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MatchTeamId");
 
-                    b.HasIndex("PlayerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("TeamPlayers");
                 });
@@ -459,18 +243,57 @@ namespace FootballAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Errors")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("ProfileImagePath")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
+
                     b.Property<int>("Role")
                         .HasColumnType("int");
+
+                    b.Property<int>("Speed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stamina")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -491,113 +314,225 @@ namespace FootballAPI.Migrations
                         new
                         {
                             Id = 1,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "ion.popescu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Ion",
+                            LastName = "Popescu",
                             Password = "default123",
+                            Rating = 8.5f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "IonPopescu"
                         },
                         new
                         {
                             Id = 2,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "marius.ionescu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Marius",
+                            LastName = "Ionescu",
                             Password = "default123",
+                            Rating = 7.8f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "MariusIonescu"
                         },
                         new
                         {
                             Id = 3,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@gmail.com",
+                            Errors = 2,
+                            FirstName = "Admin",
+                            LastName = "User",
                             Password = "default123",
+                            Rating = 0f,
                             Role = 0,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "Admin"
                         },
                         new
                         {
                             Id = 4,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "organiser@gmail.com",
+                            Errors = 2,
+                            FirstName = "Organiser",
+                            LastName = "User",
                             Password = "default123",
+                            Rating = 0f,
                             Role = 1,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "Organiser"
                         },
                         new
                         {
                             Id = 5,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "alex.georgescu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Alex",
+                            LastName = "Georgescu",
                             Password = "default123",
+                            Rating = 7.2f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "AlexGeorgescu"
                         },
                         new
                         {
                             Id = 6,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "razvan.moldovan@gmail.com",
+                            Errors = 2,
+                            FirstName = "Razvan",
+                            LastName = "Moldovan",
                             Password = "default123",
+                            Rating = 8.1f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "RazvanMoldovan"
                         },
                         new
                         {
                             Id = 7,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "cristian.stancu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Cristian",
+                            LastName = "Stancu",
                             Password = "default123",
+                            Rating = 6.9f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "CristianStancu"
                         },
                         new
                         {
                             Id = 8,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "andrei.vasilescu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Andrei",
+                            LastName = "Vasilescu",
                             Password = "default123",
+                            Rating = 7.7f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "AndreiVasilescu"
                         },
                         new
                         {
                             Id = 9,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "florin.dumitru@gmail.com",
+                            Errors = 2,
+                            FirstName = "Florin",
+                            LastName = "Dumitru",
                             Password = "default123",
+                            Rating = 8.3f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "FlorinDumitru"
                         },
                         new
                         {
                             Id = 10,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "gabriel.ciobanu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Gabriel",
+                            LastName = "Ciobanu",
                             Password = "default123",
+                            Rating = 7.4f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "GabrielCiobanu"
                         },
                         new
                         {
                             Id = 11,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "lucian.matei@gmail.com",
+                            Errors = 2,
+                            FirstName = "Lucian",
+                            LastName = "Matei",
                             Password = "default123",
+                            Rating = 6.8f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "LucianMatei"
                         },
                         new
                         {
                             Id = 12,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "daniel.radu@gmail.com",
+                            Errors = 2,
+                            FirstName = "Daniel",
+                            LastName = "Radu",
                             Password = "default123",
+                            Rating = 7.9f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "DanielRadu"
                         },
                         new
                         {
                             Id = 13,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "mihai.popa@gmail.com",
+                            Errors = 2,
+                            FirstName = "Mihai",
+                            LastName = "Popa",
                             Password = "default123",
+                            Rating = 8f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "MihaiPopa"
                         },
                         new
                         {
                             Id = 14,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "stefan.nicolae@gmail.com",
+                            Errors = 2,
+                            FirstName = "Stefan",
+                            LastName = "Nicolae",
                             Password = "default123",
+                            Rating = 7.6f,
                             Role = 2,
+                            Speed = 2,
+                            Stamina = 2,
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "StefanNicolae"
                         });
                 });
@@ -651,17 +586,6 @@ namespace FootballAPI.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("FootballAPI.Models.Player", b =>
-                {
-                    b.HasOne("FootballAPI.Models.User", "User")
-                        .WithOne()
-                        .HasForeignKey("FootballAPI.Models.Player", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("FootballAPI.Models.PlayerOrganiser", b =>
                 {
                     b.HasOne("FootballAPI.Models.User", "Organiser")
@@ -700,15 +624,15 @@ namespace FootballAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FootballAPI.Models.Player", "Player")
+                    b.HasOne("FootballAPI.Models.User", "User")
                         .WithMany("TeamPlayers")
-                        .HasForeignKey("PlayerId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("MatchTeam");
 
-                    b.Navigation("Player");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
@@ -717,11 +641,6 @@ namespace FootballAPI.Migrations
                 });
 
             modelBuilder.Entity("FootballAPI.Models.MatchTeams", b =>
-                {
-                    b.Navigation("TeamPlayers");
-                });
-
-            modelBuilder.Entity("FootballAPI.Models.Player", b =>
                 {
                     b.Navigation("TeamPlayers");
                 });
@@ -744,6 +663,8 @@ namespace FootballAPI.Migrations
                     b.Navigation("ResetPasswordTokens");
 
                     b.Navigation("SentFriendRequests");
+
+                    b.Navigation("TeamPlayers");
                 });
 #pragma warning restore 612, 618
         }

@@ -9,8 +9,6 @@ import { HttpClient } from '@angular/common/http';
 import { UserRole } from '../../models/user-role.enum';
 import { PlayerHeaderComponent } from '../../components/player-header/player-header.component';
 import { PlayerProfileImageService } from '../../services/player-profile-image.service';
-import { PlayerService } from '../../services/player.service';
-import { Player } from '../../models/player.interface';
 @Component({
   selector: 'app-player-account',
   standalone: true,
@@ -22,7 +20,6 @@ export class PlayerAccountComponent {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   user: User | null = null;
-  player: Player | null = null;
 
   newPassword = '';
   confirmPassword = '';
@@ -44,7 +41,6 @@ export class PlayerAccountComponent {
     private router: Router,
     private http: HttpClient,
     private playerProfileImageService: PlayerProfileImageService,
-    private playerService: PlayerService
   ) {
     this.loadUser();
   }
@@ -54,26 +50,12 @@ export class PlayerAccountComponent {
       const userId = this.authService.getUserId();
       if (userId) {
         this.user = await this.userService.getUserById(userId);
-        if (this.user && this.user.role === UserRole.PLAYER) {
-          await this.loadPlayerData();
-        }
       }
     } catch (error) {
       console.error('Failed to load user:', error);
     }
   }
 
-  async loadPlayerData() {
-    try {
-      if (this.user?.email) {
-        const players = await this.playerService.getPlayers();
-        this.player =
-          players.find((p: Player) => p.userEmail === this.user?.email) || null;
-      }
-    } catch (error) {
-      console.error('Failed to load player data:', error);
-    }
-  }
 
   togglePasswordForm() {
     this.showPasswordForm = !this.showPasswordForm;
@@ -162,18 +144,18 @@ export class PlayerAccountComponent {
   }
 
   async uploadProfileImage() {
-    if (!this.selectedFile || !this.player || !this.player.id) return;
+    if (!this.selectedFile || !this.user || !this.user.id) return;
 
     this.isUploadingImage = true;
     this.uploadError = '';
 
     try {
       const response = await this.playerProfileImageService
-        .uploadProfileImage(this.player.id, this.selectedFile)
+        .uploadProfileImage(this.user.id, this.selectedFile)
         .toPromise();
 
       if (response) {
-        this.player.profileImageUrl = response.imageUrl;
+        this.user.profileImageUrl = response.imageUrl;
         alert('Profile image updated successfully!');
       }
     } catch (error: any) {
@@ -189,7 +171,7 @@ export class PlayerAccountComponent {
   }
 
   async deleteProfileImage() {
-    if (!this.player || !this.player.id) return;
+    if (!this.user || !this.user.id) return;
 
     if (!confirm('Are you sure you want to delete your profile image?')) {
       return;
@@ -197,9 +179,9 @@ export class PlayerAccountComponent {
 
     try {
       await this.playerProfileImageService
-        .deleteProfileImage(this.player.id)
+        .deleteProfileImage(this.user.id)
         .toPromise();
-      this.player.profileImageUrl =
+      this.user.profileImageUrl =
         'http://localhost:5145/assets/default-avatar.png';
       alert('Profile image deleted successfully!');
     } catch (error: any) {

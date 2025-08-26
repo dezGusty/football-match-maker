@@ -202,8 +202,8 @@ export class MatchService {
 
   getPlayersFromMatch(match: Match, teamId: number): string[] {
     return match.playerHistory
-      .filter((ph) => ph.teamId === teamId && ph.player)
-      .map((ph) => `${ph.player.firstName} ${ph.player.lastName}`);
+      .filter((ph) => ph.teamId === teamId && ph.user)
+      .map((ph) => `${ph.user.firstName} ${ph.user.lastName}`);
   }
 
   async getPastMatches(): Promise<Match[]> {
@@ -323,7 +323,7 @@ export class MatchService {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify({
-        playerId: playerId,
+        userId: playerId,
         teamId: teamId,
       }),
     });

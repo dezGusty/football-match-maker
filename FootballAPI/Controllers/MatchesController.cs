@@ -14,12 +14,12 @@ namespace FootballAPI.Controllers
     public class MatchesController : ControllerBase
     {
         private readonly IMatchService _matchService;
-        private readonly IPlayerService _playerService;
+        private readonly IUserService _userService;
 
-        public MatchesController(IMatchService matchService, IPlayerService playerService)
+        public MatchesController(IMatchService matchService, IUserService userService)
         {
             _matchService = matchService;
-            _playerService = playerService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -141,7 +141,8 @@ namespace FootballAPI.Controllers
         {
             try
             {
-                var result = await _matchService.AddPlayerToTeamAsync(id, addPlayerDto.PlayerId, addPlayerDto.TeamId);
+                Console.WriteLine($"Adding player {addPlayerDto.UserId} to team {addPlayerDto.TeamId} in match {id}");
+                var result = await _matchService.AddPlayerToTeamAsync(id, addPlayerDto.UserId, addPlayerDto.TeamId);
                 if (!result)
                     return BadRequest("Could not add player to team. Team might be full or player already exists.");
 
@@ -159,8 +160,8 @@ namespace FootballAPI.Controllers
         {
             try
             {
-                var playerId = UserUtils.GetCurrentUserId(User, Request.Headers);
-                var result = await _matchService.JoinPublicMatchAsync(id, playerId);
+                var userId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var result = await _matchService.JoinPublicMatchAsync(id, userId);
                 if (!result)
                     return BadRequest("Could not join match. Match might be full, private, or player already in match.");
 
@@ -199,13 +200,13 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpPut("{id}/players/{playerId}/move")]
+        [HttpPut("{id}/players/{userId}/move")]
         [Authorize]
-        public async Task<ActionResult> MovePlayerBetweenTeams(int id, int playerId, MovePlayerDto movePlayerDto)
+        public async Task<ActionResult> MovePlayerBetweenTeams(int id, int userId, MovePlayerDto movePlayerDto)
         {
             try
             {
-                var result = await _matchService.MovePlayerBetweenTeamsAsync(id, playerId, movePlayerDto.NewTeamId);
+                var result = await _matchService.MovePlayerBetweenTeamsAsync(id, userId, movePlayerDto.NewTeamId);
                 if (!result)
                     return BadRequest("Could not move player. Target team might be full or player not found.");
 
@@ -258,9 +259,9 @@ namespace FootballAPI.Controllers
         {
             try
             {
-                var playerId = UserUtils.GetCurrentUserId(User, Request.Headers);
-                var result = await _matchService.LeaveMatchAsync(id, playerId);
-                
+                var userId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var result = await _matchService.LeaveMatchAsync(id, userId);
+
                 if (!result)
                     return BadRequest("Could not leave match. You might not be part of this match.");
 
@@ -282,8 +283,8 @@ namespace FootballAPI.Controllers
         {
             try
             {
-                var playerId = UserUtils.GetCurrentUserId(User, Request.Headers);
-                var matches = await _matchService.GetPlayerMatchesAsync(playerId);
+                var userId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var matches = await _matchService.GetPlayerMatchesAsync(userId);
                 return Ok(matches);
             }
             catch (UnauthorizedAccessException ex)
@@ -303,12 +304,7 @@ namespace FootballAPI.Controllers
             try
             {
                 var userId = UserUtils.GetCurrentUserId(User, Request.Headers);
-                var playerId = await _playerService.GetPlayerIdByUserIdAsync(userId);
-                if (playerId == null)
-                {
-                    return BadRequest("Player not found for current user.");
-                }
-                var matches = await _matchService.GetAvailableMatchesForPlayerAsync(playerId.Value);
+                var matches = await _matchService.GetAvailableMatchesForPlayerAsync(userId);
                 return Ok(matches);
             }
             catch (UnauthorizedAccessException ex)
@@ -321,13 +317,13 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpDelete("{matchId}/players/{playerId}")]
+        [HttpDelete("{matchId}/players/{userId}")]
         [Authorize]
-        public async Task<ActionResult> RemovePlayerFromMatch(int matchId, int playerId)
+        public async Task<ActionResult> RemovePlayerFromMatch(int matchId, int userId)
         {
             try
             {
-                var result = await _matchService.RemovePlayerFromMatchAsync(matchId, playerId);
+                var result = await _matchService.RemovePlayerFromMatchAsync(matchId, userId);
                 if (!result)
                     return BadRequest("Could not remove player from match. Player might not be in this match.");
 

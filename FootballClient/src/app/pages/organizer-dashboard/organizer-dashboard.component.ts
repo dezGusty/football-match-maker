@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Header } from '../../components/header/header';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { PlayerService } from '../../services/player.service';
-import { Player } from '../../models/player.interface';
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user.interface';
 import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
 import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
@@ -30,27 +30,27 @@ import {
 })
 export class OrganizerDashboardComponent {
   constructor(
-    private PlayerService: PlayerService,
+    private UserService: UserService,
     private authService: AuthService,
     private matchService: MatchService
   ) {}
 
-  players: Player[] = [];
-  filteredPlayers: Player[] = [];
+  players: User[] = [];
+  filteredPlayers: User[] = [];
   matches: MatchDisplay[] = [];
   searchTerm: string = '';
   editIndex: number | null = null;
-  editedPlayer: Player | null = null;
+  editedPlayer: User | null = null;
   showAddModal = false;
   showCreateMatchModal = false;
   showAddPlayersModal = false;
   activeTab: 'players' | 'matches' = 'matches';
   selectedMatch: MatchDisplay | null = null;
   matchDetails: any = null; // Will contain team IDs
-  teamAPlayers: Player[] = [];
-  teamBPlayers: Player[] = [];
-  originalTeamAPlayers: Player[] = [];
-  originalTeamBPlayers: Player[] = [];
+  teamAPlayers: User[] = [];
+  teamBPlayers: User[] = [];
+  originalTeamAPlayers: User[] = [];
+  originalTeamBPlayers: User[] = [];
   addingPlayers = false;
   savingPlayers = false;
   addPlayersErrorMessage = '';
@@ -63,9 +63,9 @@ export class OrganizerDashboardComponent {
     const role = this.authService.getUserRole();
 
     if (role === UserRole.ADMIN) {
-      this.players = await this.PlayerService.getPlayers();
+      this.players = await this.UserService.getPlayers();
     } else if (role === UserRole.ORGANISER) {
-      this.players = await this.PlayerService.getPlayersForOrganiser(
+      this.players = await this.UserService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
       await this.loadMatches();
@@ -149,8 +149,8 @@ export class OrganizerDashboardComponent {
     this.playerSuccessMessage = '';
 
     try {
-      const addedPlayer = await this.PlayerService.addPlayer(this.newPlayer);
-      await this.PlayerService.addPlayerOrganiserRelation(addedPlayer.id!);
+      const addedPlayer = await this.UserService.addPlayer(this.newPlayer);
+      await this.UserService.addPlayerOrganiserRelation(addedPlayer.id!);
 
       this.players.push(addedPlayer);
       this.filterPlayers();
@@ -198,9 +198,7 @@ export class OrganizerDashboardComponent {
     }
 
     try {
-      const updatedPlayer = await this.PlayerService.editPlayer(
-        this.editedPlayer
-      );
+      const updatedPlayer = await this.UserService.editUser(this.editedPlayer);
       const index = this.players.findIndex((p) => p.id === updatedPlayer.id);
       if (index !== -1) {
         this.players[index] = updatedPlayer;
@@ -218,11 +216,11 @@ export class OrganizerDashboardComponent {
     if (!confirmDelete) return;
 
     try {
-      const success = await this.PlayerService.deletePlayer(playerId);
+      const success = await this.UserService.deleteUser(playerId);
       if (success) {
         const playerIndex = this.players.findIndex((p) => p.id === playerId);
         if (playerIndex !== -1) {
-          this.players[playerIndex].isEnabled = false;
+          this.players[playerIndex].isDeleted = true;
         }
 
         this.filterPlayers();
@@ -239,11 +237,13 @@ export class OrganizerDashboardComponent {
     if (!confirmEnable) return;
 
     try {
-      const success = await this.PlayerService.enablePlayer(playerId);
+      const success = await this.UserService.editUser(
+        this.players.find((p) => p.id === playerId)!
+      );
       if (success) {
         const playerIndex = this.players.findIndex((p) => p.id === playerId);
         if (playerIndex !== -1) {
-          this.players[playerIndex].isEnabled = true;
+          this.players[playerIndex].isDeleted = false;
         }
 
         this.filterPlayers();
@@ -259,8 +259,8 @@ export class OrganizerDashboardComponent {
     this.editedPlayer = null;
   }
 
-  isPlayerEnabled(player: Player): boolean {
-    return player.isEnabled !== false;
+  isPlayerEnabled(player: User): boolean {
+    return !player.isDeleted;
   }
 
   newMatch = {
@@ -378,7 +378,7 @@ export class OrganizerDashboardComponent {
     }
   }
 
-  async addPlayerToTeam(player: Player, team: 'teamA' | 'teamB') {
+  async addPlayerToTeam(player: User, team: 'teamA' | 'teamB') {
     if (!this.selectedMatch || !this.matchDetails || !player.id) {
       return;
     }
@@ -409,7 +409,9 @@ export class OrganizerDashboardComponent {
     try {
       const teamIndex = team === 'teamA' ? 0 : 1;
       const teamId = this.matchDetails.teams[teamIndex].teamId;
-
+      console.log(
+        `Adding player ${player.id} to team ${teamId} in match ${this.selectedMatch.id}`
+      );
       await this.matchService.addPlayerToMatch(
         this.selectedMatch.id,
         player.id,
@@ -441,7 +443,7 @@ export class OrganizerDashboardComponent {
     }
   }
 
-  async removePlayerFromTeam(player: Player, team: 'teamA' | 'teamB') {
+  async removePlayerFromTeam(player: User, team: 'teamA' | 'teamB') {
     if (!this.selectedMatch || !player.id) {
       return;
     }
@@ -484,7 +486,7 @@ export class OrganizerDashboardComponent {
     }
   }
 
-  async movePlayerToOtherTeam(player: Player, currentTeam: 'teamA' | 'teamB') {
+  async movePlayerToOtherTeam(player: User, currentTeam: 'teamA' | 'teamB') {
     if (!this.selectedMatch || !this.matchDetails || !player.id) {
       return;
     }
@@ -559,7 +561,7 @@ export class OrganizerDashboardComponent {
     this.addPlayersSuccessMessage = '';
   }
 
-  isPlayerInAnyTeam(player: Player): boolean {
+  isPlayerInAnyTeam(player: User): boolean {
     return (
       this.teamAPlayers.some((p) => p.id === player.id) ||
       this.teamBPlayers.some((p) => p.id === player.id)
@@ -573,7 +575,7 @@ export class OrganizerDashboardComponent {
     return 'rating-low';
   }
 
-  getTeamAverageRating(team: Player[]): string {
+  getTeamAverageRating(team: User[]): string {
     if (team.length === 0) return '0.0';
     const avg =
       team.reduce((sum, player) => sum + (player.rating || 0), 0) / team.length;

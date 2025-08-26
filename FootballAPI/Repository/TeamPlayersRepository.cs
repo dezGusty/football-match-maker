@@ -21,7 +21,7 @@ namespace FootballAPI.Repository
                     .ThenInclude(mt => mt.Match)
                 .Include(tp => tp.MatchTeam)
                     .ThenInclude(mt => mt.Team)
-                .Include(tp => tp.Player)
+                .Include(tp => tp.User)
                 .ToListAsync();
         }
 
@@ -32,7 +32,7 @@ namespace FootballAPI.Repository
                     .ThenInclude(mt => mt.Match)
                 .Include(tp => tp.MatchTeam)
                     .ThenInclude(mt => mt.Team)
-                .Include(tp => tp.Player)
+                .Include(tp => tp.User)
                 .FirstOrDefaultAsync(tp => tp.Id == id);
         }
 
@@ -71,32 +71,31 @@ namespace FootballAPI.Repository
         public async Task<IEnumerable<TeamPlayers>> GetByMatchTeamIdAsync(int matchTeamId)
         {
             return await _context.TeamPlayers
-                .Include(tp => tp.Player)
-                    .ThenInclude(p => p.User)
+                .Include(tp => tp.User)
                 .Where(tp => tp.MatchTeamId == matchTeamId)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<TeamPlayers>> GetByPlayerIdAsync(int playerId)
+        public async Task<IEnumerable<TeamPlayers>> GetByUserIdAsync(int userId)
         {
             return await _context.TeamPlayers
                 .Include(tp => tp.MatchTeam)
                     .ThenInclude(mt => mt.Match)
                 .Include(tp => tp.MatchTeam)
                     .ThenInclude(mt => mt.Team)
-                .Where(tp => tp.PlayerId == playerId)
+                .Where(tp => tp.UserId == userId)
                 .ToListAsync();
         }
 
-        public async Task<TeamPlayers> GetByMatchTeamIdAndPlayerIdAsync(int matchTeamId, int playerId)
+        public async Task<TeamPlayers> GetByMatchTeamIdAndUserIdAsync(int matchTeamId, int userId)
         {
             return await _context.TeamPlayers
                 .Include(tp => tp.MatchTeam)
                     .ThenInclude(mt => mt.Match)
                 .Include(tp => tp.MatchTeam)
                     .ThenInclude(mt => mt.Team)
-                .Include(tp => tp.Player)
-                .FirstOrDefaultAsync(tp => tp.MatchTeamId == matchTeamId && tp.PlayerId == playerId);
+                .Include(tp => tp.User)
+                .FirstOrDefaultAsync(tp => tp.MatchTeamId == matchTeamId && tp.UserId == userId);
         }
 
         public async Task<IEnumerable<TeamPlayers>> GetByStatusAsync(PlayerStatus status)
@@ -106,7 +105,7 @@ namespace FootballAPI.Repository
                     .ThenInclude(mt => mt.Match)
                 .Include(tp => tp.MatchTeam)
                     .ThenInclude(mt => mt.Team)
-                .Include(tp => tp.Player)
+                .Include(tp => tp.User)
                 .Where(tp => tp.Status == status)
                 .ToListAsync();
         }

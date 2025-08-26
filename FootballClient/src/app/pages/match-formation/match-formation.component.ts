@@ -2,9 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Player } from '../../models/player.interface';
+import { User } from '../../models/user.interface';
 import { MatchService } from '../../services/match.service';
-import { PlayerService } from '../../services/player.service';
+import { UserService } from '../../services/user.service';
 
 interface Position {
   left: string;
@@ -19,8 +19,8 @@ interface Position {
   styleUrls: ['./match-formation.component.css'],
 })
 export class MatchFormationComponent implements OnInit {
-  @Input() team1Players: Player[] = [];
-  @Input() team2Players: Player[] = [];
+  @Input() team1Players: User[] = [];
+  @Input() team2Players: User[] = [];
   scoreA: number = 0;
   scoreB: number = 0;
   matchId?: number;
@@ -35,7 +35,7 @@ export class MatchFormationComponent implements OnInit {
 
   constructor(
     private matchService: MatchService,
-    private playerService: PlayerService,
+    private userService: UserService,
     private router: Router
   ) {}
 
@@ -122,7 +122,7 @@ export class MatchFormationComponent implements OnInit {
 
         if (this.manualAdjustments.size > 0) {
           const manualRatingUpdates: {
-            playerId: number;
+            userId: number;
             ratingChange: number;
           }[] = [];
 
@@ -133,7 +133,7 @@ export class MatchFormationComponent implements OnInit {
                 `Manual adjustment for player ${playerId}: ${adjustment}`
               );
               manualRatingUpdates.push({
-                playerId: playerId,
+                userId: playerId,
                 ratingChange: adjustment,
               });
             }
@@ -145,7 +145,7 @@ export class MatchFormationComponent implements OnInit {
               manualRatingUpdates
             );
             const success =
-              await this.playerService.updateMultiplePlayerRatings(
+              await this.userService.updateMultiplePlayerRatings(
                 manualRatingUpdates
               );
             if (success) {
@@ -205,11 +205,11 @@ export class MatchFormationComponent implements OnInit {
     );
   }
 
-  getManualAdjustment(player: Player): number {
+  getManualAdjustment(player: User): number {
     return this.manualAdjustments.get(player.id || 0) || 0;
   }
 
-  setManualAdjustment(player: Player, adjustment: number): void {
+  setManualAdjustment(player: User, adjustment: number): void {
     console.log(
       'setManualAdjustment called with:',
       player.firstName,
@@ -226,25 +226,25 @@ export class MatchFormationComponent implements OnInit {
     }
   }
 
-  resetManualAdjustment(player: Player): void {
+  resetManualAdjustment(player: User): void {
     if (player.id) {
       this.manualAdjustments.delete(player.id);
     }
   }
 
-  getTotalRatingChange(player: Player, isTeam1: boolean): number {
+  getTotalRatingChange(player: User, isTeam1: boolean): number {
     const automaticChange = this.getRatingChange(isTeam1);
     const manualChange = this.getManualAdjustment(player);
     return automaticChange + manualChange;
   }
 
-  getFinalRating(player: Player, isTeam1: boolean): number {
+  getFinalRating(player: User, isTeam1: boolean): number {
     const currentRating = player.rating || 0;
     const totalChange = this.getTotalRatingChange(player, isTeam1);
     return Math.max(0, currentRating + totalChange);
   }
 
-  trackByPlayerId(index: number, player: Player): number {
+  trackByPlayerId(index: number, player: User): number {
     return player.id || index;
   }
 
@@ -275,22 +275,22 @@ export class MatchFormationComponent implements OnInit {
     }
   }
 
-  getPlayerName(player: Player | undefined): string {
+  getPlayerName(player: User | undefined): string {
     if (!player) return 'N/A';
     return `${player.firstName} ${player.lastName}`;
   }
 
-  getPlayerFirstName(player: Player | undefined): string {
+  getPlayerFirstName(player: User | undefined): string {
     if (!player || !player.firstName) return 'N/A';
     return player.firstName;
   }
 
-  getPlayerLastName(player: Player | undefined): string {
+  getPlayerLastName(player: User | undefined): string {
     if (!player || !player.lastName) return '';
     return player.lastName;
   }
 
-  getPlayerImage(player: Player | undefined): string {
+  getPlayerImage(player: User | undefined): string {
     if (player?.profileImageUrl) {
       return player.profileImageUrl;
     }

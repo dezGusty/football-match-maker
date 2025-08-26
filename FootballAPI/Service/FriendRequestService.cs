@@ -9,16 +9,13 @@ namespace FootballAPI.Service
     {
         private readonly IFriendRequestRepository _friendRequestRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IPlayerRepository _playerRepository;
 
         public FriendRequestService(
             IFriendRequestRepository friendRequestRepository,
-            IUserRepository userRepository,
-            IPlayerRepository playerRepository)
+            IUserRepository userRepository)
         {
             _friendRequestRepository = friendRequestRepository;
             _userRepository = userRepository;
-            _playerRepository = playerRepository;
         }
 
         private FriendRequestDto MapToDto(FriendRequest friendRequest)
@@ -124,7 +121,7 @@ namespace FootballAPI.Service
                 CreatedAt = DateTime.Now
             };
 
-            await _playerRepository.AddPlayerOrganiserRelationAsync(relation);
+            await _userRepository.AddPlayerOrganiserRelationAsync(relation);
         }
 
         public async Task<IEnumerable<FriendRequestDto>> GetSentRequestsAsync(int userId)

@@ -3,9 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
-import { PlayerService } from '../../services/player.service';
 import { User } from '../../models/user.interface';
-import { Player } from '../../models/player.interface';
 
 // Service pentru comunicarea între componente
 @Component({
@@ -18,7 +16,7 @@ import { Player } from '../../models/player.interface';
 export class PlayerHeaderComponent implements OnInit {
   username: string = '';
   isMenuOpen = false;
-  currentPlayer: Player | null = null;
+  currentPlayer: User | null = null;
 
   @Output() tabChange = new EventEmitter<string>();
 
@@ -26,7 +24,6 @@ export class PlayerHeaderComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private userService: UserService,
-    private playerService: PlayerService
   ) {}
 
   async ngOnInit() {
@@ -41,10 +38,7 @@ export class PlayerHeaderComponent implements OnInit {
         const user = await this.userService.getUserById(userId);
         this.username = user.username;
 
-        // Get player data for first/last name
-        const players = await this.playerService.getPlayers();
-        this.currentPlayer =
-          players.find((p) => p.userEmail === user.email) || null;
+        this.currentPlayer = user;
       } catch (error) {
         console.error('Error loading player data:', error);
       }

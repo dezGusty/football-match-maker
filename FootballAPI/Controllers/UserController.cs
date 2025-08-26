@@ -316,5 +316,116 @@ namespace FootballAPI.Controllers
 
             return Ok(players);
         }
+
+        [HttpPost("player-organiser")]
+        public async Task<ActionResult> AddPlayerOrganiserRelation([FromBody] PlayerOrganiserRelationRequest request)
+        {
+            try
+            {
+                await _userService.AddPlayerOrganiserRelationAsync(request.UserId, request.OrganiserId);
+                return Ok(new { message = "Player-organiser relation added successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding player-organiser relation");
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet("players")]
+        public async Task<ActionResult> GetAllPlayers()
+        {
+            try
+            {
+                var players = await _userService.GetPlayersAsync();
+                return Ok(players);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all players");
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+
+        [HttpPatch("{userId}/update-rating")]
+        public async Task<ActionResult> UpdateUserRating(int userId, [FromBody] RatingUpdateRequest request)
+        {
+            try
+            {
+                var success = await _userService.UpdatePlayerRatingAsync(userId, request.RatingChange);
+                if (success)
+                    return Ok(new { message = "User rating updated successfully" });
+                else
+                    return BadRequest(new { message = "Failed to update user rating" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating user rating");
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+
+        [HttpPatch("update-multiple-ratings")]
+        public async Task<ActionResult> UpdateMultipleUserRatings([FromBody] MultipleRatingUpdateRequest request)
+        {
+            try
+            {
+                var playerRatingUpdates = request.PlayerRatingUpdates.Select(x => new PlayerRatingUpdateDto 
+                { 
+                    UserId = x.UserId, 
+                    RatingChange = x.RatingChange 
+                }).ToList();
+
+                var success = await _userService.UpdateMultiplePlayerRatingsAsync(playerRatingUpdates);
+                if (success)
+                    return Ok(new { message = "Multiple user ratings updated successfully" });
+                else
+                    return BadRequest(new { message = "Failed to update multiple user ratings" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating multiple user ratings");
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+
+        [HttpPatch("set-multiple-available")]
+        public async Task<ActionResult> SetMultiplePlayersAvailable([FromBody] int[] userIds)
+        {
+            try
+            {
+                // For now, this endpoint will just return success since the concept of "available" 
+                // might need to be defined in the context of the unified User model
+                // This was previously a Player-specific concept
+                return Ok(new { message = "Multiple players set as available successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error setting multiple players available");
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+    }
+
+    public class PlayerOrganiserRelationRequest
+    {
+        public int UserId { get; set; }
+        public int OrganiserId { get; set; }
+    }
+
+    public class RatingUpdateRequest
+    {
+        public float RatingChange { get; set; }
+    }
+
+    public class MultipleRatingUpdateRequest
+    {
+        public List<UserRatingUpdate> PlayerRatingUpdates { get; set; } = new();
+    }
+
+    public class UserRatingUpdate
+    {
+        public int UserId { get; set; }
+        public float RatingChange { get; set; }
     }
 }

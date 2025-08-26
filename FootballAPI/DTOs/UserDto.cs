@@ -9,6 +9,29 @@ namespace FootballAPI.DTOs
         public string Email { get; set; } = null!;
         public string Username { get; set; } = null!;
         public UserRole Role { get; set; }
+        
+        // Player properties integrated
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        
+        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
+        public float Rating { get; set; }
+        
+        public bool IsDeleted { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+
+        [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
+        public int Speed { get; set; }
+
+        [Range(1, 3, ErrorMessage = "Stamina must be between 1 (Low) and 3 (High)")]
+        public int Stamina { get; set; }
+
+        [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
+        public int Errors { get; set; }
+
+        public string? ProfileImageUrl { get; set; }
     }
 
     public class CreateUserDto
@@ -28,6 +51,27 @@ namespace FootballAPI.DTOs
 
         [Required]
         public UserRole Role { get; set; }
+
+        // Player properties integrated
+        [Required]
+        [StringLength(50)]
+        public string FirstName { get; set; } = null!;
+
+        [Required]
+        [StringLength(50)]
+        public string LastName { get; set; } = null!;
+
+        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
+        public float Rating { get; set; } = 0.0f;
+
+        [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
+        public int Speed { get; set; } = 2;
+
+        [Range(1, 3, ErrorMessage = "Stamina must be between 1 (Low) and 3 (High)")]
+        public int Stamina { get; set; } = 2;
+
+        [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
+        public int Errors { get; set; } = 2;
     }
 
     public class UpdateUserDto
@@ -43,6 +87,27 @@ namespace FootballAPI.DTOs
 
         [Required]
         public UserRole Role { get; set; }
+
+        // Player properties integrated
+        [Required]
+        [StringLength(50)]
+        public string FirstName { get; set; } = null!;
+        
+        [Required]
+        [StringLength(50)]
+        public string LastName { get; set; } = null!;
+        
+        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
+        public float Rating { get; set; }
+
+        [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
+        public int Speed { get; set; }
+
+        [Range(1, 3, ErrorMessage = "Stamina must be between 1 (Low) and 3 (High)")]
+        public int Stamina { get; set; }
+
+        [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
+        public int Errors { get; set; }
     }
 
     public class UserResponseDto

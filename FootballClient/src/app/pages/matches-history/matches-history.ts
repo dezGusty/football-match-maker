@@ -6,7 +6,7 @@ import { DatePipe } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlayerHistory } from '../../models/player-history.interface';
-import { Player } from '../../models/player.interface';
+import { User } from '../../models/user.interface';
 
 @Component({
   selector: 'app-matches-history',
@@ -49,17 +49,17 @@ export class MatchesHistory implements OnInit {
       this.selectedTeamBName = match.teamBName!;
 
       this.selectedTeamAPlayers = match.playerHistory
-        .filter((p) => p.teamId === match.teamAId && p.player)
+        .filter((p) => p.teamId === match.teamAId && p.user)
         .map(
           (p) =>
-            `${p.player.firstName} ${p.player.lastName} ${(p.player.rating || 0).toFixed(2)}`,
+            `${p.user.firstName} ${p.user.lastName} ${(p.user.rating || 0).toFixed(2)}`,
         );
 
       this.selectedTeamBPlayers = match.playerHistory
-        .filter((p) => p.teamId === match.teamBId && p.player)
+        .filter((p) => p.teamId === match.teamBId && p.user)
         .map(
           (p) =>
-            `${p.player.firstName} ${p.player.lastName} ${(p.player.rating || 0).toFixed(2)}`,
+            `${p.user.firstName} ${p.user.lastName} ${(p.user.rating || 0).toFixed(2)}`,
         );
 
       this.modalOpen = true;
@@ -75,10 +75,10 @@ export class MatchesHistory implements OnInit {
   getPlayers(match: Match | null, teamId?: number): string[] {
     if (!match || !teamId) return [];
     return match.playerHistory
-      .filter((ph) => ph.teamId === teamId && ph.player)
+      .filter((ph) => ph.teamId === teamId && ph.user)
       .map(
         (ph) =>
-          `${ph.player.firstName} ${ph.player.lastName} ${(ph.player.rating || 0).toFixed(2)}`,
+          `${ph.user.firstName} ${ph.user.lastName} ${(ph.user.rating || 0).toFixed(2)}`,
       );
   }
 }

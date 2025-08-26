@@ -9,15 +9,15 @@ namespace FootballAPI.Service
     {
         private readonly ITeamPlayersRepository _teamPlayersRepository;
         private readonly IMatchTeamsRepository _matchTeamsRepository;
-        private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _userRepository;
 
         public TeamPlayersService(ITeamPlayersRepository teamPlayersRepository,
                                  IMatchTeamsRepository matchTeamsRepository,
-                                 IPlayerRepository playerRepository)
+                                 IUserRepository userRepository)
         {
             _teamPlayersRepository = teamPlayersRepository;
             _matchTeamsRepository = matchTeamsRepository;
-            _playerRepository = playerRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<IEnumerable<TeamPlayersDto>> GetAllTeamPlayersAsync()
@@ -37,7 +37,7 @@ namespace FootballAPI.Service
             var teamPlayer = new TeamPlayers
             {
                 MatchTeamId = createTeamPlayersDto.MatchTeamId,
-                PlayerId = createTeamPlayersDto.PlayerId,
+                UserId = createTeamPlayersDto.UserId,
                 Status = createTeamPlayersDto.Status
             };
 
@@ -54,7 +54,7 @@ namespace FootballAPI.Service
             }
 
             existingTeamPlayer.MatchTeamId = updateTeamPlayersDto.MatchTeamId;
-            existingTeamPlayer.PlayerId = updateTeamPlayersDto.PlayerId;
+            existingTeamPlayer.UserId = updateTeamPlayersDto.UserId;
             existingTeamPlayer.Status = updateTeamPlayersDto.Status;
 
             var updatedTeamPlayer = await _teamPlayersRepository.UpdateAsync(existingTeamPlayer);
@@ -72,15 +72,15 @@ namespace FootballAPI.Service
             return teamPlayers.Select(MapToDto);
         }
 
-        public async Task<IEnumerable<TeamPlayersDto>> GetTeamPlayersByPlayerIdAsync(int playerId)
+        public async Task<IEnumerable<TeamPlayersDto>> GetTeamPlayersByUserIdAsync(int userId)
         {
-            var teamPlayers = await _teamPlayersRepository.GetByPlayerIdAsync(playerId);
+            var teamPlayers = await _teamPlayersRepository.GetByUserIdAsync(userId);
             return teamPlayers.Select(MapToDto);
         }
 
-        public async Task<TeamPlayersDto> GetTeamPlayerByMatchTeamIdAndPlayerIdAsync(int matchTeamId, int playerId)
+        public async Task<TeamPlayersDto> GetTeamPlayerByMatchTeamIdAndUserIdAsync(int matchTeamId, int userId)
         {
-            var teamPlayer = await _teamPlayersRepository.GetByMatchTeamIdAndPlayerIdAsync(matchTeamId, playerId);
+            var teamPlayer = await _teamPlayersRepository.GetByMatchTeamIdAndUserIdAsync(matchTeamId, userId);
             return teamPlayer == null ? null : MapToDto(teamPlayer);
         }
 
@@ -96,7 +96,7 @@ namespace FootballAPI.Service
             {
                 Id = teamPlayer.Id,
                 MatchTeamId = teamPlayer.MatchTeamId,
-                PlayerId = teamPlayer.PlayerId,
+                UserId = teamPlayer.UserId,
                 Status = teamPlayer.Status,
                 MatchTeam = teamPlayer.MatchTeam == null ? null : new MatchTeamsDto
                 {
@@ -117,21 +117,21 @@ namespace FootballAPI.Service
                         Name = teamPlayer.MatchTeam.Team.Name
                     }
                 },
-                Player = teamPlayer.Player == null ? null : new PlayerDto
+                User = teamPlayer.User == null ? null : new UserDto
                 {
-                    Id = teamPlayer.Player.Id,
-                    FirstName = teamPlayer.Player.FirstName,
-                    LastName = teamPlayer.Player.LastName,
-                    Rating = teamPlayer.Player.Rating,
-                    Speed = teamPlayer.Player.Speed,
-                    Stamina = teamPlayer.Player.Stamina,
-                    Errors = teamPlayer.Player.Errors,
-                    UserEmail = teamPlayer.Player.User?.Email,
-                    Username = teamPlayer.Player.User?.Username,
-                    IsDeleted = teamPlayer.Player.DeletedAt != null,
-                    CreatedAt = teamPlayer.Player.CreatedAt,
-                    UpdatedAt = teamPlayer.Player.UpdatedAt,
-                    DeletedAt = teamPlayer.Player.DeletedAt
+                    Id = teamPlayer.User.Id,
+                    FirstName = teamPlayer.User.FirstName,
+                    LastName = teamPlayer.User.LastName,
+                    Rating = teamPlayer.User.Rating,
+                    Speed = teamPlayer.User.Speed,
+                    Stamina = teamPlayer.User.Stamina,
+                    Errors = teamPlayer.User.Errors,
+                    Email = teamPlayer.User?.Email,
+                    Username = teamPlayer.User?.Username,
+                    IsDeleted = teamPlayer.User.DeletedAt != null,
+                    CreatedAt = teamPlayer.User.CreatedAt,
+                    UpdatedAt = teamPlayer.User.UpdatedAt,
+                    DeletedAt = teamPlayer.User.DeletedAt
                 }
             };
         }

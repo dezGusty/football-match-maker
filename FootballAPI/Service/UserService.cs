@@ -8,13 +8,11 @@ namespace FootballAPI.Service
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IPlayerRepository _playerRepository;
         private readonly IFriendRequestRepository _friendRequestRepository;
 
-        public UserService(IUserRepository userRepository, IPlayerRepository playerRepository, IFriendRequestRepository friendRequestRepository)
+        public UserService(IUserRepository userRepository, IFriendRequestRepository friendRequestRepository)
         {
             _userRepository = userRepository;
-            _playerRepository = playerRepository;
             _friendRequestRepository = friendRequestRepository;
         }
 
@@ -25,7 +23,18 @@ namespace FootballAPI.Service
                 Id = user.Id,
                 Username = user.Username,
                 Role = user.Role,
-                Email = user.Email
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Rating = user.Rating,
+                IsDeleted = user.DeletedAt.HasValue,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+                DeletedAt = user.DeletedAt,
+                Speed = user.Speed,
+                Stamina = user.Stamina,
+                Errors = user.Errors,
+                ProfileImageUrl = user.ProfileImagePath
             };
         }
 
@@ -81,19 +90,7 @@ namespace FootballAPI.Service
 
             var createdUser = await _userRepository.CreateAsync(user);
 
-            if (dto.Role == UserRole.ORGANISER || dto.Role == UserRole.PLAYER)
-            {
-                var player = new Player
-                {
-                    FirstName = dto.Username,
-                    LastName = "",
-                    Rating = 1000.0f,
-                    UserId = createdUser.Id,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-                await _playerRepository.CreateAsync(player);
-            }
+            // Player properties are now part of User model
 
             return MapToDto(createdUser);
         }
@@ -116,61 +113,21 @@ namespace FootballAPI.Service
                 Username = dto.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10),
                 Role = dto.Role,
-
-            };
-
-            var createdUser = await _userRepository.CreateAsync(user);
-
-            var player = new Player
-            {
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Rating = dto.Rating,
                 Speed = dto.Speed,
                 Stamina = dto.Stamina,
                 Errors = dto.Errors,
-                UserId = createdUser.Id,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
-            var createdPlayer = await _playerRepository.CreateAsync(player);
 
-            if (organizerId.HasValue)
-            {
-                await CreateAutomaticFriendConnectionAsync(organizerId.Value, createdUser.Id);
-            }
+            var createdUser = await _userRepository.CreateAsync(user);
 
             return MapToDto(createdUser);
         }
 
-        private async Task CreateAutomaticFriendConnectionAsync(int organizerId, int playerId)
-        {
-            var friendRequest = new FriendRequest
-            {
-                SenderId = organizerId,
-                ReceiverId = playerId,
-                Status = FriendRequestStatus.Accepted,
-                CreatedAt = DateTime.Now,
-                ResponsedAt = DateTime.Now
-            };
-
-            await _friendRequestRepository.CreateAsync(friendRequest);
-
-            var organizer = await _userRepository.GetByIdAsync(organizerId);
-            var player = await _userRepository.GetByIdAsync(playerId);
-
-            if (organizer != null && player != null)
-            {
-                var relation = new PlayerOrganiser
-                {
-                    OrganiserId = organizerId,
-                    PlayerId = playerId,
-                    CreatedAt = DateTime.Now
-                };
-
-                await _playerRepository.AddPlayerOrganiserRelationAsync(relation);
-            }
-        }
 
         public async Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updateUserDto)
         {
@@ -242,10 +199,49 @@ namespace FootballAPI.Service
             return await _userRepository.ChangeUsernameAsync(userId, changeUsernameDto.NewUsername);
         }
 
-        public async Task<IEnumerable<Player>> GetPlayersByOrganiserAsync(int id)
+        public async Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id)
         {
-            var players = await _playerRepository.GetPlayersByOrganiserAsync(id);
-            return players;
+            return await _userRepository.GetPlayersByOrganiserAsync(id);
+        }
+
+        // Player functionality integrated
+        public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange)
+        {
+            return await _userRepository.UpdatePlayerRatingAsync(userId, ratingChange);
+        }
+
+        public async Task<string> UpdatePlayerProfileImageAsync(int userId, IFormFile imageFile)
+        {
+            return await _userRepository.UpdatePlayerProfileImageAsync(userId, imageFile);
+        }
+
+        public async Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates)
+        {
+            return await _userRepository.UpdateMultiplePlayerRatingsAsync(playerRatingUpdates);
+        }
+
+        public async Task<IEnumerable<UserDto>> GetPlayersAsync()
+        {
+            var users = await _userRepository.GetUsersByRoleAsync(UserRole.PLAYER);
+            return users.Select(MapToDto);
+        }
+
+        public async Task AddPlayerOrganiserRelationAsync(int userId, int organiserId)
+        {
+            var organizer = await _userRepository.GetByIdAsync(organiserId);
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (organizer != null && user != null)
+            {
+                var relation = new PlayerOrganiser
+                {
+                    OrganiserId = organiserId,
+                    PlayerId = userId,
+                    CreatedAt = DateTime.Now
+                };
+
+                await _userRepository.AddPlayerOrganiserRelationAsync(relation);
+            }
         }
     }
 }

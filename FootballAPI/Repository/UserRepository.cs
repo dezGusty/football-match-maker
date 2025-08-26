@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using FootballAPI.Data;
 using FootballAPI.Models;
 using FootballAPI.Models.Enums;
+using FootballAPI.DTOs;
+using Microsoft.AspNetCore.Http;
 
 namespace FootballAPI.Repository
 {
@@ -139,6 +141,57 @@ namespace FootballAPI.Repository
                 query = query.AsNoTracking();
 
             return await query.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        // Player functionality integrated
+        public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange)
+        {
+            var user = await GetByIdAsync(userId);
+            if (user == null)
+                return false;
+
+            user.Rating += ratingChange;
+            user.UpdatedAt = DateTime.UtcNow;
+            await UpdateAsync(user);
+            return true;
+        }
+
+        public async Task<string> UpdatePlayerProfileImageAsync(int userId, IFormFile imageFile)
+        {
+            var user = await GetByIdAsync(userId);
+            if (user == null)
+                throw new ArgumentException("User not found");
+
+            // This would typically involve file storage logic
+            // For now, just updating the path
+            var imagePath = $"/images/players/{userId}_{DateTime.UtcNow:yyyyMMddHHmmss}.jpg";
+            user.ProfileImagePath = imagePath;
+            user.UpdatedAt = DateTime.UtcNow;
+            await UpdateAsync(user);
+            
+            return imagePath;
+        }
+
+        public async Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates)
+        {
+            try
+            {
+                foreach (var update in playerRatingUpdates)
+                {
+                    await UpdatePlayerRatingAsync(update.UserId, update.RatingChange);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task AddPlayerOrganiserRelationAsync(PlayerOrganiser relation)
+        {
+            _context.PlayerOrganisers.Add(relation);
+            await _context.SaveChangesAsync();
         }
     }
 }

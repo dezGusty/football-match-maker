@@ -3,6 +3,7 @@ using FootballAPI.Models;
 using FootballAPI.Models.Enums;
 using FootballAPI.Service;
 using FootballAPI.Service.Interfaces;
+using FootballAPI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -15,7 +16,6 @@ namespace FootballAPI.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
-        private readonly IPlayerService _playerService;
         private readonly IResetPasswordService _passwordResetService;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
@@ -24,7 +24,6 @@ namespace FootballAPI.Controllers
         public AuthController(
             IAuthService authService,
             IUserService userService,
-            IPlayerService playerService,
             IResetPasswordService passwordResetService,
             IEmailService emailService,
             IConfiguration configuration,
@@ -32,7 +31,6 @@ namespace FootballAPI.Controllers
         {
             _authService = authService;
             _userService = userService;
-            _playerService = playerService;
             _passwordResetService = passwordResetService;
             _emailService = emailService;
             _configuration = configuration;
@@ -119,33 +117,27 @@ namespace FootballAPI.Controllers
         }
 
         [HttpPost("create-player-account")]
+        [Authorize]
         public async Task<IActionResult> CreatePlayerAccount([FromBody] CreatePlayerUserDto dto)
         {
             try
             {
+                var organizerId = UserUtils.GetCurrentUserId(User, Request.Headers);
+
                 var existingUser = await _userService.GetUserByEmailAsync(dto.Email);
                 if (existingUser != null)
                 {
                     return BadRequest(new { message = "User with this email already exists." });
                 }
 
-                var user = new CreateUserDto
-                {
-                    Email = dto.Email,
-                    Username = dto.Username,
-                    Role = UserRole.PLAYER,
-                    Password = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString())
+                dto.Password = Guid.NewGuid().ToString();
+                dto.Role = UserRole.PLAYER;
 
-                };
-
-                var createdUser = await _userService.CreateUserAsync(user);
-
-                var createdPlayer = await _playerService.GetPlayerByUserIdAsync(createdUser.Id);
+                var createdUser = await _userService.CreatePlayerUserAsync(dto, organizerId);
 
                 var resetToken = await _passwordResetService.GeneratePasswordResetTokenAsync(createdUser.Id);
 
                 var frontendUrl = _configuration["Frontend:BaseUrl"];
-
                 var setPasswordUrl = $"{frontendUrl}/reset-password?token={resetToken}";
 
                 await _emailService.SendSetPasswordEmailAsync(dto.Email, dto.Username, setPasswordUrl);
@@ -155,10 +147,20 @@ namespace FootballAPI.Controllers
                 return Ok(new
                 {
                     message = "Player account created successfully. Password setup email sent.",
-                    id = createdPlayer?.Id,
-                    userId = createdUser.Id,
-
+                    id = createdUser.Id,
+                    email = createdUser.Email,
+                    username = createdUser.Username,
+                    firstName = createdUser.FirstName,
+                    lastName = createdUser.LastName,
+                    rating = createdUser.Rating,
+                    speed = createdUser.Speed,
+                    stamina = createdUser.Stamina,
+                    errors = createdUser.Errors
                 });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
             }
             catch (InvalidOperationException ex)
             {

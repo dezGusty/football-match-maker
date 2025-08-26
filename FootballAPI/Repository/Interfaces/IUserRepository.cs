@@ -1,6 +1,7 @@
 using FootballAPI.Models.Enums;
 using FootballAPI.Models;
 using FootballAPI.DTOs;
+using Microsoft.AspNetCore.Http;
 
 namespace FootballAPI.Repository
 {
@@ -22,5 +23,11 @@ namespace FootballAPI.Repository
         Task<bool> ChangeUsernameAsync(int userId, string newUsername);
         Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id);
         Task<User?> GetUserByEmail(string email, bool includeDeleted = false, bool tracking = false);
+        
+        // Player functionality integrated
+        Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange);
+        Task<string> UpdatePlayerProfileImageAsync(int userId, IFormFile imageFile);
+        Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates);
+        Task AddPlayerOrganiserRelationAsync(PlayerOrganiser relation);
     }
 }

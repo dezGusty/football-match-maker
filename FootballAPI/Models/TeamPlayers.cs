@@ -13,15 +13,15 @@ namespace FootballAPI.Models
     public int MatchTeamId { get; set; }
 
     [Required]
-    public int PlayerId { get; set; }
+    public int UserId { get; set; }
 
     public PlayerStatus Status { get; set; }
 
     [ForeignKey("MatchTeamId")]
     public virtual MatchTeams MatchTeam { get; set; } = null!;
 
-    [ForeignKey("PlayerId")]
-    public virtual Player Player { get; set; } = null!;
+    [ForeignKey("UserId")]
+    public virtual User User { get; set; } = null!;
   }
 }
 

@@ -22,15 +22,15 @@ namespace FootballAPI.Service
         Task<MatchDto> MakeMatchPublicAsync(int matchId);
         Task<MatchDto> MakeMatchPrivateAsync(int matchId);
         
-        Task<bool> AddPlayerToTeamAsync(int matchId, int playerId, int teamId);
+        Task<bool> AddPlayerToTeamAsync(int matchId, int userId, int teamId);
         Task<bool> JoinSpecificTeamAsync(int matchId, int userId, int teamId);
-        Task<bool> JoinPublicMatchAsync(int matchId, int playerId);
-        Task<bool> MovePlayerBetweenTeamsAsync(int matchId, int playerId, int newTeamId);
+        Task<bool> JoinPublicMatchAsync(int matchId, int userId);
+        Task<bool> MovePlayerBetweenTeamsAsync(int matchId, int userId, int newTeamId);
         Task<MatchDto> PublishMatchAsync(int matchId);
         Task<MatchDetailsDto> GetMatchDetailsAsync(int matchId);
-        Task<bool> LeaveMatchAsync(int matchId, int playerId);
-        Task<IEnumerable<MatchDto>> GetPlayerMatchesAsync(int playerId);
-        Task<IEnumerable<MatchDto>> GetAvailableMatchesForPlayerAsync(int playerId);
-        Task<bool> RemovePlayerFromMatchAsync(int matchId, int playerId);
+        Task<bool> LeaveMatchAsync(int matchId, int userId);
+        Task<IEnumerable<MatchDto>> GetPlayerMatchesAsync(int userId);
+        Task<IEnumerable<MatchDto>> GetAvailableMatchesForPlayerAsync(int userId);
+        Task<bool> RemovePlayerFromMatchAsync(int matchId, int userId);
     }
 }

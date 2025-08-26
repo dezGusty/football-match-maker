@@ -129,8 +129,8 @@ namespace FootballAPI.DTOs
     public class PlayerRatingUpdateDto
     {
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "PlayerId must be greater than 0")]
-        public int PlayerId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "UserId must be greater than 0")]
+        public int UserId { get; set; }
         
         [Range(-10000.0f, 10000.0f, ErrorMessage = "Rating change must be between -10000.0 and 10000.0")]
         public float RatingChange { get; set; }
@@ -144,8 +144,8 @@ namespace FootballAPI.DTOs
     public class PlayerOrganiserDto
     {
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "PlayerId must be greater than 0")]
-        public int PlayerId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "UserId must be greater than 0")]
+        public int UserId { get; set; }
         
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "OrganiserId must be greater than 0")]
@@ -155,8 +155,8 @@ namespace FootballAPI.DTOs
     public class CreatePlayerMatchHistoryDto
     {
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "PlayerId must be greater than 0")]
-        public int PlayerId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "UserId must be greater than 0")]
+        public int UserId { get; set; }
 
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "TeamId must be greater than 0")]
@@ -173,8 +173,8 @@ namespace FootballAPI.DTOs
     public class UpdatePlayerMatchHistoryDto
     {
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "PlayerId must be greater than 0")]
-        public int PlayerId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "UserId must be greater than 0")]
+        public int UserId { get; set; }
 
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "TeamId must be greater than 0")]

@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { MatchService } from '../../services/match.service';
-import { PlayerService } from '../../services/player.service';
+import { UserService } from '../../services/user.service';
 import { PlayerHeaderComponent } from '../../components/player-header/player-header.component';
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
 import { Match } from '../../models/match.interface';
-import { Player } from '../../models/player.interface';
+import { User } from '../../models/user.interface';
 import { PlayerHistory } from '../../models/player-history.interface';
 
 @Component({
@@ -26,7 +26,7 @@ import { PlayerHistory } from '../../models/player-history.interface';
 })
 export class PlayerDashboardComponent implements OnInit {
   activeTab: string = 'future';
-  currentPlayer: Player | null = null;
+  currentPlayer: User | null = null;
 
   upcomingMatches: Match[] = [];
   availableMatches: Match[] = [];
@@ -42,7 +42,7 @@ export class PlayerDashboardComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private matchService: MatchService,
-    private playerService: PlayerService,
+    private userService: UserService,
     private router: Router
   ) {}
 
@@ -63,9 +63,9 @@ export class PlayerDashboardComponent implements OnInit {
         );
         if (userResponse.ok) {
           const user = await userResponse.json();
-          const players = await this.playerService.getPlayers();
+          const players = await this.userService.getPlayers();
           this.currentPlayer =
-            players.find((p) => p.userEmail === user.email) || null;
+            players.find((p) => p.email === user.email) || null;
         } else {
           console.error('Failed to fetch user data:', userResponse.status);
         }
@@ -95,11 +95,10 @@ export class PlayerDashboardComponent implements OnInit {
   async loadPlayerSpecificMatches() {
     try {
       const response = await fetch(
-        `http://localhost:5145/api/players/${this.currentPlayer!.id}/matches`
+        `http://localhost:5145/api/user/${this.currentPlayer!.id}/matches`
       );
       if (response.ok) {
         const playerMatches = await response.json();
-
         this.upcomingMatches = playerMatches.filter(
           (match: any) => new Date(match.matchDate) > new Date()
         );
@@ -115,7 +114,7 @@ export class PlayerDashboardComponent implements OnInit {
 
       this.upcomingMatches = futureMatches.filter((match) => {
         const isPlayerInMatch = match.playerHistory?.some(
-          (ph) => ph.player && ph.player.id === this.currentPlayer?.id
+          (ph) => ph.user && ph.user.id === this.currentPlayer?.id
         );
         return isPlayerInMatch;
       });
@@ -207,17 +206,15 @@ export class PlayerDashboardComponent implements OnInit {
         : [];
     } catch (error) {
       this.selectedTeamAPlayers = match.playerHistory
-        .filter((p) => p.teamId === match.teamAId && p.player)
+        .filter((p) => p.teamId === match.teamAId && p.user)
         .map(
-          (p) =>
-            `${p.player.firstName} ${p.player.lastName} - ${p.player.rating}`
+          (p) => `${p.user.firstName} ${p.user.lastName} - ${p.user.rating}`
         );
 
       this.selectedTeamBPlayers = match.playerHistory
-        .filter((p) => p.teamId === match.teamBId && p.player)
+        .filter((p) => p.teamId === match.teamBId && p.user)
         .map(
-          (p) =>
-            `${p.player.firstName} ${p.player.lastName} - ${p.player.rating}`
+          (p) => `${p.user.firstName} ${p.user.lastName} - ${p.user.rating}`
         );
     }
   }
@@ -229,7 +226,7 @@ export class PlayerDashboardComponent implements OnInit {
 
   getPlayerTeamName(match: Match): string {
     const playerHistory = match.playerHistory?.find(
-      (ph) => ph.player && ph.player.id === this.currentPlayer?.id
+      (ph) => ph.user && ph.user.id === this.currentPlayer?.id
     );
     if (!playerHistory) return '';
 
@@ -240,7 +237,7 @@ export class PlayerDashboardComponent implements OnInit {
 
   canLeaveMatch(match: Match): boolean {
     const playerHistory = match.playerHistory?.find(
-      (ph) => ph.player && ph.player.id === this.currentPlayer?.id
+      (ph) => ph.user && ph.user.id === this.currentPlayer?.id
     );
     return playerHistory?.status === 2;
   }

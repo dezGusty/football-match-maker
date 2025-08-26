@@ -22,10 +22,10 @@ namespace FootballAPI.DTOs
     
     public class PlayerHistoryDto
     {
-        public int PlayerId { get; set; }
+        public int UserId { get; set; }
         public int TeamId { get; set; }
         public PlayerStatus Status { get; set; }
-        public PlayerDto Player { get; set; } = null!;
+        public UserDto User { get; set; } = null!;
     }
 
     public class CreateMatchDto
@@ -49,7 +49,7 @@ namespace FootballAPI.DTOs
 
     public class AddPlayerToMatchDto
     {
-        public int PlayerId { get; set; }
+        public int UserId { get; set; }
         public int TeamId { get; set; }
     }
 
@@ -83,7 +83,7 @@ namespace FootballAPI.DTOs
     public class PlayerInMatchDto
     {
         public int Id { get; set; }
-        public int PlayerId { get; set; }
+        public int UserId { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string PlayerName { get; set; } = string.Empty;

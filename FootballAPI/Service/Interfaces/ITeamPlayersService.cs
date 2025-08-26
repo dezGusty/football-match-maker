@@ -12,8 +12,8 @@ namespace FootballAPI.Service
         Task<TeamPlayersDto> UpdateTeamPlayerAsync(int id, UpdateTeamPlayersDto updateTeamPlayersDto);
         Task<bool> DeleteTeamPlayerAsync(int id);
         Task<IEnumerable<TeamPlayersDto>> GetTeamPlayersByMatchTeamIdAsync(int matchTeamId);
-        Task<IEnumerable<TeamPlayersDto>> GetTeamPlayersByPlayerIdAsync(int playerId);
-        Task<TeamPlayersDto> GetTeamPlayerByMatchTeamIdAndPlayerIdAsync(int matchTeamId, int playerId);
+        Task<IEnumerable<TeamPlayersDto>> GetTeamPlayersByUserIdAsync(int userId);
+        Task<TeamPlayersDto> GetTeamPlayerByMatchTeamIdAndUserIdAsync(int matchTeamId, int userId);
         Task<IEnumerable<TeamPlayersDto>> GetTeamPlayersByStatusAsync(PlayerStatus status);
     }
 }

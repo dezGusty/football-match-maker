@@ -9,7 +9,6 @@ namespace FootballAPI.Data
         public FootballDbContext(DbContextOptions<FootballDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Player> Players { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<Match> Matches { get; set; }
         public DbSet<MatchTeams> MatchTeams { get; set; }
@@ -30,25 +29,15 @@ namespace FootballAPI.Data
                 entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Password).IsRequired().HasMaxLength(255);
                 entity.Property(e => e.Role).IsRequired();
-                entity.HasIndex(e => e.Email).IsUnique();
-                entity.HasIndex(e => e.Username).IsUnique();
-            });
-
-            // Player configurations
-            modelBuilder.Entity<Player>(entity =>
-            {
-                entity.HasKey(e => e.Id);
                 entity.Property(e => e.FirstName).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.LastName).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.ProfileImagePath).HasMaxLength(500);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
-
-                entity.HasOne(e => e.User)
-                    .WithOne()
-                    .HasForeignKey<Player>(e => e.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.Username).IsUnique();
             });
+
 
             // Team configurations
             modelBuilder.Entity<Team>(entity =>
@@ -90,7 +79,7 @@ namespace FootballAPI.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // TeamPlayers configurations (Many-to-Many between Team and Player through MatchTeam)
+            // TeamPlayers configurations (Many-to-Many between Team and User through MatchTeam)
             modelBuilder.Entity<TeamPlayers>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -101,9 +90,9 @@ namespace FootballAPI.Data
                     .HasForeignKey(e => e.MatchTeamId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.Player)
-                    .WithMany(p => p.TeamPlayers)
-                    .HasForeignKey(e => e.PlayerId)
+                entity.HasOne(e => e.User)
+                    .WithMany(u => u.TeamPlayers)
+                    .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -167,128 +156,6 @@ namespace FootballAPI.Data
                 new Team { Id = 2, Name = "Steaua Bucuresti" }
             );
 
-            modelBuilder.Entity<Player>().HasData(
-                new Player
-                {
-                    Id = 1,
-                    FirstName = "Ion",
-                    LastName = "Popescu",
-                    Rating = 8.5f,
-                    UserId = 1,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                },
-                new Player
-                {
-                    Id = 2,
-                    FirstName = "Marius",
-                    LastName = "Ionescu",
-                    Rating = 7.8f,
-                    UserId = 2,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                },
-                new Player
-                {
-                    Id = 3,
-                    FirstName = "Alex",
-                    LastName = "Georgescu",
-                    Rating = 7.2f,
-                    UserId = 5,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                },
-                new Player
-                {
-                    Id = 4,
-                    FirstName = "Razvan",
-                    LastName = "Moldovan",
-                    Rating = 8.1f,
-                    UserId = 6,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                },
-                new Player
-                {
-                    Id = 5,
-                    FirstName = "Cristian",
-                    LastName = "Stancu",
-                    Rating = 6.9f,
-                    UserId = 7,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                },
-                new Player
-                {
-                    Id = 6,
-                    FirstName = "Andrei",
-                    LastName = "Vasilescu",
-                    Rating = 7.7f,
-                    UserId = 8,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                },
-                new Player
-                {
-                    Id = 7,
-                    FirstName = "Florin",
-                    LastName = "Dumitru",
-                    Rating = 8.3f,
-                    UserId = 9,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                },
-                new Player
-                {
-                    Id = 8,
-                    FirstName = "Gabriel",
-                    LastName = "Ciobanu",
-                    Rating = 7.4f,
-                    UserId = 10,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                },
-                new Player
-                {
-                    Id = 9,
-                    FirstName = "Lucian",
-                    LastName = "Matei",
-                    Rating = 6.8f,
-                    UserId = 11,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                },
-                new Player
-                {
-                    Id = 10,
-                    FirstName = "Daniel",
-                    LastName = "Radu",
-                    Rating = 7.9f,
-                    UserId = 12,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                },
-                new Player
-                {
-                    Id = 11,
-                    FirstName = "Mihai",
-                    LastName = "Popa",
-                    Rating = 8.0f,
-                    UserId = 13,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                },
-                new Player
-                {
-                    Id = 12,
-                    FirstName = "Stefan",
-                    LastName = "Nicolae",
-                    Rating = 7.6f,
-                    UserId = 14,
-                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                }
-            );
 
             modelBuilder.Entity<User>().HasData(
                 new User
@@ -297,7 +164,12 @@ namespace FootballAPI.Data
                     Email = "ion.popescu@gmail.com",
                     Username = "IonPopescu",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Ion",
+                    LastName = "Popescu",
+                    Rating = 8.5f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -305,7 +177,12 @@ namespace FootballAPI.Data
                     Email = "marius.ionescu@gmail.com",
                     Username = "MariusIonescu",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Marius",
+                    LastName = "Ionescu",
+                    Rating = 7.8f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -313,7 +190,12 @@ namespace FootballAPI.Data
                     Email = "admin@gmail.com",
                     Username = "Admin",
                     Password = "default123",
-                    Role = UserRole.ADMIN
+                    Role = UserRole.ADMIN,
+                    FirstName = "Admin",
+                    LastName = "User",
+                    Rating = 0.0f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -321,7 +203,12 @@ namespace FootballAPI.Data
                     Email = "organiser@gmail.com",
                     Username = "Organiser",
                     Password = "default123",
-                    Role = UserRole.ORGANISER
+                    Role = UserRole.ORGANISER,
+                    FirstName = "Organiser",
+                    LastName = "User",
+                    Rating = 0.0f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -329,7 +216,12 @@ namespace FootballAPI.Data
                     Email = "alex.georgescu@gmail.com",
                     Username = "AlexGeorgescu",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Alex",
+                    LastName = "Georgescu",
+                    Rating = 7.2f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -337,7 +229,12 @@ namespace FootballAPI.Data
                     Email = "razvan.moldovan@gmail.com",
                     Username = "RazvanMoldovan",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Razvan",
+                    LastName = "Moldovan",
+                    Rating = 8.1f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -345,7 +242,12 @@ namespace FootballAPI.Data
                     Email = "cristian.stancu@gmail.com",
                     Username = "CristianStancu",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Cristian",
+                    LastName = "Stancu",
+                    Rating = 6.9f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -353,7 +255,12 @@ namespace FootballAPI.Data
                     Email = "andrei.vasilescu@gmail.com",
                     Username = "AndreiVasilescu",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Andrei",
+                    LastName = "Vasilescu",
+                    Rating = 7.7f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -361,7 +268,12 @@ namespace FootballAPI.Data
                     Email = "florin.dumitru@gmail.com",
                     Username = "FlorinDumitru",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Florin",
+                    LastName = "Dumitru",
+                    Rating = 8.3f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -369,7 +281,12 @@ namespace FootballAPI.Data
                     Email = "gabriel.ciobanu@gmail.com",
                     Username = "GabrielCiobanu",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Gabriel",
+                    LastName = "Ciobanu",
+                    Rating = 7.4f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -377,7 +294,12 @@ namespace FootballAPI.Data
                     Email = "lucian.matei@gmail.com",
                     Username = "LucianMatei",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Lucian",
+                    LastName = "Matei",
+                    Rating = 6.8f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -385,7 +307,12 @@ namespace FootballAPI.Data
                     Email = "daniel.radu@gmail.com",
                     Username = "DanielRadu",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Daniel",
+                    LastName = "Radu",
+                    Rating = 7.9f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -393,7 +320,12 @@ namespace FootballAPI.Data
                     Email = "mihai.popa@gmail.com",
                     Username = "MihaiPopa",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Mihai",
+                    LastName = "Popa",
+                    Rating = 8.0f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -401,10 +333,13 @@ namespace FootballAPI.Data
                     Email = "stefan.nicolae@gmail.com",
                     Username = "StefanNicolae",
                     Password = "default123",
-                    Role = UserRole.PLAYER
+                    Role = UserRole.PLAYER,
+                    FirstName = "Stefan",
+                    LastName = "Nicolae",
+                    Rating = 7.6f,
+                    CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }
-
-
             );
         }
 

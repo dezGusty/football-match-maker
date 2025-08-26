@@ -8,7 +8,6 @@ import { User } from '../../models/user.interface';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { MatchService } from '../../services/match.service';
-import { PlayerService } from '../../services/player.service';
 import { Match } from '../../models/match.interface';
 import { UserRole } from '../../models/user-role.enum';
 
@@ -39,7 +38,6 @@ export class Account {
     private router: Router,
     private http: HttpClient,
     private matchService: MatchService,
-    private playerService: PlayerService
   ) {
     this.loadUser();
     this.loadFutureMatches();
@@ -69,7 +67,7 @@ export class Account {
       const playerIds = await this.matchService.getPlayersForScheduledMatch(
         match.id!
       );
-      await this.playerService.setMultiplePlayersAvailable(playerIds);
+      await this.userService.setMultiplePlayersAvailable(playerIds);
       this.router.navigate(['/select-players']);
     } catch (error) {
       console.error('Failed to begin scheduled match:', error);

@@ -60,7 +60,6 @@ builder.Services.AddDbContext<FootballDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Repository Registration
-builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -71,7 +70,6 @@ builder.Services.AddScoped<IMatchTeamsRepository, MatchTeamsRepository>();
 builder.Services.AddScoped<ITeamPlayersRepository, TeamPlayersRepository>();
 
 // Service Registration
-builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IUserService, UserService>();

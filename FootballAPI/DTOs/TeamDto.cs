@@ -65,10 +65,10 @@ namespace FootballAPI.DTOs
     {
         public int Id { get; set; }
         public int MatchTeamId { get; set; }
-        public int PlayerId { get; set; }
+        public int UserId { get; set; }
         public PlayerStatus Status { get; set; }
         public MatchTeamsDto MatchTeam { get; set; } = null!;
-        public PlayerDto Player { get; set; } = null!;
+        public UserDto User { get; set; } = null!;
     }
 
     public class CreateTeamPlayersDto
@@ -78,8 +78,8 @@ namespace FootballAPI.DTOs
         public int MatchTeamId { get; set; }
         
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "PlayerId must be greater than 0")]
-        public int PlayerId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "UserId must be greater than 0")]
+        public int UserId { get; set; }
         
         public PlayerStatus Status { get; set; } = PlayerStatus.Open;
     }
@@ -91,8 +91,8 @@ namespace FootballAPI.DTOs
         public int MatchTeamId { get; set; }
         
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "PlayerId must be greater than 0")]
-        public int PlayerId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "UserId must be greater than 0")]
+        public int UserId { get; set; }
         
         public PlayerStatus Status { get; set; }
     }

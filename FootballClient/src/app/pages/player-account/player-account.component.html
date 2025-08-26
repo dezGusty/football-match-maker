@@ -7,8 +7,8 @@
       (click)="triggerFileInput()"
       [style.cursor]="'pointer'"
     >
-      @if (player && player.profileImageUrl) {
-      <img [src]="player.profileImageUrl" alt="Profile" class="profile-image" />
+      @if (user && user.profileImageUrl) {
+      <img [src]="user.profileImageUrl" alt="Profile" class="profile-image" />
       } @else {
       <span class="material-icons avatar-icon-big">person</span>
       }
@@ -29,7 +29,7 @@
     <div class="upload-status">Uploading...</div>
     } @if (uploadError) {
     <div class="upload-error">{{ uploadError }}</div>
-    } @if (player && player.profileImageUrl && !player.profileImageUrl.includes('default-avatar')) {
+    } @if (user && user.profileImageUrl && !user.profileImageUrl.includes('default-avatar')) {
     <button class="delete-image-btn" (click)="deleteProfileImage()">
       Remove Photo
     </button>
