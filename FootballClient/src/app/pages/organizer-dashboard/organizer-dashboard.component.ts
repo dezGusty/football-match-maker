@@ -11,7 +11,6 @@ import { FriendRequestsComponent } from '../../components/friend-requests/friend
 import { MatchService } from '../../services/match.service';
 import {
   CreateMatchRequest,
-  CreateMatchResponse,
   MatchDisplay,
 } from '../../models/create-match.interface';
 
@@ -139,7 +138,7 @@ export class OrganizerDashboardComponent {
       this.playerSuccessMessage = `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`;
 
       this.resetPlayer();
-      this.players = await this.PlayerService.getPlayersForOrganiser(
+      this.players = await this.UserService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
 

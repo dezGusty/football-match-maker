@@ -9,8 +9,6 @@ import { PlayerHeaderComponent } from '../../components/player-header/player-hea
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
 import { Match } from '../../models/match.interface';
 import { User } from '../../models/user.interface';
-import { PlayerHistory } from '../../models/player-history.interface';
-import { User } from '../../models/user.interface';
 
 @Component({
   selector: 'app-player-dashboard',
