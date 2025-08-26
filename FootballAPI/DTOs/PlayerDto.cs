@@ -36,14 +36,14 @@ namespace FootballAPI.DTOs
         [Required]
         [StringLength(50)]
         public string FirstName { get; set; } = null!;
-        
+
         [Required]
         [StringLength(50)]
         public string LastName { get; set; } = null!;
-        
+
         [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
         public float Rating { get; set; }
-        
+
         [Required]
         [EmailAddress]
         [StringLength(100)]
@@ -57,6 +57,10 @@ namespace FootballAPI.DTOs
 
         [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
         public int Errors { get; set; } = 2;
+
+        [Required]
+        public int UserId { get; set; }
+
     }
 
     public class CreatePlayerUserDto

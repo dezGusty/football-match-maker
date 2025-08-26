@@ -137,7 +137,7 @@ namespace FootballAPI.Service
         {
             var match = new Match
             {
-                MatchDate = createMatchDto.MatchDate,
+                MatchDate = DateTime.Parse(createMatchDto.MatchDate),
                 IsPublic = false,
                 Status = createMatchDto.Status,
                 Location = createMatchDto.Location,
@@ -201,7 +201,7 @@ namespace FootballAPI.Service
             if (existingMatch == null)
                 return null;
 
-            existingMatch.MatchDate = updateMatchDto.MatchDate;
+            existingMatch.MatchDate = DateTime.Parse(updateMatchDto.MatchDate);
             existingMatch.IsPublic = updateMatchDto.IsPublic;
             existingMatch.Status = updateMatchDto.Status;
             existingMatch.Location = updateMatchDto.Location;

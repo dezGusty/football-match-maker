@@ -68,10 +68,8 @@ export class OrganizerDashboardComponent {
       this.players = await this.UserService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
-      await this.loadMatches();
+      this.loadMatches();
     }
-
-    this.filterPlayers();
   }
 
   async loadMatches() {
@@ -94,27 +92,10 @@ export class OrganizerDashboardComponent {
 
   ngOnInit() {
     this.init();
+    this.loadMatches();
   }
 
-  filterPlayers() {
-    this.filteredPlayers = this.players.filter((player) => {
-      const isActive = this.isPlayerEnabled(player);
-      const searchTerms = this.searchTerm.toLowerCase().trim().split(' ');
-      const fullName = `${player.firstName || ''} ${
-        player.lastName || ''
-      }`.toLowerCase();
-
-      const matchesSearch =
-        this.searchTerm.trim() === '' ||
-        searchTerms.every((term) => fullName.includes(term));
-
-      return isActive && matchesSearch;
-    });
-  }
-
-  onSearchChange() {
-    this.filterPlayers();
-  }
+  onSearchChange() {}
 
   newPlayer = {
     firstName: '',
@@ -139,6 +120,7 @@ export class OrganizerDashboardComponent {
       return;
     }
 
+    console.log('new player:  ', this.newPlayer);
     if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10000) {
       this.playerErrorMessage = 'Rating must be between 0 and 10000.';
       return;
@@ -153,20 +135,13 @@ export class OrganizerDashboardComponent {
       await this.UserService.addPlayerOrganiserRelation(addedPlayer.id!);
 
       this.players.push(addedPlayer);
-      this.filterPlayers();
 
       this.playerSuccessMessage = `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`;
 
-      this.newPlayer = {
-        firstName: '',
-        lastName: '',
-        email: '',
-        username: '',
-        rating: 0,
-        speed: 2,
-        stamina: 2,
-        errors: 2,
-      };
+      this.resetPlayer();
+      this.players = await this.PlayerService.getPlayersForOrganiser(
+        this.authService.getUserId()!
+      );
 
       setTimeout(() => {
         this.showAddModal = false;
@@ -181,6 +156,18 @@ export class OrganizerDashboardComponent {
     }
   }
 
+  resetPlayer() {
+    this.newPlayer = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      username: '',
+      rating: 0,
+      speed: 2,
+      stamina: 2,
+      errors: 2,
+    };
+  }
   setEditIndex(index: number) {
     this.editIndex = index;
     this.editedPlayer = { ...this.players[index] };
@@ -202,7 +189,6 @@ export class OrganizerDashboardComponent {
       const index = this.players.findIndex((p) => p.id === updatedPlayer.id);
       if (index !== -1) {
         this.players[index] = updatedPlayer;
-        this.filterPlayers();
       }
       this.clearEditIndex();
       console.log('Player updated:', updatedPlayer);
@@ -223,7 +209,6 @@ export class OrganizerDashboardComponent {
           this.players[playerIndex].isDeleted = true;
         }
 
-        this.filterPlayers();
         console.log('Player deleted successfully');
       }
     } catch (error) {
@@ -246,7 +231,6 @@ export class OrganizerDashboardComponent {
           this.players[playerIndex].isDeleted = false;
         }
 
-        this.filterPlayers();
         console.log('Player reactivated successfully');
       }
     } catch (error) {

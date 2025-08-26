@@ -38,7 +38,7 @@ namespace FootballAPI.Service
             };
         }
 
-        private UserResponseDto MapToResponseDto(User user, string token = null)
+        private UserResponseDto MapToResponseDto(User user, string token = null!)
         {
             return new UserResponseDto
             {
@@ -58,13 +58,13 @@ namespace FootballAPI.Service
         public async Task<UserDto> GetUserByIdAsync(int id)
         {
             var user = await _userRepository.GetByIdAsync(id);
-            return user == null ? null : MapToDto(user);
+            return user == null ? null! : MapToDto(user);
         }
 
         public async Task<UserDto> GetUserByUsernameAsync(string username)
         {
             var user = await _userRepository.GetByUsernameAsync(username);
-            return user == null ? null : MapToDto(user);
+            return user == null ? null! : MapToDto(user);
         }
 
         public async Task<UserDto?> GetUserByEmailAsync(string email)
@@ -80,6 +80,7 @@ namespace FootballAPI.Service
 
         public async Task<UserDto> CreateUserAsync(CreateUserDto dto)
         {
+            Console.WriteLine(dto);
             var user = new User
             {
                 Email = dto.Email,
@@ -156,7 +157,7 @@ namespace FootballAPI.Service
             var user = await _userRepository.AuthenticateAsync(loginDto.Email, loginDto.Password);
 
             if (user == null)
-                return null;
+                return null!;
 
             return MapToResponseDto(user);
         }

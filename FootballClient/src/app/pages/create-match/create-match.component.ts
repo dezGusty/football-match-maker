@@ -53,9 +53,9 @@ export class CreateMatchComponent {
         throw new Error('Locația este obligatorie');
       }
 
-      // Prepare request
+      // Send the datetime-local value as-is without timezone conversion
       const createMatchRequest: CreateMatchRequest = {
-        matchDate: new Date(this.matchForm.matchDate).toISOString(),
+        matchDate: this.matchForm.matchDate,
         status: 1, // Open status
         location: this.matchForm.location,
         cost: this.matchForm.cost || undefined,
