@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 import { User } from '../../models/user.interface';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -41,6 +42,7 @@ export class PlayerAccountComponent {
     private router: Router,
     private http: HttpClient,
     private playerProfileImageService: PlayerProfileImageService,
+    private notificationService: NotificationService
   ) {
     this.loadUser();
   }
@@ -91,11 +93,11 @@ export class PlayerAccountComponent {
         this.newPassword,
         this.confirmPassword
       );
-      alert(message);
+      this.notificationService.showSuccess(message);
       this.resetForms();
       this.showPasswordForm = false;
     } catch (error: any) {
-      alert(error.message || 'Password change failed');
+      this.notificationService.showError(error.message || 'Password change failed');
     }
   }
 
@@ -107,12 +109,12 @@ export class PlayerAccountComponent {
         this.newUsername,
         this.usernamePassword
       );
-      alert(message);
+      this.notificationService.showSuccess(message);
       this.user.username = this.newUsername;
       this.resetForms();
       this.showUsernameForm = false;
     } catch (error: any) {
-      alert(error.message || 'Username change failed');
+      this.notificationService.showError(error.message || 'Username change failed');
     }
   }
 
@@ -156,7 +158,7 @@ export class PlayerAccountComponent {
 
       if (response) {
         this.user.profileImageUrl = response.imageUrl;
-        alert('Profile image updated successfully!');
+        this.notificationService.showSuccess('Profile image updated successfully!');
       }
     } catch (error: any) {
       this.uploadError = error.error?.message || 'Failed to upload image';
@@ -183,9 +185,9 @@ export class PlayerAccountComponent {
         .toPromise();
       this.user.profileImageUrl =
         'http://localhost:5145/assets/default-avatar.png';
-      alert('Profile image deleted successfully!');
+      this.notificationService.showSuccess('Profile image deleted successfully!');
     } catch (error: any) {
-      alert(error.error?.message || 'Failed to delete image');
+      this.notificationService.showError(error.error?.message || 'Failed to delete image');
       console.error('Delete error:', error);
     }
   }

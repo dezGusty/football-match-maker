@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { MatchService } from '../../services/match.service';
 import { UserService } from '../../services/user.service';
+import { NotificationService } from '../../services/notification.service';
 import { PlayerHeaderComponent } from '../../components/player-header/player-header.component';
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
 import { Match } from '../../models/match.interface';
@@ -42,7 +43,8 @@ export class PlayerDashboardComponent implements OnInit {
     private authService: AuthService,
     private matchService: MatchService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   async ngOnInit() {
@@ -255,7 +257,7 @@ export class PlayerDashboardComponent implements OnInit {
       await this.loadAvailableMatches();
     } catch (error) {
       console.error('Error joining match:', error);
-      alert('Failed to join match. Please try again.');
+      this.notificationService.showError('Failed to join match. Please try again.');
     }
   }
 
@@ -277,10 +279,10 @@ export class PlayerDashboardComponent implements OnInit {
       await this.loadMatches();
       await this.loadAvailableMatches();
 
-      alert('Successfully joined the match!');
+      this.notificationService.showSuccess('Successfully joined the match!');
     } catch (error) {
       console.error('Error joining match:', error);
-      alert('Failed to join match. Please try again.');
+      this.notificationService.showError('Failed to join match. Please try again.');
     }
   }
 
@@ -292,7 +294,7 @@ export class PlayerDashboardComponent implements OnInit {
       }
 
       if (!this.canLeaveMatch(match)) {
-        alert(
+        this.notificationService.showWarning(
           'You cannot leave this match because you were added by the organizer.'
         );
         return;
@@ -302,11 +304,11 @@ export class PlayerDashboardComponent implements OnInit {
         await this.matchService.leaveMatch(match.id);
         await this.loadMatches();
         await this.loadAvailableMatches();
-        alert('Successfully left the match!');
+        this.notificationService.showSuccess('Successfully left the match!');
       }
     } catch (error) {
       console.error('Error leaving match:', error);
-      alert('Failed to leave match. Please try again.');
+      this.notificationService.showError('Failed to leave match. Please try again.');
     }
   }
 }

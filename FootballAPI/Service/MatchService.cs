@@ -205,7 +205,6 @@ namespace FootballAPI.Service
             existingMatch.Location = updateMatchDto.Location;
             existingMatch.Cost = updateMatchDto.Cost;
 
-            // Update team names if provided
             if (!string.IsNullOrEmpty(updateMatchDto.TeamAName) || !string.IsNullOrEmpty(updateMatchDto.TeamBName))
             {
                 var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(id);

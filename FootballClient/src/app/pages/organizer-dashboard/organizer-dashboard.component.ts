@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
 import { MatchService } from '../../services/match.service';
+import { NotificationService } from '../../services/notification.service';
 import {
   CreateMatchRequest,
   MatchDisplay,
@@ -31,7 +32,8 @@ export class OrganizerDashboardComponent {
   constructor(
     private UserService: UserService,
     private authService: AuthService,
-    private matchService: MatchService
+    private matchService: MatchService,
+    private notificationService: NotificationService
   ) {}
 
   players: User[] = [];
@@ -157,20 +159,21 @@ export class OrganizerDashboardComponent {
 
       this.players.push(addedPlayer);
 
-      this.playerSuccessMessage = `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`;
-
       this.resetPlayer();
       this.players = await this.UserService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
 
-      setTimeout(() => {
-        this.showAddModal = false;
-        this.playerSuccessMessage = '';
-      }, 2000);
+      this.showAddModal = false;
+      this.notificationService.showSuccess(
+        `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`
+      );
     } catch (error: any) {
       this.playerErrorMessage =
         error.message || 'Failed to add player. Please try again.';
+      this.notificationService.showError(
+        error.message || 'Failed to add player. Please try again.'
+      );
       console.error('Error adding player:', error);
     } finally {
       this.playerLoading = false;
@@ -201,7 +204,7 @@ export class OrganizerDashboardComponent {
       typeof this.editedPlayer.rating === 'number' &&
       (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10000)
     ) {
-      alert('Rating must be between 0 and 10000.');
+      this.notificationService.showError('Rating must be between 0 and 10000.');
       return;
     }
 
@@ -234,7 +237,9 @@ export class OrganizerDashboardComponent {
       }
     } catch (error) {
       console.error('Error deleting player:', error);
-      alert('Failed to delete player. Please try again.');
+      this.notificationService.showError(
+        'Failed to delete player. Please try again.'
+      );
     }
   }
 
@@ -256,7 +261,9 @@ export class OrganizerDashboardComponent {
       }
     } catch (error) {
       console.error('Error enabling player:', error);
-      alert('Failed to reactivate player. Please try again.');
+      this.notificationService.showError(
+        'Failed to reactivate player. Please try again.'
+      );
     }
   }
   clearEditIndex() {
@@ -313,7 +320,6 @@ export class OrganizerDashboardComponent {
       const createdMatch = await this.matchService.createNewMatch(
         createMatchRequest
       );
-      this.matchSuccessMessage = 'Match created successfully!';
 
       await this.loadMatches();
 
@@ -325,10 +331,8 @@ export class OrganizerDashboardComponent {
         teamBName: '',
       };
 
-      setTimeout(() => {
-        this.showCreateMatchModal = false;
-        this.matchSuccessMessage = '';
-      }, 1500);
+      this.showCreateMatchModal = false;
+      this.notificationService.showSuccess('Match created successfully!');
     } catch (error: any) {
       this.matchErrorMessage = error.message || 'Error creating match';
       console.error('Error creating match:', error);
@@ -623,10 +627,30 @@ export class OrganizerDashboardComponent {
         this.matches[matchIndex].isPublic = true;
       }
 
-      alert('Match made public successfully!');
+      this.notificationService.showSuccess('Match made public successfully!');
     } catch (error: any) {
-      alert(error.message || 'Error making match public');
+      this.notificationService.showError(
+        error.message || 'Error making match public'
+      );
       console.error('Error making match public:', error);
+    }
+  }
+
+  async makeMatchPrivate(matchId: number) {
+    try {
+      await this.matchService.makeMatchPrivate(matchId);
+
+      const matchIndex = this.matches.findIndex((m) => m.id === matchId);
+      if (matchIndex > -1) {
+        this.matches[matchIndex].isPublic = false;
+      }
+
+      this.notificationService.showSuccess('Match made private successfully!');
+    } catch (error: any) {
+      this.notificationService.showError(
+        error.message || 'Error making match private'
+      );
+      console.error('Error making match private:', error);
     }
   }
 
@@ -685,8 +709,12 @@ export class OrganizerDashboardComponent {
       }
 
       this.showEditMatchModal = false;
+      this.notificationService.showSuccess('Match updated successfully!');
     } catch (error: any) {
       this.editMatchErrorMessage = error.message || 'Error updating match';
+      this.notificationService.showError(
+        error.message || 'Failed to update match. Please try again.'
+      );
       console.error('Error updating match:', error);
     } finally {
       this.editMatchLoading = false;

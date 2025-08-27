@@ -1,0 +1,25 @@
+<div class="notification-container">
+  <div 
+    *ngFor="let notification of notifications; trackBy: trackByFn"
+    class="notification"
+    [ngClass]="'notification-' + notification.type"
+    [@slideIn]
+  >
+    <div class="notification-content">
+      <span class="notification-icon">{{ getIconForType(notification.type) }}</span>
+      <span class="notification-message">{{ notification.message }}</span>
+      <button 
+        *ngIf="notification.dismissible"
+        class="notification-close"
+        (click)="removeNotification(notification.id)"
+        aria-label="Close notification"
+      >
+        ✕
+      </button>
+    </div>
+    <div 
+      class="notification-progress" 
+      [style.animation-duration]="(notification.duration || 4000) + 'ms'"
+    ></div>
+  </div>
+</div>

@@ -124,13 +124,19 @@
             </span>
           </td>
           <td>
-            <span
-              class="public-badge"
-              [class.public]="match.isPublic"
-              [class.private]="!match.isPublic"
+            <button
+              class="action-btn"
+              [class.make-public-btn]="!match.isPublic"
+              [class.make-private-btn]="match.isPublic"
+              [title]="match.isPublic ? 'Make Private' : 'Make Public'"
+              (click)="
+                match.isPublic
+                  ? makeMatchPrivate(match.id)
+                  : makeMatchPublic(match.id)
+              "
             >
-              {{ match.isPublic ? "Public" : "Private" }}
-            </span>
+              {{ match.isPublic ? "Make Private" : "Make Public" }}
+            </button>
           </td>
           <td class="actions">
             <button
@@ -139,14 +145,6 @@
               (click)="openAddPlayersModal(match)"
             >
               Add Players
-            </button>
-            <button
-              *ngIf="!match.isPublic"
-              class="action-btn make-public-btn"
-              title="Make Public"
-              (click)="makeMatchPublic(match.id)"
-            >
-              Make Public
             </button>
             <button
               class="action-btn edit-btn"

@@ -358,6 +358,26 @@ export class MatchService {
     return await response.json();
   }
 
+  async makeMatchPrivate(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/unpublish`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error('Could not make match private');
+      }
+      throw new Error(`Error making match private: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
   async getPlayerMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/my-matches`, {
       headers: this.getAuthHeaders(),
