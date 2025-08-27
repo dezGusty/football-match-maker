@@ -193,5 +193,98 @@ namespace FootballAPI.Repository
             _context.PlayerOrganisers.Add(relation);
             await _context.SaveChangesAsync();
         }
+
+        // Organizer delegation functionality
+        public async Task<OrganizerDelegate> CreateDelegationAsync(OrganizerDelegate delegation)
+        {
+            _context.OrganizerDelegates.Add(delegation);
+            await _context.SaveChangesAsync();
+            return delegation;
+        }
+
+        public async Task<OrganizerDelegate?> GetActiveDelegationByOrganizerId(int organizerId)
+        {
+            return await _context.OrganizerDelegates
+                .Include(d => d.OriginalOrganizer)
+                .Include(d => d.DelegateUser)
+                .FirstOrDefaultAsync(d => d.OriginalOrganizerId == organizerId && d.IsActive);
+        }
+
+        public async Task<OrganizerDelegate?> GetActiveDelegationByDelegateId(int delegateId)
+        {
+            return await _context.OrganizerDelegates
+                .Include(d => d.OriginalOrganizer)
+                .Include(d => d.DelegateUser)
+                .FirstOrDefaultAsync(d => d.DelegateUserId == delegateId && d.IsActive);
+        }
+
+        public async Task<bool> ReclaimDelegationAsync(int delegationId, int originalOrganizerId)
+        {
+            var delegation = await _context.OrganizerDelegates
+                .FirstOrDefaultAsync(d => d.Id == delegationId && d.OriginalOrganizerId == originalOrganizerId && d.IsActive);
+
+            if (delegation == null)
+                return false;
+
+            delegation.IsActive = false;
+            delegation.ReclaimedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> AreFriends(int userId1, int userId2)
+        {
+            return await _context.FriendRequests.AnyAsync(fr => 
+                ((fr.SenderId == userId1 && fr.ReceiverId == userId2) ||
+                 (fr.SenderId == userId2 && fr.ReceiverId == userId1)) &&
+                fr.Status == Models.Enums.FriendRequestStatus.Accepted);
+        }
+
+        public async Task<bool> TransferPlayerOrganiserRelationsAsync(int fromOrganizerId, int toOrganizerId)
+        {
+            try
+            {
+                // Get all existing relations for the original organizer
+                var existingRelations = await _context.PlayerOrganisers
+                    .Where(po => po.OrganiserId == fromOrganizerId)
+                    .ToListAsync();
+
+                // Remove all existing relations
+                _context.PlayerOrganisers.RemoveRange(existingRelations);
+
+                // Create new relations with the new organizer
+                var newRelations = existingRelations.Select(relation => new PlayerOrganiser
+                {
+                    OrganiserId = toOrganizerId,
+                    PlayerId = relation.PlayerId,
+                    CreatedAt = DateTime.Now
+                }).ToList();
+
+                // Add the new relations
+                await _context.PlayerOrganisers.AddRangeAsync(newRelations);
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateUserRoleAndDelegationStatus(int userId, UserRole newRole, bool isDelegating, int? delegatedToUserId)
+        {
+            var user = await GetByIdAsync(userId);
+            if (user == null)
+                return false;
+
+            user.Role = newRole;
+            user.IsDelegatingOrganizer = isDelegating;
+            user.DelegatedToUserId = delegatedToUserId;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await UpdateAsync(user);
+            return true;
+        }
     }
 }

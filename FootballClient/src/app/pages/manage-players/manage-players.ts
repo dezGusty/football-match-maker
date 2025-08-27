@@ -13,6 +13,7 @@ import {
   CreateMatchRequest,
   MatchDisplay,
 } from '../../models/create-match.interface';
+import { DelegationStatusDto, OrganizerDelegateDto } from '../../models/organizer-delegation.interface';
 
 @Component({
   selector: 'app-manage-players',
@@ -52,6 +53,15 @@ export class ManagePlayersComponent {
 
   // Modal states
   showAddModal = false;
+  showDelegateModal = false;
+
+  // Delegation variables
+  delegationStatus: DelegationStatusDto | null = null;
+  delegationLoading = false;
+  delegationErrorMessage = '';
+  delegationSuccessMessage = '';
+  selectedPlayerForDelegation: User | null = null;
+  delegationNotes = '';
 
   private async loadAvailablePlayers() {
     const organiserId = this.authService.getUserId()!;
@@ -82,6 +92,17 @@ export class ManagePlayersComponent {
       this.players = await this.UserService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
+    }
+
+    await this.loadDelegationStatus();
+  }
+
+  async loadDelegationStatus() {
+    try {
+      const userId = this.authService.getUserId()!;
+      this.delegationStatus = await this.UserService.getDelegationStatus(userId);
+    } catch (error) {
+      console.error('Error loading delegation status:', error);
     }
   }
 
@@ -243,5 +264,86 @@ export class ManagePlayersComponent {
   clearEditIndex() {
     this.editIndex = null;
     this.editedPlayer = null;
+  }
+
+  openDelegateModal(player: User) {
+    this.selectedPlayerForDelegation = player;
+    this.showDelegateModal = true;
+    this.delegationErrorMessage = '';
+    this.delegationSuccessMessage = '';
+    this.delegationNotes = '';
+  }
+
+  closeDelegateModal() {
+    this.showDelegateModal = false;
+    this.selectedPlayerForDelegation = null;
+    this.delegationNotes = '';
+    this.delegationErrorMessage = '';
+    this.delegationSuccessMessage = '';
+  }
+
+  async delegateToPlayer() {
+    if (!this.selectedPlayerForDelegation) return;
+
+    this.delegationLoading = true;
+    this.delegationErrorMessage = '';
+    this.delegationSuccessMessage = '';
+
+    try {
+      const userId = this.authService.getUserId()!;
+      await this.UserService.delegateOrganizerRole(
+        userId, 
+        this.selectedPlayerForDelegation.id!,
+        this.delegationNotes || undefined
+      );
+
+      this.delegationSuccessMessage = `Successfully delegated organizer role to ${this.selectedPlayerForDelegation.firstName} ${this.selectedPlayerForDelegation.lastName}`;
+      
+      await this.loadDelegationStatus();
+
+      setTimeout(() => {
+        this.closeDelegateModal();
+      }, 2000);
+
+    } catch (error: any) {
+      this.delegationErrorMessage = error.message || 'Failed to delegate organizer role';
+      console.error('Error delegating organizer role:', error);
+    } finally {
+      this.delegationLoading = false;
+    }
+  }
+
+  async reclaimOrganizerRole() {
+    if (!this.delegationStatus?.currentDelegation) return;
+
+    const confirm = window.confirm('Are you sure you want to reclaim your organizer role?');
+    if (!confirm) return;
+
+    this.delegationLoading = true;
+    this.delegationErrorMessage = '';
+
+    try {
+      const userId = this.authService.getUserId()!;
+      await this.UserService.reclaimOrganizerRole(
+        userId, 
+        this.delegationStatus.currentDelegation.id
+      );
+
+      await this.loadDelegationStatus();
+      
+      console.log('Organizer role reclaimed successfully');
+
+    } catch (error: any) {
+      this.delegationErrorMessage = error.message || 'Failed to reclaim organizer role';
+      console.error('Error reclaiming organizer role:', error);
+    } finally {
+      this.delegationLoading = false;
+    }
+  }
+
+  canDelegateToPlayer(player: User): boolean {
+    return this.isPlayerEnabled(player) && 
+           !this.delegationStatus?.isDelegating &&
+           player.role !== UserRole.ORGANISER;
   }
 }

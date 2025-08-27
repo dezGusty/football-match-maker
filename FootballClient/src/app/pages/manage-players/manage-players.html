@@ -2,6 +2,28 @@
 <app-friend-requests></app-friend-requests>
 
 <div class="page">
+  <!-- Delegation Status -->
+  @if (delegationStatus?.isDelegating && delegationStatus?.currentDelegation) {
+  <div class="delegation-status-banner warning">
+    <strong>⚠️ Role Delegated:</strong> 
+    You have delegated your organizer role to <strong>{{ delegationStatus?.currentDelegation?.delegateUserName }}</strong>
+    <button 
+      class="reclaim-btn"
+      (click)="reclaimOrganizerRole()"
+      [disabled]="delegationLoading"
+    >
+      {{ delegationLoading ? 'Reclaiming...' : 'Reclaim Role' }}
+    </button>
+  </div>
+  }
+
+  @if (delegationStatus?.isDelegate && delegationStatus?.receivedDelegation) {
+  <div class="delegation-status-banner info">
+    <strong>👑 Acting as Organizer:</strong> 
+    You are acting as organizer for <strong>{{ delegationStatus?.receivedDelegation?.originalOrganizerName }}</strong>
+  </div>
+  }
+
   <!-- Floating Actions -->
   <div class="fab-stack">
     <button
@@ -181,6 +203,15 @@
               >
                 Edit
               </button>
+              @if (canDelegateToPlayer(player)) {
+              <button
+                class="action-btn delegate-btn"
+                title="Make Organizer"
+                (click)="openDelegateModal(player)"
+              >
+                Make Organizer
+              </button>
+              }
               <button
                 class="action-btn delete-btn"
                 title="Disable"
@@ -297,6 +328,88 @@
         <span *ngIf="playerLoading">Adding Player...</span>
         <span *ngIf="!playerLoading">Add Player</span>
       </button>
+    </div>
+  </div>
+  }
+
+  <!-- Delegate Organizer Modal -->
+  @if (showDelegateModal && selectedPlayerForDelegation) {
+  <div class="modal-backdrop" (click)="closeDelegateModal()">
+    <div class="modal-content glass" (click)="$event.stopPropagation()">
+      <button
+        class="close-modal-btn"
+        (click)="closeDelegateModal()"
+        title="Close"
+      >
+        &times;
+      </button>
+      <h3>Delegate Organizer Role</h3>
+      <p class="modal-subtitle">
+        Make <strong>{{ selectedPlayerForDelegation.firstName }} {{ selectedPlayerForDelegation.lastName }}</strong> 
+        the temporary organizer
+      </p>
+
+      <div class="delegation-info">
+        <div class="info-item">
+          <strong>Player:</strong> 
+          {{ selectedPlayerForDelegation.firstName }} {{ selectedPlayerForDelegation.lastName }}
+        </div>
+        <div class="info-item">
+          <strong>Rating:</strong> 
+          {{ selectedPlayerForDelegation.rating | number: "1.0-2" }}
+        </div>
+        <div class="info-item">
+          <strong>Email:</strong> 
+          {{ selectedPlayerForDelegation.email }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="delegationNotes">Notes (Optional):</label>
+        <textarea
+          id="delegationNotes"
+          [(ngModel)]="delegationNotes"
+          placeholder="Add any notes about this delegation..."
+          rows="3"
+        ></textarea>
+      </div>
+
+      <div class="warning-message">
+        <strong>⚠️ Important:</strong>
+        <ul>
+          <li>This player will have full organizer privileges temporarily</li>
+          <li>They can manage matches, players, and team formations</li>
+          <li>You can reclaim your role at any time</li>
+          <li>Only one delegation can be active at a time</li>
+        </ul>
+      </div>
+
+      <!-- Messages -->
+      <div *ngIf="delegationErrorMessage" class="error-message">
+        {{ delegationErrorMessage }}
+      </div>
+
+      <div *ngIf="delegationSuccessMessage" class="success-message">
+        {{ delegationSuccessMessage }}
+      </div>
+
+      <div class="modal-actions">
+        <button
+          class="secondary-btn"
+          (click)="closeDelegateModal()"
+          [disabled]="delegationLoading"
+        >
+          Cancel
+        </button>
+        <button
+          class="danger-btn"
+          (click)="delegateToPlayer()"
+          [disabled]="delegationLoading"
+        >
+          <span *ngIf="delegationLoading">Delegating...</span>
+          <span *ngIf="!delegationLoading">Delegate Role</span>
+        </button>
+      </div>
     </div>
   </div>
   }

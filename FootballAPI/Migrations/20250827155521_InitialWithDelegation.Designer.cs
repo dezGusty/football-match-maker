@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    [Migration("20250826102135_Init")]
-    partial class Init
+    [Migration("20250827155521_InitialWithDelegation")]
+    partial class InitialWithDelegation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -125,6 +125,46 @@ namespace FootballAPI.Migrations
                     b.HasIndex("TeamId");
 
                     b.ToTable("MatchTeams");
+                });
+
+            modelBuilder.Entity("FootballAPI.Models.OrganizerDelegate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("DelegateUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("OriginalOrganizerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ReclaimedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DelegateUserId");
+
+                    b.HasIndex("OriginalOrganizerId", "IsActive")
+                        .IsUnique()
+                        .HasFilter("[IsActive] = 1");
+
+                    b.ToTable("OrganizerDelegates");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.PlayerOrganiser", b =>
@@ -248,6 +288,9 @@ namespace FootballAPI.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
+                    b.Property<int?>("DelegatedToUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
@@ -263,6 +306,9 @@ namespace FootballAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsDelegatingOrganizer")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -302,6 +348,8 @@ namespace FootballAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DelegatedToUserId");
+
                     b.HasIndex("Email")
                         .IsUnique();
 
@@ -318,6 +366,7 @@ namespace FootballAPI.Migrations
                             Email = "ion.popescu@gmail.com",
                             Errors = 2,
                             FirstName = "Ion",
+                            IsDelegatingOrganizer = false,
                             LastName = "Popescu",
                             Password = "default123",
                             Rating = 8.5f,
@@ -334,6 +383,7 @@ namespace FootballAPI.Migrations
                             Email = "marius.ionescu@gmail.com",
                             Errors = 2,
                             FirstName = "Marius",
+                            IsDelegatingOrganizer = false,
                             LastName = "Ionescu",
                             Password = "default123",
                             Rating = 7.8f,
@@ -350,6 +400,7 @@ namespace FootballAPI.Migrations
                             Email = "admin@gmail.com",
                             Errors = 2,
                             FirstName = "Admin",
+                            IsDelegatingOrganizer = false,
                             LastName = "User",
                             Password = "default123",
                             Rating = 0f,
@@ -366,6 +417,7 @@ namespace FootballAPI.Migrations
                             Email = "organiser@gmail.com",
                             Errors = 2,
                             FirstName = "Organiser",
+                            IsDelegatingOrganizer = false,
                             LastName = "User",
                             Password = "default123",
                             Rating = 0f,
@@ -382,6 +434,7 @@ namespace FootballAPI.Migrations
                             Email = "alex.georgescu@gmail.com",
                             Errors = 2,
                             FirstName = "Alex",
+                            IsDelegatingOrganizer = false,
                             LastName = "Georgescu",
                             Password = "default123",
                             Rating = 7.2f,
@@ -398,6 +451,7 @@ namespace FootballAPI.Migrations
                             Email = "razvan.moldovan@gmail.com",
                             Errors = 2,
                             FirstName = "Razvan",
+                            IsDelegatingOrganizer = false,
                             LastName = "Moldovan",
                             Password = "default123",
                             Rating = 8.1f,
@@ -414,6 +468,7 @@ namespace FootballAPI.Migrations
                             Email = "cristian.stancu@gmail.com",
                             Errors = 2,
                             FirstName = "Cristian",
+                            IsDelegatingOrganizer = false,
                             LastName = "Stancu",
                             Password = "default123",
                             Rating = 6.9f,
@@ -430,6 +485,7 @@ namespace FootballAPI.Migrations
                             Email = "andrei.vasilescu@gmail.com",
                             Errors = 2,
                             FirstName = "Andrei",
+                            IsDelegatingOrganizer = false,
                             LastName = "Vasilescu",
                             Password = "default123",
                             Rating = 7.7f,
@@ -446,6 +502,7 @@ namespace FootballAPI.Migrations
                             Email = "florin.dumitru@gmail.com",
                             Errors = 2,
                             FirstName = "Florin",
+                            IsDelegatingOrganizer = false,
                             LastName = "Dumitru",
                             Password = "default123",
                             Rating = 8.3f,
@@ -462,6 +519,7 @@ namespace FootballAPI.Migrations
                             Email = "gabriel.ciobanu@gmail.com",
                             Errors = 2,
                             FirstName = "Gabriel",
+                            IsDelegatingOrganizer = false,
                             LastName = "Ciobanu",
                             Password = "default123",
                             Rating = 7.4f,
@@ -478,6 +536,7 @@ namespace FootballAPI.Migrations
                             Email = "lucian.matei@gmail.com",
                             Errors = 2,
                             FirstName = "Lucian",
+                            IsDelegatingOrganizer = false,
                             LastName = "Matei",
                             Password = "default123",
                             Rating = 6.8f,
@@ -494,6 +553,7 @@ namespace FootballAPI.Migrations
                             Email = "daniel.radu@gmail.com",
                             Errors = 2,
                             FirstName = "Daniel",
+                            IsDelegatingOrganizer = false,
                             LastName = "Radu",
                             Password = "default123",
                             Rating = 7.9f,
@@ -510,6 +570,7 @@ namespace FootballAPI.Migrations
                             Email = "mihai.popa@gmail.com",
                             Errors = 2,
                             FirstName = "Mihai",
+                            IsDelegatingOrganizer = false,
                             LastName = "Popa",
                             Password = "default123",
                             Rating = 8f,
@@ -526,6 +587,7 @@ namespace FootballAPI.Migrations
                             Email = "stefan.nicolae@gmail.com",
                             Errors = 2,
                             FirstName = "Stefan",
+                            IsDelegatingOrganizer = false,
                             LastName = "Nicolae",
                             Password = "default123",
                             Rating = 7.6f,
@@ -586,6 +648,25 @@ namespace FootballAPI.Migrations
                     b.Navigation("Team");
                 });
 
+            modelBuilder.Entity("FootballAPI.Models.OrganizerDelegate", b =>
+                {
+                    b.HasOne("FootballAPI.Models.User", "DelegateUser")
+                        .WithMany("ReceivedDelegations")
+                        .HasForeignKey("DelegateUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FootballAPI.Models.User", "OriginalOrganizer")
+                        .WithMany("OriginalDelegations")
+                        .HasForeignKey("OriginalOrganizerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("DelegateUser");
+
+                    b.Navigation("OriginalOrganizer");
+                });
+
             modelBuilder.Entity("FootballAPI.Models.PlayerOrganiser", b =>
                 {
                     b.HasOne("FootballAPI.Models.User", "Organiser")
@@ -635,6 +716,16 @@ namespace FootballAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FootballAPI.Models.User", b =>
+                {
+                    b.HasOne("FootballAPI.Models.User", "DelegatedToUser")
+                        .WithMany()
+                        .HasForeignKey("DelegatedToUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("DelegatedToUser");
+                });
+
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
                 {
                     b.Navigation("MatchTeams");
@@ -656,7 +747,11 @@ namespace FootballAPI.Migrations
 
                     b.Navigation("OrganisedPlayers");
 
+                    b.Navigation("OriginalDelegations");
+
                     b.Navigation("PlayerRelations");
+
+                    b.Navigation("ReceivedDelegations");
 
                     b.Navigation("ReceivedFriendRequests");
 

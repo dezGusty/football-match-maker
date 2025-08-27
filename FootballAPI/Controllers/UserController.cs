@@ -406,6 +406,79 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [HttpPost("{id}/delegate-organizer-role")]
+        public async Task<ActionResult<OrganizerDelegateDto>> DelegateOrganizerRole(int id, [FromBody] DelegateOrganizerRoleDto dto)
+        {
+            try
+            {
+                var delegation = await _userService.DelegateOrganizerRoleAsync(id, dto);
+                return Ok(delegation);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation error delegating organizer role");
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Invalid operation delegating organizer role");
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error delegating organizer role");
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+
+        [HttpPost("{id}/reclaim-organizer-role")]
+        public async Task<ActionResult> ReclaimOrganizerRole(int id, [FromBody] ReclaimOrganizerRoleDto dto)
+        {
+            try
+            {
+                var success = await _userService.ReclaimOrganizerRoleAsync(id, dto);
+                if (success)
+                    return Ok(new { message = "Organizer role reclaimed successfully" });
+                else
+                    return BadRequest(new { message = "Failed to reclaim organizer role" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reclaiming organizer role");
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet("{id}/delegation-status")]
+        public async Task<ActionResult<DelegationStatusDto>> GetDelegationStatus(int id)
+        {
+            try
+            {
+                var status = await _userService.GetDelegationStatusAsync(id);
+                return Ok(status);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting delegation status");
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet("{id}/friends")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetFriends(int id)
+        {
+            try
+            {
+                var friends = await _userService.GetFriendsAsync(id);
+                return Ok(friends);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting user friends");
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+
     }
 
     public class PlayerOrganiserRelationRequest

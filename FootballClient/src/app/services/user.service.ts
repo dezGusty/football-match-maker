@@ -2,6 +2,12 @@ import { Injectable } from '@angular/core';
 import { User } from '../models/user.interface';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
+import { 
+  DelegateOrganizerRoleDto, 
+  ReclaimOrganizerRoleDto, 
+  OrganizerDelegateDto, 
+  DelegationStatusDto 
+} from '../models/organizer-delegation.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -308,5 +314,57 @@ export class UserService {
       console.error('Error setting multiple players available:', error);
       return false;
     }
+  }
+
+  async delegateOrganizerRole(userId: number, friendUserId: number, notes?: string): Promise<OrganizerDelegateDto> {
+    const headers = this.getAuthHeaders();
+    const body: DelegateOrganizerRoleDto = { friendUserId, notes };
+    
+    const response = await fetch(`${this.url}/${userId}/delegate-organizer-role`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.message || 'Failed to delegate organizer role');
+    }
+
+    return await response.json();
+  }
+
+  async reclaimOrganizerRole(userId: number, delegationId: number): Promise<boolean> {
+    const headers = this.getAuthHeaders();
+    const body: ReclaimOrganizerRoleDto = { delegationId };
+
+    const response = await fetch(`${this.url}/${userId}/reclaim-organizer-role`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.message || 'Failed to reclaim organizer role');
+    }
+
+    return true;
+  }
+
+  async getDelegationStatus(userId: number): Promise<DelegationStatusDto> {
+    const headers = this.getAuthHeaders();
+    
+    const response = await fetch(`${this.url}/${userId}/delegation-status`, {
+      method: 'GET',
+      headers,
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.message || 'Failed to get delegation status');
+    }
+
+    return await response.json();
   }
 }

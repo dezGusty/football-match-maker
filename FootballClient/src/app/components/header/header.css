@@ -180,3 +180,19 @@
   border: 2px solid #6a866e;
   background: #fff;
 }
+
+.delegation-indicator {
+  position: relative;
+  margin-left: 4px;
+}
+
+.delegation-icon {
+  font-size: 14px;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}

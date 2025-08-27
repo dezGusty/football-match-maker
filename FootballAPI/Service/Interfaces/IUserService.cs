@@ -29,6 +29,12 @@ namespace FootballAPI.Service
         Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates);
         Task<IEnumerable<UserDto>> GetPlayersAsync();
         Task AddPlayerOrganiserRelationAsync(int userId, int organiserId);
+        
+        // Organizer delegation functionality
+        Task<OrganizerDelegateDto> DelegateOrganizerRoleAsync(int organizerId, DelegateOrganizerRoleDto dto);
+        Task<bool> ReclaimOrganizerRoleAsync(int organizerId, ReclaimOrganizerRoleDto dto);
+        Task<DelegationStatusDto> GetDelegationStatusAsync(int userId);
+        Task<IEnumerable<UserDto>> GetFriendsAsync(int userId);
 
     }
 
