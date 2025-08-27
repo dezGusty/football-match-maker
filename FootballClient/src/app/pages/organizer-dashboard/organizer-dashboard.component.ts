@@ -481,50 +481,81 @@ export class OrganizerDashboardComponent {
     
   }
   ratingChange(player?: User): string {
-    let playerErrorsChange = 0;
-    switch (player?.errors) {
-      case 1:
-        playerErrorsChange = 0.025;
-        break;
-      case 2:
-        playerErrorsChange = 0.05;
-        break;
-      case 3:
-        playerErrorsChange = 0.075;
-        break;
-      case 4:
-        playerErrorsChange = 0.1;
-        break;
-      default:
-        playerErrorsChange = 0;
-        break;
+    if(this.selectedRatingSystem == "Performance"){
+      let playerErrorsChange = 0;
+      switch (player?.errors) {
+        case 1:
+          playerErrorsChange = 0.025;
+          break;
+        case 2:
+          playerErrorsChange = 0.05;
+          break;
+        case 3:
+          playerErrorsChange = 0.075;
+          break;
+        case 4:
+          playerErrorsChange = 0.1;
+          break;
+        default:
+          playerErrorsChange = 0;
+          break;
+      }
+      const totalRating =
+        (player?.rating ?? 0) * 0.005 +
+        (player?.speed ?? 0) * 0.025 +
+        (player?.stamina ?? 0) * 0.025 +
+        playerErrorsChange;
+      
+      if(this.teamAScore != null && this.teamBScore != null){
+        if(this.teamAScore > this.teamBScore){
+          if(this.teamAPlayers.some(p => p.id === player?.id)){
+            return "+" + totalRating.toFixed(2);
+          } else if(this.teamBPlayers.some(p => p.id === player?.id)){
+            return "-" + totalRating.toFixed(2);
+          }
+        }
+        else if(this.teamAScore < this.teamBScore){
+          if(this.teamAPlayers.some(p => p.id === player?.id)){
+            return "-" + totalRating.toFixed(2);
+          } else if(this.teamBPlayers.some(p => p.id === player?.id)){
+            return "+" + totalRating.toFixed(2);
+          }
+        }
+        else {
+          return "+" + (totalRating/2).toFixed(2);
+        }
+      }
+      return "0"
     }
-    const totalRating =
-      (player?.rating ?? 0) * 0.005 +
-      (player?.speed ?? 0) * 0.025 +
-      (player?.stamina ?? 0) * 0.025 +
-      playerErrorsChange;
+    else if(this.selectedRatingSystem == "Linear"){
+      if(this.teamAScore != null && this.teamBScore != null){
+        const scoreDiff = Math.abs(this.teamAScore - this.teamBScore);
+        const ratingChange = Math.min(0.1 * scoreDiff, 1); // Max change capped at 1 point
+
+        if(this.teamAScore > this.teamBScore){
+          if(this.teamAPlayers.some(p => p.id === player?.id)){
+            return "+" + ratingChange.toFixed(2);
+          } else if(this.teamBPlayers.some(p => p.id === player?.id)){
+            return "-" + ratingChange.toFixed(2);
+          }
+        }
+        else if(this.teamAScore < this.teamBScore){
+          if(this.teamAPlayers.some(p => p.id === player?.id)){
+            return "-" + ratingChange.toFixed(2);
+          } else if(this.teamBPlayers.some(p => p.id === player?.id)){
+            return "+" + ratingChange.toFixed(2);
+          }
+        }
+        else {
+          return "0.00";
+        }
+      }
+      return "0.00"
+    }
+    else{
+      return "0.00"
+    }
     
-    if(this.teamAScore != null && this.teamBScore != null){
-      if(this.teamAScore > this.teamBScore){
-        if(this.teamAPlayers.some(p => p.id === player?.id)){
-          return "+" + totalRating.toFixed(2);
-        } else if(this.teamBPlayers.some(p => p.id === player?.id)){
-          return "-" + totalRating.toFixed(2);
-        }
-      }
-      else if(this.teamAScore < this.teamBScore){
-        if(this.teamAPlayers.some(p => p.id === player?.id)){
-          return "-" + totalRating.toFixed(2);
-        } else if(this.teamBPlayers.some(p => p.id === player?.id)){
-          return "+" + totalRating.toFixed(2);
-        }
-      }
-      else {
-        return "+" + (totalRating/2).toFixed(2);
-      }
-    }
-    return "0"
   }
 
   async openAddPlayersModal(match: MatchDisplay) {
