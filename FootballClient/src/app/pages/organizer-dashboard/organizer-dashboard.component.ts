@@ -38,13 +38,14 @@ export class OrganizerDashboardComponent {
   availablePlayers: User[] = [];
   filteredPlayers: User[] = [];
   matches: MatchDisplay[] = [];
+  myMatches: MatchDisplay[] = [];
   searchTerm: string = '';
   editIndex: number | null = null;
   editedPlayer: User | null = null;
   showAddModal = false;
   showCreateMatchModal = false;
   showAddPlayersModal = false;
-  activeTab: 'players' | 'matches' = 'matches';
+  activeTab: 'players' | 'matches' | 'myMatches' = 'matches';
   selectedMatch: MatchDisplay | null = null;
   matchDetails: any = null; // Will contain team IDs
   teamAPlayers: User[] = [];
@@ -78,6 +79,78 @@ export class OrganizerDashboardComponent {
     }
   }
 
+  private async LoadMyMatches() {
+    try {
+      const playerMatches = await this.matchService.getPlayerMatches();
+      const myId = this.authService.getUserId();
+      console.log('My ID:', myId);
+      console.log('Player matches:', playerMatches);
+      const processedMatches = await Promise.all(
+        playerMatches.map(async (match: any) => {
+          let myTeam: 'A' | 'B' | null = null;
+          console.log('Processing match:', match.id);
+
+          try {
+            const matchDetails = await this.matchService.getMatchDetails(
+              match.id
+            );
+            console.log('Match details for', match.id, ':', matchDetails);
+
+            if (matchDetails.teams && Array.isArray(matchDetails.teams)) {
+              if (
+                matchDetails.teams[0]?.players?.some((p: any) => {
+                  console.log(
+                    'Checking Team A player:',
+                    p.id,
+                    'vs my ID:',
+                    myId,
+                    'Match:',
+                    p.id == myId
+                  );
+                  return p.id == myId;
+                })
+              ) {
+                myTeam = 'A';
+                console.log('Found in Team A');
+              } else if (
+                matchDetails.teams[1]?.players?.some((p: any) => {
+                  console.log(
+                    'Checking Team B player:',
+                    p.id,
+                    'vs my ID:',
+                    myId,
+                    'Match:',
+                    p.id == myId
+                  );
+                  return p.id == myId;
+                })
+              ) {
+                myTeam = 'B';
+                console.log('Found in Team B');
+              }
+            }
+          } catch (detailsError) {
+            console.error(
+              'Error fetching match details for match',
+              match.id,
+              ':',
+              detailsError
+            );
+
+            myTeam = null;
+          }
+
+          console.log('Final myTeam for match', match.id, ':', myTeam);
+          return { ...match, myTeam };
+        })
+      );
+
+      this.myMatches = processedMatches;
+      console.log('Final myMatches:', this.myMatches);
+    } catch (error) {
+      console.error('Error loading my matches:', error);
+    }
+  }
   async init() {
     const role = this.authService.getUserRole();
 
@@ -89,6 +162,7 @@ export class OrganizerDashboardComponent {
         this.authService.getUserId()!
       );
       this.loadMatches();
+      this.LoadMyMatches();
     }
   }
 

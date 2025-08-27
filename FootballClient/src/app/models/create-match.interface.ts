@@ -26,4 +26,5 @@ export interface MatchDisplay {
   teamBName?: string;
   status: number;
   isPublic: boolean;
+  myTeam?: 'A' | 'B' | null;
 }

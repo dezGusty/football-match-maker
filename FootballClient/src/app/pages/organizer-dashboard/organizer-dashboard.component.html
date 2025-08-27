@@ -18,6 +18,14 @@
     >
       Players
     </button>
+
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'myMatches'"
+      (click)="activeTab = 'myMatches'"
+    >
+      My Matches
+    </button>
   </div>
 
   <!-- Floating Actions - Organizer Only -->
@@ -315,6 +323,54 @@
               }
             </td>
           </ng-template>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!--My matches section-->
+  <div
+    *ngIf="activeTab === 'myMatches'"
+    class="table-wrapper"
+    role="region"
+    aria-label="Matches table"
+    tabindex="0"
+  >
+    <table class="matches-table modern">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date & Time</th>
+          <th>Teams</th>
+          <th>Location</th>
+          <th>Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let match of myMatches; let i = index"
+          class="row-anim my-match-row"
+          [style.animationDelay]="i * 40 + 'ms'"
+        >
+          <td>{{ i + 1 }}</td>
+          <td>{{ match.matchDate | date : "short" }}</td>
+          <td class="teams-cell">
+            <div class="team-names">
+              <span
+                class="team-a"
+                [ngClass]="{ 'my-team': match.myTeam === 'A' }"
+                >{{ match.teamAName || "TeamA" }}</span
+              >
+              <span class="vs">vs</span>
+              <span
+                class="team-b"
+                [ngClass]="{ 'my-team': match.myTeam === 'B' }"
+                >{{ match.teamBName || "TeamB" }}</span
+              >
+            </div>
+          </td>
+          <td>{{ match.location || "TBD" }}</td>
+          <td>{{ match.cost ? match.cost + " Lei total" : "Free" }}</td>
         </tr>
       </tbody>
     </table>
