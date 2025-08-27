@@ -97,7 +97,6 @@
           <th>Teams</th>
           <th>Location</th>
           <th>Cost</th>
-          <th>Status</th>
           <th>Public</th>
           <th>Actions</th>
         </tr>
@@ -119,11 +118,6 @@
           </td>
           <td>{{ match.location || "TBD" }}</td>
           <td>{{ match.cost ? match.cost + " Lei total" : "Free" }}</td>
-          <td>
-            <span class="status-badge" [ngClass]="getStatusClass(match.status)">
-              {{ getStatusText(match.status) }}
-            </span>
-          </td>
           <td>
             <button
               class="action-btn"
