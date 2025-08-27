@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 import { UserRole } from '../../models/user-role.enum';
 
 @Component({
@@ -20,6 +21,7 @@ export class Login {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private notificationService: NotificationService
   ) {
     if (this.authService.isLoggedIn()) {
       this.redirectBasedOnRole();
@@ -85,7 +87,7 @@ export class Login {
   forgotPassword() {
     this.email = this.forgotEmail;
     this.authService.forgotPassword(this.email).subscribe({
-      next: () => alert('Email trimis cu succes! Verifică inbox-ul.'),
+      next: () => this.notificationService.showSuccess('Email trimis cu succes! Verifică inbox-ul.'),
       error: (err) => {
         console.error(err);
         this.errorMessage = 'A apărut o eroare la trimiterea email-ului.';

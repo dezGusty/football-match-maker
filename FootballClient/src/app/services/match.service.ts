@@ -151,7 +151,6 @@ export class MatchService {
     const team = await response.json();
     return team.currentPlayers.map((p: any) => `${p.firstName} ${p.lastName}`);
   }
-
   async updateMatch(
     matchId: number,
     updateData: { teamAGoals: number; teamBGoals: number }
@@ -359,6 +358,26 @@ export class MatchService {
     return await response.json();
   }
 
+  async makeMatchPrivate(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/unpublish`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error('Could not make match private');
+      }
+      throw new Error(`Error making match private: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
   async getPlayerMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/my-matches`, {
       headers: this.getAuthHeaders(),
@@ -491,6 +510,36 @@ export class MatchService {
         );
       }
       throw new Error(`Error leaving match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async updateMatchPlayer(
+    matchId: number,
+    updateData: {
+      matchDate: string;
+      location: string;
+      cost?: number;
+      teamAName?: string;
+      teamBName?: string;
+    }
+  ): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(updateData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 404) {
+        throw new Error('Match not found');
+      }
+      throw new Error(`Error updating match: ${errorText}`);
     }
 
     return await response.json();

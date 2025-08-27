@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 import { User } from '../../models/user.interface';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -34,7 +35,8 @@ export class Account {
     private userService: UserService,
     private authService: AuthService,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private notificationService: NotificationService
   ) {
     this.loadUser();
   }
@@ -84,11 +86,11 @@ export class Account {
         this.newPassword,
         this.confirmPassword
       );
-      alert(message);
+      this.notificationService.showSuccess(message);
       this.resetForms();
       this.showPasswordForm = false;
     } catch (error: any) {
-      alert(error.message || 'Password change failed');
+      this.notificationService.showError(error.message || 'Password change failed');
     }
   }
 
@@ -100,12 +102,12 @@ export class Account {
         this.newUsername,
         this.usernamePassword
       );
-      alert(message);
+      this.notificationService.showSuccess(message);
       this.user.username = this.newUsername;
       this.resetForms();
       this.showUsernameForm = false;
     } catch (error: any) {
-      alert(error.message || 'Username change failed');
+      this.notificationService.showError(error.message || 'Username change failed');
     }
   }
 
