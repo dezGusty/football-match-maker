@@ -284,12 +284,12 @@ export class OrganizerDashboardComponent {
     matchDate: '',
     location: '',
     cost: null as number | null,
+    teamAName: '',
+    teamBName: '',
   };
 
   editMatchLoading = false;
   editMatchErrorMessage = '';
-  editMatchSuccessMessage = '';
-
   async createMatch() {
     if (!this.newMatch.matchDate || !this.newMatch.location) {
       this.matchErrorMessage = 'Match date and location are required';
@@ -635,10 +635,11 @@ export class OrganizerDashboardComponent {
       matchDate: new Date(match.matchDate).toISOString().slice(0, 16),
       location: match.location || '',
       cost: match.cost || null,
+      teamAName: match.teamAName || '',
+      teamBName: match.teamBName || '',
     };
 
     this.editMatchErrorMessage = '';
-    this.editMatchSuccessMessage = '';
     this.selectedMatch = match;
     this.showEditMatchModal = true;
   }
@@ -656,21 +657,20 @@ export class OrganizerDashboardComponent {
 
     this.editMatchLoading = true;
     this.editMatchErrorMessage = '';
-    this.editMatchSuccessMessage = '';
 
     try {
       const updateMatchRequest = {
         matchDate: new Date(this.editMatch.matchDate).toISOString(),
         location: this.editMatch.location,
         cost: this.editMatch.cost || undefined,
+        teamAName: this.editMatch.teamAName || undefined,
+        teamBName: this.editMatch.teamBName || undefined,
       };
 
       const updatedMatch = await this.matchService.updateMatchPlayer(
         this.selectedMatch.id,
         updateMatchRequest
       );
-
-      this.editMatchSuccessMessage = 'Match updated successfully!';
 
       const matchIndex = this.matches.findIndex(
         (m) => m.id === this.selectedMatch!.id
@@ -684,10 +684,7 @@ export class OrganizerDashboardComponent {
         };
       }
 
-      setTimeout(() => {
-        this.showEditMatchModal = false;
-        this.editMatchSuccessMessage = '';
-      }, 1500);
+      this.showEditMatchModal = false;
     } catch (error: any) {
       this.editMatchErrorMessage = error.message || 'Error updating match';
       console.error('Error updating match:', error);

@@ -41,10 +41,10 @@ namespace FootballAPI.DTOs
     public class UpdateMatchDto
     {
         public string MatchDate { get; set; }
-        public bool IsPublic { get; set; }
-        public Status Status { get; set; }
         public string? Location { get; set; }
         public decimal? Cost { get; set; }
+        public string? TeamAName { get; set; }
+        public string? TeamBName { get; set; }
     }
 
     public class AddPlayerToMatchDto

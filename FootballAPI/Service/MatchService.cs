@@ -202,10 +202,27 @@ namespace FootballAPI.Service
                 return null;
 
             existingMatch.MatchDate = DateTime.Parse(updateMatchDto.MatchDate);
-            existingMatch.IsPublic = updateMatchDto.IsPublic;
-            existingMatch.Status = updateMatchDto.Status;
             existingMatch.Location = updateMatchDto.Location;
             existingMatch.Cost = updateMatchDto.Cost;
+
+            // Update team names if provided
+            if (!string.IsNullOrEmpty(updateMatchDto.TeamAName) || !string.IsNullOrEmpty(updateMatchDto.TeamBName))
+            {
+                var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(id);
+                var teams = matchTeams.ToList();
+
+                if (!string.IsNullOrEmpty(updateMatchDto.TeamAName) && teams.Count > 0)
+                {
+                    var updateTeamDto = new UpdateTeamDto { Name = updateMatchDto.TeamAName };
+                    await _teamService.UpdateTeamAsync(teams[0].TeamId, updateTeamDto);
+                }
+
+                if (!string.IsNullOrEmpty(updateMatchDto.TeamBName) && teams.Count > 1)
+                {
+                    var updateTeamDto = new UpdateTeamDto { Name = updateMatchDto.TeamBName };
+                    await _teamService.UpdateTeamAsync(teams[1].TeamId, updateTeamDto);
+                }
+            }
 
             var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
             return await MapToDtoAsync(updatedMatch);

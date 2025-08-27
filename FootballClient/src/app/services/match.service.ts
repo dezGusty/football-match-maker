@@ -501,6 +501,8 @@ export class MatchService {
       matchDate: string;
       location: string;
       cost?: number;
+      teamAName?: string;
+      teamBName?: string;
     }
   ): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {

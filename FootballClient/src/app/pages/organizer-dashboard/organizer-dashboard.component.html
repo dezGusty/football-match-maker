@@ -556,14 +556,33 @@
         />
       </div>
 
+      <!-- Team Names -->
+      <div class="team-names-section">
+        <div class="grid two">
+          <div class="form-group">
+            <label>Team A Name</label>
+            <input
+              type="text"
+              placeholder="Team A"
+              [(ngModel)]="editMatch.teamAName"
+              maxlength="50"
+            />
+          </div>
+          <div class="form-group">
+            <label>Team B Name</label>
+            <input
+              type="text"
+              placeholder="Team B"
+              [(ngModel)]="editMatch.teamBName"
+              maxlength="50"
+            />
+          </div>
+        </div>
+      </div>
 
       <!-- Messages -->
       <div *ngIf="editMatchErrorMessage" class="error-message">
         {{ editMatchErrorMessage }}
-      </div>
-
-      <div *ngIf="editMatchSuccessMessage" class="success-message">
-        {{ editMatchSuccessMessage }}
       </div>
 
       <button
