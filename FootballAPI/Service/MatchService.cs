@@ -202,8 +202,6 @@ namespace FootballAPI.Service
         return null;
 
     existingMatch.MatchDate = DateTime.Parse(updateMatchDto.MatchDate);
-    existingMatch.IsPublic = updateMatchDto.IsPublic;
-    existingMatch.Status = updateMatchDto.Status;
     existingMatch.Location = updateMatchDto.Location;
     existingMatch.Cost = updateMatchDto.Cost;
     
@@ -247,7 +245,6 @@ namespace FootballAPI.Service
 
             if (!string.IsNullOrEmpty(updateMatchDto.TeamAName) || !string.IsNullOrEmpty(updateMatchDto.TeamBName))
             {
-                var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(id);
                 var teams = matchTeams.ToList();
 
                 if (!string.IsNullOrEmpty(updateMatchDto.TeamAName) && teams.Count > 0)
@@ -262,9 +259,7 @@ namespace FootballAPI.Service
                     await _teamService.UpdateTeamAsync(teams[1].TeamId, updateTeamDto);
                 }
             }
-
-            var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
-            return await MapToDtoAsync(updatedMatch);
+            
         }
 
         var losingPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(losingTeam.Id);
@@ -382,7 +377,6 @@ namespace FootballAPI.Service
         {
             var match = await _matchRepository.GetByIdAsync(matchId);
             if (match == null) return false;
-            Console.WriteLine("1");
 
             var organiserPlayers = await _userService.GetPlayersByOrganiserAsync(match.OrganiserId);
 
@@ -391,15 +385,12 @@ namespace FootballAPI.Service
 
             var matchTeam = await _matchTeamsService.GetMatchTeamByMatchIdAndTeamIdAsync(matchId, teamId);
             if (matchTeam == null) return false;
-            Console.WriteLine("3");
 
             var existingPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(matchTeam.Id);
             if (existingPlayers.Count() >= 6) return false;
-            Console.WriteLine("4");
 
             var existingPlayer = await _teamPlayersService.GetTeamPlayerByMatchTeamIdAndUserIdAsync(matchTeam.Id, userId);
             if (existingPlayer != null) return false;
-            Console.WriteLine("5");
 
             var createTeamUserDto = new CreateTeamPlayersDto
             {
