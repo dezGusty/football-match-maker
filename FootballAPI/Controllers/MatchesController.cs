@@ -243,6 +243,24 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [HttpPost("{id}/unpublish")]
+        [Authorize]
+        public async Task<ActionResult<MatchDto>> UnpublishMatch(int id)
+        {
+            try
+            {
+                var result = await _matchService.MakeMatchPrivateAsync(id);
+                if (result == null)
+                    return BadRequest("Could not make match private. Match not found.");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error making match private: {ex.Message}");
+            }
+        }
+
         [HttpGet("{id}/details")]
         public async Task<ActionResult<MatchDetailsDto>> GetMatchDetails(int id)
         {

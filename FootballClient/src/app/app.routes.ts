@@ -66,6 +66,14 @@ export const routes: Routes = [
     canActivate: [authGuard, organizerGuard],
   },
   {
+    path: 'manage-players',
+    loadComponent: () =>
+      import('./pages/manage-players/manage-players').then(
+        (m) => m.ManagePlayersComponent
+      ),
+    canActivate: [authGuard, organizerGuard],
+  },
+  {
     path: 'home',
     redirectTo: '/',
     pathMatch: 'full',

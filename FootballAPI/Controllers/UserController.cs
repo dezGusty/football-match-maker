@@ -370,10 +370,10 @@ namespace FootballAPI.Controllers
         {
             try
             {
-                var playerRatingUpdates = request.PlayerRatingUpdates.Select(x => new PlayerRatingUpdateDto 
-                { 
-                    UserId = x.UserId, 
-                    RatingChange = x.RatingChange 
+                var playerRatingUpdates = request.PlayerRatingUpdates.Select(x => new PlayerRatingUpdateDto
+                {
+                    UserId = x.UserId,
+                    RatingChange = x.RatingChange
                 }).ToList();
 
                 var success = await _userService.UpdateMultiplePlayerRatingsAsync(playerRatingUpdates);
@@ -405,6 +405,7 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
             }
         }
+
     }
 
     public class PlayerOrganiserRelationRequest

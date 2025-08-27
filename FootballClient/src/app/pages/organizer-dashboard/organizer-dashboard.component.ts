@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
 import { MatchService } from '../../services/match.service';
+import { NotificationService } from '../../services/notification.service';
 import {
   CreateMatchRequest,
   MatchDisplay,
@@ -31,20 +32,24 @@ export class OrganizerDashboardComponent {
   constructor(
     private UserService: UserService,
     private authService: AuthService,
-    private matchService: MatchService
+    private matchService: MatchService,
+    private notificationService: NotificationService
   ) {}
 
   players: User[] = [];
+  availablePlayers: User[] = [];
   filteredPlayers: User[] = [];
   matches: MatchDisplay[] = [];
+  myMatches: MatchDisplay[] = [];
   searchTerm: string = '';
   editIndex: number | null = null;
   editedPlayer: User | null = null;
   showAddModal = false;
   showCreateMatchModal = false;
+  showEditMatchModal = false;
   showAddPlayersModal = false;
   showFinalizeMatchModal = false;
-  activeTab: 'players' | 'matches' = 'matches';
+  activeTab: 'players' | 'matches' | 'myMatches' = 'matches';
   selectedMatch: MatchDisplay | null = null;
   selectedRatingSystem: string = 'Linear'; // Default rating system
   matchDetails: any = null; // Will contain team IDs
@@ -62,16 +67,109 @@ export class OrganizerDashboardComponent {
   playerErrorMessage = '';
   playerSuccessMessage = '';
 
+  private async loadAvailablePlayers() {
+    const organiserId = this.authService.getUserId()!;
+
+    this.availablePlayers = [...this.players];
+
+    try {
+      const organiser = await this.UserService.getUserById(organiserId);
+      if (organiser) {
+        const organiserAsPlayer: User = {
+          ...organiser,
+          lastName: `${organiser.lastName} (myself)`,
+        };
+        this.availablePlayers = [organiserAsPlayer, ...this.availablePlayers];
+      }
+    } catch (error) {
+      console.error('Error fetching organizer details:', error);
+    }
+  }
+
+  private async LoadMyMatches() {
+    try {
+      const playerMatches = await this.matchService.getPlayerMatches();
+      const myId = this.authService.getUserId();
+      console.log('My ID:', myId);
+      console.log('Player matches:', playerMatches);
+      const processedMatches = await Promise.all(
+        playerMatches.map(async (match: any) => {
+          let myTeam: 'A' | 'B' | null = null;
+          console.log('Processing match:', match.id);
+
+          try {
+            const matchDetails = await this.matchService.getMatchDetails(
+              match.id
+            );
+            console.log('Match details for', match.id, ':', matchDetails);
+
+            if (matchDetails.teams && Array.isArray(matchDetails.teams)) {
+              if (
+                matchDetails.teams[0]?.players?.some((p: any) => {
+                  console.log(
+                    'Checking Team A player:',
+                    p.id,
+                    'vs my ID:',
+                    myId,
+                    'Match:',
+                    p.id == myId
+                  );
+                  return p.id == myId;
+                })
+              ) {
+                myTeam = 'A';
+                console.log('Found in Team A');
+              } else if (
+                matchDetails.teams[1]?.players?.some((p: any) => {
+                  console.log(
+                    'Checking Team B player:',
+                    p.id,
+                    'vs my ID:',
+                    myId,
+                    'Match:',
+                    p.id == myId
+                  );
+                  return p.id == myId;
+                })
+              ) {
+                myTeam = 'B';
+                console.log('Found in Team B');
+              }
+            }
+          } catch (detailsError) {
+            console.error(
+              'Error fetching match details for match',
+              match.id,
+              ':',
+              detailsError
+            );
+
+            myTeam = null;
+          }
+
+          console.log('Final myTeam for match', match.id, ':', myTeam);
+          return { ...match, myTeam };
+        })
+      );
+
+      this.myMatches = processedMatches;
+      console.log('Final myMatches:', this.myMatches);
+    } catch (error) {
+      console.error('Error loading my matches:', error);
+    }
+  }
   async init() {
     const role = this.authService.getUserRole();
 
     if (role === UserRole.ADMIN) {
       this.players = await this.UserService.getPlayers();
+      this.availablePlayers = [...this.players];
     } else if (role === UserRole.ORGANISER) {
       this.players = await this.UserService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
       this.loadMatches();
+      this.LoadMyMatches();
     }
   }
 
@@ -139,20 +237,21 @@ export class OrganizerDashboardComponent {
 
       this.players.push(addedPlayer);
 
-      this.playerSuccessMessage = `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`;
-
       this.resetPlayer();
       this.players = await this.UserService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
 
-      setTimeout(() => {
-        this.showAddModal = false;
-        this.playerSuccessMessage = '';
-      }, 2000);
+      this.showAddModal = false;
+      this.notificationService.showSuccess(
+        `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`
+      );
     } catch (error: any) {
       this.playerErrorMessage =
         error.message || 'Failed to add player. Please try again.';
+      this.notificationService.showError(
+        error.message || 'Failed to add player. Please try again.'
+      );
       console.error('Error adding player:', error);
     } finally {
       this.playerLoading = false;
@@ -183,7 +282,9 @@ export class OrganizerDashboardComponent {
       typeof this.editedPlayer.rating === 'number' &&
       (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10)
     ) {
+
       alert('Rating must be between 0 and 10.');
+
       return;
     }
 
@@ -216,7 +317,9 @@ export class OrganizerDashboardComponent {
       }
     } catch (error) {
       console.error('Error deleting player:', error);
-      alert('Failed to delete player. Please try again.');
+      this.notificationService.showError(
+        'Failed to delete player. Please try again.'
+      );
     }
   }
 
@@ -238,7 +341,9 @@ export class OrganizerDashboardComponent {
       }
     } catch (error) {
       console.error('Error enabling player:', error);
-      alert('Failed to reactivate player. Please try again.');
+      this.notificationService.showError(
+        'Failed to reactivate player. Please try again.'
+      );
     }
   }
   clearEditIndex() {
@@ -262,6 +367,16 @@ export class OrganizerDashboardComponent {
   matchErrorMessage = '';
   matchSuccessMessage = '';
 
+  editMatch = {
+    matchDate: '',
+    location: '',
+    cost: null as number | null,
+    teamAName: '',
+    teamBName: '',
+  };
+
+  editMatchLoading = false;
+  editMatchErrorMessage = '';
   async createMatch() {
     if (!this.newMatch.matchDate || !this.newMatch.location) {
       this.matchErrorMessage = 'Match date and location are required';
@@ -285,7 +400,6 @@ export class OrganizerDashboardComponent {
       const createdMatch = await this.matchService.createNewMatch(
         createMatchRequest
       );
-      this.matchSuccessMessage = 'Match created successfully!';
 
       await this.loadMatches();
 
@@ -297,10 +411,8 @@ export class OrganizerDashboardComponent {
         teamBName: '',
       };
 
-      setTimeout(() => {
-        this.showCreateMatchModal = false;
-        this.matchSuccessMessage = '';
-      }, 1500);
+      this.showCreateMatchModal = false;
+      this.notificationService.showSuccess('Match created successfully!');
     } catch (error: any) {
       this.matchErrorMessage = error.message || 'Error creating match';
       console.error('Error creating match:', error);
@@ -421,6 +533,7 @@ export class OrganizerDashboardComponent {
     this.addPlayersSuccessMessage = '';
 
     try {
+      await this.loadAvailablePlayers();
       this.matchDetails = await this.matchService.getMatchDetails(match.id);
       console.log('Match details received:', this.matchDetails);
 
@@ -670,15 +783,98 @@ export class OrganizerDashboardComponent {
         this.matches[matchIndex].isPublic = true;
       }
 
-      alert('Match made public successfully!');
+      this.notificationService.showSuccess('Match made public successfully!');
     } catch (error: any) {
-      alert(error.message || 'Error making match public');
+      this.notificationService.showError(
+        error.message || 'Error making match public'
+      );
       console.error('Error making match public:', error);
     }
   }
 
+  async makeMatchPrivate(matchId: number) {
+    try {
+      await this.matchService.makeMatchPrivate(matchId);
+
+      const matchIndex = this.matches.findIndex((m) => m.id === matchId);
+      if (matchIndex > -1) {
+        this.matches[matchIndex].isPublic = false;
+      }
+
+      this.notificationService.showSuccess('Match made private successfully!');
+    } catch (error: any) {
+      this.notificationService.showError(
+        error.message || 'Error making match private'
+      );
+      console.error('Error making match private:', error);
+    }
+  }
+
   openEditMatchModal(match: MatchDisplay) {
-    alert('Edit match functionality coming soon!');
+    this.editMatch = {
+      matchDate: new Date(match.matchDate).toISOString().slice(0, 16),
+      location: match.location || '',
+      cost: match.cost || null,
+      teamAName: match.teamAName || '',
+      teamBName: match.teamBName || '',
+    };
+
+    this.editMatchErrorMessage = '';
+    this.selectedMatch = match;
+    this.showEditMatchModal = true;
+  }
+
+  async updateMatch() {
+    if (!this.editMatch.matchDate || !this.editMatch.location) {
+      this.editMatchErrorMessage = 'Match date and location are required';
+      return;
+    }
+
+    if (!this.selectedMatch) {
+      this.editMatchErrorMessage = 'No match selected for editing';
+      return;
+    }
+
+    this.editMatchLoading = true;
+    this.editMatchErrorMessage = '';
+
+    try {
+      const updateMatchRequest = {
+        matchDate: new Date(this.editMatch.matchDate).toISOString(),
+        location: this.editMatch.location,
+        cost: this.editMatch.cost || undefined,
+        teamAName: this.editMatch.teamAName || undefined,
+        teamBName: this.editMatch.teamBName || undefined,
+      };
+
+      const updatedMatch = await this.matchService.updateMatchPlayer(
+        this.selectedMatch.id,
+        updateMatchRequest
+      );
+
+      const matchIndex = this.matches.findIndex(
+        (m) => m.id === this.selectedMatch!.id
+      );
+      if (matchIndex > -1) {
+        this.matches[matchIndex] = {
+          ...this.matches[matchIndex],
+          matchDate: updatedMatch.matchDate,
+          location: updatedMatch.location,
+          cost: updatedMatch.cost,
+        };
+      }
+
+      this.showEditMatchModal = false;
+      this.notificationService.showSuccess('Match updated successfully!');
+    } catch (error: any) {
+      this.editMatchErrorMessage = error.message || 'Error updating match';
+      this.notificationService.showError(
+        error.message || 'Failed to update match. Please try again.'
+      );
+      console.error('Error updating match:', error);
+    } finally {
+      this.editMatchLoading = false;
+    }
   }
 
 }

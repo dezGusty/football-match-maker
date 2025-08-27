@@ -241,6 +241,30 @@ namespace FootballAPI.Service
                 playerErrorsChange;
 
             await _userService.UpdatePlayerRatingAsync(player.UserId, totalRating);
+            existingMatch.MatchDate = DateTime.Parse(updateMatchDto.MatchDate);
+            existingMatch.Location = updateMatchDto.Location;
+            existingMatch.Cost = updateMatchDto.Cost;
+
+            if (!string.IsNullOrEmpty(updateMatchDto.TeamAName) || !string.IsNullOrEmpty(updateMatchDto.TeamBName))
+            {
+                var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(id);
+                var teams = matchTeams.ToList();
+
+                if (!string.IsNullOrEmpty(updateMatchDto.TeamAName) && teams.Count > 0)
+                {
+                    var updateTeamDto = new UpdateTeamDto { Name = updateMatchDto.TeamAName };
+                    await _teamService.UpdateTeamAsync(teams[0].TeamId, updateTeamDto);
+                }
+
+                if (!string.IsNullOrEmpty(updateMatchDto.TeamBName) && teams.Count > 1)
+                {
+                    var updateTeamDto = new UpdateTeamDto { Name = updateMatchDto.TeamBName };
+                    await _teamService.UpdateTeamAsync(teams[1].TeamId, updateTeamDto);
+                }
+            }
+
+            var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
+            return await MapToDtoAsync(updatedMatch);
         }
 
         var losingPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(losingTeam.Id);
@@ -361,9 +385,9 @@ namespace FootballAPI.Service
             Console.WriteLine("1");
 
             var organiserPlayers = await _userService.GetPlayersByOrganiserAsync(match.OrganiserId);
-            // if (!organiserPlayers.Any(p => p.Id == userId))
-            //     return false;
-            Console.WriteLine("2");
+
+            if (!organiserPlayers.Any(p => p.Id == userId) && userId != match.OrganiserId)
+                return false;
 
             var matchTeam = await _matchTeamsService.GetMatchTeamByMatchIdAndTeamIdAsync(matchId, teamId);
             if (matchTeam == null) return false;

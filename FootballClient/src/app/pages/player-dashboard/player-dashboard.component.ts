@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { MatchService } from '../../services/match.service';
 import { UserService } from '../../services/user.service';
+import { NotificationService } from '../../services/notification.service';
 import { PlayerHeaderComponent } from '../../components/player-header/player-header.component';
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
 import { Match } from '../../models/match.interface';
@@ -42,7 +43,8 @@ export class PlayerDashboardComponent implements OnInit {
     private authService: AuthService,
     private matchService: MatchService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   async ngOnInit() {
@@ -52,7 +54,6 @@ export class PlayerDashboardComponent implements OnInit {
     await this.loadAvailableMatches();
     await this.loadPublicMatches();
     await this.loadPlayerSpecificMatches();
-    // await this.loadMatchesByFiltering();
   }
 
   async loadPlayerData() {
@@ -96,17 +97,10 @@ export class PlayerDashboardComponent implements OnInit {
 
   async loadPlayerSpecificMatches() {
     try {
-      const response = await fetch(
-        `http://localhost:5145/api/user/${this.currentPlayer!.id}/matches`
+      const playerMatches = await this.matchService.getPlayerMatches();
+      this.upcomingMatches = playerMatches.filter(
+        (match: any) => new Date(match.matchDate) > new Date()
       );
-      if (response.ok) {
-        const playerMatches = await response.json();
-        this.upcomingMatches = playerMatches.filter(
-          (match: any) => new Date(match.matchDate) > new Date()
-        );
-
-        return;
-      }
     } catch (error) {}
   }
 
@@ -189,6 +183,7 @@ export class PlayerDashboardComponent implements OnInit {
   async loadMatchDetails(match: Match) {
     this.selectedMatch = match;
     this.selectedTeamAName = match.teamAName!;
+
     this.selectedTeamBName = match.teamBName!;
 
     try {
@@ -202,28 +197,20 @@ export class PlayerDashboardComponent implements OnInit {
       );
 
       this.selectedTeamAPlayers = teamA
-        ? teamA.players.map(
-            (p: any) => `${p.firstName} ${p.lastName} - ${p.rating}`
-          )
+        ? teamA.players.map((p: any) => `${p.username} - ${p.rating}`)
         : [];
 
       this.selectedTeamBPlayers = teamB
-        ? teamB.players.map(
-            (p: any) => `${p.firstName} ${p.lastName} - ${p.rating}`
-          )
+        ? teamB.players.map((p: any) => `${p.username} - ${p.rating}`)
         : [];
     } catch (error) {
       this.selectedTeamAPlayers = match.playerHistory
         .filter((p) => p.teamId === match.teamAId && p.user)
-        .map(
-          (p) => `${p.user.firstName} ${p.user.lastName} - ${p.user.rating}`
-        );
+        .map((p) => `${p.user.username}- ${p.user.rating}`);
 
       this.selectedTeamBPlayers = match.playerHistory
         .filter((p) => p.teamId === match.teamBId && p.user)
-        .map(
-          (p) => `${p.user.firstName} ${p.user.lastName} - ${p.user.rating}`
-        );
+        .map((p) => `${p.user.username} - ${p.user.rating}`);
     }
   }
 
@@ -270,7 +257,7 @@ export class PlayerDashboardComponent implements OnInit {
       await this.loadAvailableMatches();
     } catch (error) {
       console.error('Error joining match:', error);
-      alert('Failed to join match. Please try again.');
+      this.notificationService.showError('Failed to join match. Please try again.');
     }
   }
 
@@ -292,10 +279,10 @@ export class PlayerDashboardComponent implements OnInit {
       await this.loadMatches();
       await this.loadAvailableMatches();
 
-      alert('Successfully joined the match!');
+      this.notificationService.showSuccess('Successfully joined the match!');
     } catch (error) {
       console.error('Error joining match:', error);
-      alert('Failed to join match. Please try again.');
+      this.notificationService.showError('Failed to join match. Please try again.');
     }
   }
 
@@ -307,7 +294,7 @@ export class PlayerDashboardComponent implements OnInit {
       }
 
       if (!this.canLeaveMatch(match)) {
-        alert(
+        this.notificationService.showWarning(
           'You cannot leave this match because you were added by the organizer.'
         );
         return;
@@ -317,11 +304,11 @@ export class PlayerDashboardComponent implements OnInit {
         await this.matchService.leaveMatch(match.id);
         await this.loadMatches();
         await this.loadAvailableMatches();
-        alert('Successfully left the match!');
+        this.notificationService.showSuccess('Successfully left the match!');
       }
     } catch (error) {
       console.error('Error leaving match:', error);
-      alert('Failed to leave match. Please try again.');
+      this.notificationService.showError('Failed to leave match. Please try again.');
     }
   }
 }

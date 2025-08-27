@@ -35,9 +35,8 @@
   <div class="menu" [class.open]="isMenuOpen">
     <ul>
       <li *ngIf="isOrganizer()">
-        <button (click)="navigateToDashboard()">
-          Manage Players & Matches
-        </button>
+        <button (click)="navigateToDashboard()">Home</button>
+        <button (click)="navigateTo('/manage-players')">Players</button>
       </li>
 
       <!-- Player Menu Items -->
