@@ -476,8 +476,8 @@ export class OrganizerDashboardComponent {
     this.showFinalizeMatchModal = false;
   }
   async finalizeMatch() {
-    // await this.matchService.updateMatch(this.selectedMatch?.id);
-    // console.log('Match finalized:', this.selectedMatch?.id);
+    await this.matchService.finalizeMatchServ(
+      this.selectedMatch!.id);
     
   }
   ratingChange(player?: User): string {
