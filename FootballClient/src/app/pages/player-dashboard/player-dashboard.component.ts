@@ -202,28 +202,20 @@ export class PlayerDashboardComponent implements OnInit {
       );
 
       this.selectedTeamAPlayers = teamA
-        ? teamA.players.map(
-            (p: any) => `${p.firstName} ${p.lastName} - ${p.rating}`
-          )
+        ? teamA.players.map((p: any) => `${p.username} - ${p.rating}`)
         : [];
 
       this.selectedTeamBPlayers = teamB
-        ? teamB.players.map(
-            (p: any) => `${p.firstName} ${p.lastName} - ${p.rating}`
-          )
+        ? teamB.players.map((p: any) => `${p.username} - ${p.rating}`)
         : [];
     } catch (error) {
       this.selectedTeamAPlayers = match.playerHistory
         .filter((p) => p.teamId === match.teamAId && p.user)
-        .map(
-          (p) => `${p.user.firstName} ${p.user.lastName} - ${p.user.rating}`
-        );
+        .map((p) => `${p.user.username}- ${p.user.rating}`);
 
       this.selectedTeamBPlayers = match.playerHistory
         .filter((p) => p.teamId === match.teamBId && p.user)
-        .map(
-          (p) => `${p.user.firstName} ${p.user.lastName} - ${p.user.rating}`
-        );
+        .map((p) => `${p.user.username} - ${p.user.rating}`);
     }
   }
 

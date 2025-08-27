@@ -555,9 +555,7 @@
               [class.already-added]="isPlayerInAnyTeam(player)"
             >
               <div class="player-name-rating">
-                <span class="name"
-                  >{{ player.firstName }} {{ player.lastName }}</span
-                >
+                <span class="name">{{ player.username }}</span>
                 <span class="rating">({{ player.rating }})</span>
               </div>
 
@@ -610,9 +608,7 @@
                   class="simple-player-row"
                 >
                   <span class="player-name"
-                    >{{ player.firstName }} {{ player.lastName }} ({{
-                      player.rating
-                    }})</span
+                    >{{ player.username }}({{ player.rating }})</span
                   >
                   <div class="player-actions">
                     <button
@@ -662,9 +658,7 @@
                   class="simple-player-row"
                 >
                   <span class="player-name"
-                    >{{ player.firstName }} {{ player.lastName }} ({{
-                      player.rating
-                    }})</span
+                    >{{ player.username }} ({{ player.rating }})</span
                   >
                   <div class="player-actions">
                     <button
