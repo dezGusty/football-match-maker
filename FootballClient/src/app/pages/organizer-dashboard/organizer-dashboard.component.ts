@@ -43,6 +43,7 @@ export class OrganizerDashboardComponent {
   editedPlayer: User | null = null;
   showAddModal = false;
   showCreateMatchModal = false;
+  showEditMatchModal = false;
   showAddPlayersModal = false;
   activeTab: 'players' | 'matches' = 'matches';
   selectedMatch: MatchDisplay | null = null;
@@ -278,6 +279,16 @@ export class OrganizerDashboardComponent {
   matchLoading = false;
   matchErrorMessage = '';
   matchSuccessMessage = '';
+
+  editMatch = {
+    matchDate: '',
+    location: '',
+    cost: null as number | null,
+  };
+
+  editMatchLoading = false;
+  editMatchErrorMessage = '';
+  editMatchSuccessMessage = '';
 
   async createMatch() {
     if (!this.newMatch.matchDate || !this.newMatch.location) {
@@ -620,6 +631,68 @@ export class OrganizerDashboardComponent {
   }
 
   openEditMatchModal(match: MatchDisplay) {
-    alert('Edit match functionality coming soon!');
+    this.editMatch = {
+      matchDate: new Date(match.matchDate).toISOString().slice(0, 16),
+      location: match.location || '',
+      cost: match.cost || null,
+    };
+
+    this.editMatchErrorMessage = '';
+    this.editMatchSuccessMessage = '';
+    this.selectedMatch = match;
+    this.showEditMatchModal = true;
+  }
+
+  async updateMatch() {
+    if (!this.editMatch.matchDate || !this.editMatch.location) {
+      this.editMatchErrorMessage = 'Match date and location are required';
+      return;
+    }
+
+    if (!this.selectedMatch) {
+      this.editMatchErrorMessage = 'No match selected for editing';
+      return;
+    }
+
+    this.editMatchLoading = true;
+    this.editMatchErrorMessage = '';
+    this.editMatchSuccessMessage = '';
+
+    try {
+      const updateMatchRequest = {
+        matchDate: new Date(this.editMatch.matchDate).toISOString(),
+        location: this.editMatch.location,
+        cost: this.editMatch.cost || undefined,
+      };
+
+      const updatedMatch = await this.matchService.updateMatchPlayer(
+        this.selectedMatch.id,
+        updateMatchRequest
+      );
+
+      this.editMatchSuccessMessage = 'Match updated successfully!';
+
+      const matchIndex = this.matches.findIndex(
+        (m) => m.id === this.selectedMatch!.id
+      );
+      if (matchIndex > -1) {
+        this.matches[matchIndex] = {
+          ...this.matches[matchIndex],
+          matchDate: updatedMatch.matchDate,
+          location: updatedMatch.location,
+          cost: updatedMatch.cost,
+        };
+      }
+
+      setTimeout(() => {
+        this.showEditMatchModal = false;
+        this.editMatchSuccessMessage = '';
+      }, 1500);
+    } catch (error: any) {
+      this.editMatchErrorMessage = error.message || 'Error updating match';
+      console.error('Error updating match:', error);
+    } finally {
+      this.editMatchLoading = false;
+    }
   }
 }

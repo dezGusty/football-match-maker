@@ -509,6 +509,75 @@
   </div>
   }
 
+  <!-- Edit Match Modal -->
+  @if (showEditMatchModal) {
+  <div class="modal-backdrop" (click)="showEditMatchModal = false">
+    <div class="modal-content glass" (click)="$event.stopPropagation()">
+      <button
+        class="close-modal-btn"
+        (click)="showEditMatchModal = false"
+        title="Close"
+      >
+        &times;
+      </button>
+      <h3>Edit Match</h3>
+
+      <!-- Date & Time -->
+      <div class="form-group">
+        <label>Match Date & Time *</label>
+        <input
+          type="datetime-local"
+          [(ngModel)]="editMatch.matchDate"
+          [min]="getMinDateTime()"
+          required
+        />
+      </div>
+
+      <!-- Location -->
+      <div class="form-group">
+        <label>Location *</label>
+        <input
+          type="text"
+          placeholder="e.g., Central Stadium, Synthetic Field..."
+          [(ngModel)]="editMatch.location"
+          required
+        />
+      </div>
+
+      <!-- Cost -->
+      <div class="form-group">
+        <label>Total Match Cost (Lei)</label>
+        <input
+          type="number"
+          placeholder="e.g., 300"
+          [(ngModel)]="editMatch.cost"
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+
+      <!-- Messages -->
+      <div *ngIf="editMatchErrorMessage" class="error-message">
+        {{ editMatchErrorMessage }}
+      </div>
+
+      <div *ngIf="editMatchSuccessMessage" class="success-message">
+        {{ editMatchSuccessMessage }}
+      </div>
+
+      <button
+        class="primary-cta"
+        (click)="updateMatch()"
+        [disabled]="editMatchLoading"
+      >
+        <span *ngIf="editMatchLoading">Updating...</span>
+        <span *ngIf="!editMatchLoading">Update Match</span>
+      </button>
+    </div>
+  </div>
+  }
+
   <!-- Add Players Modal -->
   @if (showAddPlayersModal) {
   <div class="modal-backdrop" (click)="closeAddPlayersModal()">
