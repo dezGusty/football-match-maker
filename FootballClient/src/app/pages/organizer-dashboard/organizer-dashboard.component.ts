@@ -35,15 +35,17 @@ export class OrganizerDashboardComponent {
   ) {}
 
   players: User[] = [];
+  availablePlayers: User[] = [];
   filteredPlayers: User[] = [];
   matches: MatchDisplay[] = [];
+  myMatches: MatchDisplay[] = [];
   searchTerm: string = '';
   editIndex: number | null = null;
   editedPlayer: User | null = null;
   showAddModal = false;
   showCreateMatchModal = false;
   showAddPlayersModal = false;
-  activeTab: 'players' | 'matches' = 'matches';
+  activeTab: 'players' | 'matches' | 'myMatches' = 'matches';
   selectedMatch: MatchDisplay | null = null;
   matchDetails: any = null; // Will contain team IDs
   teamAPlayers: User[] = [];
@@ -58,16 +60,109 @@ export class OrganizerDashboardComponent {
   playerErrorMessage = '';
   playerSuccessMessage = '';
 
+  private async loadAvailablePlayers() {
+    const organiserId = this.authService.getUserId()!;
+
+    this.availablePlayers = [...this.players];
+
+    try {
+      const organiser = await this.UserService.getUserById(organiserId);
+      if (organiser) {
+        const organiserAsPlayer: User = {
+          ...organiser,
+          lastName: `${organiser.lastName} (myself)`,
+        };
+        this.availablePlayers = [organiserAsPlayer, ...this.availablePlayers];
+      }
+    } catch (error) {
+      console.error('Error fetching organizer details:', error);
+    }
+  }
+
+  private async LoadMyMatches() {
+    try {
+      const playerMatches = await this.matchService.getPlayerMatches();
+      const myId = this.authService.getUserId();
+      console.log('My ID:', myId);
+      console.log('Player matches:', playerMatches);
+      const processedMatches = await Promise.all(
+        playerMatches.map(async (match: any) => {
+          let myTeam: 'A' | 'B' | null = null;
+          console.log('Processing match:', match.id);
+
+          try {
+            const matchDetails = await this.matchService.getMatchDetails(
+              match.id
+            );
+            console.log('Match details for', match.id, ':', matchDetails);
+
+            if (matchDetails.teams && Array.isArray(matchDetails.teams)) {
+              if (
+                matchDetails.teams[0]?.players?.some((p: any) => {
+                  console.log(
+                    'Checking Team A player:',
+                    p.id,
+                    'vs my ID:',
+                    myId,
+                    'Match:',
+                    p.id == myId
+                  );
+                  return p.id == myId;
+                })
+              ) {
+                myTeam = 'A';
+                console.log('Found in Team A');
+              } else if (
+                matchDetails.teams[1]?.players?.some((p: any) => {
+                  console.log(
+                    'Checking Team B player:',
+                    p.id,
+                    'vs my ID:',
+                    myId,
+                    'Match:',
+                    p.id == myId
+                  );
+                  return p.id == myId;
+                })
+              ) {
+                myTeam = 'B';
+                console.log('Found in Team B');
+              }
+            }
+          } catch (detailsError) {
+            console.error(
+              'Error fetching match details for match',
+              match.id,
+              ':',
+              detailsError
+            );
+
+            myTeam = null;
+          }
+
+          console.log('Final myTeam for match', match.id, ':', myTeam);
+          return { ...match, myTeam };
+        })
+      );
+
+      this.myMatches = processedMatches;
+      console.log('Final myMatches:', this.myMatches);
+    } catch (error) {
+      console.error('Error loading my matches:', error);
+    }
+  }
   async init() {
     const role = this.authService.getUserRole();
 
     if (role === UserRole.ADMIN) {
       this.players = await this.UserService.getPlayers();
+      this.availablePlayers = [...this.players];
     } else if (role === UserRole.ORGANISER) {
       this.players = await this.UserService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
       this.loadMatches();
+      this.LoadMyMatches();
     }
   }
 
@@ -341,6 +436,7 @@ export class OrganizerDashboardComponent {
     this.addPlayersSuccessMessage = '';
 
     try {
+      await this.loadAvailablePlayers();
       this.matchDetails = await this.matchService.getMatchDetails(match.id);
       console.log('Match details received:', this.matchDetails);
 

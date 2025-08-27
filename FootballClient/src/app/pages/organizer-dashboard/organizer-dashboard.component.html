@@ -11,12 +11,13 @@
     >
       Matches
     </button>
+
     <button
       class="tab-btn"
-      [class.active]="activeTab === 'players'"
-      (click)="activeTab = 'players'"
+      [class.active]="activeTab === 'myMatches'"
+      (click)="activeTab = 'myMatches'"
     >
-      Players
+      My Matches
     </button>
   </div>
 
@@ -161,160 +162,49 @@
     </table>
   </div>
 
-  <!-- Players Table -->
+  <!--My matches section-->
   <div
-    *ngIf="activeTab === 'players'"
+    *ngIf="activeTab === 'myMatches'"
     class="table-wrapper"
     role="region"
-    aria-label="Players table"
+    aria-label="Matches table"
     tabindex="0"
   >
-    <table class="players-table modern">
+    <table class="matches-table modern">
       <thead>
         <tr>
           <th>#</th>
-          <th>First name</th>
-          <th>Last name</th>
-          <th>Rating</th>
-          <th>Individual Stats</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th>Date & Time</th>
+          <th>Teams</th>
+          <th>Location</th>
+          <th>Cost</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          *ngFor="
-            let player of searchTerm.trim() ? filteredPlayers : players;
-            let i = index
-          "
-          [class.disabled-player]="!isPlayerEnabled(player)"
-          class="row-anim"
+          *ngFor="let match of myMatches; let i = index"
+          class="row-anim my-match-row"
           [style.animationDelay]="i * 40 + 'ms'"
         >
           <td>{{ i + 1 }}</td>
-
-          <ng-container
-            *ngIf="editIndex === i && isPlayerEnabled(player); else viewMode"
-          >
-            <td><input type="text" [(ngModel)]="editedPlayer!.firstName" /></td>
-            <td><input type="text" [(ngModel)]="editedPlayer!.lastName" /></td>
-            <td>
-              <input
-                type="number"
-                [(ngModel)]="editedPlayer!.rating"
-                min="0"
-                max="10000"
-                step="0.1"
-              />
-            </td>
-            <td>
-              <div class="edit-stats">
-                <div class="stat-edit-group">
-                  <label>Speed:</label>
-                  <select [(ngModel)]="editedPlayer!.speed">
-                    <option value="1">Low</option>
-                    <option value="2">Medium</option>
-                    <option value="3">High</option>
-                    <option value="4">Extreme</option>
-                  </select>
-                </div>
-                <div class="stat-edit-group">
-                  <label>Stamina:</label>
-                  <select [(ngModel)]="editedPlayer!.stamina">
-                    <option value="1">Low</option>
-                    <option value="2">Medium</option>
-                    <option value="3">High</option>
-                    <option value="4">Extreme</option>
-                  </select>
-                </div>
-                <div class="stat-edit-group">
-                  <label>Errors:</label>
-                  <select [(ngModel)]="editedPlayer!.errors">
-                    <option value="1">Low</option>
-                    <option value="2">Medium</option>
-                    <option value="3">High</option>
-                    <option value="4">Extreme</option>
-                  </select>
-                </div>
-              </div>
-            </td>
-            <td><span class="status-badge enabled">Active</span></td>
-            <td class="actions">
-              <button
-                class="action-btn save-btn"
-                title="Save"
-                (click)="editPlayer()"
-              >
-                Save
-              </button>
-              <button
-                class="action-btn cancel-btn"
-                title="Cancel"
-                (click)="clearEditIndex()"
-              >
-                Cancel
-              </button>
-            </td>
-          </ng-container>
-
-          <ng-template #viewMode>
-            <td>
-              {{
-                isPlayerEnabled(player)
-                  ? player.firstName
-                  : (player.firstName | slice : 0 : 3)
-              }}
-            </td>
-            <td>
-              {{
-                isPlayerEnabled(player)
-                  ? player.lastName
-                  : (player.lastName | slice : 0 : 3)
-              }}
-            </td>
-            <td>{{ player.rating | number : "1.0-2" }}</td>
-            <td>
-              <app-player-stats
-                [speed]="player.speed || 2"
-                [stamina]="player.stamina || 2"
-                [errors]="player.errors || 2"
-              ></app-player-stats>
-            </td>
-            <td>
+          <td>{{ match.matchDate | date : "short" }}</td>
+          <td class="teams-cell">
+            <div class="team-names">
               <span
-                class="status-badge"
-                [class.enabled]="isPlayerEnabled(player)"
+                class="team-a"
+                [ngClass]="{ 'my-team': match.myTeam === 'A' }"
+                >{{ match.teamAName || "TeamA" }}</span
               >
-                {{ isPlayerEnabled(player) ? "Active" : "Inactive" }}
-              </span>
-            </td>
-            <td class="actions">
-              @if (isPlayerEnabled(player)) {
-              <button
-                class="action-btn edit-btn"
-                title="Edit"
-                (click)="setEditIndex(i)"
+              <span class="vs">vs</span>
+              <span
+                class="team-b"
+                [ngClass]="{ 'my-team': match.myTeam === 'B' }"
+                >{{ match.teamBName || "TeamB" }}</span
               >
-                Edit
-              </button>
-              <button
-                class="action-btn delete-btn"
-                title="Disable"
-                (click)="deletePlayer(player.id!)"
-              >
-                Disable
-              </button>
-              } @else {
-              <button
-                class="action-btn reactivate-btn"
-                title="Reactivate"
-                (click)="enablePlayer(player.id!)"
-              >
-                Reactivate
-              </button>
-              }
-            </td>
-          </ng-template>
+            </div>
+          </td>
+          <td>{{ match.location || "TBD" }}</td>
+          <td>{{ match.cost ? match.cost + " Lei total" : "Free" }}</td>
         </tr>
       </tbody>
     </table>
@@ -543,19 +433,19 @@
         <div class="available-players-panel">
           <div class="panel-header">
             <h4><i class="icon-users"></i>Available Players</h4>
-            <span class="players-count">{{ players.length }} players</span>
+            <span class="players-count"
+              >{{ availablePlayers.length }} players</span
+            >
           </div>
 
           <div class="players-list-simple">
             <div
-              *ngFor="let player of players; let i = index"
+              *ngFor="let player of availablePlayers; let i = index"
               class="player-row-simple"
               [class.already-added]="isPlayerInAnyTeam(player)"
             >
               <div class="player-name-rating">
-                <span class="name"
-                  >{{ player.firstName }} {{ player.lastName }}</span
-                >
+                <span class="name">{{ player.username }}</span>
                 <span class="rating">({{ player.rating }})</span>
               </div>
 
@@ -608,9 +498,7 @@
                   class="simple-player-row"
                 >
                   <span class="player-name"
-                    >{{ player.firstName }} {{ player.lastName }} ({{
-                      player.rating
-                    }})</span
+                    >{{ player.username }}({{ player.rating }})</span
                   >
                   <div class="player-actions">
                     <button
@@ -660,9 +548,7 @@
                   class="simple-player-row"
                 >
                   <span class="player-name"
-                    >{{ player.firstName }} {{ player.lastName }} ({{
-                      player.rating
-                    }})</span
+                    >{{ player.username }} ({{ player.rating }})</span
                   >
                   <div class="player-actions">
                     <button
