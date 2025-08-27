@@ -196,20 +196,104 @@ namespace FootballAPI.Service
         }
 
         public async Task<MatchDto> UpdateMatchAsync(int id, UpdateMatchDto updateMatchDto)
+{
+    var existingMatch = await _matchRepository.GetByIdAsync(id);
+    if (existingMatch == null)
+        return null;
+
+    existingMatch.MatchDate = DateTime.Parse(updateMatchDto.MatchDate);
+    existingMatch.IsPublic = updateMatchDto.IsPublic;
+    existingMatch.Status = updateMatchDto.Status;
+    existingMatch.Location = updateMatchDto.Location;
+    existingMatch.Cost = updateMatchDto.Cost;
+    
+    // Fetch MatchTeams to get scores
+    var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(id);
+    if (matchTeams.Count() != 2)
+        throw new InvalidOperationException("Match must have exactly two teams.");
+
+    var teamA = matchTeams.First();
+    var teamB = matchTeams.Last();
+
+    // Determine the winning and losing teams
+    var winningTeam = teamA.Goals > teamB.Goals ? teamA : (teamB.Goals > teamA.Goals ? teamB : null);
+    var losingTeam = winningTeam == teamA ? teamB : teamA;
+
+    // Update player ratings
+    if (winningTeam != null)
+    {
+        var winningPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(winningTeam.Id);
+        foreach (var player in winningPlayers)
         {
-            var existingMatch = await _matchRepository.GetByIdAsync(id);
-            if (existingMatch == null)
-                return null;
+            float playerErrorsChange = player.User.Errors switch
+            {
+                1 => 0.025f,
+                2 => 0.05f,
+                3 => 0.075f,
+                4 => 0.1f,
+                _ => 0f
+            };
 
-            existingMatch.MatchDate = DateTime.Parse(updateMatchDto.MatchDate);
-            existingMatch.IsPublic = updateMatchDto.IsPublic;
-            existingMatch.Status = updateMatchDto.Status;
-            existingMatch.Location = updateMatchDto.Location;
-            existingMatch.Cost = updateMatchDto.Cost;
+            float totalRating = 
+                (player.User.Rating * 0.005f) +
+                (player.User.Speed * 0.025f) +
+                (player.User.Stamina * 0.025f) +
+                playerErrorsChange;
 
-            var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
-            return await MapToDtoAsync(updatedMatch);
+            await _userService.UpdatePlayerRatingAsync(player.UserId, totalRating);
         }
+
+        var losingPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(losingTeam.Id);
+        foreach (var player in losingPlayers)
+        {
+            float playerErrorsChange = player.User.Errors switch
+            {
+                1 => 0.025f,
+                2 => 0.05f,
+                3 => 0.075f,
+                4 => 0.1f,
+                _ => 0f
+            };
+
+            float totalRating = 
+                (player.User.Rating * 0.005f) +
+                (player.User.Speed * 0.025f) +
+                (player.User.Stamina * 0.025f) +
+                playerErrorsChange;
+
+            await _userService.UpdatePlayerRatingAsync(player.UserId, -totalRating);
+        }
+    }
+    else
+    {
+        // Handle draw case
+        var teamAPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(teamA.Id);
+        var teamBPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(teamB.Id);
+
+        foreach (var player in teamAPlayers.Concat(teamBPlayers))
+        {
+            float playerErrorsChange = player.User.Errors switch
+            {
+                1 => 0.025f,
+                2 => 0.05f,
+                3 => 0.075f,
+                4 => 0.1f,
+                _ => 0f
+            };
+
+            float totalRating = 
+                (player.User.Rating * 0.005f) +
+                (player.User.Speed * 0.025f) +
+                (player.User.Stamina * 0.025f) +
+                playerErrorsChange;
+
+            await _userService.UpdatePlayerRatingAsync(player.UserId, totalRating / 2);
+        }
+    }
+
+    var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
+    return await MapToDtoAsync(updatedMatch);
+}
 
         public async Task<bool> DeleteMatchAsync(int id)
         {
@@ -274,19 +358,24 @@ namespace FootballAPI.Service
         {
             var match = await _matchRepository.GetByIdAsync(matchId);
             if (match == null) return false;
+            Console.WriteLine("1");
 
             var organiserPlayers = await _userService.GetPlayersByOrganiserAsync(match.OrganiserId);
-            if (!organiserPlayers.Any(p => p.Id == userId))
-                return false;
+            // if (!organiserPlayers.Any(p => p.Id == userId))
+            //     return false;
+            Console.WriteLine("2");
 
             var matchTeam = await _matchTeamsService.GetMatchTeamByMatchIdAndTeamIdAsync(matchId, teamId);
             if (matchTeam == null) return false;
+            Console.WriteLine("3");
 
             var existingPlayers = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(matchTeam.Id);
             if (existingPlayers.Count() >= 6) return false;
+            Console.WriteLine("4");
 
             var existingPlayer = await _teamPlayersService.GetTeamPlayerByMatchTeamIdAndUserIdAsync(matchTeam.Id, userId);
             if (existingPlayer != null) return false;
+            Console.WriteLine("5");
 
             var createTeamUserDto = new CreateTeamPlayersDto
             {
@@ -569,6 +658,5 @@ namespace FootballAPI.Service
 
             return false;
         }
-
     }
 }

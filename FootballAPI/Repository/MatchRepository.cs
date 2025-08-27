@@ -23,8 +23,7 @@ namespace FootballAPI.Repository
 
         public async Task<Match> GetByIdAsync(int id)
         {
-            return await _context.Matches
-                .FirstOrDefaultAsync(m => m.Id == id);
+            return await _context.Matches.FirstOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task<IEnumerable<Match>> GetMatchesByDateRangeAsync(DateTime startDate, DateTime endDate)
