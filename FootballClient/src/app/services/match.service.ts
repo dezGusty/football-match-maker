@@ -151,6 +151,27 @@ export class MatchService {
     const team = await response.json();
     return team.currentPlayers.map((p: any) => `${p.firstName} ${p.lastName}`);
   }
+  async finalizeMatchServ(matchId: number): Promise<void> {
+    const currentMatch = await this.getMatchById(matchId);
+    if (!currentMatch) {
+      throw new Error('Match not found');
+    }
+    const updateMatchDto = {
+      matchDate: currentMatch.matchDate,
+      teamAId: currentMatch.teamAId,
+      teamBId: currentMatch.teamBId,
+    };
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updateMatchDto),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to update match');
+    }
+
+    return await response.json();
+  }
   async updateMatch(
     matchId: number,
     updateData: { teamAGoals: number; teamBGoals: number }
