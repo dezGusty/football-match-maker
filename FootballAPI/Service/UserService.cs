@@ -142,6 +142,12 @@ namespace FootballAPI.Service
             existingUser.Username = updateUserDto.Username;
             existingUser.Role = updateUserDto.Role;
             existingUser.Email = updateUserDto.Email;
+            existingUser.Rating = updateUserDto.Rating;
+            existingUser.FirstName = updateUserDto.FirstName;
+            existingUser.LastName = updateUserDto.LastName;
+            existingUser.Speed = updateUserDto.Speed;
+            existingUser.Errors = updateUserDto.Errors;
+            existingUser.Stamina = updateUserDto.Stamina;
 
             var updatedUser = await _userRepository.UpdateAsync(existingUser);
             return MapToDto(updatedUser);
