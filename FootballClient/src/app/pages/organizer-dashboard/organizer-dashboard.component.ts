@@ -48,11 +48,15 @@ export class OrganizerDashboardComponent {
   showCreateMatchModal = false;
   showEditMatchModal = false;
   showAddPlayersModal = false;
+  showFinalizeMatchModal = false;
   activeTab: 'players' | 'matches' | 'myMatches' = 'matches';
   selectedMatch: MatchDisplay | null = null;
+  selectedRatingSystem: string = 'Linear'; // Default rating system
   matchDetails: any = null; // Will contain team IDs
   teamAPlayers: User[] = [];
   teamBPlayers: User[] = [];
+  teamAScore: number | null = null;
+  teamBScore: number | null = null;
   originalTeamAPlayers: User[] = [];
   originalTeamBPlayers: User[] = [];
   addingPlayers = false;
@@ -218,8 +222,8 @@ export class OrganizerDashboardComponent {
     }
 
     console.log('new player:  ', this.newPlayer);
-    if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10000) {
-      this.playerErrorMessage = 'Rating must be between 0 and 10000.';
+    if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10) {
+      this.playerErrorMessage = 'Rating must be between 0 and 10.';
       return;
     }
 
@@ -276,9 +280,11 @@ export class OrganizerDashboardComponent {
 
     if (
       typeof this.editedPlayer.rating === 'number' &&
-      (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10000)
+      (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10)
     ) {
-      this.notificationService.showError('Rating must be between 0 and 10000.');
+
+      alert('Rating must be between 0 and 10.');
+
       return;
     }
 
@@ -443,6 +449,82 @@ export class OrganizerDashboardComponent {
       default:
         return 'status-unknown';
     }
+  }
+  async openFinalizeMatchModal(match: MatchDisplay) {
+    this.selectedMatch = match;
+
+    try {
+      this.matchDetails = await this.matchService.getMatchDetails(match.id);
+      console.log('Match details received:', this.matchDetails);
+
+      this.originalTeamAPlayers = this.matchDetails.teams[0]?.players || [];
+      this.originalTeamBPlayers = this.matchDetails.teams[1]?.players || [];
+
+      console.log('Team A players:', this.originalTeamAPlayers);
+      console.log('Team B players:', this.originalTeamBPlayers);
+
+      this.teamAPlayers = [...this.originalTeamAPlayers];
+      this.teamBPlayers = [...this.originalTeamBPlayers];
+
+
+      this.showFinalizeMatchModal = true;
+    } catch (error) {
+      console.error('Error loading match details for finalize modal:', error);
+    }
+  }
+  async closeFinalizeMatchModal() {
+    this.showFinalizeMatchModal = false;
+  }
+  async finalizeMatch() {
+    // await this.matchService.updateMatch(this.selectedMatch?.id);
+    // console.log('Match finalized:', this.selectedMatch?.id);
+    
+  }
+  ratingChange(player?: User): string {
+    let playerErrorsChange = 0;
+    switch (player?.errors) {
+      case 1:
+        playerErrorsChange = 0.025;
+        break;
+      case 2:
+        playerErrorsChange = 0.05;
+        break;
+      case 3:
+        playerErrorsChange = 0.075;
+        break;
+      case 4:
+        playerErrorsChange = 0.1;
+        break;
+      default:
+        playerErrorsChange = 0;
+        break;
+    }
+    const totalRating =
+      (player?.rating ?? 0) * 0.005 +
+      (player?.speed ?? 0) * 0.025 +
+      (player?.stamina ?? 0) * 0.025 +
+      playerErrorsChange;
+    
+    if(this.teamAScore != null && this.teamBScore != null){
+      if(this.teamAScore > this.teamBScore){
+        if(this.teamAPlayers.some(p => p.id === player?.id)){
+          return "+" + totalRating.toFixed(2);
+        } else if(this.teamBPlayers.some(p => p.id === player?.id)){
+          return "-" + totalRating.toFixed(2);
+        }
+      }
+      else if(this.teamAScore < this.teamBScore){
+        if(this.teamAPlayers.some(p => p.id === player?.id)){
+          return "-" + totalRating.toFixed(2);
+        } else if(this.teamBPlayers.some(p => p.id === player?.id)){
+          return "+" + totalRating.toFixed(2);
+        }
+      }
+      else {
+        return "+" + (totalRating/2).toFixed(2);
+      }
+    }
+    return "0"
   }
 
   async openAddPlayersModal(match: MatchDisplay) {
@@ -794,4 +876,5 @@ export class OrganizerDashboardComponent {
       this.editMatchLoading = false;
     }
   }
+
 }

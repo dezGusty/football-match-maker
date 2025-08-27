@@ -6,6 +6,7 @@ using FootballAPI.Service;
 using Microsoft.AspNetCore.Authorization;
 using FootballAPI.Utils;
 using System.Security.Claims;
+using FootballAPI.Repository;
 
 namespace FootballAPI.Controllers
 {
@@ -13,11 +14,16 @@ namespace FootballAPI.Controllers
     [Route("api/[controller]")]
     public class MatchesController : ControllerBase
     {
+        private readonly IMatchRepository _matchRepository;
         private readonly IMatchService _matchService;
         private readonly IUserService _userService;
+        private readonly IMatchTeamsService _matchTeamsService;
+        private readonly ITeamPlayersService _teamPlayersService;
 
         public MatchesController(IMatchService matchService, IUserService userService)
         {
+            _matchTeamsService = _matchTeamsService;
+            _teamPlayersService = _teamPlayersService;
             _matchService = matchService;
             _userService = userService;
         }
@@ -85,6 +91,7 @@ namespace FootballAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<MatchDto>> UpdateMatch(int id, UpdateMatchDto updateMatchDto)
         {
+
             try
             {
                 var match = await _matchService.UpdateMatchAsync(id, updateMatchDto);

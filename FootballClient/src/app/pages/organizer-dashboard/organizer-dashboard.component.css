@@ -470,8 +470,10 @@
   top: 0;
   z-index: 1;
   text-align: left;
-  font-size: 0.9rem;
-  letter-spacing: 0.04em;
+
+  font-size: .9rem;
+  letter-spacing: .04em;
+
   text-transform: uppercase;
   background: linear-gradient(
     180deg,
@@ -486,6 +488,7 @@
 
 .matches-table.modern td {
   padding: 14px 18px;
+
   border-bottom: 1px solid rgba(124, 242, 208, 0.08);
 }
 
@@ -648,16 +651,31 @@
   max-height: 90vh;
   overflow: hidden;
 }
-
-.match-info {
+.match-info-fin {
   margin-bottom: 20px;
   padding: 16px;
   background: rgba(124, 242, 208, 0.05);
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border: 1px solid rgba(124, 242, 208, 0.1);
 }
+.match-info-fin select{
+  padding: 8px 12px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid rgba(124,242,208,0.2);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.score-input{
+  
 
-.match-info p {
+}
+
+
+.match-info-fin p {
   margin: 4px 0;
   color: var(--text);
 }
@@ -806,7 +824,20 @@
   margin-bottom: 8px;
   opacity: 0.5;
 }
-
+.teams-panel-fin {
+  background: var(--gradient);
+  border-radius: 12px;
+  border: 1px solid var(--primary-700);
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+}
+.teams-container-fin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  flex: 1;
+}
 /* Teams Panel */
 .teams-panel {
   background: var(--bg-secondary);
@@ -871,9 +902,9 @@
 
 .simple-player-row {
   display: flex;
-  justify-content: space-between;
+  justify-content:space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 8px;
   background: var(--bg-tertiary);
   border-radius: 6px;
   transition: background 0.2s ease;
@@ -1006,6 +1037,7 @@
 }
 
 /* Responsive */
+
 @media (max-width: 980px) {
   .players-table.modern td,
   .players-table.modern th,
@@ -1018,6 +1050,7 @@
     margin: 20px 20px;
   }
 }
+
 
 @media (max-width: 720px) {
   .table-wrapper {
@@ -1055,6 +1088,7 @@
 }
 
 /* Accessibility / Reduced motion */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -1071,4 +1105,5 @@
   padding: 2px 8px;
   font-weight: bold;
   box-shadow: 0 2px 8px rgba(30, 233, 182, 0.12);
+
 }
