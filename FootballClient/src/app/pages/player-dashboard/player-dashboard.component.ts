@@ -95,17 +95,10 @@ export class PlayerDashboardComponent implements OnInit {
 
   async loadPlayerSpecificMatches() {
     try {
-      const response = await fetch(
-        `http://localhost:5145/api/user/${this.currentPlayer!.id}/matches`
+      const playerMatches = await this.matchService.getPlayerMatches();
+      this.upcomingMatches = playerMatches.filter(
+        (match: any) => new Date(match.matchDate) > new Date()
       );
-      if (response.ok) {
-        const playerMatches = await response.json();
-        this.upcomingMatches = playerMatches.filter(
-          (match: any) => new Date(match.matchDate) > new Date()
-        );
-
-        return;
-      }
     } catch (error) {}
   }
 
