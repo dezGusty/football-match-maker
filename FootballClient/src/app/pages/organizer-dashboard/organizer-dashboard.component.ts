@@ -35,6 +35,7 @@ export class OrganizerDashboardComponent {
   ) {}
 
   players: User[] = [];
+  availablePlayers: User[] = [];
   filteredPlayers: User[] = [];
   matches: MatchDisplay[] = [];
   searchTerm: string = '';
@@ -58,11 +59,31 @@ export class OrganizerDashboardComponent {
   playerErrorMessage = '';
   playerSuccessMessage = '';
 
+  private async loadAvailablePlayers() {
+    const organiserId = this.authService.getUserId()!;
+
+    this.availablePlayers = [...this.players];
+
+    try {
+      const organiser = await this.UserService.getUserById(organiserId);
+      if (organiser) {
+        const organiserAsPlayer: User = {
+          ...organiser,
+          lastName: `${organiser.lastName} (myself)`,
+        };
+        this.availablePlayers = [organiserAsPlayer, ...this.availablePlayers];
+      }
+    } catch (error) {
+      console.error('Error fetching organizer details:', error);
+    }
+  }
+
   async init() {
     const role = this.authService.getUserRole();
 
     if (role === UserRole.ADMIN) {
       this.players = await this.UserService.getPlayers();
+      this.availablePlayers = [...this.players];
     } else if (role === UserRole.ORGANISER) {
       this.players = await this.UserService.getPlayersForOrganiser(
         this.authService.getUserId()!
@@ -341,6 +362,7 @@ export class OrganizerDashboardComponent {
     this.addPlayersSuccessMessage = '';
 
     try {
+      await this.loadAvailablePlayers();
       this.matchDetails = await this.matchService.getMatchDetails(match.id);
       console.log('Match details received:', this.matchDetails);
 

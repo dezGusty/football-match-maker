@@ -276,7 +276,7 @@ namespace FootballAPI.Service
             if (match == null) return false;
 
             var organiserPlayers = await _userService.GetPlayersByOrganiserAsync(match.OrganiserId);
-            if (!organiserPlayers.Any(p => p.Id == userId))
+            if (!organiserPlayers.Any(p => p.Id == userId) && userId != match.OrganiserId)
                 return false;
 
             var matchTeam = await _matchTeamsService.GetMatchTeamByMatchIdAndTeamIdAsync(matchId, teamId);

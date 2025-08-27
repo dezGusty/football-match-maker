@@ -52,7 +52,6 @@ export class PlayerDashboardComponent implements OnInit {
     await this.loadAvailableMatches();
     await this.loadPublicMatches();
     await this.loadPlayerSpecificMatches();
-    // await this.loadMatchesByFiltering();
   }
 
   async loadPlayerData() {
@@ -96,17 +95,10 @@ export class PlayerDashboardComponent implements OnInit {
 
   async loadPlayerSpecificMatches() {
     try {
-      const response = await fetch(
-        `http://localhost:5145/api/user/${this.currentPlayer!.id}/matches`
+      const playerMatches = await this.matchService.getPlayerMatches();
+      this.upcomingMatches = playerMatches.filter(
+        (match: any) => new Date(match.matchDate) > new Date()
       );
-      if (response.ok) {
-        const playerMatches = await response.json();
-        this.upcomingMatches = playerMatches.filter(
-          (match: any) => new Date(match.matchDate) > new Date()
-        );
-
-        return;
-      }
     } catch (error) {}
   }
 
@@ -189,6 +181,7 @@ export class PlayerDashboardComponent implements OnInit {
   async loadMatchDetails(match: Match) {
     this.selectedMatch = match;
     this.selectedTeamAName = match.teamAName!;
+
     this.selectedTeamBName = match.teamBName!;
 
     try {
@@ -202,28 +195,20 @@ export class PlayerDashboardComponent implements OnInit {
       );
 
       this.selectedTeamAPlayers = teamA
-        ? teamA.players.map(
-            (p: any) => `${p.firstName} ${p.lastName} - ${p.rating}`
-          )
+        ? teamA.players.map((p: any) => `${p.username} - ${p.rating}`)
         : [];
 
       this.selectedTeamBPlayers = teamB
-        ? teamB.players.map(
-            (p: any) => `${p.firstName} ${p.lastName} - ${p.rating}`
-          )
+        ? teamB.players.map((p: any) => `${p.username} - ${p.rating}`)
         : [];
     } catch (error) {
       this.selectedTeamAPlayers = match.playerHistory
         .filter((p) => p.teamId === match.teamAId && p.user)
-        .map(
-          (p) => `${p.user.firstName} ${p.user.lastName} - ${p.user.rating}`
-        );
+        .map((p) => `${p.user.username}- ${p.user.rating}`);
 
       this.selectedTeamBPlayers = match.playerHistory
         .filter((p) => p.teamId === match.teamBId && p.user)
-        .map(
-          (p) => `${p.user.firstName} ${p.user.lastName} - ${p.user.rating}`
-        );
+        .map((p) => `${p.user.username} - ${p.user.rating}`);
     }
   }
 
