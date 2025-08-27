@@ -155,6 +155,13 @@
             >
               Edit
             </button>
+            <button
+              class="action-btn finalize-btn"
+              title="Finalize Match"
+              (click)="openFinalizeMatchModal(match)"
+              >
+              Finalize Match
+            </button>
           </td>
         </tr>
       </tbody>
@@ -320,6 +327,155 @@
     </table>
   </div>
 
+  @if (showFinalizeMatchModal) {
+    <div class="modal-backdrop" (click)="closeFinalizeMatchModal()">
+      <div
+        class="modal-content glass add-players-modal"
+        (click)="$event.stopPropagation()"
+      >
+        <button
+          class="close-modal-btn"
+          (click)="closeFinalizeMatchModal()"
+          title="Close"
+        >
+          &times;
+        </button>
+
+        <h3>Finalize Match</h3>
+        <div class="match-info-fin">
+          <div>
+            <p>
+              <strong
+              >{{ selectedMatch?.teamAName || "TeamA" }} vs
+                {{ selectedMatch?.teamBName || "TeamB" }}</strong
+              >
+            </p>
+            <p>
+              {{ selectedMatch?.matchDate | date : "short" }} -
+              {{ selectedMatch?.location }}
+            </p>
+          </div>
+          <div>
+            <select [(ngModel)]="selectedRatingSystem">
+              <option value="Linear">Linear</option>
+              <option value="Performance">Performance</option>
+              <!-- <option value="Vote">Vote</option> -->
+            </select>
+          </div>
+
+        </div>
+        <div class="teams-panel-fin">
+          <div class="teams-container-fin">
+            <!-- Team 1 -->
+            <div class="team-table">
+              <div class="team-header">
+                <h4>Team 1</h4>
+                <div class="team-stats">
+                  <input
+                    class="score-input"
+                    type="number"
+                    placeholder="Team 1 Score"
+                    [(ngModel)]="teamAScore"
+                    min="0"
+                    step="1">
+                </div>
+              </div>
+
+              <div class="team-players-simple">
+                <div
+                  *ngFor="let player of teamAPlayers; let i = index"
+                  class="simple-player-row"
+                >
+                  <span class="player-name"
+                  >{{ player.firstName }} {{ player.lastName }}
+                  </span>
+                  <span class="player-rating">
+                    Rating: {{ player.rating || 'N/A' }}
+                     {{ratingChange(player)}}
+                  </span>
+                
+                </div>
+
+                <!-- Empty slots -->
+                <div
+                  *ngFor="
+                    let slot of getEmptySlots(teamAPlayers.length);
+                    let i = index
+                  "
+                  class="empty-slot-simple"
+                >
+                  <span class="empty-text">Empty slot</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Team 2 -->
+            <div class="team-table">
+              <div class="team-header">
+                <h4>Team 2</h4>
+                <div class="team-stats">
+                  <input
+                    class="score-input"
+                    type="number"
+                    placeholder="Team 2 Score"
+                    [(ngModel)]="teamBScore"
+                    min="0"
+                    step="1">
+                </div>
+              </div>
+
+              <div class="team-players-simple">
+                <div
+                  *ngFor="let player of teamBPlayers; let i = index"
+                  class="simple-player-row"
+                >
+                  <span class="player-name"
+                  >{{ player.firstName }} {{ player.lastName }}
+                  </span>
+                  <span class="player-rating">
+                    Rating: {{ player.rating || 'N/A' }}
+                     {{ratingChange(player)}}
+                  </span>
+                </div>
+
+                <!-- Empty slots -->
+                <div
+                  *ngFor="
+                    let slot of getEmptySlots(teamBPlayers.length);
+                    let i = index
+                  "
+                  class="empty-slot-simple"
+                >
+                  <span class="empty-text">Empty slot</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Messages -->
+        <div *ngIf="addPlayersErrorMessage" class="error-message">
+          {{ addPlayersErrorMessage }}
+        </div>
+
+        <div *ngIf="addPlayersSuccessMessage" class="success-message">
+          {{ addPlayersSuccessMessage }}
+        </div>
+
+        <!-- Actions -->
+        <div class="modal-actions">
+          <button
+            class="btn action-btn"
+            (click)="finalizeMatch()"
+          >
+            Finalize Match
+          </button>
+          <button class="btn action-btn" (click)="closeFinalizeMatchModal()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  }
   <!-- Add Player Modal -->
   @if (showAddModal) {
   <div class="modal-backdrop" (click)="showAddModal = false">
