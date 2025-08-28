@@ -155,7 +155,7 @@
 .menu button {
   width: 100%;
   padding: 1rem 1.2rem;
-  background-color: var(--surface);
+  background-color: rgba(255, 255, 255, 0.221);
   border: none;
   border-radius: 8px;
   color: var(--muted);
@@ -193,6 +193,11 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
