@@ -194,6 +194,28 @@ namespace FootballAPI.Repository
             await _context.SaveChangesAsync();
         }
 
+        public async Task<bool> RemovePlayerOrganiserRelationAsync(int organizerId, int playerId)
+        {
+            try
+            {
+                var relation = await _context.PlayerOrganisers
+                    .FirstOrDefaultAsync(po => po.OrganiserId == organizerId && po.PlayerId == playerId);
+                
+                if (relation != null)
+                {
+                    _context.PlayerOrganisers.Remove(relation);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         // Organizer delegation functionality
         public async Task<OrganizerDelegate> CreateDelegationAsync(OrganizerDelegate delegation)
         {

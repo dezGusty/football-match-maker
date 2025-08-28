@@ -282,6 +282,8 @@ namespace FootballAPI.Service
 
             var createdDelegation = await _userRepository.CreateDelegationAsync(delegation);
 
+            await _userRepository.RemovePlayerOrganiserRelationAsync(organizerId, dto.FriendUserId);
+
             await _userRepository.TransferPlayerOrganiserRelationsAsync(organizerId, dto.FriendUserId);
 
             await _userRepository.UpdateUserRoleAndDelegationStatus(organizerId, UserRole.ORGANISER, true, dto.FriendUserId, true);
@@ -302,7 +304,12 @@ namespace FootballAPI.Service
 
             await _userRepository.TransferPlayerOrganiserRelationsAsync(delegation.DelegateUserId, organizerId);
 
-            await _userRepository.RestoreOrganizerPlayerRelationAsync(organizerId);
+            await _userRepository.AddPlayerOrganiserRelationAsync(new PlayerOrganiser
+            {
+                OrganiserId = organizerId,
+                PlayerId = delegation.DelegateUserId,
+                CreatedAt = DateTime.Now
+            });
 
             await _userRepository.UpdateUserRoleAndDelegationStatus(organizerId, UserRole.ORGANISER, false, null, false);
             await _userRepository.UpdateUserRoleAndDelegationStatus(delegation.DelegateUserId, UserRole.PLAYER, false, null, false);

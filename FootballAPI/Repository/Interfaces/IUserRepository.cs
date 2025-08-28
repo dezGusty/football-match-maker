@@ -29,6 +29,7 @@ namespace FootballAPI.Repository
         Task<string> UpdatePlayerProfileImageAsync(int userId, IFormFile imageFile);
         Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates);
         Task AddPlayerOrganiserRelationAsync(PlayerOrganiser relation);
+        Task<bool> RemovePlayerOrganiserRelationAsync(int organizerId, int playerId);
 
         // Organizer delegation functionality
         Task<OrganizerDelegate> CreateDelegationAsync(OrganizerDelegate delegation);
