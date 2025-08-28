@@ -30,15 +30,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  
+}
+.logo-container:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease-in-out;
 }
 
 .logo {
   height: 60px;
-  transition: transform 0.3s ease;
-}
-
-.logo:hover {
-  transform: scale(1.05);
 }
 
 .header-profile {
@@ -71,8 +71,6 @@
 }
 .app-title:hover {
   color: var(--text);
-  transform: scale(1.05);
-  transition: 0.2s ease-in-out;
 }
 .profile-username {
   font-size: 1.08rem;
