@@ -33,7 +33,7 @@ namespace FootballAPI.Models
         [StringLength(50)]
         public string LastName { get; set; } = string.Empty;
 
-        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
+        [Range(0.0f, 10.0f, ErrorMessage = "Rating must be between 0.0 and 10.0")]
         public float Rating { get; set; } = 0.0f;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -42,14 +42,14 @@ namespace FootballAPI.Models
 
         public DateTime? DeletedAt { get; set; }
 
-        [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
-        public int Speed { get; set; } = 2; // 1 = Low, 2 = Medium, 3 = High
+        [Range(1, 4, ErrorMessage = "Speed must be between 1 (Low) and 4 (Extreme)")]
+        public int Speed { get; set; } = 2;
 
-        [Range(1, 3, ErrorMessage = "Stamina must be between 1 (Low) and 3 (High)")]
-        public int Stamina { get; set; } = 2; // 1 = Low, 2 = Medium, 3 = High
+        [Range(1, 4, ErrorMessage = "Stamina must be between 1 (Low) and 4 (Extreme)")]
+        public int Stamina { get; set; } = 2;
 
-        [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
-        public int Errors { get; set; } = 2; // 1 = Low, 2 = Medium, 3 = High (Low = Few errors, High = Many errors)
+        [Range(1, 4, ErrorMessage = "Errors must be between 1 (Low) and 4 (Extreme)")]
+        public int Errors { get; set; } = 2; 
 
         [StringLength(500)]
         public string? ProfileImagePath { get; set; }
