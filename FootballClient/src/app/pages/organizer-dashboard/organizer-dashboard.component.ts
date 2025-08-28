@@ -175,7 +175,7 @@ export class OrganizerDashboardComponent {
 
   async loadMatches() {
     try {
-      const allMatches = await this.matchService.getAllMatches();
+      const allMatches = await this.matchService.getMatchesByOrganiser();
       this.matches = allMatches.map((match) => ({
         id: match.id,
         matchDate: match.matchDate,
@@ -282,7 +282,6 @@ export class OrganizerDashboardComponent {
       typeof this.editedPlayer.rating === 'number' &&
       (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10)
     ) {
-
       alert('Rating must be between 0 and 10.');
 
       return;
@@ -466,7 +465,6 @@ export class OrganizerDashboardComponent {
       this.teamAPlayers = [...this.originalTeamAPlayers];
       this.teamBPlayers = [...this.originalTeamBPlayers];
 
-
       this.showFinalizeMatchModal = true;
     } catch (error) {
       console.error('Error loading match details for finalize modal:', error);
@@ -476,12 +474,10 @@ export class OrganizerDashboardComponent {
     this.showFinalizeMatchModal = false;
   }
   async finalizeMatch() {
-    await this.matchService.finalizeMatchServ(
-      this.selectedMatch!.id);
-    
+    await this.matchService.finalizeMatchServ(this.selectedMatch!.id);
   }
   ratingChange(player?: User): string {
-    if(this.selectedRatingSystem == "Performance"){
+    if (this.selectedRatingSystem == 'Performance') {
       let playerErrorsChange = 0;
       switch (player?.errors) {
         case 1:
@@ -505,57 +501,50 @@ export class OrganizerDashboardComponent {
         (player?.speed ?? 0) * 0.025 +
         (player?.stamina ?? 0) * 0.025 +
         playerErrorsChange;
-      
-      if(this.teamAScore != null && this.teamBScore != null){
-        if(this.teamAScore > this.teamBScore){
-          if(this.teamAPlayers.some(p => p.id === player?.id)){
-            return "+" + totalRating.toFixed(2);
-          } else if(this.teamBPlayers.some(p => p.id === player?.id)){
-            return "-" + totalRating.toFixed(2);
+
+      if (this.teamAScore != null && this.teamBScore != null) {
+        if (this.teamAScore > this.teamBScore) {
+          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
+            return '+' + totalRating.toFixed(2);
+          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
+            return '-' + totalRating.toFixed(2);
           }
-        }
-        else if(this.teamAScore < this.teamBScore){
-          if(this.teamAPlayers.some(p => p.id === player?.id)){
-            return "-" + totalRating.toFixed(2);
-          } else if(this.teamBPlayers.some(p => p.id === player?.id)){
-            return "+" + totalRating.toFixed(2);
+        } else if (this.teamAScore < this.teamBScore) {
+          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
+            return '-' + totalRating.toFixed(2);
+          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
+            return '+' + totalRating.toFixed(2);
           }
-        }
-        else {
-          return "+" + (totalRating/2).toFixed(2);
+        } else {
+          return '+' + (totalRating / 2).toFixed(2);
         }
       }
-      return "0"
-    }
-    else if(this.selectedRatingSystem == "Linear"){
-      if(this.teamAScore != null && this.teamBScore != null){
+      return '0';
+    } else if (this.selectedRatingSystem == 'Linear') {
+      if (this.teamAScore != null && this.teamBScore != null) {
         const scoreDiff = Math.abs(this.teamAScore - this.teamBScore);
         const ratingChange = Math.min(0.1 * scoreDiff, 1); // Max change capped at 1 point
 
-        if(this.teamAScore > this.teamBScore){
-          if(this.teamAPlayers.some(p => p.id === player?.id)){
-            return "+" + ratingChange.toFixed(2);
-          } else if(this.teamBPlayers.some(p => p.id === player?.id)){
-            return "-" + ratingChange.toFixed(2);
+        if (this.teamAScore > this.teamBScore) {
+          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
+            return '+' + ratingChange.toFixed(2);
+          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
+            return '-' + ratingChange.toFixed(2);
           }
-        }
-        else if(this.teamAScore < this.teamBScore){
-          if(this.teamAPlayers.some(p => p.id === player?.id)){
-            return "-" + ratingChange.toFixed(2);
-          } else if(this.teamBPlayers.some(p => p.id === player?.id)){
-            return "+" + ratingChange.toFixed(2);
+        } else if (this.teamAScore < this.teamBScore) {
+          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
+            return '-' + ratingChange.toFixed(2);
+          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
+            return '+' + ratingChange.toFixed(2);
           }
-        }
-        else {
-          return "0.00";
+        } else {
+          return '0.00';
         }
       }
-      return "0.00"
+      return '0.00';
+    } else {
+      return '0.00';
     }
-    else{
-      return "0.00"
-    }
-    
   }
 
   async openAddPlayersModal(match: MatchDisplay) {
@@ -907,5 +896,4 @@ export class OrganizerDashboardComponent {
       this.editMatchLoading = false;
     }
   }
-
 }
