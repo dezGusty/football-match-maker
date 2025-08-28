@@ -302,6 +302,8 @@ namespace FootballAPI.Service
 
             await _userRepository.TransferPlayerOrganiserRelationsAsync(delegation.DelegateUserId, organizerId);
 
+            await _userRepository.RestoreOrganizerPlayerRelationAsync(organizerId);
+
             await _userRepository.UpdateUserRoleAndDelegationStatus(organizerId, UserRole.ORGANISER, false, null, false);
             await _userRepository.UpdateUserRoleAndDelegationStatus(delegation.DelegateUserId, UserRole.PLAYER, false, null, false);
 

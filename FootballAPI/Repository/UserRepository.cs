@@ -248,10 +248,13 @@ namespace FootballAPI.Repository
                     .Where(po => po.OrganiserId == fromOrganizerId)
                     .ToListAsync();
 
+                var relationsToTransfer = existingRelations
+                    .Where(po => po.PlayerId != fromOrganizerId)
+                    .ToList();
 
                 _context.PlayerOrganisers.RemoveRange(existingRelations);
 
-                var newRelations = existingRelations.Select(relation => new PlayerOrganiser
+                var newRelations = relationsToTransfer.Select(relation => new PlayerOrganiser
                 {
                     OrganiserId = toOrganizerId,
                     PlayerId = relation.PlayerId,
@@ -261,6 +264,34 @@ namespace FootballAPI.Repository
                 await _context.PlayerOrganisers.AddRangeAsync(newRelations);
 
                 await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RestoreOrganizerPlayerRelationAsync(int organizerId)
+        {
+            try
+            {
+                var existingRelation = await _context.PlayerOrganisers
+                    .FirstOrDefaultAsync(po => po.OrganiserId == organizerId && po.PlayerId == organizerId);
+
+                if (existingRelation == null)
+                {
+                    var newRelation = new PlayerOrganiser
+                    {
+                        OrganiserId = organizerId,
+                        PlayerId = organizerId,
+                        CreatedAt = DateTime.Now
+                    };
+
+                    await _context.PlayerOrganisers.AddAsync(newRelation);
+                    await _context.SaveChangesAsync();
+                }
+
                 return true;
             }
             catch
