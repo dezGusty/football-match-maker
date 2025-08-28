@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface SetPasswordRequest {
   token: string;
@@ -15,7 +16,7 @@ export interface SetPasswordResponse {
   providedIn: 'root',
 })
 export class PasswordService {
-  private readonly apiUrl = 'https://localhost:5145/api/Auth';
+  private readonly apiUrl = `${environment.apiUrl}/Auth`;
   constructor(private http: HttpClient) {}
 
   setPassword(request: SetPasswordRequest): Observable<SetPasswordResponse> {
