@@ -342,6 +342,26 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [HttpGet("organiser/matches")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatchesByOrganiserAsync()
+        {
+            try
+            {
+                var organiserId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var matches = await _matchService.GetMatchesByOrganiserAsync(organiserId);
+                return Ok(matches);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error getting matches by organiser: {ex.Message}");
+            }
+        }
+
         [HttpDelete("{matchId}/players/{userId}")]
         [Authorize]
         public async Task<ActionResult> RemovePlayerFromMatch(int matchId, int userId)

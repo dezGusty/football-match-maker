@@ -334,6 +334,18 @@ export class MatchService {
     return await response.json();
   }
 
+  async getMatchesByOrganiser(): Promise<any[]> {
+    const response = await fetch(`${this.baseUrl}/matches/organiser/matches`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch matches by organiser');
+    }
+
+    return await response.json();
+  }
+
   async addPlayerToMatch(
     matchId: number,
     playerId: number,
@@ -380,10 +392,13 @@ export class MatchService {
   }
 
   async makeMatchPrivate(matchId: number): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}/unpublish`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-    });
+    const response = await fetch(
+      `${this.baseUrl}/matches/${matchId}/unpublish`,
+      {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
