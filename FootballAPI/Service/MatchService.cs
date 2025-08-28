@@ -3,6 +3,7 @@ using FootballAPI.Models;
 using FootballAPI.Models.Enums;
 using FootballAPI.Repository;
 using FootballAPI.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace FootballAPI.Service
 {
@@ -672,6 +673,35 @@ namespace FootballAPI.Service
             }
 
             return false;
+        }
+
+        public async Task<int> GetEffectiveOrganizerId(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                throw new ArgumentException("User not found");
+
+            // If user is delegating (original organizer now acting as player), 
+            // return the delegated user's ID
+            if (user.IsDelegatingOrganizer && user.DelegatedToUserId.HasValue)
+            {
+                return user.DelegatedToUserId.Value;
+            }
+
+            // If user is acting as a delegate (player now acting as organizer),
+            // check if they have an active delegation
+            var receivedDelegation = await _context.OrganizerDelegates
+                .FirstOrDefaultAsync(d => d.DelegateUserId == userId && d.IsActive);
+
+            if (receivedDelegation != null)
+            {
+                // They are acting on behalf of another organizer, 
+                // but for match operations, they are the effective organizer
+                return userId;
+            }
+
+            // Regular case: user is the organizer
+            return userId;
         }
     }
 }

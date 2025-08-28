@@ -16,6 +16,7 @@ namespace FootballAPI.Data
         public DbSet<FriendRequest> FriendRequests { get; set; }
         public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
         public DbSet<PlayerOrganiser> PlayerOrganisers { get; set; }
+        public DbSet<OrganizerDelegate> OrganizerDelegates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +37,11 @@ namespace FootballAPI.Data
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
                 entity.HasIndex(e => e.Email).IsUnique();
                 entity.HasIndex(e => e.Username).IsUnique();
+                
+                entity.HasOne(e => e.DelegatedToUser)
+                    .WithMany()
+                    .HasForeignKey(e => e.DelegatedToUserId)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
 
 
@@ -143,6 +149,28 @@ namespace FootballAPI.Data
                     .WithMany(u => u.PlayerRelations)
                     .HasForeignKey(e => e.PlayerId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // OrganizerDelegate configurations
+            modelBuilder.Entity<OrganizerDelegate>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.Notes).HasMaxLength(500);
+
+                entity.HasOne(e => e.OriginalOrganizer)
+                    .WithMany(u => u.OriginalDelegations)
+                    .HasForeignKey(e => e.OriginalOrganizerId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(e => e.DelegateUser)
+                    .WithMany(u => u.ReceivedDelegations)
+                    .HasForeignKey(e => e.DelegateUserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => new { e.OriginalOrganizerId, e.IsActive })
+                    .IsUnique()
+                    .HasFilter("[IsActive] = 1");
             });
 
             SeedData(modelBuilder);

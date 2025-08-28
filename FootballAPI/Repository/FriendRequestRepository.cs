@@ -100,5 +100,15 @@ namespace FootballAPI.Repository
 
             return [.. asOrganiser.Union(asPlayer).OrderBy(u => u.Username)];
         }
+
+        public async Task<IEnumerable<FriendRequest>> GetAcceptedFriendsAsync(int userId)
+        {
+            return await _context.FriendRequests
+                .Include(fr => fr.Sender)
+                .Include(fr => fr.Receiver)
+                .Where(fr => (fr.SenderId == userId || fr.ReceiverId == userId) && 
+                            fr.Status == FriendRequestStatus.Accepted)
+                .ToListAsync();
+        }
     }
 }

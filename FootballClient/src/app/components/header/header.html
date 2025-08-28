@@ -7,6 +7,13 @@
     >
       <span class="material-icons profile-icon">person</span>
       <span class="profile-username">{{ username }}</span>
+      @if (isDelegating() || isDelegate()) {
+      <div class="delegation-indicator" [title]="getDelegationText()">
+        <span class="delegation-icon">
+          {{ isDelegating() ? "⚠️" : "👑" }}
+        </span>
+      </div>
+      }
     </div>
   </div>
   <div class="header-center">
@@ -38,6 +45,8 @@
     <ul>
       <li *ngIf="isOrganizer()">
         <button (click)="navigateToDashboard()">Home</button>
+      </li>
+      <li *ngIf="isOrganizer()">
         <button (click)="navigateTo('/manage-players')">Players</button>
       </li>
 

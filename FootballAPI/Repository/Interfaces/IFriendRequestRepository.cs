@@ -14,5 +14,6 @@ namespace FootballAPI.Repository
         Task<FriendRequest> UpdateAsync(FriendRequest friendRequest);
         Task<bool> DeleteAsync(int id);
         Task<bool> ExistsPendingRequestAsync(int senderId, int receiverId);
+        Task<IEnumerable<FriendRequest>> GetAcceptedFriendsAsync(int userId);
     }
 }

@@ -1,0 +1,75 @@
+<app-header></app-header>
+
+<div class="delegated-organizer-container">
+  <div class="content">
+    <div class="header-section">
+      <h1>Organizer Role Delegated</h1>
+      <p class="subtitle">Your organizer role has been temporarily delegated to a friend</p>
+    </div>
+
+    <div class="status-card" *ngIf="delegationStatus && isDelegatedOrganizer()">
+      <div class="status-header">
+        <h2>Delegation Status</h2>
+        <span class="status-badge active">Active</span>
+      </div>
+
+      <div class="delegation-details">
+        <div class="detail-item">
+          <label>Delegated To:</label>
+          <span class="delegate-name">{{ getDelegateName() }}</span>
+        </div>
+
+        <div class="detail-item">
+          <label>Delegation Date:</label>
+          <span>{{ getDelegationDate() }}</span>
+        </div>
+
+        <div class="detail-item">
+          <label>Notes:</label>
+          <span class="notes">{{ getDelegationNotes() }}</span>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-card">
+          <h3>What does this mean?</h3>
+          <ul>
+            <li>Your friend is now acting as the organizer</li>
+            <li>They have access to organize matches and manage players</li>
+            <li>You retain your organizer role but cannot access organizer functions</li>
+            <li>You can reclaim your role at any time</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button 
+          class="reclaim-btn" 
+          (click)="reclaimOrganizerRole()" 
+          [disabled]="loading">
+          <span *ngIf="loading" class="spinner"></span>
+          {{ loading ? 'Reclaiming...' : 'Reclaim My Organizer Role' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="no-delegation" *ngIf="!loading && (!delegationStatus || !isDelegatedOrganizer())">
+      <h2>No Active Delegation</h2>
+      <p>You don't have any active delegation. Redirecting to organizer dashboard...</p>
+    </div>
+
+    <div class="loading" *ngIf="loading && !delegationStatus">
+      <div class="spinner"></div>
+      <p>Loading delegation status...</p>
+    </div>
+
+    <div class="messages">
+      <div class="success-message" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -91,8 +91,6 @@ namespace FootballAPI.Service
 
             var createdUser = await _userRepository.CreateAsync(user);
 
-            // Player properties are now part of User model
-
             return MapToDto(createdUser);
         }
 
@@ -249,6 +247,120 @@ namespace FootballAPI.Service
 
                 await _userRepository.AddPlayerOrganiserRelationAsync(relation);
             }
+        }
+
+        public async Task<OrganizerDelegateDto> DelegateOrganizerRoleAsync(int organizerId, DelegateOrganizerRoleDto dto)
+        {
+            var organizer = await _userRepository.GetByIdAsync(organizerId);
+            if (organizer == null || organizer.Role != UserRole.ORGANISER)
+                throw new ArgumentException("User is not an organizer");
+
+            var existingDelegation = await _userRepository.GetActiveDelegationByOrganizerId(organizerId);
+            if (existingDelegation != null)
+                throw new InvalidOperationException("User already has an active delegation");
+
+            var friend = await _userRepository.GetByIdAsync(dto.FriendUserId);
+            if (friend == null || friend.Role != UserRole.PLAYER)
+                throw new ArgumentException("Friend must be a player");
+
+            var areFriends = await _userRepository.AreFriends(organizerId, dto.FriendUserId);
+            if (!areFriends)
+                throw new ArgumentException("Users must be friends to delegate organizer role");
+
+            var friendDelegation = await _userRepository.GetActiveDelegationByDelegateId(dto.FriendUserId);
+            if (friendDelegation != null)
+                throw new InvalidOperationException("Friend is already acting as a delegate for another organizer");
+
+            var delegation = new OrganizerDelegate
+            {
+                OriginalOrganizerId = organizerId,
+                DelegateUserId = dto.FriendUserId,
+                Notes = dto.Notes,
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true
+            };
+
+            var createdDelegation = await _userRepository.CreateDelegationAsync(delegation);
+
+            await _userRepository.RemovePlayerOrganiserRelationAsync(organizerId, dto.FriendUserId);
+
+            await _userRepository.TransferPlayerOrganiserRelationsAsync(organizerId, dto.FriendUserId);
+
+            await _userRepository.UpdateUserRoleAndDelegationStatus(organizerId, UserRole.ORGANISER, true, dto.FriendUserId, true);
+            await _userRepository.UpdateUserRoleAndDelegationStatus(dto.FriendUserId, UserRole.ORGANISER, false, null, false);
+
+            return MapToDelegationDto(createdDelegation, organizer, friend);
+        }
+
+        public async Task<bool> ReclaimOrganizerRoleAsync(int organizerId, ReclaimOrganizerRoleDto dto)
+        {
+            var delegation = await _userRepository.GetActiveDelegationByOrganizerId(organizerId);
+            if (delegation == null || delegation.Id != dto.DelegationId)
+                return false;
+
+            var success = await _userRepository.ReclaimDelegationAsync(dto.DelegationId, organizerId);
+            if (!success)
+                return false;
+
+            await _userRepository.TransferPlayerOrganiserRelationsAsync(delegation.DelegateUserId, organizerId);
+
+            await _userRepository.AddPlayerOrganiserRelationAsync(new PlayerOrganiser
+            {
+                OrganiserId = organizerId,
+                PlayerId = delegation.DelegateUserId,
+                CreatedAt = DateTime.Now
+            });
+
+            await _userRepository.UpdateUserRoleAndDelegationStatus(organizerId, UserRole.ORGANISER, false, null, false);
+            await _userRepository.UpdateUserRoleAndDelegationStatus(delegation.DelegateUserId, UserRole.PLAYER, false, null, false);
+
+            return true;
+        }
+
+        public async Task<DelegationStatusDto> GetDelegationStatusAsync(int userId)
+        {
+            var currentDelegation = await _userRepository.GetActiveDelegationByOrganizerId(userId);
+            var receivedDelegation = await _userRepository.GetActiveDelegationByDelegateId(userId);
+
+            return new DelegationStatusDto
+            {
+                IsDelegating = currentDelegation != null,
+                IsDelegate = receivedDelegation != null,
+                CurrentDelegation = currentDelegation != null ? MapToDelegationDto(currentDelegation, currentDelegation.OriginalOrganizer, currentDelegation.DelegateUser) : null,
+                ReceivedDelegation = receivedDelegation != null ? MapToDelegationDto(receivedDelegation, receivedDelegation.OriginalOrganizer, receivedDelegation.DelegateUser) : null
+            };
+        }
+
+        public async Task<IEnumerable<UserDto>> GetFriendsAsync(int userId)
+        {
+            var friendRequests = await _friendRequestRepository.GetAcceptedFriendsAsync(userId);
+            var friendIds = friendRequests.Select(fr => fr.SenderId == userId ? fr.ReceiverId : fr.SenderId);
+
+            var friends = new List<User>();
+            foreach (var friendId in friendIds)
+            {
+                var friend = await _userRepository.GetByIdAsync(friendId);
+                if (friend != null)
+                    friends.Add(friend);
+            }
+
+            return friends.Select(MapToDto);
+        }
+
+        private OrganizerDelegateDto MapToDelegationDto(OrganizerDelegate delegation, User originalOrganizer, User delegateUser)
+        {
+            return new OrganizerDelegateDto
+            {
+                Id = delegation.Id,
+                OriginalOrganizerId = delegation.OriginalOrganizerId,
+                OriginalOrganizerName = $"{originalOrganizer.FirstName} {originalOrganizer.LastName}",
+                DelegateUserId = delegation.DelegateUserId,
+                DelegateUserName = $"{delegateUser.FirstName} {delegateUser.LastName}",
+                CreatedAt = delegation.CreatedAt,
+                ReclaimedAt = delegation.ReclaimedAt,
+                IsActive = delegation.IsActive,
+                Notes = delegation.Notes
+            };
         }
     }
 }

@@ -4,6 +4,7 @@ using FootballAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250827155521_InitialWithDelegation")]
+    partial class InitialWithDelegation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -304,9 +307,6 @@ namespace FootballAPI.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<bool>("IsDelegated")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsDelegatingOrganizer")
                         .HasColumnType("bit");
 
@@ -366,7 +366,6 @@ namespace FootballAPI.Migrations
                             Email = "ion.popescu@gmail.com",
                             Errors = 2,
                             FirstName = "Ion",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Popescu",
                             Password = "default123",
@@ -384,7 +383,6 @@ namespace FootballAPI.Migrations
                             Email = "marius.ionescu@gmail.com",
                             Errors = 2,
                             FirstName = "Marius",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Ionescu",
                             Password = "default123",
@@ -402,7 +400,6 @@ namespace FootballAPI.Migrations
                             Email = "admin@gmail.com",
                             Errors = 2,
                             FirstName = "Admin",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "User",
                             Password = "default123",
@@ -420,7 +417,6 @@ namespace FootballAPI.Migrations
                             Email = "organiser@gmail.com",
                             Errors = 2,
                             FirstName = "Organiser",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "User",
                             Password = "default123",
@@ -438,7 +434,6 @@ namespace FootballAPI.Migrations
                             Email = "alex.georgescu@gmail.com",
                             Errors = 2,
                             FirstName = "Alex",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Georgescu",
                             Password = "default123",
@@ -456,7 +451,6 @@ namespace FootballAPI.Migrations
                             Email = "razvan.moldovan@gmail.com",
                             Errors = 2,
                             FirstName = "Razvan",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Moldovan",
                             Password = "default123",
@@ -474,7 +468,6 @@ namespace FootballAPI.Migrations
                             Email = "cristian.stancu@gmail.com",
                             Errors = 2,
                             FirstName = "Cristian",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Stancu",
                             Password = "default123",
@@ -492,7 +485,6 @@ namespace FootballAPI.Migrations
                             Email = "andrei.vasilescu@gmail.com",
                             Errors = 2,
                             FirstName = "Andrei",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Vasilescu",
                             Password = "default123",
@@ -510,7 +502,6 @@ namespace FootballAPI.Migrations
                             Email = "florin.dumitru@gmail.com",
                             Errors = 2,
                             FirstName = "Florin",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Dumitru",
                             Password = "default123",
@@ -528,7 +519,6 @@ namespace FootballAPI.Migrations
                             Email = "gabriel.ciobanu@gmail.com",
                             Errors = 2,
                             FirstName = "Gabriel",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Ciobanu",
                             Password = "default123",
@@ -546,7 +536,6 @@ namespace FootballAPI.Migrations
                             Email = "lucian.matei@gmail.com",
                             Errors = 2,
                             FirstName = "Lucian",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Matei",
                             Password = "default123",
@@ -564,7 +553,6 @@ namespace FootballAPI.Migrations
                             Email = "daniel.radu@gmail.com",
                             Errors = 2,
                             FirstName = "Daniel",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Radu",
                             Password = "default123",
@@ -582,7 +570,6 @@ namespace FootballAPI.Migrations
                             Email = "mihai.popa@gmail.com",
                             Errors = 2,
                             FirstName = "Mihai",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Popa",
                             Password = "default123",
@@ -600,7 +587,6 @@ namespace FootballAPI.Migrations
                             Email = "stefan.nicolae@gmail.com",
                             Errors = 2,
                             FirstName = "Stefan",
-                            IsDelegated = false,
                             IsDelegatingOrganizer = false,
                             LastName = "Nicolae",
                             Password = "default123",

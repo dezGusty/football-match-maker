@@ -54,6 +54,15 @@ namespace FootballAPI.Models
         [StringLength(500)]
         public string? ProfileImagePath { get; set; }
 
+        // Delegation fields
+        public int? DelegatedToUserId { get; set; }
+        [ForeignKey("DelegatedToUserId")]
+        public virtual User? DelegatedToUser { get; set; }
+
+        public bool IsDelegatingOrganizer { get; set; } = false;
+
+        public bool IsDelegated { get; set; } = false;
+
         // Navigation properties
         public virtual ICollection<FriendRequest> SentFriendRequests { get; set; } = new List<FriendRequest>();
         public virtual ICollection<FriendRequest> ReceivedFriendRequests { get; set; } = new List<FriendRequest>();
@@ -62,5 +71,7 @@ namespace FootballAPI.Models
         public virtual ICollection<PlayerOrganiser> PlayerRelations { get; set; } = new List<PlayerOrganiser>();
         public virtual ICollection<Match> OrganisedMatches { get; set; } = new List<Match>();
         public virtual ICollection<TeamPlayers> TeamPlayers { get; set; } = new List<TeamPlayers>();
+        public virtual ICollection<OrganizerDelegate> OriginalDelegations { get; set; } = new List<OrganizerDelegate>();
+        public virtual ICollection<OrganizerDelegate> ReceivedDelegations { get; set; } = new List<OrganizerDelegate>();
     }
 }

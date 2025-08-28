@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { UserRole } from '../../models/user-role.enum';
+import { DelegationStatusDto } from '../../models/organizer-delegation.interface';
 
 @Component({
   selector: 'app-header',
@@ -16,6 +17,7 @@ export class Header implements OnInit {
   username: string = '';
   isMenuOpen = false;
   userRole: UserRole | null = null;
+  delegationStatus: DelegationStatusDto | null = null;
 
   constructor(
     private router: Router,
@@ -29,6 +31,14 @@ export class Header implements OnInit {
       const user = await this.userService.getUserById(userId);
       this.username = user.username;
       this.userRole = this.authService.getUserRole();
+      
+      if (this.isOrganizer()) {
+        try {
+          this.delegationStatus = await this.userService.getDelegationStatus(userId);
+        } catch (error) {
+          console.error('Error loading delegation status in header:', error);
+        }
+      }
     }
   }
 
@@ -59,6 +69,24 @@ export class Header implements OnInit {
   // Check if user is player
   isPlayer(): boolean {
     return this.userRole === UserRole.PLAYER;
+  }
+
+  // Check delegation status
+  isDelegating(): boolean {
+    return !!this.delegationStatus?.isDelegating;
+  }
+
+  isDelegate(): boolean {
+    return !!this.delegationStatus?.isDelegate;
+  }
+
+  getDelegationText(): string {
+    if (this.isDelegating()) {
+      return `Role delegated to ${this.delegationStatus?.currentDelegation?.delegateUserName}`;
+    } else if (this.isDelegate()) {
+      return `Acting for ${this.delegationStatus?.receivedDelegation?.originalOrganizerName}`;
+    }
+    return '';
   }
 
   logout() {

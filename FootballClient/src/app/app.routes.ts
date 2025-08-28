@@ -94,4 +94,12 @@ export const routes: Routes = [
       ),
     canActivate: [authGuard],
   },
+  {
+    path: 'delegated-organizer',
+    loadComponent: () =>
+      import('./pages/delegated-organizer/delegated-organizer.component').then(
+        (m) => m.DelegatedOrganizerComponent
+      ),
+    canActivate: [authGuard],
+  },
 ];

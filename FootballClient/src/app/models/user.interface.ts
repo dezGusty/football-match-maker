@@ -18,4 +18,9 @@ export interface User {
   stamina: number;
   errors: number;
   profileImageUrl?: string;
+  
+  // Delegation properties
+  isDelegatingOrganizer?: boolean;
+  delegatedToUserId?: number;
+  isDelegated?: boolean;
 }

@@ -123,13 +123,13 @@
   position: fixed;
   top: 80px;
   right: -280px;
-  background-color: var(--bg);
+  background-color: #282828;
   width: 280px;
   padding: 1.5rem;
   transition: all 0.3s ease;
   z-index: 5;
   border-bottom-left-radius: 12px;
-  box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
   visibility: hidden;
   opacity: 0;
 }
@@ -153,7 +153,7 @@
 .menu button {
   width: 100%;
   padding: 1rem 1.2rem;
-  background-color: var(--surface);
+  background-color: rgba(255, 255, 255, 0.221);
   border: none;
   border-radius: 8px;
   color: var(--muted);
@@ -165,7 +165,7 @@
 }
 
 .menu button:hover {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: #202020;
   transform: translateX(5px);
 }
 
@@ -177,4 +177,25 @@
   margin-right: 8px;
   border: 2px solid #6a866e;
   background: #fff;
+}
+
+.delegation-indicator {
+  position: relative;
+  margin-left: 4px;
+}
+
+.delegation-icon {
+  font-size: 14px;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
