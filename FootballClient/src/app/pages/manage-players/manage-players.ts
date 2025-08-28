@@ -355,6 +355,7 @@ export class ManagePlayersComponent {
     return (
       this.isPlayerEnabled(player) &&
       !this.delegationStatus?.isDelegating &&
+      !this.delegationStatus?.isDelegate &&
       player.role !== UserRole.ORGANISER
     );
   }

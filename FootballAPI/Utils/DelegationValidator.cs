@@ -30,6 +30,13 @@ namespace FootballAPI.Utils
                 return result;
             }
 
+            var isDelegate = await _userRepository.GetActiveDelegationByDelegateId(organizerId);
+            if (isDelegate != null)
+            {
+                result.AddError("Delegated organizers cannot delegate to others");
+                return result;
+            }
+
             var existingDelegation = await _userRepository.GetActiveDelegationByOrganizerId(organizerId);
             if (existingDelegation != null)
             {
