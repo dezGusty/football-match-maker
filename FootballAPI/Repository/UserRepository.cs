@@ -272,7 +272,7 @@ namespace FootballAPI.Repository
             }
         }
 
-        public async Task<bool> UpdateUserRoleAndDelegationStatus(int userId, UserRole newRole, bool isDelegating, int? delegatedToUserId)
+        public async Task<bool> UpdateUserRoleAndDelegationStatus(int userId, UserRole newRole, bool isDelegating, int? delegatedToUserId, bool? isDelegated = null)
         {
             var user = await GetByIdAsync(userId);
             if (user == null)
@@ -281,6 +281,8 @@ namespace FootballAPI.Repository
             user.Role = newRole;
             user.IsDelegatingOrganizer = isDelegating;
             user.DelegatedToUserId = delegatedToUserId;
+            if (isDelegated.HasValue)
+                user.IsDelegated = isDelegated.Value;
             user.UpdatedAt = DateTime.UtcNow;
 
             await UpdateAsync(user);

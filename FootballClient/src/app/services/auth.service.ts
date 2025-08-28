@@ -200,6 +200,35 @@ export class AuthService {
     return null;
   }
 
+  async isDelegatedOrganizer(): Promise<boolean> {
+    const userId = this.getUserId();
+    const userRole = this.getUserRole();
+    
+    if (!userId || userRole !== UserRole.ORGANISER) {
+      return false;
+    }
+
+    try {
+      // Make direct API call to avoid circular dependency
+      const response = await fetch(`${this.apiUrl}/user/${userId}/delegation-status`, {
+        headers: {
+          'Authorization': `Bearer ${this.getToken()}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch delegation status');
+      }
+
+      const delegationStatus = await response.json();
+      return delegationStatus.isDelegating === true;
+    } catch (error) {
+      console.error('Error checking delegation status:', error);
+      return false;
+    }
+  }
+
   forgotPassword(email: string) {
     if (!email) {
       throw new Error('Te rog introdu adresa de email.');

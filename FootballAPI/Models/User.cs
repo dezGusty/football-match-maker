@@ -61,6 +61,8 @@ namespace FootballAPI.Models
 
         public bool IsDelegatingOrganizer { get; set; } = false;
 
+        public bool IsDelegated { get; set; } = false;
+
         // Navigation properties
         public virtual ICollection<FriendRequest> SentFriendRequests { get; set; } = new List<FriendRequest>();
         public virtual ICollection<FriendRequest> ReceivedFriendRequests { get; set; } = new List<FriendRequest>();

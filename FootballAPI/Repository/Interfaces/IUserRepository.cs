@@ -37,6 +37,6 @@ namespace FootballAPI.Repository
         Task<bool> ReclaimDelegationAsync(int delegationId, int originalOrganizerId);
         Task<bool> AreFriends(int userId1, int userId2);
         Task<bool> TransferPlayerOrganiserRelationsAsync(int fromOrganizerId, int toOrganizerId);
-        Task<bool> UpdateUserRoleAndDelegationStatus(int userId, UserRole newRole, bool isDelegating, int? delegatedToUserId);
+        Task<bool> UpdateUserRoleAndDelegationStatus(int userId, UserRole newRole, bool isDelegating, int? delegatedToUserId, bool? isDelegated = null);
     }
 }
