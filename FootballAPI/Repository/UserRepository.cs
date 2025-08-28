@@ -269,6 +269,28 @@ namespace FootballAPI.Repository
             }
         }
 
+        public async Task<bool> TransferMatchesAsync(int fromOrganizerId, int toOrganizerId)
+        {
+            try
+            {
+                var matchesToTransfer = await _context.Matches
+                    .Where(m => m.OrganiserId == fromOrganizerId)
+                    .ToListAsync();
+
+                foreach (var match in matchesToTransfer)
+                {
+                    match.OrganiserId = toOrganizerId;
+                }
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> UpdateUserRoleAndDelegationStatus(int userId, UserRole newRole, bool isDelegating, int? delegatedToUserId, bool? isDelegated = null)
         {
             var user = await GetByIdAsync(userId);

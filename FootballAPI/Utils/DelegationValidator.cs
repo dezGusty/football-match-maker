@@ -17,7 +17,6 @@ namespace FootballAPI.Utils
         {
             var result = new ValidationResult();
 
-            // Check if organizer exists and is actually an organizer
             var organizer = await _userRepository.GetByIdAsync(organizerId);
             if (organizer == null)
             {
@@ -31,7 +30,6 @@ namespace FootballAPI.Utils
                 return result;
             }
 
-            // Check if organizer already has an active delegation
             var existingDelegation = await _userRepository.GetActiveDelegationByOrganizerId(organizerId);
             if (existingDelegation != null)
             {
@@ -39,7 +37,6 @@ namespace FootballAPI.Utils
                 return result;
             }
 
-            // Check if delegate exists and is a player
             var delegateUser = await _userRepository.GetByIdAsync(delegateId);
             if (delegateUser == null)
             {
@@ -53,7 +50,6 @@ namespace FootballAPI.Utils
                 return result;
             }
 
-            // Check if delegate is already acting as delegate for someone else
             var delegateActiveDelegation = await _userRepository.GetActiveDelegationByDelegateId(delegateId);
             if (delegateActiveDelegation != null)
             {
@@ -61,7 +57,6 @@ namespace FootballAPI.Utils
                 return result;
             }
 
-            // Check if they are friends
             var areFriends = await _userRepository.AreFriends(organizerId, delegateId);
             if (!areFriends)
             {
@@ -69,7 +64,6 @@ namespace FootballAPI.Utils
                 return result;
             }
 
-            // Check for circular delegation attempts (prevent A->B->A scenarios)
             if (organizer.IsDelegatingOrganizer && organizer.DelegatedToUserId == delegateId)
             {
                 result.AddError("Circular delegation is not allowed");
@@ -84,7 +78,6 @@ namespace FootballAPI.Utils
         {
             var result = new ValidationResult();
 
-            // Get the delegation record
             var delegation = await _userRepository.GetActiveDelegationByOrganizerId(organizerId);
             if (delegation == null)
             {
@@ -98,7 +91,6 @@ namespace FootballAPI.Utils
                 return result;
             }
 
-            // Ensure the delegation belongs to the organizer making the request
             if (delegation.OriginalOrganizerId != organizerId)
             {
                 result.AddError("Unauthorized: You can only reclaim your own delegation");
@@ -113,14 +105,12 @@ namespace FootballAPI.Utils
         {
             var result = new ValidationResult();
 
-            // Check if user is the actual organizer
             if (userId == matchOrganizerId)
             {
                 result.IsValid = true;
                 return result;
             }
 
-            // Check if user is acting as delegate for the match organizer
             var delegation = await _userRepository.GetActiveDelegationByDelegateId(userId);
             if (delegation != null && delegation.OriginalOrganizerId == matchOrganizerId)
             {
