@@ -13,7 +13,11 @@ import {
   CreateMatchRequest,
   MatchDisplay,
 } from '../../models/create-match.interface';
-import { DelegationStatusDto, OrganizerDelegateDto } from '../../models/organizer-delegation.interface';
+import {
+  DelegationStatusDto,
+  OrganizerDelegateDto,
+} from '../../models/organizer-delegation.interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-manage-players',
@@ -32,7 +36,8 @@ export class ManagePlayersComponent {
   constructor(
     private UserService: UserService,
     private authService: AuthService,
-    private matchService: MatchService
+    private matchService: MatchService,
+    private router: Router
   ) {}
 
   players: User[] = [];
@@ -100,7 +105,9 @@ export class ManagePlayersComponent {
   async loadDelegationStatus() {
     try {
       const userId = this.authService.getUserId()!;
-      this.delegationStatus = await this.UserService.getDelegationStatus(userId);
+      this.delegationStatus = await this.UserService.getDelegationStatus(
+        userId
+      );
     } catch (error) {
       console.error('Error loading delegation status:', error);
     }
@@ -292,21 +299,22 @@ export class ManagePlayersComponent {
     try {
       const userId = this.authService.getUserId()!;
       await this.UserService.delegateOrganizerRole(
-        userId, 
+        userId,
         this.selectedPlayerForDelegation.id!,
         this.delegationNotes || undefined
       );
 
-      this.delegationSuccessMessage = `Successfully delegated organizer role to ${this.selectedPlayerForDelegation.firstName} ${this.selectedPlayerForDelegation.lastName}`;
-      
+      this.delegationSuccessMessage = `Successfully delegated organizer role to ${this.selectedPlayerForDelegation.firstName} ${this.selectedPlayerForDelegation.lastName}. Redirecting...`;
+
       await this.loadDelegationStatus();
 
       setTimeout(() => {
         this.closeDelegateModal();
-      }, 2000);
-
+        this.router.navigate(['/delegated-organizer']);
+      }, 1500);
     } catch (error: any) {
-      this.delegationErrorMessage = error.message || 'Failed to delegate organizer role';
+      this.delegationErrorMessage =
+        error.message || 'Failed to delegate organizer role';
       console.error('Error delegating organizer role:', error);
     } finally {
       this.delegationLoading = false;
@@ -316,7 +324,9 @@ export class ManagePlayersComponent {
   async reclaimOrganizerRole() {
     if (!this.delegationStatus?.currentDelegation) return;
 
-    const confirm = window.confirm('Are you sure you want to reclaim your organizer role?');
+    const confirm = window.confirm(
+      'Are you sure you want to reclaim your organizer role?'
+    );
     if (!confirm) return;
 
     this.delegationLoading = true;
@@ -325,16 +335,16 @@ export class ManagePlayersComponent {
     try {
       const userId = this.authService.getUserId()!;
       await this.UserService.reclaimOrganizerRole(
-        userId, 
+        userId,
         this.delegationStatus.currentDelegation.id
       );
 
       await this.loadDelegationStatus();
-      
-      console.log('Organizer role reclaimed successfully');
 
+      console.log('Organizer role reclaimed successfully');
     } catch (error: any) {
-      this.delegationErrorMessage = error.message || 'Failed to reclaim organizer role';
+      this.delegationErrorMessage =
+        error.message || 'Failed to reclaim organizer role';
       console.error('Error reclaiming organizer role:', error);
     } finally {
       this.delegationLoading = false;
@@ -342,8 +352,10 @@ export class ManagePlayersComponent {
   }
 
   canDelegateToPlayer(player: User): boolean {
-    return this.isPlayerEnabled(player) && 
-           !this.delegationStatus?.isDelegating &&
-           player.role !== UserRole.ORGANISER;
+    return (
+      this.isPlayerEnabled(player) &&
+      !this.delegationStatus?.isDelegating &&
+      player.role !== UserRole.ORGANISER
+    );
   }
 }
