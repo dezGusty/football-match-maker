@@ -168,7 +168,7 @@ namespace FootballAPI.Repository
             user.ProfileImagePath = imagePath;
             user.UpdatedAt = DateTime.UtcNow;
             await UpdateAsync(user);
-            
+
             return imagePath;
         }
 
@@ -234,25 +234,23 @@ namespace FootballAPI.Repository
 
         public async Task<bool> AreFriends(int userId1, int userId2)
         {
-            return await _context.FriendRequests.AnyAsync(fr => 
-                ((fr.SenderId == userId1 && fr.ReceiverId == userId2) ||
-                 (fr.SenderId == userId2 && fr.ReceiverId == userId1)) &&
-                fr.Status == Models.Enums.FriendRequestStatus.Accepted);
+            return await _context.PlayerOrganisers.AnyAsync(po =>
+                (po.OrganiserId == userId1 && po.PlayerId == userId2) ||
+                 (po.PlayerId == userId2 && po.OrganiserId == userId1));
         }
 
         public async Task<bool> TransferPlayerOrganiserRelationsAsync(int fromOrganizerId, int toOrganizerId)
         {
             try
             {
-                // Get all existing relations for the original organizer
+
                 var existingRelations = await _context.PlayerOrganisers
                     .Where(po => po.OrganiserId == fromOrganizerId)
                     .ToListAsync();
 
-                // Remove all existing relations
+
                 _context.PlayerOrganisers.RemoveRange(existingRelations);
 
-                // Create new relations with the new organizer
                 var newRelations = existingRelations.Select(relation => new PlayerOrganiser
                 {
                     OrganiserId = toOrganizerId,
@@ -260,7 +258,6 @@ namespace FootballAPI.Repository
                     CreatedAt = DateTime.Now
                 }).ToList();
 
-                // Add the new relations
                 await _context.PlayerOrganisers.AddRangeAsync(newRelations);
 
                 await _context.SaveChangesAsync();

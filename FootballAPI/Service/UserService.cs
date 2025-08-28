@@ -251,35 +251,28 @@ namespace FootballAPI.Service
             }
         }
 
-        // Organizer delegation functionality
         public async Task<OrganizerDelegateDto> DelegateOrganizerRoleAsync(int organizerId, DelegateOrganizerRoleDto dto)
         {
-            // Validation: Check if organizer exists and is actually an organizer
             var organizer = await _userRepository.GetByIdAsync(organizerId);
             if (organizer == null || organizer.Role != UserRole.ORGANISER)
                 throw new ArgumentException("User is not an organizer");
 
-            // Check if organizer already has an active delegation
             var existingDelegation = await _userRepository.GetActiveDelegationByOrganizerId(organizerId);
             if (existingDelegation != null)
                 throw new InvalidOperationException("User already has an active delegation");
 
-            // Validate friend exists and is a player
             var friend = await _userRepository.GetByIdAsync(dto.FriendUserId);
             if (friend == null || friend.Role != UserRole.PLAYER)
                 throw new ArgumentException("Friend must be a player");
 
-            // Check if they are actually friends
             var areFriends = await _userRepository.AreFriends(organizerId, dto.FriendUserId);
             if (!areFriends)
                 throw new ArgumentException("Users must be friends to delegate organizer role");
 
-            // Check if friend is already a delegate
             var friendDelegation = await _userRepository.GetActiveDelegationByDelegateId(dto.FriendUserId);
             if (friendDelegation != null)
                 throw new InvalidOperationException("Friend is already acting as a delegate for another organizer");
 
-            // Create delegation record
             var delegation = new OrganizerDelegate
             {
                 OriginalOrganizerId = organizerId,
@@ -291,35 +284,28 @@ namespace FootballAPI.Service
 
             var createdDelegation = await _userRepository.CreateDelegationAsync(delegation);
 
-            // Transfer PlayerOrganiser relations
             await _userRepository.TransferPlayerOrganiserRelationsAsync(organizerId, dto.FriendUserId);
 
-            // Update user roles and delegation status
-            await _userRepository.UpdateUserRoleAndDelegationStatus(organizerId, UserRole.ORGANISER, true, dto.FriendUserId, true);
-            await _userRepository.UpdateUserRoleAndDelegationStatus(dto.FriendUserId, UserRole.ORGANISER, false, null, false);
+            await _userRepository.UpdateUserRoleAndDelegationStatus(organizerId, UserRole.PLAYER, true, dto.FriendUserId);
+            await _userRepository.UpdateUserRoleAndDelegationStatus(dto.FriendUserId, UserRole.ORGANISER, false, null);
 
-            // Return delegation DTO
             return MapToDelegationDto(createdDelegation, organizer, friend);
         }
 
         public async Task<bool> ReclaimOrganizerRoleAsync(int organizerId, ReclaimOrganizerRoleDto dto)
         {
-            // Get delegation
             var delegation = await _userRepository.GetActiveDelegationByOrganizerId(organizerId);
             if (delegation == null || delegation.Id != dto.DelegationId)
                 return false;
 
-            // Reclaim delegation
             var success = await _userRepository.ReclaimDelegationAsync(dto.DelegationId, organizerId);
             if (!success)
                 return false;
 
-            // Transfer PlayerOrganiser relations back
             await _userRepository.TransferPlayerOrganiserRelationsAsync(delegation.DelegateUserId, organizerId);
 
-            // Update user roles and delegation status
-            await _userRepository.UpdateUserRoleAndDelegationStatus(organizerId, UserRole.ORGANISER, false, null, false);
-            await _userRepository.UpdateUserRoleAndDelegationStatus(delegation.DelegateUserId, UserRole.PLAYER, false, null, false);
+            await _userRepository.UpdateUserRoleAndDelegationStatus(organizerId, UserRole.ORGANISER, false, null);
+            await _userRepository.UpdateUserRoleAndDelegationStatus(delegation.DelegateUserId, UserRole.PLAYER, false, null);
 
             return true;
         }
@@ -342,7 +328,7 @@ namespace FootballAPI.Service
         {
             var friendRequests = await _friendRequestRepository.GetAcceptedFriendsAsync(userId);
             var friendIds = friendRequests.Select(fr => fr.SenderId == userId ? fr.ReceiverId : fr.SenderId);
-            
+
             var friends = new List<User>();
             foreach (var friendId in friendIds)
             {
