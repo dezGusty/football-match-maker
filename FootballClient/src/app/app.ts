@@ -11,5 +11,5 @@ import { NotificationComponent } from './components/notification/notification.co
   `,
 })
 export class App {
-  protected readonly title = signal('FootballClient');
+  protected readonly title = signal('Football Manager');
 }

@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { User } from '../models/user.interface';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private readonly url = 'http://localhost:5145/api/user';
-  private readonly MAX_RATING = 10000;
+  private readonly url = `${environment.apiUrl}/user`;
+  private readonly MAX_RATING = 10;
   private readonly MIN_RATING = 0;
 
   constructor(private http: HttpClient, private authService: AuthService) {}

@@ -121,8 +121,8 @@ export class ManagePlayersComponent {
     }
 
     console.log('new player:  ', this.newPlayer);
-    if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10000) {
-      this.playerErrorMessage = 'Rating must be between 0 and 10000.';
+    if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10) {
+      this.playerErrorMessage = 'Rating must be between 0 and 10.';
       return;
     }
 
@@ -179,9 +179,9 @@ export class ManagePlayersComponent {
 
     if (
       typeof this.editedPlayer.rating === 'number' &&
-      (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10000)
+      (this.editedPlayer.rating < 0 || this.editedPlayer.rating > 10)
     ) {
-      alert('Rating must be between 0 and 10000.');
+      alert('Rating must be between 0 and 10.');
       return;
     }
 

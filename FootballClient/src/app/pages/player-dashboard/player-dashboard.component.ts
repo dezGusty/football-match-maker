@@ -10,6 +10,7 @@ import { PlayerHeaderComponent } from '../../components/player-header/player-hea
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
 import { Match } from '../../models/match.interface';
 import { User } from '../../models/user.interface';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-player-dashboard',
@@ -62,7 +63,7 @@ export class PlayerDashboardComponent implements OnInit {
     if (userId) {
       try {
         const userResponse = await fetch(
-          `http://localhost:5145/api/user/${userId}`
+          `${environment.apiUrl}/user/${userId}`
         );
         if (userResponse.ok) {
           const user = await userResponse.json();

@@ -9,6 +9,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 interface SetPasswordRequest {
   token: string;
@@ -34,7 +35,7 @@ export class SetPasswordComponent implements OnInit {
   showPassword = false;
   token = '';
 
-  private readonly API_URL = 'http://localhost:5145/api/Auth';
+  private readonly API_URL = `${environment.apiUrl}/Auth`;
 
   constructor(
     private fb: FormBuilder,

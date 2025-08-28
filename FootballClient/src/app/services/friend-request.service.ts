@@ -5,12 +5,13 @@ import {
   FriendRequestResponse,
 } from '../models/friend-request.interface';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FriendRequestService {
-  private baseUrl = 'http://localhost:5145/api/friendrequest';
+  private baseUrl = `${environment.apiUrl}/friendrequest`;
 
   constructor(private authService: AuthService) {}
 

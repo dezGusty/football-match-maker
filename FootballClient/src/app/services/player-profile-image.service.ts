@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface PlayerProfileImageResponse {
   message: string;
@@ -11,7 +12,7 @@ export interface PlayerProfileImageResponse {
   providedIn: 'root',
 })
 export class PlayerProfileImageService {
-  private apiUrl = 'http://localhost:5145/api/players';
+  private apiUrl = `${environment.apiUrl}/players`;
 
   constructor(private http: HttpClient) {}
 

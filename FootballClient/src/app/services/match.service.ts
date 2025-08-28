@@ -6,12 +6,13 @@ import {
   CreateMatchResponse,
 } from '../models/create-match.interface';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MatchService {
-  private readonly baseUrl: string = 'http://localhost:5145/api';
+  private readonly baseUrl: string = `${environment.apiUrl}`;
   private teamNamesCache: Map<number, string> = new Map();
 
   constructor(private authService: AuthService) {}

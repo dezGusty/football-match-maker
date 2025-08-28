@@ -4,12 +4,13 @@ import { UserRole } from '../models/user-role.enum';
 import { HttpClient } from '@angular/common/http';
 import { PlayerUser } from '../models/player-user.interface'; // importă interfața
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:5145/api';
+  private readonly apiUrl = `${environment.apiUrl}`;
   private isAuthenticated = false;
   private userId: number | null = null;
   private userRole: UserRole | null = null;

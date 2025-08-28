@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { PlayerMatchHistoryCreated } from '../models/playerMatchHistoryCreated.interface';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlayerMatchHistoryService {
-  private readonly url: string = 'http://localhost:5145/api/playermatchhistory';
+  private readonly url: string = `${environment.apiUrl}/playermatchhistory`;
 
   async createPlayerMatchHistory(
     playerId: number,
