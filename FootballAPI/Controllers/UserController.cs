@@ -389,22 +389,6 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpPatch("set-multiple-available")]
-        public async Task<ActionResult> SetMultiplePlayersAvailable([FromBody] int[] userIds)
-        {
-            try
-            {
-                // For now, this endpoint will just return success since the concept of "available" 
-                // might need to be defined in the context of the unified User model
-                // This was previously a Player-specific concept
-                return Ok(new { message = "Multiple players set as available successfully" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error setting multiple players available");
-                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
-            }
-        }
 
         [HttpPost("{id}/delegate-organizer-role")]
         public async Task<ActionResult<OrganizerDelegateDto>> DelegateOrganizerRole(int id, [FromBody] DelegateOrganizerRoleDto dto)

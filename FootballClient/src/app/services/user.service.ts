@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { User } from '../models/user.interface';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
-import { 
-  DelegateOrganizerRoleDto, 
-  ReclaimOrganizerRoleDto, 
-  OrganizerDelegateDto, 
-  DelegationStatusDto 
+import {
+  DelegateOrganizerRoleDto,
+  ReclaimOrganizerRoleDto,
+  OrganizerDelegateDto,
+  DelegationStatusDto,
 } from '../models/organizer-delegation.interface';
 
 @Injectable({
@@ -297,56 +297,54 @@ export class UserService {
     }
   }
 
-  async setMultiplePlayersAvailable(playerIds: number[]): Promise<boolean> {
-    try {
-      const response = await fetch(`${this.url}/set-multiple-available`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(playerIds),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to set multiple players available');
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error setting multiple players available:', error);
-      return false;
-    }
-  }
-
-  async delegateOrganizerRole(userId: number, friendUserId: number, notes?: string): Promise<OrganizerDelegateDto> {
+  async delegateOrganizerRole(
+    userId: number,
+    friendUserId: number,
+    notes?: string
+  ): Promise<OrganizerDelegateDto> {
     const headers = this.getAuthHeaders();
     const body: DelegateOrganizerRoleDto = { friendUserId, notes };
-    
-    const response = await fetch(`${this.url}/${userId}/delegate-organizer-role`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
+
+    const response = await fetch(
+      `${this.url}/${userId}/delegate-organizer-role`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      }
+    );
 
     if (!response.ok) {
       const errorResponse = await response.json();
-      throw new Error(errorResponse.message || 'Failed to delegate organizer role');
+      throw new Error(
+        errorResponse.message || 'Failed to delegate organizer role'
+      );
     }
 
     return await response.json();
   }
 
-  async reclaimOrganizerRole(userId: number, delegationId: number): Promise<boolean> {
+  async reclaimOrganizerRole(
+    userId: number,
+    delegationId: number
+  ): Promise<boolean> {
     const headers = this.getAuthHeaders();
     const body: ReclaimOrganizerRoleDto = { delegationId };
 
-    const response = await fetch(`${this.url}/${userId}/reclaim-organizer-role`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
+    const response = await fetch(
+      `${this.url}/${userId}/reclaim-organizer-role`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      }
+    );
 
     if (!response.ok) {
       const errorResponse = await response.json();
-      throw new Error(errorResponse.message || 'Failed to reclaim organizer role');
+      throw new Error(
+        errorResponse.message || 'Failed to reclaim organizer role'
+      );
     }
 
     return true;
@@ -354,7 +352,7 @@ export class UserService {
 
   async getDelegationStatus(userId: number): Promise<DelegationStatusDto> {
     const headers = this.getAuthHeaders();
-    
+
     const response = await fetch(`${this.url}/${userId}/delegation-status`, {
       method: 'GET',
       headers,
@@ -362,7 +360,9 @@ export class UserService {
 
     if (!response.ok) {
       const errorResponse = await response.json();
-      throw new Error(errorResponse.message || 'Failed to get delegation status');
+      throw new Error(
+        errorResponse.message || 'Failed to get delegation status'
+      );
     }
 
     return await response.json();
