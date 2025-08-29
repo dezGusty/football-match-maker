@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -134,6 +135,11 @@ builder.Services.AddAuthorization();
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+
+app.UseHttpMetrics();
+app.MapMetrics();
+
+app.MapGet("/", () => "Hello from Football Match Maker!");
 
 app.MapHealthChecks("/api/health");
 
