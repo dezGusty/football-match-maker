@@ -44,18 +44,15 @@ services:
   # Only for testing purposes
   # k6 load testing tool
   # InfluxDB 1.8
-  influxdb:
-    image: influxdb:1.8
-    container_name: influxdb
-    ports:
-      - "8086:8086"
-    environment:
-      INFLUXDB_DB: k6
-      INFLUXDB_ADMIN_ENABLED: "true"
-      INFLUXDB_ADMIN_USER: admin
-      INFLUXDB_ADMIN_PASSWORD: admin123
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
     volumes:
-      - influxdb_data:/var/lib/influxdb
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - backend
     restart: unless-stopped
 
   # Grafana
@@ -68,12 +65,11 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin123
     depends_on:
-      - influxdb
+      - prometheus
     restart: unless-stopped
 
 volumes:
   sql_data:
-  influxdb_data:
 
     
 

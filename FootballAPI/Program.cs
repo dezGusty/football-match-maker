@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -135,7 +136,18 @@ builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
+app.UseHttpMetrics();
+app.MapMetrics();
+
+app.MapGet("/", () => "Hello from Football Match Maker!");
+
 app.MapHealthChecks("/api/health");
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<FootballDbContext>();
+    db.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -41,7 +41,7 @@ namespace FootballAPI.DTOs
         [StringLength(50)]
         public string LastName { get; set; } = null!;
 
-        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
+        [Range(0.0f, 10.0f, ErrorMessage = "Rating must be between 0.0 and 10.0")]
         public float Rating { get; set; }
 
         [Required]
@@ -49,13 +49,13 @@ namespace FootballAPI.DTOs
         [StringLength(100)]
         public string Email { get; set; } = null!;
 
-        [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
+        [Range(1, 4, ErrorMessage = "Speed must be between 1 (Low) and 4 (Extreme)")]
         public int Speed { get; set; } = 2;
 
-        [Range(1, 3, ErrorMessage = "Stamina must be between 1 (Low) and 3 (High)")]
+        [Range(1, 4, ErrorMessage = "Stamina must be between 1 (Low) and 4 (Extreme)")]
         public int Stamina { get; set; } = 2;
 
-        [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
+        [Range(1, 4, ErrorMessage = "Errors must be between 1 (Low) and 4 (Extreme)")]
         public int Errors { get; set; } = 2;
 
         [Required]
@@ -85,16 +85,16 @@ namespace FootballAPI.DTOs
         [StringLength(50)]
         public string LastName { get; set; } = null!;
 
-        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
+        [Range(0.0f, 10.0f, ErrorMessage = "Rating must be between 0.0 and 10.0")]
         public float Rating { get; set; } = 0.0f;
 
-        [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
+        [Range(1, 4, ErrorMessage = "Speed must be between 1 (Low) and 4 (Extreme)")]
         public int Speed { get; set; } = 2;
 
-        [Range(1, 3, ErrorMessage = "Stamina must be between 1 (Low) and 3 (High)")]
+        [Range(1, 4, ErrorMessage = "Stamina must be between 1 (Low) and 4 (Extreme)")]
         public int Stamina { get; set; } = 2;
 
-        [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
+        [Range(1, 4, ErrorMessage = "Errors must be between 1 (Low) and 4 (Extreme)")]
         public int Errors { get; set; } = 2;
 
         [Required]
@@ -111,22 +111,22 @@ namespace FootballAPI.DTOs
         [StringLength(50)]
         public string LastName { get; set; } = null!;
         
-        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
+        [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10.0")]
         public float Rating { get; set; }
 
-        [Range(1, 3, ErrorMessage = "Speed must be between 1 (Low) and 3 (High)")]
+        [Range(1, 4, ErrorMessage = "Speed must be between 1 (Low) and 4 (Extreme)")]
         public int Speed { get; set; }
 
-        [Range(1, 3, ErrorMessage = "Stamina must be between 1 (Low) and 3 (High)")]
+        [Range(1, 4, ErrorMessage = "Stamina must be between 1 (Low) and 4 (Extreme)")]
         public int Stamina { get; set; }
 
-        [Range(1, 3, ErrorMessage = "Errors must be between 1 (Low) and 3 (High)")]
+        [Range(1, 4, ErrorMessage = "Errors must be between 1 (Low) and 4 (Extreme)")]
         public int Errors { get; set; }
     }
 
     public class UpdatePlayerRatingDto
     {
-        [Range(-10000.0f, 10000.0f, ErrorMessage = "Rating change must be between -10000.0 and 10000.0")]
+        [Range(0.0f, 10.0f, ErrorMessage = "Rating change must be between 0.0 and 10.0")]
         public float RatingChange { get; set; }
     }
 
@@ -136,7 +136,7 @@ namespace FootballAPI.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "UserId must be greater than 0")]
         public int UserId { get; set; }
         
-        [Range(-10000.0f, 10000.0f, ErrorMessage = "Rating change must be between -10000.0 and 10000.0")]
+        [Range(0.0f, 0.0f, ErrorMessage = "Rating change must be between 0.0 and 0.0")]
         public float RatingChange { get; set; }
     }
 
@@ -170,7 +170,7 @@ namespace FootballAPI.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "MatchId must be greater than 0")]
         public int MatchId { get; set; }
 
-        [Range(0.0f, 10000.0f, ErrorMessage = "PerformanceRating must be between 0.0 and 10000.0")]
+        [Range(0.0f, 10.0f, ErrorMessage = "PerformanceRating must be between 0.0 and 10.0")]
         public float PerformanceRating { get; set; } = 0.0f;
     }
 
@@ -188,7 +188,7 @@ namespace FootballAPI.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "MatchId must be greater than 0")]
         public int MatchId { get; set; }
 
-        [Range(0.0f, 10000.0f, ErrorMessage = "PerformanceRating must be between 0.0 and 10000.0")]
+        [Range(0.0f, 10.0f, ErrorMessage = "PerformanceRating must be between 0.0 and 10.0")]
         public float PerformanceRating { get; set; }
     }
 }
