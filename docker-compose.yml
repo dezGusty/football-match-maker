@@ -70,7 +70,6 @@ services:
 
 volumes:
   sql_data:
-  influxdb_data:
 
     
 
