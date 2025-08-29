@@ -148,7 +148,6 @@ export class ManagePlayersComponent {
       return;
     }
 
-    console.log('new player:  ', this.newPlayer);
     if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10) {
       this.playerErrorMessage = 'Rating must be between 0 and 10.';
       return;
@@ -220,7 +219,6 @@ export class ManagePlayersComponent {
         this.players[index] = updatedPlayer;
       }
       this.clearEditIndex();
-      console.log('Player updated:', updatedPlayer);
     } catch (error) {
       console.error('Error updating player:', error);
     }
@@ -237,8 +235,6 @@ export class ManagePlayersComponent {
         if (playerIndex !== -1) {
           this.players[playerIndex].isDeleted = true;
         }
-
-        console.log('Player deleted successfully');
       }
     } catch (error) {
       console.error('Error deleting player:', error);
@@ -259,8 +255,6 @@ export class ManagePlayersComponent {
         if (playerIndex !== -1) {
           this.players[playerIndex].isDeleted = false;
         }
-
-        console.log('Player reactivated successfully');
       }
     } catch (error) {
       console.error('Error enabling player:', error);
@@ -340,8 +334,6 @@ export class ManagePlayersComponent {
       );
 
       await this.loadDelegationStatus();
-
-      console.log('Organizer role reclaimed successfully');
     } catch (error: any) {
       this.delegationErrorMessage =
         error.message || 'Failed to reclaim organizer role';

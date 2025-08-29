@@ -23,7 +23,7 @@ export class PlayerHeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private userService: UserService,
+    private userService: UserService
   ) {}
 
   async ngOnInit() {
@@ -55,7 +55,6 @@ export class PlayerHeaderComponent implements OnInit {
   }
 
   switchTab(tab: string) {
-    console.log('Switching to tab:', tab); // Debug log
     this.tabChange.emit(tab);
     this.isMenuOpen = false;
   }

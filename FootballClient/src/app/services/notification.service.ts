@@ -36,7 +36,6 @@ export class NotificationService {
 
     if (newNotification.duration && newNotification.duration > 0) {
       setTimeout(() => {
-        console.log('Auto-removing notification:', id);
         this.removeNotification(id);
       }, newNotification.duration);
     }

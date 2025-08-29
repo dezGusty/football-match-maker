@@ -41,7 +41,6 @@ export class NotificationComponent implements OnInit, OnDestroy {
     this.subscription = this.notificationService
       .getNotifications()
       .subscribe((notifications) => {
-        console.log('Notifications updated:', notifications);
         this.notifications = notifications;
       });
   }
@@ -53,7 +52,6 @@ export class NotificationComponent implements OnInit, OnDestroy {
   }
 
   removeNotification(id: string): void {
-    console.log('Manually removing notification:', id);
     this.notificationService.removeNotification(id);
   }
 

@@ -258,7 +258,9 @@ export class PlayerDashboardComponent implements OnInit {
       await this.loadAvailableMatches();
     } catch (error) {
       console.error('Error joining match:', error);
-      this.notificationService.showError('Failed to join match. Please try again.');
+      this.notificationService.showError(
+        'Failed to join match. Please try again.'
+      );
     }
   }
 
@@ -270,7 +272,6 @@ export class PlayerDashboardComponent implements OnInit {
       }
 
       if (teamId === undefined || teamId === null) {
-        console.log('Team ID is undefined, using general joinMatch instead');
         await this.matchService.joinMatch(this.selectedMatch.id);
       } else {
         await this.matchService.joinTeam(this.selectedMatch.id, teamId);
@@ -283,7 +284,9 @@ export class PlayerDashboardComponent implements OnInit {
       this.notificationService.showSuccess('Successfully joined the match!');
     } catch (error) {
       console.error('Error joining match:', error);
-      this.notificationService.showError('Failed to join match. Please try again.');
+      this.notificationService.showError(
+        'Failed to join match. Please try again.'
+      );
     }
   }
 
@@ -309,7 +312,9 @@ export class PlayerDashboardComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error leaving match:', error);
-      this.notificationService.showError('Failed to leave match. Please try again.');
+      this.notificationService.showError(
+        'Failed to leave match. Please try again.'
+      );
     }
   }
 }

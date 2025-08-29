@@ -34,14 +34,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/login/login').then((m) => m.Login),
   },
   {
-    path: 'match-formation',
-    loadComponent: () =>
-      import('./pages/match-formation/match-formation.component').then(
-        (m) => m.MatchFormationComponent
-      ),
-    canActivate: [authGuard],
-  },
-  {
     path: 'matches-history',
     loadComponent: () =>
       import('./pages/matches-history/matches-history').then(

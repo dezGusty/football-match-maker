@@ -90,50 +90,28 @@ export class OrganizerDashboardComponent {
     try {
       const playerMatches = await this.matchService.getPlayerMatches();
       const myId = this.authService.getUserId();
-      console.log('My ID:', myId);
-      console.log('Player matches:', playerMatches);
       const processedMatches = await Promise.all(
         playerMatches.map(async (match: any) => {
           let myTeam: 'A' | 'B' | null = null;
-          console.log('Processing match:', match.id);
 
           try {
             const matchDetails = await this.matchService.getMatchDetails(
               match.id
             );
-            console.log('Match details for', match.id, ':', matchDetails);
 
             if (matchDetails.teams && Array.isArray(matchDetails.teams)) {
               if (
                 matchDetails.teams[0]?.players?.some((p: any) => {
-                  console.log(
-                    'Checking Team A player:',
-                    p.id,
-                    'vs my ID:',
-                    myId,
-                    'Match:',
-                    p.id == myId
-                  );
                   return p.id == myId;
                 })
               ) {
                 myTeam = 'A';
-                console.log('Found in Team A');
               } else if (
                 matchDetails.teams[1]?.players?.some((p: any) => {
-                  console.log(
-                    'Checking Team B player:',
-                    p.id,
-                    'vs my ID:',
-                    myId,
-                    'Match:',
-                    p.id == myId
-                  );
                   return p.id == myId;
                 })
               ) {
                 myTeam = 'B';
-                console.log('Found in Team B');
               }
             }
           } catch (detailsError) {
@@ -147,13 +125,11 @@ export class OrganizerDashboardComponent {
             myTeam = null;
           }
 
-          console.log('Final myTeam for match', match.id, ':', myTeam);
           return { ...match, myTeam };
         })
       );
 
       this.myMatches = processedMatches;
-      console.log('Final myMatches:', this.myMatches);
     } catch (error) {
       console.error('Error loading my matches:', error);
     }
@@ -221,7 +197,6 @@ export class OrganizerDashboardComponent {
       return;
     }
 
-    console.log('new player:  ', this.newPlayer);
     if (this.newPlayer.rating < 0 || this.newPlayer.rating > 10) {
       this.playerErrorMessage = 'Rating must be between 0 and 10.';
       return;
@@ -294,7 +269,6 @@ export class OrganizerDashboardComponent {
         this.players[index] = updatedPlayer;
       }
       this.clearEditIndex();
-      console.log('Player updated:', updatedPlayer);
     } catch (error) {
       console.error('Error updating player:', error);
     }
@@ -311,8 +285,6 @@ export class OrganizerDashboardComponent {
         if (playerIndex !== -1) {
           this.players[playerIndex].isDeleted = true;
         }
-
-        console.log('Player deleted successfully');
       }
     } catch (error) {
       console.error('Error deleting player:', error);
@@ -335,8 +307,6 @@ export class OrganizerDashboardComponent {
         if (playerIndex !== -1) {
           this.players[playerIndex].isDeleted = false;
         }
-
-        console.log('Player reactivated successfully');
       }
     } catch (error) {
       console.error('Error enabling player:', error);
@@ -454,13 +424,9 @@ export class OrganizerDashboardComponent {
 
     try {
       this.matchDetails = await this.matchService.getMatchDetails(match.id);
-      console.log('Match details received:', this.matchDetails);
 
       this.originalTeamAPlayers = this.matchDetails.teams[0]?.players || [];
       this.originalTeamBPlayers = this.matchDetails.teams[1]?.players || [];
-
-      console.log('Team A players:', this.originalTeamAPlayers);
-      console.log('Team B players:', this.originalTeamBPlayers);
 
       this.teamAPlayers = [...this.originalTeamAPlayers];
       this.teamBPlayers = [...this.originalTeamBPlayers];
@@ -555,13 +521,9 @@ export class OrganizerDashboardComponent {
     try {
       await this.loadAvailablePlayers();
       this.matchDetails = await this.matchService.getMatchDetails(match.id);
-      console.log('Match details received:', this.matchDetails);
 
       this.originalTeamAPlayers = this.matchDetails.teams[0]?.players || [];
       this.originalTeamBPlayers = this.matchDetails.teams[1]?.players || [];
-
-      console.log('Team A players:', this.originalTeamAPlayers);
-      console.log('Team B players:', this.originalTeamBPlayers);
 
       this.teamAPlayers = [...this.originalTeamAPlayers];
       this.teamBPlayers = [...this.originalTeamBPlayers];
@@ -605,9 +567,7 @@ export class OrganizerDashboardComponent {
     try {
       const teamIndex = team === 'teamA' ? 0 : 1;
       const teamId = this.matchDetails.teams[teamIndex].teamId;
-      console.log(
-        `Adding player ${player.id} to team ${teamId} in match ${this.selectedMatch.id}`
-      );
+
       await this.matchService.addPlayerToMatch(
         this.selectedMatch.id,
         player.id,

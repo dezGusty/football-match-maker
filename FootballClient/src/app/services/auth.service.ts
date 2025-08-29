@@ -150,7 +150,10 @@ export class AuthService {
       // Redirect based on user role
       if (loginResponse.user.role === UserRole.PLAYER) {
         this.router.navigate(['/player-dashboard']);
-      } else if (loginResponse.user.role === UserRole.ORGANISER || loginResponse.user.role === UserRole.ADMIN) {
+      } else if (
+        loginResponse.user.role === UserRole.ORGANISER ||
+        loginResponse.user.role === UserRole.ADMIN
+      ) {
         this.router.navigate(['/organizer-dashboard']);
       } else {
         // Default fallback to root which will redirect based on role
@@ -204,19 +207,22 @@ export class AuthService {
   async isDelegatedOrganizer(): Promise<boolean> {
     const userId = this.getUserId();
     const userRole = this.getUserRole();
-    
+
     if (!userId || userRole !== UserRole.ORGANISER) {
       return false;
     }
 
     try {
       // Make direct API call to avoid circular dependency
-      const response = await fetch(`${this.apiUrl}/user/${userId}/delegation-status`, {
-        headers: {
-          'Authorization': `Bearer ${this.getToken()}`,
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        `${this.apiUrl}/user/${userId}/delegation-status`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.getToken()}`,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch delegation status');
@@ -264,7 +270,6 @@ export class AuthService {
     localStorage.removeItem('userId');
     localStorage.removeItem('userRole');
     localStorage.removeItem('authExpiresAt');
-    console.log('Auth state cleared');
   }
   async logout(redirect: boolean = true): Promise<void> {
     try {
