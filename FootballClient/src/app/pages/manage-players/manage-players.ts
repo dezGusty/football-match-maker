@@ -68,25 +68,6 @@ export class ManagePlayersComponent {
   selectedPlayerForDelegation: User | null = null;
   delegationNotes = '';
 
-  private async loadAvailablePlayers() {
-    const organiserId = this.authService.getUserId()!;
-
-    this.availablePlayers = [...this.players];
-
-    try {
-      const organiser = await this.UserService.getUserById(organiserId);
-      if (organiser) {
-        const organiserAsPlayer: User = {
-          ...organiser,
-          lastName: `${organiser.lastName} (myself)`,
-        };
-        this.availablePlayers = [organiserAsPlayer, ...this.availablePlayers];
-      }
-    } catch (error) {
-      console.error('Error fetching organizer details:', error);
-    }
-  }
-
   async init() {
     const role = this.authService.getUserRole();
 
@@ -117,12 +98,10 @@ export class ManagePlayersComponent {
     this.init();
   }
 
-  // Player management
   isPlayerEnabled(player: User): boolean {
     return !player.isDeleted;
   }
 
-  // Search functionality
   onSearchChange() {}
 
   newPlayer = {
