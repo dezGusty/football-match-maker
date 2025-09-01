@@ -162,13 +162,16 @@ export class MatchService {
       teamAId: currentMatch.teamAId,
       teamBId: currentMatch.teamBId,
     };
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
+    const response = await fetch(`${this.baseUrl}/matches/finalize/${matchId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updateMatchDto),
     });
     if (!response.ok) {
       throw new Error('Failed to update match');
+    }
+    if(response.ok){
+      console.log('Match finalized successfully');
     }
 
     return await response.json();
