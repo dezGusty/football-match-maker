@@ -52,13 +52,11 @@ namespace FootballAPI.Services
 
                     if (matchDetails.TotalPlayers >= 10)
                     {
-                        // Automatically finalize matches with 10+ players that have passed their date
-                        match.Status = Status.Finalized;
-                        _logger.LogInformation($"Auto-finalized match {match.Id} with {matchDetails.TotalPlayers} players");
+                        match.Status = Status.Closed;
+                        _logger.LogInformation($"Auto-closed match {match.Id} with {matchDetails.TotalPlayers} players");
                     }
                     else
                     {
-                        // Automatically cancel matches with less than 10 players that have passed their date
                         match.Status = Status.Cancelled;
 
                         _logger.LogInformation($"Auto-cancelled match {match.Id} with {matchDetails.TotalPlayers} players");
