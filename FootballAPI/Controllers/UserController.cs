@@ -460,6 +460,7 @@ namespace FootballAPI.Controllers
             }
         }
         [HttpPut("{id}/profile-image")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> UpdateProfileImage(int id, [FromForm] IFormFile imageFile)
         {
             if (imageFile == null || imageFile.Length == 0)
