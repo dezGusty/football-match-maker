@@ -37,6 +37,6 @@ namespace FootballAPI.Service
 
         Task<MatchDto> CloseMatchAsync(int matchId);
         Task<MatchDto> CancelMatchAsync(int matchId);
-        Task<MatchDto> FinalizeMatchAsync(int matchId);
+        Task<MatchDto> FinalizeMatchAsync(int matchId ,UpdateMatchDto updateMatchDto);
     }
 }

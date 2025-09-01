@@ -417,6 +417,24 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Error removing player from match: {ex.Message}");
             }
         }
+        
+        [HttpPut("finalize/{id}")]
+        public async Task<ActionResult<MatchDto>> Finalizematch(int id, UpdateMatchDto updateMatchDto)
+        {
+
+            try
+            {
+                var match = await _matchService.FinalizeMatchAsync(id, updateMatchDto);
+                if (match == null)
+                    return NotFound($"Match with ID {id} not found.");
+
+                return Ok(match);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error updating match: {ex.Message}");
+            }
+        }
 
     }
 }
