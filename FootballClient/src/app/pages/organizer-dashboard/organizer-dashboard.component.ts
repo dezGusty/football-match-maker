@@ -518,7 +518,7 @@ export class OrganizerDashboardComponent {
   canShowFinalizeButton(match: MatchDisplay): boolean {
     const matchDate = new Date(match.matchDate);
     const now = new Date();
-    return matchDate < now && match.status === MatchStatus.Open;
+    return matchDate < now && match.status === MatchStatus.Closed;
   }
 
   getAddPlayersButtonText(match: MatchDisplay): string {
