@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
@@ -11,6 +11,7 @@ import { HttpClient } from '@angular/common/http';
 import { MatchService } from '../../services/match.service';
 import { Match } from '../../models/match.interface';
 import { UserRole } from '../../models/user-role.enum';
+import { PlayerProfileImageService } from '../../services/player-profile-image.service';
 
 @Component({
   selector: 'app-account',
@@ -19,6 +20,7 @@ import { UserRole } from '../../models/user-role.enum';
   styleUrl: './account.css',
 })
 export class Account {
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   user: User | null = null;
 
   newPassword = '';
@@ -31,11 +33,16 @@ export class Account {
   showPasswordForm = false;
   showUsernameForm = false;
 
+  selectedFile: File | null = null;
+  isUploadingImage = false;
+  uploadError = '';
+
   constructor(
     private userService: UserService,
     private authService: AuthService,
     private router: Router,
     private http: HttpClient,
+    private playerProfileImageService: PlayerProfileImageService,
     private notificationService: NotificationService
   ) {
     this.loadUser();
@@ -121,4 +128,74 @@ export class Account {
   }
 
   UserRole = UserRole;
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+      this.uploadError = '';
+
+      const validation = this.playerProfileImageService.validateImageFile(
+        this.selectedFile
+      );
+      if (!validation.isValid) {
+        this.uploadError = validation.error || 'Invalid file';
+        this.selectedFile = null;
+        return;
+      }
+
+      this.uploadProfileImage();
+    }
+  }
+
+  async uploadProfileImage() {
+    if (!this.selectedFile || !this.user || !this.user.id) return;
+
+    this.isUploadingImage = true;
+    this.uploadError = '';
+
+    try {
+      const response = await this.playerProfileImageService
+        .uploadProfileImage(this.user.id, this.selectedFile)
+        .toPromise();
+
+      if (response) {
+        this.user.profileImageUrl = response.imageUrl;
+        this.notificationService.showSuccess('Profile image updated successfully!');
+      }
+    } catch (error: any) {
+      this.uploadError = error.error?.message || 'Failed to upload image';
+      console.error('Upload error:', error);
+    } finally {
+      this.isUploadingImage = false;
+      this.selectedFile = null;
+      if (this.fileInput) {
+        this.fileInput.nativeElement.value = '';
+      }
+    }
+  }
+
+  async deleteProfileImage() {
+    if (!this.user || !this.user.id) return;
+
+    if (!confirm('Are you sure you want to delete your profile image?')) {
+      return;
+    }
+
+    try {
+      await this.playerProfileImageService
+        .deleteProfileImage(this.user.id)
+        .toPromise();
+      this.user.profileImageUrl =
+        'http://localhost:5145/assets/default-avatar.png';
+      this.notificationService.showSuccess('Profile image deleted successfully!');
+    } catch (error: any) {
+      this.notificationService.showError(error.error?.message || 'Failed to delete image');
+      console.error('Delete error:', error);
+    }
+  }
+
+  triggerFileInput() {
+    this.fileInput.nativeElement.click();
+  }
 }

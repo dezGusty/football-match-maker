@@ -12,7 +12,7 @@ export interface PlayerProfileImageResponse {
   providedIn: 'root',
 })
 export class PlayerProfileImageService {
-  private apiUrl = `${environment.apiUrl}/players`;
+  private apiUrl = `${environment.apiUrl}/User`;
 
   constructor(private http: HttpClient) {}
 
@@ -23,7 +23,7 @@ export class PlayerProfileImageService {
     const formData = new FormData();
     formData.append('imageFile', imageFile);
 
-    return this.http.post<PlayerProfileImageResponse>(
+    return this.http.put<PlayerProfileImageResponse>(
       `${this.apiUrl}/${playerId}/profile-image`,
       formData
     );
