@@ -22,7 +22,6 @@ namespace FootballAPI.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // User configurations
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -40,14 +39,12 @@ namespace FootballAPI.Data
             });
 
 
-            // Team configurations
             modelBuilder.Entity<Team>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             });
 
-            // Match configurations
             modelBuilder.Entity<Match>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -63,7 +60,6 @@ namespace FootballAPI.Data
                     .OnDelete(DeleteBehavior.NoAction);
             });
 
-            // MatchTeams configurations (Many-to-Many between Match and Team)
             modelBuilder.Entity<MatchTeams>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -80,7 +76,6 @@ namespace FootballAPI.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // TeamPlayers configurations (Many-to-Many between Team and User through MatchTeam)
             modelBuilder.Entity<TeamPlayers>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -97,7 +92,6 @@ namespace FootballAPI.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // FriendRequest configurations
             modelBuilder.Entity<FriendRequest>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -115,7 +109,6 @@ namespace FootballAPI.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // ResetPasswordToken configurations
             modelBuilder.Entity<ResetPasswordToken>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -129,7 +122,6 @@ namespace FootballAPI.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // PlayerOrganiser configurations (Many-to-Many between User as Organiser and User as Player)
             modelBuilder.Entity<PlayerOrganiser>(entity =>
             {
                 entity.HasKey(e => new { e.OrganiserId, e.PlayerId });
@@ -146,7 +138,6 @@ namespace FootballAPI.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // OrganizerDelegate configurations
             modelBuilder.Entity<OrganizerDelegate>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -363,6 +354,36 @@ namespace FootballAPI.Data
                     CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                     UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }
+            );
+
+            modelBuilder.Entity<PlayerOrganiser>().HasData(
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 1, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 2, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 5, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 6, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 7, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 8, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 9, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 10, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 11, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 12, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 13, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new PlayerOrganiser { OrganiserId = 4, PlayerId = 14, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) }
+            );
+
+            modelBuilder.Entity<FriendRequest>().HasData(
+                new FriendRequest { Id = 1, SenderId = 4, ReceiverId = 1, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new FriendRequest { Id = 2, SenderId = 4, ReceiverId = 2, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new FriendRequest { Id = 3, SenderId = 4, ReceiverId = 5, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new FriendRequest { Id = 4, SenderId = 4, ReceiverId = 6, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new FriendRequest { Id = 5, SenderId = 4, ReceiverId = 7, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new FriendRequest { Id = 6, SenderId = 4, ReceiverId = 8, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new FriendRequest { Id = 7, SenderId = 4, ReceiverId = 9, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new FriendRequest { Id = 8, SenderId = 4, ReceiverId = 10, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new FriendRequest { Id = 9, SenderId = 4, ReceiverId = 11, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new FriendRequest { Id = 10, SenderId = 4, ReceiverId = 12, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new FriendRequest { Id = 11, SenderId = 4, ReceiverId = 13, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new FriendRequest { Id = 12, SenderId = 4, ReceiverId = 14, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) }
             );
         }
 
