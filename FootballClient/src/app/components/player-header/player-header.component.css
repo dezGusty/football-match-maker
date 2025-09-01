@@ -36,7 +36,9 @@
 .logo-container:hover {
   transform: scale(1.05);
 }
-
+.logo {
+  height: 60px;
+}
 .app-title {
   font-size: 24px;
   font-weight: 700;
