@@ -2,9 +2,38 @@
 
 <div class="account-fullpage">
   <div class="account-avatar-col">
-    <div class="avatar-big">
+    <div
+      class="avatar-big"
+      (click)="triggerFileInput()"
+      [style.cursor]="'pointer'"
+    >
+      @if (user && user.profileImageUrl) {
+      <img [src]="user.profileImageUrl" alt="Profile" class="profile-image" />
+      } @else {
       <span class="material-icons avatar-icon-big">person</span>
+      }
+      <div class="upload-overlay">
+        <span class="material-icons">camera_alt</span>
+      </div>
     </div>
+
+    <input
+      #fileInput
+      type="file"
+      accept="image/*"
+      (change)="onFileSelected($event)"
+      style="display: none"
+    />
+
+    @if (isUploadingImage) {
+    <div class="upload-status">Uploading...</div>
+    } @if (uploadError) {
+    <div class="upload-error">{{ uploadError }}</div>
+    } @if (user && user.profileImageUrl && !user.profileImageUrl.includes('default-avatar')) {
+    <button class="delete-image-btn" (click)="deleteProfileImage()">
+      Remove Photo
+    </button>
+    }
 
     <button class="logout-btn" (click)="logout()">Logout</button>
   </div>

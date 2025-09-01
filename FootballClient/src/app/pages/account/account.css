@@ -17,6 +17,88 @@
   flex-direction: column;
   align-items: center;
 }
+.avatar-big {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 140px;
+  color: var(--text);
+  box-shadow: 0 4px 24px rgba(106, 134, 110, 0.13);
+  margin-bottom: 0;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.avatar-big:hover {
+  transform: scale(1.05);
+}
+
+.avatar-big .profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.upload-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.avatar-big:hover .upload-overlay {
+  opacity: 1;
+}
+.upload-status {
+  margin-top: 10px;
+  color: var(--primary-600);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.upload-error {
+  margin-top: 10px;
+  color: #d32f2f;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  max-width: 200px;
+}
+
+.delete-image-btn {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.delete-image-btn:hover {
+  background: #b71c1c;
+}
+
+.avatar-icon-big {
+  font-size: 140px;
+  line-height: 1;
+}
 
 .avatar-section {
   display: flex;
