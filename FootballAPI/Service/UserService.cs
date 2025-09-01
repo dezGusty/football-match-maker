@@ -286,8 +286,8 @@ namespace FootballAPI.Service
 
             await _userRepository.TransferPlayerOrganiserRelationsAsync(organizerId, dto.FriendUserId);
 
-            await _userRepository.UpdateUserRoleAndDelegationStatus(organizerId, UserRole.ORGANISER, true, dto.FriendUserId, true);
-            await _userRepository.UpdateUserRoleAndDelegationStatus(dto.FriendUserId, UserRole.ORGANISER, false, null, false);
+            // Update the delegate's role to ORGANISER (temporarily while delegation is active)
+            await _userRepository.UpdateUserRoleAsync(dto.FriendUserId, UserRole.ORGANISER);
 
             return MapToDelegationDto(createdDelegation, organizer, friend);
         }
@@ -311,8 +311,7 @@ namespace FootballAPI.Service
                 CreatedAt = DateTime.Now
             });
 
-            await _userRepository.UpdateUserRoleAndDelegationStatus(organizerId, UserRole.ORGANISER, false, null, false);
-            await _userRepository.UpdateUserRoleAndDelegationStatus(delegation.DelegateUserId, UserRole.PLAYER, false, null, false);
+            await _userRepository.UpdateUserRoleAsync(delegation.DelegateUserId, UserRole.PLAYER);
 
             return true;
         }

@@ -71,7 +71,8 @@ namespace FootballAPI.Utils
                 return result;
             }
 
-            if (organizer.IsDelegatingOrganizer && organizer.DelegatedToUserId == delegateId)
+            var existingOrganizerDelegation = await _userRepository.GetActiveDelegationByOrganizerId(organizerId);
+            if (existingOrganizerDelegation?.DelegateUserId == delegateId)
             {
                 result.AddError("Circular delegation is not allowed");
                 return result;

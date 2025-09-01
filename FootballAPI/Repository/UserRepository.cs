@@ -200,14 +200,14 @@ namespace FootballAPI.Repository
             {
                 var relation = await _context.PlayerOrganisers
                     .FirstOrDefaultAsync(po => po.OrganiserId == organizerId && po.PlayerId == playerId);
-                
+
                 if (relation != null)
                 {
                     _context.PlayerOrganisers.Remove(relation);
                     await _context.SaveChangesAsync();
                     return true;
                 }
-                
+
                 return false;
             }
             catch
@@ -344,17 +344,13 @@ namespace FootballAPI.Repository
             }
         }
 
-        public async Task<bool> UpdateUserRoleAndDelegationStatus(int userId, UserRole newRole, bool isDelegating, int? delegatedToUserId, bool? isDelegated = null)
+        public async Task<bool> UpdateUserRoleAsync(int userId, UserRole newRole)
         {
             var user = await GetByIdAsync(userId);
             if (user == null)
                 return false;
 
             user.Role = newRole;
-            user.IsDelegatingOrganizer = isDelegating;
-            user.DelegatedToUserId = delegatedToUserId;
-            if (isDelegated.HasValue)
-                user.IsDelegated = isDelegated.Value;
             user.UpdatedAt = DateTime.UtcNow;
 
             await UpdateAsync(user);

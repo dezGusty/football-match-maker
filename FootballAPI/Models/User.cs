@@ -49,19 +49,10 @@ namespace FootballAPI.Models
         public int Stamina { get; set; } = 2;
 
         [Range(1, 4, ErrorMessage = "Errors must be between 1 (Low) and 4 (Extreme)")]
-        public int Errors { get; set; } = 2; 
+        public int Errors { get; set; } = 2;
 
         [StringLength(500)]
         public string? ProfileImagePath { get; set; }
-
-        // Delegation fields
-        public int? DelegatedToUserId { get; set; }
-        [ForeignKey("DelegatedToUserId")]
-        public virtual User? DelegatedToUser { get; set; }
-
-        public bool IsDelegatingOrganizer { get; set; } = false;
-
-        public bool IsDelegated { get; set; } = false;
 
         // Navigation properties
         public virtual ICollection<FriendRequest> SentFriendRequests { get; set; } = new List<FriendRequest>();

@@ -5,7 +5,7 @@ export interface User {
   email: string;
   username: string;
   role: UserRole;
-  
+
   // Player properties integrated
   firstName: string;
   lastName: string;
@@ -18,9 +18,4 @@ export interface User {
   stamina: number;
   errors: number;
   profileImageUrl?: string;
-  
-  // Delegation properties
-  isDelegatingOrganizer?: boolean;
-  delegatedToUserId?: number;
-  isDelegated?: boolean;
 }

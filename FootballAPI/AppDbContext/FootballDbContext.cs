@@ -37,11 +37,6 @@ namespace FootballAPI.Data
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
                 entity.HasIndex(e => e.Email).IsUnique();
                 entity.HasIndex(e => e.Username).IsUnique();
-                
-                entity.HasOne(e => e.DelegatedToUser)
-                    .WithMany()
-                    .HasForeignKey(e => e.DelegatedToUserId)
-                    .OnDelete(DeleteBehavior.NoAction);
             });
 
 
