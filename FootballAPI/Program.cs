@@ -143,6 +143,8 @@ app.MapGet("/", () => "Hello from Football Match Maker!");
 
 app.MapHealthChecks("/api/health");
 
+app.UseStaticFiles();
+
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<FootballDbContext>();
