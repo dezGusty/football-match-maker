@@ -286,7 +286,8 @@ namespace FootballAPI.Service
 
             await _userRepository.TransferPlayerOrganiserRelationsAsync(organizerId, dto.FriendUserId);
 
-            // Update the delegate's role to ORGANISER (temporarily while delegation is active)
+            await _userRepository.TransferMatchesAsync(organizerId, dto.FriendUserId);
+
             await _userRepository.UpdateUserRoleAsync(dto.FriendUserId, UserRole.ORGANISER);
 
             return MapToDelegationDto(createdDelegation, organizer, friend);
@@ -303,6 +304,8 @@ namespace FootballAPI.Service
                 return false;
 
             await _userRepository.TransferPlayerOrganiserRelationsAsync(delegation.DelegateUserId, organizerId);
+
+            await _userRepository.TransferMatchesAsync(delegation.DelegateUserId, organizerId);
 
             await _userRepository.AddPlayerOrganiserRelationAsync(new PlayerOrganiser
             {
