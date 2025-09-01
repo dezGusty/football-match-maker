@@ -54,3 +54,6 @@ TestResult.xml
 nunit-*.xml
 FootballAPI/appsettings.json
 .vs
+
+.vscode/
+.claude/
