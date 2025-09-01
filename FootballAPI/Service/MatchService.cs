@@ -136,9 +136,16 @@ namespace FootballAPI.Service
 
         public async Task<MatchDto> CreateMatchAsync(CreateMatchDto createMatchDto, int organiserId)
         {
+            var matchDate = DateTime.Parse(createMatchDto.MatchDate);
+
+            if (matchDate <= DateTime.Now)
+            {
+                throw new ArgumentException("Cannot create a match in the past. Please select a future date and time.");
+            }
+
             var match = new Match
             {
-                MatchDate = DateTime.Parse(createMatchDto.MatchDate),
+                MatchDate = matchDate,
                 IsPublic = false,
                 Status = createMatchDto.Status,
                 Location = createMatchDto.Location,
@@ -202,7 +209,14 @@ namespace FootballAPI.Service
             if (existingMatch == null)
                 return null;
 
-            existingMatch.MatchDate = DateTime.Parse(updateMatchDto.MatchDate);
+            var matchDate = DateTime.Parse(updateMatchDto.MatchDate);
+
+            if (matchDate <= DateTime.Now)
+            {
+                throw new ArgumentException("Cannot update match to a past date. Please select a future date and time.");
+            }
+
+            existingMatch.MatchDate = matchDate;
             existingMatch.Location = updateMatchDto.Location;
             existingMatch.Cost = updateMatchDto.Cost;
 
@@ -438,7 +452,7 @@ namespace FootballAPI.Service
         {
 
             var match = await _matchRepository.GetByIdAsync(matchId);
-            if (match == null || !match.IsPublic) return false;
+            if (match == null || !match.IsPublic || match.Status != Status.Open) return false;
 
             var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(matchId);
             if (matchTeams.Count() != 2) return false;
@@ -637,7 +651,7 @@ namespace FootballAPI.Service
 
                 if (!playerAlreadyInMatch)
                 {
-                    if (match.IsPublic)
+                    if (match.IsPublic && match.Status == Status.Open)
                     {
                         availableMatches.Add(match);
                     }
@@ -694,6 +708,52 @@ namespace FootballAPI.Service
             }
 
             return userId;
+        }
+
+        public async Task<MatchDto> CloseMatchAsync(int matchId)
+        {
+            var match = await _matchRepository.GetByIdAsync(matchId);
+            if (match == null || match.Status != Status.Open)
+                return null;
+
+            var matchDetails = await GetMatchDetailsAsync(matchId);
+            if (matchDetails.TotalPlayers < 10)
+                return null;
+
+            match.Status = Status.Closed;
+            await _matchRepository.UpdateAsync(match);
+            await _context.SaveChangesAsync();
+
+            return await MapToDtoAsync(match);
+        }
+
+        public async Task<MatchDto> CancelMatchAsync(int matchId)
+        {
+            var match = await _matchRepository.GetByIdAsync(matchId);
+            if (match == null)
+                return null;
+
+            match.Status = Status.Cancelled;
+            await _matchRepository.UpdateAsync(match);
+            await _context.SaveChangesAsync();
+
+            return await MapToDtoAsync(match);
+        }
+
+        public async Task<MatchDto> FinalizeMatchAsync(int matchId)
+        {
+            var match = await _matchRepository.GetByIdAsync(matchId);
+            if (match == null)
+                return null;
+
+            if (match.MatchDate > DateTime.Now)
+                return null;
+
+            match.Status = Status.Finalized;
+            await _matchRepository.UpdateAsync(match);
+            await _context.SaveChangesAsync();
+
+            return await MapToDtoAsync(match);
         }
     }
 }

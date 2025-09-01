@@ -97,6 +97,7 @@
           <th>Teams</th>
           <th>Location</th>
           <th>Cost</th>
+          <th>Status</th>
           <th>Public</th>
           <th>Actions</th>
         </tr>
@@ -119,6 +120,11 @@
           <td>{{ match.location || "TBD" }}</td>
           <td>{{ match.cost ? match.cost + " Lei total" : "Free" }}</td>
           <td>
+            <span class="status-badge" [ngClass]="getStatusClass(match.status)">
+              {{ getStatusText(match.status) }}
+            </span>
+          </td>
+          <td>
             <button
               class="action-btn"
               [class.make-public-btn]="!match.isPublic"
@@ -136,24 +142,42 @@
           <td class="actions">
             <button
               class="action-btn add-players-btn"
-              title="Add Players"
+              [title]="getAddPlayersButtonText(match)"
               (click)="openAddPlayersModal(match)"
             >
-              Add Players
+              {{ getAddPlayersButtonText(match) }}
             </button>
             <button
               class="action-btn edit-btn"
               title="Edit Match"
               (click)="openEditMatchModal(match)"
+              *ngIf="match.status === 0"
             >
               Edit
+            </button>
+            <button
+              class="action-btn close-btn"
+              title="Close Match"
+              (click)="closeMatch(match)"
+              *ngIf="canShowCloseButton(match)"
+            >
+              Close
+            </button>
+            <button
+              class="action-btn cancel-btn"
+              title="Cancel Match"
+              (click)="cancelMatch(match)"
+              *ngIf="match.status === 0"
+            >
+              Cancel
             </button>
             <button
               class="action-btn finalize-btn"
               title="Finalize Match"
               (click)="openFinalizeMatchModal(match)"
+              *ngIf="canShowFinalizeButton(match)"
             >
-              Finalize Match
+              Finalize
             </button>
           </td>
         </tr>

@@ -14,17 +14,12 @@ import {
   CreateMatchRequest,
   MatchDisplay,
 } from '../../models/create-match.interface';
+import { MatchStatus } from '../../models/match-status.enum';
 
 @Component({
   selector: 'app-organizer-dashboard',
   standalone: true,
-  imports: [
-    Header,
-    FormsModule,
-    CommonModule,
-    PlayerStatsComponent,
-    FriendRequestsComponent,
-  ],
+  imports: [Header, FormsModule, CommonModule, FriendRequestsComponent],
   templateUrl: './organizer-dashboard.component.html',
   styleUrls: ['./organizer-dashboard.component.css'],
 })
@@ -160,16 +155,42 @@ export class OrganizerDashboardComponent {
   async loadMatches() {
     try {
       const allMatches = await this.matchService.getMatchesByOrganiser();
-      this.matches = allMatches.map((match) => ({
-        id: match.id,
-        matchDate: match.matchDate,
-        location: match.location,
-        cost: match.cost,
-        teamAName: match.teamAName,
-        teamBName: match.teamBName,
-        status: match.status,
-        isPublic: match.isPublic,
-      }));
+      this.matches = await Promise.all(
+        allMatches.map(async (match) => {
+          let teamAPlayerCount = 0;
+          let teamBPlayerCount = 0;
+
+          try {
+            const matchDetails = await this.matchService.getMatchDetails(
+              match.id
+            );
+            if (matchDetails.teams && Array.isArray(matchDetails.teams)) {
+              teamAPlayerCount = matchDetails.teams[0]?.players?.length || 0;
+              teamBPlayerCount = matchDetails.teams[1]?.players?.length || 0;
+            }
+          } catch (error) {
+            console.error(
+              'Error fetching match details for match',
+              match.id,
+              ':',
+              error
+            );
+          }
+
+          return {
+            id: match.id,
+            matchDate: match.matchDate,
+            location: match.location,
+            cost: match.cost,
+            teamAName: match.teamAName,
+            teamBName: match.teamBName,
+            status: match.status,
+            isPublic: match.isPublic,
+            teamAPlayerCount,
+            teamBPlayerCount,
+          };
+        })
+      );
     } catch (error) {
       console.error('Error loading matches:', error);
     }
@@ -360,6 +381,14 @@ export class OrganizerDashboardComponent {
       return;
     }
 
+    const selectedDate = new Date(this.newMatch.matchDate);
+    const now = new Date();
+    if (selectedDate <= now) {
+      this.matchErrorMessage =
+        'Cannot create a match in the past. Please select a future date and time.';
+      return;
+    }
+
     this.matchLoading = true;
     this.matchErrorMessage = '';
     this.matchSuccessMessage = '';
@@ -367,7 +396,7 @@ export class OrganizerDashboardComponent {
     try {
       const createMatchRequest: CreateMatchRequest = {
         matchDate: new Date(this.newMatch.matchDate).toISOString(),
-        status: 1,
+        status: MatchStatus.Open,
         location: this.newMatch.location,
         cost: this.newMatch.cost || undefined,
         teamAName: this.newMatch.teamAName || undefined,
@@ -400,13 +429,13 @@ export class OrganizerDashboardComponent {
 
   getStatusText(status: number): string {
     switch (status) {
-      case 1:
+      case MatchStatus.Open:
         return 'Open';
-      case 2:
+      case MatchStatus.Closed:
         return 'Closed';
-      case 4:
+      case MatchStatus.Finalized:
         return 'Finalized';
-      case 8:
+      case MatchStatus.Cancelled:
         return 'Cancelled';
       default:
         return 'Unknown';
@@ -415,13 +444,13 @@ export class OrganizerDashboardComponent {
 
   getStatusClass(status: number): string {
     switch (status) {
-      case 1:
+      case MatchStatus.Open:
         return 'status-open';
-      case 2:
+      case MatchStatus.Closed:
         return 'status-closed';
-      case 4:
+      case MatchStatus.Finalized:
         return 'status-finalized';
-      case 8:
+      case MatchStatus.Cancelled:
         return 'status-cancelled';
       default:
         return 'status-unknown';
@@ -449,6 +478,56 @@ export class OrganizerDashboardComponent {
   }
   async finalizeMatch() {
     await this.matchService.finalizeMatchServ(this.selectedMatch!.id);
+    this.closeFinalizeMatchModal();
+    await this.loadMatches();
+  }
+
+  async closeMatch(match: MatchDisplay) {
+    try {
+      await this.matchService.closeMatch(match.id);
+      this.notificationService.showSuccess('Match closed successfully!');
+      await this.loadMatches();
+    } catch (error: any) {
+      this.notificationService.showError(
+        error.message || 'Error closing match'
+      );
+      console.error('Error closing match:', error);
+    }
+  }
+
+  async cancelMatch(match: MatchDisplay) {
+    try {
+      await this.matchService.cancelMatch(match.id);
+      this.notificationService.showSuccess('Match cancelled successfully!');
+      await this.loadMatches();
+    } catch (error: any) {
+      this.notificationService.showError(
+        error.message || 'Error cancelling match'
+      );
+      console.error('Error cancelling match:', error);
+    }
+  }
+
+  canShowCloseButton(match: MatchDisplay): boolean {
+    return (
+      match.status === MatchStatus.Open &&
+      (match.teamAPlayerCount || 0) + (match.teamBPlayerCount || 0) >= 10
+    );
+  }
+
+  canShowFinalizeButton(match: MatchDisplay): boolean {
+    const matchDate = new Date(match.matchDate);
+    const now = new Date();
+    return matchDate < now && match.status === MatchStatus.Open;
+  }
+
+  getAddPlayersButtonText(match: MatchDisplay): string {
+    const totalPlayers =
+      (match.teamAPlayerCount || 0) + (match.teamBPlayerCount || 0);
+    if (totalPlayers >= 12 || match.status === MatchStatus.Closed) {
+      return 'View Players';
+    }
+    return 'Add Players';
   }
   ratingChange(player?: User): string {
     if (this.selectedRatingSystem == 'Performance') {
@@ -598,6 +677,8 @@ export class OrganizerDashboardComponent {
           : this.selectedMatch.teamBName || 'TeamB'
       }`;
       setTimeout(() => (this.addPlayersSuccessMessage = ''), 2000);
+
+      await this.loadMatches();
     } catch (error: any) {
       this.addPlayersErrorMessage =
         error.message || 'Error adding player to team';
@@ -641,6 +722,8 @@ export class OrganizerDashboardComponent {
           : this.selectedMatch.teamBName || 'TeamB'
       }`;
       setTimeout(() => (this.addPlayersSuccessMessage = ''), 2000);
+
+      await this.loadMatches();
     } catch (error: any) {
       this.addPlayersErrorMessage =
         error.message || 'Error removing player from team';
@@ -710,6 +793,8 @@ export class OrganizerDashboardComponent {
           : this.selectedMatch.teamBName || 'TeamB'
       }`;
       setTimeout(() => (this.addPlayersSuccessMessage = ''), 2000);
+
+      await this.loadMatches();
     } catch (error: any) {
       this.addPlayersErrorMessage =
         error.message || 'Error moving player between teams';
@@ -753,13 +838,26 @@ export class OrganizerDashboardComponent {
 
   getDefaultDateTime(): string {
     const now = new Date();
-    now.setHours(now.getHours() + 2);
-    return now.toISOString().slice(0, 16);
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
   getMinDateTime(): string {
     const now = new Date();
-    return now.toISOString().slice(0, 16);
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
   async makeMatchPublic(matchId: number) {
@@ -799,8 +897,17 @@ export class OrganizerDashboardComponent {
   }
 
   openEditMatchModal(match: MatchDisplay) {
+    const matchDate = new Date(match.matchDate);
+
+    const year = matchDate.getFullYear();
+    const month = String(matchDate.getMonth() + 1).padStart(2, '0');
+    const day = String(matchDate.getDate()).padStart(2, '0');
+    const hours = String(matchDate.getHours()).padStart(2, '0');
+    const minutes = String(matchDate.getMinutes()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+
     this.editMatch = {
-      matchDate: new Date(match.matchDate).toISOString().slice(0, 16),
+      matchDate: formattedDate,
       location: match.location || '',
       cost: match.cost || null,
       teamAName: match.teamAName || '',
@@ -815,6 +922,14 @@ export class OrganizerDashboardComponent {
   async updateMatch() {
     if (!this.editMatch.matchDate || !this.editMatch.location) {
       this.editMatchErrorMessage = 'Match date and location are required';
+      return;
+    }
+
+    const selectedDate = new Date(this.editMatch.matchDate);
+    const now = new Date();
+    if (selectedDate <= now) {
+      this.editMatchErrorMessage =
+        'Cannot update match to a past date. Please select a future date and time.';
       return;
     }
 

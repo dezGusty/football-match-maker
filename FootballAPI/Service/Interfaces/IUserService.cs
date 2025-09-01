@@ -22,16 +22,14 @@ namespace FootballAPI.Service
         Task<bool> UsernameExistsAsync(string username, int excludeUserId);
         Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto changeUsernameDto);
         Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id);
-        
-        // Player functionality integrated
+
         Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange);
         Task<string> UpdatePlayerProfileImageAsync(int userId, IFormFile imageFile);
         Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates);
         Task<IEnumerable<UserDto>> GetPlayersAsync();
         Task AddPlayerOrganiserRelationAsync(int userId, int organiserId);
         Task<UserDto?> UpdateUserProfileImageAsync(int id, string imageUrl);
-        
-        // Organizer delegation functionality
+
         Task<OrganizerDelegateDto> DelegateOrganizerRoleAsync(int organizerId, DelegateOrganizerRoleDto dto);
         Task<bool> ReclaimOrganizerRoleAsync(int organizerId, ReclaimOrganizerRoleDto dto);
         Task<DelegationStatusDto> GetDelegationStatusAsync(int userId);

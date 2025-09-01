@@ -179,6 +179,11 @@
 }
 .cancel-btn {
   border-color: rgba(247, 201, 72, 0.45);
+  color: #f7c948;
+}
+.close-btn {
+  border-color: rgba(236, 72, 153, 0.5);
+  color: #ec4899;
 }
 .reactivate-btn {
   border-color: rgba(74, 222, 128, 0.5);

@@ -9,14 +9,13 @@ namespace FootballAPI.DTOs
         public string Email { get; set; } = null!;
         public string Username { get; set; } = null!;
         public UserRole Role { get; set; }
-        
-        // Player properties integrated
+
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        
+
         [Range(0.0f, 10.0f, ErrorMessage = "Rating must be between 0.0 and 10.0")]
         public float Rating { get; set; }
-        
+
         public bool IsDeleted { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
@@ -52,7 +51,6 @@ namespace FootballAPI.DTOs
         [Required]
         public UserRole Role { get; set; }
 
-        // Player properties integrated
         [Required]
         [StringLength(50)]
         public string FirstName { get; set; } = null!;
@@ -88,15 +86,14 @@ namespace FootballAPI.DTOs
         [Required]
         public UserRole Role { get; set; }
 
-        // Player properties integrated
         [Required]
         [StringLength(50)]
         public string FirstName { get; set; } = null!;
-        
+
         [Required]
         [StringLength(50)]
         public string LastName { get; set; } = null!;
-        
+
         [Range(0.0f, 10.0f, ErrorMessage = "Rating must be between 0.0 and 10.0")]
         public float Rating { get; set; }
 

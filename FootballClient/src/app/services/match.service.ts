@@ -415,6 +415,46 @@ export class MatchService {
     return await response.json();
   }
 
+  async closeMatch(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/close`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error('Could not close match. Match needs at least 10 players or is not in Open status.');
+      }
+      throw new Error(`Error closing match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async cancelMatch(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/cancel`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error('Could not cancel match. Match not found or invalid status.');
+      }
+      throw new Error(`Error cancelling match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
   async getPlayerMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/my-matches`, {
       headers: this.getAuthHeaders(),

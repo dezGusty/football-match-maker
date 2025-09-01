@@ -14,19 +14,13 @@ namespace FootballAPI.Controllers
     [Route("api/[controller]")]
     public class MatchesController : ControllerBase
     {
-        private readonly IMatchRepository _matchRepository;
         private readonly IMatchService _matchService;
-        private readonly IUserService _userService;
-        private readonly IMatchTeamsService _matchTeamsService;
-        private readonly ITeamPlayersService _teamPlayersService;
 
-        public MatchesController(IMatchService matchService, IUserService userService)
+        public MatchesController(IMatchService matchService)
         {
-            _matchTeamsService = _matchTeamsService;
-            _teamPlayersService = _teamPlayersService;
             _matchService = matchService;
-            _userService = userService;
         }
+
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetAllMatches()
@@ -359,6 +353,42 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error getting matches by organiser: {ex.Message}");
+            }
+        }
+
+        [HttpPost("{id}/close")]
+        [Authorize]
+        public async Task<ActionResult<MatchDto>> CloseMatch(int id)
+        {
+            try
+            {
+                var result = await _matchService.CloseMatchAsync(id);
+                if (result == null)
+                    return BadRequest("Could not close match. Match needs at least 10 players or is not in Open status.");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error closing match: {ex.Message}");
+            }
+        }
+
+        [HttpPost("{id}/cancel")]
+        [Authorize]
+        public async Task<ActionResult<MatchDto>> CancelMatch(int id)
+        {
+            try
+            {
+                var result = await _matchService.CancelMatchAsync(id);
+                if (result == null)
+                    return BadRequest("Could not cancel match. Match not found or invalid status.");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error cancelling match: {ex.Message}");
             }
         }
 
