@@ -347,6 +347,18 @@ namespace FootballAPI.Service
             return friends.Select(MapToDto);
         }
 
+        public async Task<UserDto?> UpdateUserProfileImageAsync(int id, string imageUrl)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+                return null;
+
+            user.ProfileImagePath = imageUrl;
+            var updatedUser = await _userRepository.UpdateAsync(user);
+            return MapToDto(updatedUser);
+        }
+        
+
         private OrganizerDelegateDto MapToDelegationDto(OrganizerDelegate delegation, User originalOrganizer, User delegateUser)
         {
             return new OrganizerDelegateDto
@@ -362,5 +374,6 @@ namespace FootballAPI.Service
                 Notes = delegation.Notes
             };
         }
+
     }
 }
