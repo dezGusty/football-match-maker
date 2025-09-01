@@ -282,9 +282,9 @@ namespace FootballAPI.Service
 
             var createdDelegation = await _userRepository.CreateDelegationAsync(delegation);
 
-            await _userRepository.RemovePlayerOrganiserRelationAsync(organizerId, dto.FriendUserId);
+            await _userRepository.SwitchOrganizerPlayerRelationAsync(organizerId, dto.FriendUserId);
 
-            await _userRepository.TransferPlayerOrganiserRelationsAsync(organizerId, dto.FriendUserId);
+            await _userRepository.TransferPlayerOrganiserRelationsExcludingAsync(organizerId, dto.FriendUserId, dto.FriendUserId);
 
             await _userRepository.TransferMatchesAsync(organizerId, dto.FriendUserId);
 
@@ -303,16 +303,11 @@ namespace FootballAPI.Service
             if (!success)
                 return false;
 
-            await _userRepository.TransferPlayerOrganiserRelationsAsync(delegation.DelegateUserId, organizerId);
+            await _userRepository.TransferPlayerOrganiserRelationsExcludingAsync(delegation.DelegateUserId, organizerId, organizerId);
+
+            await _userRepository.SwitchOrganizerPlayerRelationAsync(delegation.DelegateUserId, organizerId);
 
             await _userRepository.TransferMatchesAsync(delegation.DelegateUserId, organizerId);
-
-            await _userRepository.AddPlayerOrganiserRelationAsync(new PlayerOrganiser
-            {
-                OrganiserId = organizerId,
-                PlayerId = delegation.DelegateUserId,
-                CreatedAt = DateTime.Now
-            });
 
             await _userRepository.UpdateUserRoleAsync(delegation.DelegateUserId, UserRole.PLAYER);
 

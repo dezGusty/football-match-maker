@@ -263,6 +263,11 @@ namespace FootballAPI.Repository
 
         public async Task<bool> TransferPlayerOrganiserRelationsAsync(int fromOrganizerId, int toOrganizerId)
         {
+            return await TransferPlayerOrganiserRelationsAsync(fromOrganizerId, toOrganizerId, null);
+        }
+
+        public async Task<bool> TransferPlayerOrganiserRelationsAsync(int fromOrganizerId, int toOrganizerId, int? excludePlayerId)
+        {
             try
             {
 
@@ -274,7 +279,21 @@ namespace FootballAPI.Repository
                     .Where(po => po.PlayerId != fromOrganizerId)
                     .ToList();
 
-                _context.PlayerOrganisers.RemoveRange(existingRelations);
+                if (excludePlayerId.HasValue)
+                {
+                    relationsToTransfer = relationsToTransfer
+                        .Where(po => po.PlayerId != excludePlayerId.Value)
+                        .ToList();
+
+                    var relationsToRemove = existingRelations
+                        .Where(po => po.PlayerId != excludePlayerId.Value)
+                        .ToList();
+                    _context.PlayerOrganisers.RemoveRange(relationsToRemove);
+                }
+                else
+                {
+                    _context.PlayerOrganisers.RemoveRange(existingRelations);
+                }
 
                 var newRelations = relationsToTransfer.Select(relation => new PlayerOrganiser
                 {
@@ -286,6 +305,41 @@ namespace FootballAPI.Repository
                 await _context.PlayerOrganisers.AddRangeAsync(newRelations);
 
                 await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> TransferPlayerOrganiserRelationsExcludingAsync(int fromOrganizerId, int toOrganizerId, int excludePlayerId)
+        {
+            return await TransferPlayerOrganiserRelationsAsync(fromOrganizerId, toOrganizerId, excludePlayerId);
+        }
+
+        public async Task<bool> SwitchOrganizerPlayerRelationAsync(int originalOrganizerId, int delegatePlayerId)
+        {
+            try
+            {
+                var existingRelation = await _context.PlayerOrganisers
+                    .FirstOrDefaultAsync(po => po.OrganiserId == originalOrganizerId && po.PlayerId == delegatePlayerId);
+
+                if (existingRelation != null)
+                {
+                    _context.PlayerOrganisers.Remove(existingRelation);
+
+                    var switchedRelation = new PlayerOrganiser
+                    {
+                        OrganiserId = delegatePlayerId,
+                        PlayerId = originalOrganizerId,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    await _context.PlayerOrganisers.AddAsync(switchedRelation);
+                    await _context.SaveChangesAsync();
+                }
+
                 return true;
             }
             catch
