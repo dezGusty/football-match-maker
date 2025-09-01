@@ -87,8 +87,10 @@ export class OrganizerDashboardComponent {
   }
 
   private async LoadMyMatches() {
+    console.log('Loading my matches...');
     try {
       const playerMatches = await this.matchService.getPlayerMatches();
+      console.log('Fetched player msatches:', playerMatches);
       const myId = this.authService.getUserId();
       const processedMatches = await Promise.all(
         playerMatches.map(async (match: any) => {
@@ -136,14 +138,20 @@ export class OrganizerDashboardComponent {
   }
   async init() {
     const role = this.authService.getUserRole();
+    console.log('User role:', role);
 
     if (role === UserRole.ADMIN) {
       this.players = await this.UserService.getPlayers();
       this.availablePlayers = [...this.players];
     } else if (role === UserRole.ORGANISER) {
-      this.players = await this.UserService.getPlayersForOrganiser(
-        this.authService.getUserId()!
-      );
+      try {
+        this.players = await this.UserService.getPlayersForOrganiser(
+          this.authService.getUserId()!
+        );
+      } catch (error) {
+        this.players = [];
+      }
+
       this.loadMatches();
       this.LoadMyMatches();
     }

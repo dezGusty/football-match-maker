@@ -311,10 +311,7 @@ namespace FootballAPI.Controllers
         public async Task<ActionResult> GetPlayersForOrganiser(int id)
         {
             var players = await _userService.GetPlayersByOrganiserAsync(id);
-            if (players == null || !players.Any())
-                return NotFound("No players found for this organiser.");
-
-            return Ok(players);
+            return Ok(players ?? []);
         }
 
         [HttpPost("player-organiser")]
