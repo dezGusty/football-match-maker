@@ -202,8 +202,6 @@ export class OrganizerDashboardComponent {
     this.loadMatches();
   }
 
-  onSearchChange() {}
-
   newPlayer = {
     firstName: '',
     lastName: '',
@@ -567,7 +565,7 @@ export class OrganizerDashboardComponent {
 
   getRatingPreviewForPlayer(playerId: number): string {
     const preview = this.ratingPreviews.find((p) => p.playerId === playerId);
-    return preview ? preview.ratingChange : '0.00';
+    return preview ? preview.ratingChange : '0.0';
   }
 
   getRatingChangeClass(playerId: number): string {
@@ -649,15 +647,6 @@ export class OrganizerDashboardComponent {
         this.originalTeamBPlayers.push(player);
       }
 
-      this.addPlayersSuccessMessage = `${player.firstName} ${
-        player.lastName
-      } added to ${
-        team === 'teamA'
-          ? this.selectedMatch.teamAName || 'TeamA'
-          : this.selectedMatch.teamBName || 'TeamB'
-      }`;
-      setTimeout(() => (this.addPlayersSuccessMessage = ''), 2000);
-
       await this.loadMatches();
     } catch (error: any) {
       this.addPlayersErrorMessage =
@@ -693,15 +682,6 @@ export class OrganizerDashboardComponent {
           (p) => p.id !== player.id
         );
       }
-
-      this.addPlayersSuccessMessage = `${player.firstName} ${
-        player.lastName
-      } removed from ${
-        team === 'teamA'
-          ? this.selectedMatch.teamAName || 'TeamA'
-          : this.selectedMatch.teamBName || 'TeamB'
-      }`;
-      setTimeout(() => (this.addPlayersSuccessMessage = ''), 2000);
 
       await this.loadMatches();
     } catch (error: any) {
@@ -764,15 +744,6 @@ export class OrganizerDashboardComponent {
         this.teamAPlayers.push(player);
         this.originalTeamAPlayers.push(player);
       }
-
-      this.addPlayersSuccessMessage = `${player.firstName} ${
-        player.lastName
-      } moved to ${
-        otherTeam === 'teamA'
-          ? this.selectedMatch.teamAName || 'TeamA'
-          : this.selectedMatch.teamBName || 'TeamB'
-      }`;
-      setTimeout(() => (this.addPlayersSuccessMessage = ''), 2000);
 
       await this.loadMatches();
     } catch (error: any) {

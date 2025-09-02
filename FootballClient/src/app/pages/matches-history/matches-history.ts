@@ -52,14 +52,14 @@ export class MatchesHistory implements OnInit {
         .filter((p) => p.teamId === match.teamAId && p.user)
         .map(
           (p) =>
-            `${p.user.firstName} ${p.user.lastName} ${(p.user.rating || 0).toFixed(2)}`,
+            `${p.user.firstName} ${p.user.lastName} ${(p.user.rating || 0).toFixed(1)}`,
         );
 
       this.selectedTeamBPlayers = match.playerHistory
         .filter((p) => p.teamId === match.teamBId && p.user)
         .map(
           (p) =>
-            `${p.user.firstName} ${p.user.lastName} ${(p.user.rating || 0).toFixed(2)}`,
+            `${p.user.firstName} ${p.user.lastName} ${(p.user.rating || 0).toFixed(1)}`,
         );
 
       this.modalOpen = true;
@@ -78,7 +78,7 @@ export class MatchesHistory implements OnInit {
       .filter((ph) => ph.teamId === teamId && ph.user)
       .map(
         (ph) =>
-          `${ph.user.firstName} ${ph.user.lastName} ${(ph.user.rating || 0).toFixed(2)}`,
+          `${ph.user.firstName} ${ph.user.lastName} ${(ph.user.rating || 0).toFixed(1)}`,
       );
   }
 }

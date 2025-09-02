@@ -96,7 +96,7 @@
           <th>Date & Time</th>
           <th>Teams</th>
           <th>Location</th>
-          <th>Cost</th>
+          <th>Cost Total</th>
           <th>Status</th>
           <th>Public</th>
           <th>Actions</th>
@@ -118,7 +118,7 @@
             </div>
           </td>
           <td>{{ match.location || "TBD" }}</td>
-          <td>{{ match.cost ? match.cost + " Lei total" : "Free" }}</td>
+          <td>{{ match.cost ? match.cost + " Lei" : "Free" }}</td>
           <td>
             <span class="status-badge" [ngClass]="getStatusClass(match.status)">
               {{ getStatusText(match.status) }}
@@ -200,7 +200,7 @@
           <th>Date & Time</th>
           <th>Teams</th>
           <th>Location</th>
-          <th>Cost</th>
+          <th>Cost Total</th>
         </tr>
       </thead>
       <tbody>
@@ -227,7 +227,7 @@
             </div>
           </td>
           <td>{{ match.location || "TBD" }}</td>
-          <td>{{ match.cost ? match.cost + " Lei total" : "Free" }}</td>
+          <td>{{ match.cost ? match.cost + " Lei" : "Free" }}</td>
         </tr>
       </tbody>
     </table>
@@ -262,7 +262,10 @@
           </p>
         </div>
         <div>
-          <select [(ngModel)]="selectedRatingSystem" (ngModelChange)="updateRatingPreview()">
+          <select
+            [(ngModel)]="selectedRatingSystem"
+            (ngModelChange)="updateRatingPreview()"
+          >
             <option value="Linear">Linear</option>
             <option value="Performance">Performance</option>
             <!-- <option value="Vote">Vote</option> -->
@@ -297,8 +300,10 @@
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
                 <span class="player-rating">
-                  Rating: {{ player.rating || "N/A" }}
-                  <span [class]="getRatingChangeClass(player.id)">{{ getRatingPreviewForPlayer(player.id) }}</span>
+                  Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                  <span [class]="getRatingChangeClass(player.id)">{{
+                    getRatingPreviewForPlayer(player.id)
+                  }}</span>
                 </span>
               </div>
 
@@ -341,8 +346,10 @@
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
                 <span class="player-rating">
-                  Rating: {{ player.rating || "N/A" }}
-                  <span [class]="getRatingChangeClass(player.id)">{{ getRatingPreviewForPlayer(player.id) }}</span>
+                  Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                  <span [class]="getRatingChangeClass(player.id)">{{
+                    getRatingPreviewForPlayer(player.id)
+                  }}</span>
                 </span>
               </div>
 
@@ -705,7 +712,9 @@
             >
               <div class="player-name-rating">
                 <span class="name">{{ player.username }}</span>
-                <span class="rating">({{ player.rating }})</span>
+                <span class="rating"
+                  >({{ player.rating | number : "1.0-1" }})</span
+                >
               </div>
 
               <div class="action-buttons">
@@ -757,7 +766,9 @@
                   class="simple-player-row"
                 >
                   <span class="player-name"
-                    >{{ player.username }} ({{ player.rating }})</span
+                    >{{ player.username }} ({{
+                      player.rating | number : "1.0-1"
+                    }})</span
                   >
                   <div class="player-actions">
                     <button
@@ -807,7 +818,9 @@
                   class="simple-player-row"
                 >
                   <span class="player-name"
-                    >{{ player.username }} ({{ player.rating }})</span
+                    >{{ player.username }} ({{
+                      player.rating | number : "1.0-1"
+                    }})</span
                   >
                   <div class="player-actions">
                     <button
