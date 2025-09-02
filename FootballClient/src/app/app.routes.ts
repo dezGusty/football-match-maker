@@ -50,6 +50,14 @@ export const routes: Routes = [
     canActivate: [authGuard, playerGuard],
   },
   {
+    path: 'player-dashboard-availableMatches',
+    loadComponent: () =>
+      import(
+        './pages/player-dashboard-availableMatches/player-dashboard-availableMatches.component'
+      ).then((m) => m.PlayerDashboardAvailableMatchesComponent),
+    canActivate: [authGuard, playerGuard],
+  },
+  {
     path: 'organizer-dashboard',
     loadComponent: () =>
       import('./pages/organizer-dashboard/organizer-dashboard.component').then(

@@ -36,10 +36,14 @@
   <div class="menu" [class.open]="isMenuOpen">
     <ul>
       <li>
-        <button (click)="switchTab('future')">My Matches</button>
+        <button (click)="navigateTo('/player-dashboard')">
+          My Matches
+        </button>
       </li>
       <li>
-        <button (click)="switchTab('available')">Available Matches</button>
+        <button (click)="navigateTo('/player-dashboard-availableMatches')">
+          Available Matches
+        </button>
       </li>
       <li>
         <button (click)="switchTab('past')">Past Matches</button>
