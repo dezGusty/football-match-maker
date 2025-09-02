@@ -87,14 +87,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'create-match',
-    loadComponent: () =>
-      import('./pages/create-match/create-match.component').then(
-        (m) => m.CreateMatchComponent
-      ),
-    canActivate: [authGuard],
-  },
-  {
     path: 'delegated-organizer',
     loadComponent: () =>
       import('./pages/delegated-organizer/delegated-organizer.component').then(
