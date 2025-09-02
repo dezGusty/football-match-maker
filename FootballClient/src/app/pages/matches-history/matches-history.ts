@@ -39,42 +39,19 @@ export class MatchesHistory implements OnInit {
   selectedTeamBName: string = '';
   selectedTeamAPlayers: string[] = [];
   selectedTeamBPlayers: string[] = [];
-  modalOpen: boolean = false;
+  showDetails: boolean = false;
   selectedMatch: Match | null = null;
   statusText: string = '';
+  modalOpen = false;
 
-  async openPlayersModal(match: Match) {
-    try {
-      this.selectedMatch = match;
-      this.selectedTeamAName = match.teamAName!;
-      this.selectedTeamBName = match.teamBName!;
-
-      this.selectedTeamAPlayers = match.playerHistory
-        .filter((p) => p.teamId === match.teamAId && p.user)
-        .map(
-          (p) =>
-            `${p.user.firstName} ${p.user.lastName} ${(
-              p.user.rating || 0
-            ).toFixed(2)}`
-        );
-
-      this.selectedTeamBPlayers = match.playerHistory
-        .filter((p) => p.teamId === match.teamBId && p.user)
-        .map(
-          (p) =>
-            `${p.user.firstName} ${p.user.lastName} ${(
-              p.user.rating || 0
-            ).toFixed(2)}`
-        );
-
-      this.modalOpen = true;
-    } catch (error) {
-      console.error('Error loading player data:', error);
-    }
+  openPlayersModal(match: Match): void {
+    this.selectedMatch = match;
+    this.modalOpen = true;
   }
 
   closeModal() {
     this.modalOpen = false;
+    this.selectedMatch = null;
   }
 
   getPlayers(match: Match | null, teamId?: number | undefined): string[] {

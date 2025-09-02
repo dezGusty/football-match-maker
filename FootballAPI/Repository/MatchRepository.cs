@@ -82,9 +82,10 @@ namespace FootballAPI.Repository
 
         public async Task<IEnumerable<Match>> GetPastMatchesAsync()
         {
-            var currentDate = DateTime.Now.Date;
+            var currentDate = DateTime.Now;
+            Console.WriteLine($"Current date: {currentDate}");
             return await _context.Matches
-                .Where(m => m.MatchDate.Date <= currentDate && (m.Status == Status.Closed || m.Status == Status.Finalized))
+                .Where(m => m.MatchDate <= currentDate && (m.Status == Status.Closed || m.Status == Status.Finalized))
                 .OrderByDescending(m => m.MatchDate)
                 .ToListAsync();
         }
@@ -92,7 +93,7 @@ namespace FootballAPI.Repository
 
         public async Task<IEnumerable<Match>> GetFutureMatchesAsync()
         {
-            var currentDate = DateTime.Now.Date;
+            var currentDate = DateTime.Now;
             return await _context.Matches
                 .Where(m => m.MatchDate.Date > currentDate)
                 .OrderBy(m => m.MatchDate)
