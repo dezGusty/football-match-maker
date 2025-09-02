@@ -14,7 +14,7 @@ namespace FootballAPI.Models
     [Required]
     public int TeamId { get; set; }
 
-    public int Goals { get; set; } = 0;
+    public int? Goals { get; set; } = null;
 
     [ForeignKey("MatchId")]
     public virtual Match Match { get; set; } = null!;

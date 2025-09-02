@@ -63,7 +63,7 @@ namespace FootballAPI.Data
             modelBuilder.Entity<MatchTeams>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Goals).HasDefaultValue(0);
+                entity.Property(e => e.Goals).HasDefaultValue(null);
 
                 entity.HasOne(e => e.Match)
                     .WithMany(m => m.MatchTeams)

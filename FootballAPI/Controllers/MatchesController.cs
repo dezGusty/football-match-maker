@@ -418,13 +418,27 @@ namespace FootballAPI.Controllers
             }
         }
         
+        [HttpPost("{id}/rating-preview")]
+        public async Task<ActionResult<IEnumerable<RatingPreviewDto>>> CalculateRatingPreview(int id, CalculateRatingPreviewDto dto)
+        {
+            try
+            {
+                var ratingPreviews = await _matchService.CalculateRatingPreviewAsync(id, dto);
+                return Ok(ratingPreviews);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error calculating rating preview: {ex.Message}");
+            }
+        }
+
         [HttpPut("finalize/{id}")]
-        public async Task<ActionResult<MatchDto>> Finalizematch(int id, UpdateMatchDto updateMatchDto)
+        public async Task<ActionResult<MatchDto>> Finalizematch(int id, FinalizeMatchDto finalizeMatchDto)
         {
 
             try
             {
-                var match = await _matchService.FinalizeMatchAsync(id, updateMatchDto);
+                var match = await _matchService.FinalizeMatchAsync(id, finalizeMatchDto);
                 if (match == null)
                     return NotFound($"Match with ID {id} not found.");
 
@@ -432,7 +446,7 @@ namespace FootballAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Error updating match: {ex.Message}");
+                return BadRequest($"Error finalizing match: {ex.Message}");
             }
         }
 
