@@ -26,11 +26,6 @@ export interface MatchDisplay {
   teamBName?: string;
   status: number;
   isPublic: boolean;
-  organiserId?: number;
-  teamAId?: number;
-  teamBId?: number;
-  teamAGoals?: number;
-  teamBGoals?: number;
   teamAPlayerCount?: number;
   teamBPlayerCount?: number;
   myTeam?: 'A' | 'B' | null;

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
   FriendRequest,
-  CreateFriendRequest,
   FriendRequestResponse,
 } from '../models/friend-request.interface';
 import { AuthService } from './auth.service';

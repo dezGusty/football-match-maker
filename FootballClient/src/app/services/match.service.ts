@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Match } from '../models/match.interface';
-import { MatchCreated } from '../models/matchCreated.interface';
 import {
   CreateMatchRequest,
   CreateMatchResponse,
