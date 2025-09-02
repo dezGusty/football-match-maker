@@ -62,7 +62,7 @@ export class MatchesHistory implements OnInit {
         (ph) =>
           `${ph.user.firstName} ${ph.user.lastName} ${(
             ph.user.rating || 0
-          ).toFixed(2)}`
+          ).toFixed(1)}`
       );
   }
 

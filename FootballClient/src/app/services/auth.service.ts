@@ -147,7 +147,6 @@ export class AuthService {
       this.userId = loginResponse.user.id;
       this.userRole = loginResponse.user.role;
 
-      // Redirect based on user role
       if (loginResponse.user.role === UserRole.PLAYER) {
         this.router.navigate(['/player-dashboard']);
       } else if (
@@ -156,7 +155,6 @@ export class AuthService {
       ) {
         this.router.navigate(['/organizer-dashboard']);
       } else {
-        // Default fallback to root which will redirect based on role
         this.router.navigate(['/']);
       }
     } catch (error) {
@@ -185,10 +183,6 @@ export class AuthService {
     return true;
   }
 
-  isRegistered(): boolean {
-    return localStorage.getItem('isAuthenticated') === 'true';
-  }
-
   getUserId(): number | null {
     return this.userId;
   }
@@ -213,7 +207,6 @@ export class AuthService {
     }
 
     try {
-      // Make direct API call to avoid circular dependency
       const response = await fetch(
         `${this.apiUrl}/user/${userId}/delegation-status`,
         {
