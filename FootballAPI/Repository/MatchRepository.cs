@@ -84,7 +84,7 @@ namespace FootballAPI.Repository
         {
             var currentDate = DateTime.Now.Date;
             return await _context.Matches
-                .Where(m => m.MatchDate.Date <= currentDate)
+                .Where(m => m.MatchDate.Date <= currentDate && (m.Status == Status.Closed || m.Status == Status.Finalized))
                 .OrderByDescending(m => m.MatchDate)
                 .ToListAsync();
         }
