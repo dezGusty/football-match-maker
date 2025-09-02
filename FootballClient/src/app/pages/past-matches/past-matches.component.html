@@ -1,0 +1,72 @@
+<app-player-header *ngIf="isPlayer()"></app-player-header>
+
+<app-header *ngIf="isOrganizer()"></app-header>
+
+<table class="matches-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Date</th>
+      <th>First Team</th>
+      <th>Second Team</th>
+      <th>Score</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let match of matches; let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>{{ match.matchDate | date : "MMM d, y, HH:mm" }}</td>
+      <td>{{ match.teamAName }}</td>
+      <td>{{ match.teamBName }}</td>
+      <td>
+        {{ getScoreDisplay(match) }}
+      </td>
+      <td>
+        <button class="details-btn" (click)="openPlayersModal(match)">
+          Match Details
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="modal-overlay" *ngIf="modalOpen" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Match Details</h2>
+    </div>
+
+    <div class="teams-container">
+      <div class="team-section">
+        <h3>{{ selectedMatch?.teamAName }}</h3>
+        <ul>
+          <li
+            *ngFor="
+              let player of getPlayers(selectedMatch, selectedMatch?.teamAId)
+            "
+          >
+            {{ player }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="team-section">
+        <h3>{{ selectedMatch?.teamBName }}</h3>
+        <ul>
+          <li
+            *ngFor="
+              let player of getPlayers(selectedMatch, selectedMatch?.teamBId)
+            "
+          >
+            {{ player }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px">
+      <button (click)="closeModal()">Close</button>
+    </div>
+  </div>
+</div>

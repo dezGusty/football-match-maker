@@ -459,61 +459,61 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
             }
         }
-        [HttpPut("{id}/profile-image")]
-        public async Task<IActionResult> UpdateProfileImage(int id, [FromForm] IFormFile imageFile)
-        {
-            if (imageFile == null || imageFile.Length == 0)
-                return BadRequest("No image file uploaded.");
+        // [HttpPut("{id}/profile-image")]
+        // public async Task<IActionResult> UpdateProfileImage(int id, [FromForm] IFormFile imageFile)
+        // {
+        //     if (imageFile == null || imageFile.Length == 0)
+        //         return BadRequest("No image file uploaded.");
 
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+        //     var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
 
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
+        //     if (!Directory.Exists(uploadsFolder))
+        //     {
+        //         Directory.CreateDirectory(uploadsFolder);
+        //     }
 
-            var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
-            var filePath = Path.Combine(uploadsFolder, fileName);
+        //     var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+        //     var filePath = Path.Combine(uploadsFolder, fileName);
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await imageFile.CopyToAsync(stream);
-            }
-            
-            var baseUrl = $"{Request.Scheme}://{Request.Host}";
-            var imageUrl = $"{baseUrl}/images/{fileName}";
+        //     using (var stream = new FileStream(filePath, FileMode.Create))
+        //     {
+        //         await imageFile.CopyToAsync(stream);
+        //     }
 
-            var updatedUser = await _userService.UpdateUserProfileImageAsync(id, imageUrl);
+        //     var baseUrl = $"{Request.Scheme}://{Request.Host}";
+        //     var imageUrl = $"{baseUrl}/images/{fileName}";
 
-            if (updatedUser == null)
-                return NotFound($"User with ID {id} was not found.");
+        //     var updatedUser = await _userService.UpdateUserProfileImageAsync(id, imageUrl);
 
-            return Ok(new { message = "Profile image updated successfully", imageUrl });
-        }
-        
-        [HttpDelete("{id}/profile-image")]
-        public async Task<IActionResult> DeleteProfileImage(int id)
-        {
-            var user = await _userService.GetUserByIdAsync(id);
-            if (user == null)
-                return NotFound($"User with ID {id} was not found.");
+        //     if (updatedUser == null)
+        //         return NotFound($"User with ID {id} was not found.");
 
-            if (!string.IsNullOrEmpty(user.ProfileImageUrl))
-            {
-                var fileName = Path.GetFileName(user.ProfileImageUrl);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+        //     return Ok(new { message = "Profile image updated successfully", imageUrl });
+        // }
 
-                if (System.IO.File.Exists(filePath))
-                {
-                    System.IO.File.Delete(filePath);
-                }
-                
-                user.ProfileImageUrl = null;
-                await _userService.UpdateUserProfileImageAsync(id, null);
-            }
+        // [HttpDelete("{id}/profile-image")]
+        // public async Task<IActionResult> DeleteProfileImage(int id)
+        // {
+        //     var user = await _userService.GetUserByIdAsync(id);
+        //     if (user == null)
+        //         return NotFound($"User with ID {id} was not found.");
 
-            return Ok(new { message = "Profile image deleted successfully" });
-        }
+        //     if (!string.IsNullOrEmpty(user.ProfileImageUrl))
+        //     {
+        //         var fileName = Path.GetFileName(user.ProfileImageUrl);
+        //         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+
+        //         if (System.IO.File.Exists(filePath))
+        //         {
+        //             System.IO.File.Delete(filePath);
+        //         }
+
+        //         user.ProfileImageUrl = null;
+        //         await _userService.UpdateUserProfileImageAsync(id, null);
+        //     }
+
+        //     return Ok(new { message = "Profile image deleted successfully" });
+        // }
 
 
 

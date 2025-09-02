@@ -122,12 +122,14 @@ namespace FootballAPI.Controllers
                 return BadRequest($"Error getting future matches: {ex.Message}");
             }
         }
+        [Authorize]
         [HttpGet("past")]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetPastMatches()
         {
             try
             {
-                var pastMatches = await _matchService.GetPastMatchesAsync();
+                int id = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var pastMatches = await _matchService.GetPastMatchesAsync(id);
                 return Ok(pastMatches);
             }
             catch (Exception ex)
@@ -135,6 +137,24 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [Authorize]
+        [HttpGet("past/my-matches")]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetMyPastMatches()
+        {
+            try
+            {
+                int userId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var pastMatches = await _matchService.GetPastMatchesByParticipantAsync(userId);
+                return Ok(pastMatches);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
 
         [HttpPost("{id}/players")]
         [Authorize]
@@ -417,7 +437,7 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, $"Error removing player from match: {ex.Message}");
             }
         }
-        
+
         [HttpPost("{id}/rating-preview")]
         public async Task<ActionResult<IEnumerable<RatingPreviewDto>>> CalculateRatingPreview(int id, CalculateRatingPreviewDto dto)
         {

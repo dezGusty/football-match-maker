@@ -226,9 +226,20 @@ namespace FootballAPI.Service
             return matchDtos;
 
         }
-        public async Task<IEnumerable<MatchDto>> GetPastMatchesAsync()
+        public async Task<IEnumerable<MatchDto>> GetPastMatchesAsync(int userId)
         {
-            var pastMatches = await _matchRepository.GetPastMatchesAsync();
+            var pastMatches = await _matchRepository.GetPastMatchesAsync(userId);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in pastMatches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
+        }
+
+        public async Task<IEnumerable<MatchDto>> GetPastMatchesByParticipantAsync(int userId)
+        {
+            var pastMatches = await _matchRepository.GetPastMatchesByParticipantAsync(userId);
             var matchDtos = new List<MatchDto>();
             foreach (var match in pastMatches)
             {
@@ -674,7 +685,7 @@ namespace FootballAPI.Service
                 if (ratingSystem == "Performance")
                 {
                     float performanceRating = CalculatePerformanceRating(player.User);
-                    
+
                     if (isTie)
                     {
                         ratingChange = performanceRating / 2;
@@ -692,7 +703,7 @@ namespace FootballAPI.Service
                 {
                     int scoreDiff = Math.Abs(teamAGoals - teamBGoals);
                     float linearRating = CalculateLinearRating(scoreDiff);
-                    
+
                     if (isTie)
                     {
                         ratingChange = 0f;
@@ -707,8 +718,8 @@ namespace FootballAPI.Service
                     }
                 }
 
-                string ratingChangeStr = ratingChange >= 0 ? 
-                    $"+{ratingChange:F2}" : 
+                string ratingChangeStr = ratingChange >= 0 ?
+                    $"+{ratingChange:F2}" :
                     $"{ratingChange:F2}";
 
                 result.Add(new RatingPreviewDto
@@ -764,19 +775,19 @@ namespace FootballAPI.Service
 
             // Calculate and apply rating changes
             var ratingChanges = await CalculateRatingChanges(matchId, finalizeMatchDto.TeamAGoals, finalizeMatchDto.TeamBGoals, finalizeMatchDto.RatingSystem);
-            
+
             foreach (var ratingChange in ratingChanges)
             {
                 float change = float.Parse(ratingChange.RatingChange);
                 await _userService.UpdatePlayerRatingAsync(ratingChange.PlayerId, change);
             }
-            
+
             match.Status = Status.Finalized;
             await _matchRepository.UpdateAsync(match);
             await _context.SaveChangesAsync();
 
             return await MapToDtoAsync(match);
         }
-        
+
     }
 }

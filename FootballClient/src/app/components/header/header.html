@@ -23,7 +23,6 @@
       style="cursor: pointer"
       title="Go to Dashboard"
     >
-    
       <img src="assets/logo_nobg.png" alt="logo-image" class="logo" />
       <h1 class="app-title">Football Match Maker</h1>
     </div>
@@ -58,8 +57,12 @@
       <!-- Common Menu Items -->
       <li>
         <button (click)="navigateTo('/matches-history')">
-          Matches History
+          Old created matches
         </button>
+      </li>
+
+      <li>
+        <button (click)="navigateTo('/past-matches')">Past matches</button>
       </li>
 
       <li>

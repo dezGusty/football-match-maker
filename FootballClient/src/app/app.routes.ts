@@ -58,6 +58,14 @@ export const routes: Routes = [
     canActivate: [authGuard, playerGuard],
   },
   {
+    path: 'past-matches',
+    loadComponent: () =>
+      import('./pages/past-matches/past-matches.component').then(
+        (m) => m.PastMatches
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: 'organizer-dashboard',
     loadComponent: () =>
       import('./pages/organizer-dashboard/organizer-dashboard.component').then(

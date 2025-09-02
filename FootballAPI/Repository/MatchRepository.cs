@@ -80,16 +80,22 @@ namespace FootballAPI.Repository
             return await _context.Matches.AnyAsync(m => m.Id == id);
         }
 
-        public async Task<IEnumerable<Match>> GetPastMatchesAsync()
+        public async Task<IEnumerable<Match>> GetPastMatchesAsync(int id)
         {
             var currentDate = DateTime.Now;
-            Console.WriteLine($"Current date: {currentDate}");
             return await _context.Matches
-                .Where(m => m.MatchDate <= currentDate && (m.Status == Status.Closed || m.Status == Status.Finalized))
+                .Where(m => m.MatchDate <= currentDate && (m.Status == Status.Closed || m.Status == Status.Finalized) && m.OrganiserId == id)
                 .OrderByDescending(m => m.MatchDate)
                 .ToListAsync();
         }
-
+        public async Task<IEnumerable<Match>> GetPastMatchesByParticipantAsync(int userId)
+        {
+            var currentDate = DateTime.Now;
+            return await _context.Matches
+                .Where(m => m.MatchDate <= currentDate && (m.Status == Status.Closed || m.Status == Status.Finalized) && m.MatchTeams.Any(mt => mt.TeamPlayers.Any(p => p.UserId == userId)))
+                .OrderByDescending(m => m.MatchDate)
+                .ToListAsync();
+        }
 
         public async Task<IEnumerable<Match>> GetFutureMatchesAsync()
         {

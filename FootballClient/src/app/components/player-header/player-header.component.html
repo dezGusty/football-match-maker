@@ -36,9 +36,7 @@
   <div class="menu" [class.open]="isMenuOpen">
     <ul>
       <li>
-        <button (click)="navigateTo('/player-dashboard')">
-          My Matches
-        </button>
+        <button (click)="navigateTo('/player-dashboard')">My Matches</button>
       </li>
       <li>
         <button (click)="navigateTo('/player-dashboard-availableMatches')">
@@ -46,7 +44,7 @@
         </button>
       </li>
       <li>
-        <button (click)="switchTab('past')">Past Matches</button>
+        <button (click)="navigateTo('/past-matches')">Past Matches</button>
       </li>
       <li>
         <button (click)="logout()" class="logout-btn">Log Out</button>

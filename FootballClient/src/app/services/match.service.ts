@@ -189,6 +189,63 @@ export class MatchService {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.authService.getToken()}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch past matches: ${errorText}`);
+      }
+
+      const rawMatches = await response.json();
+
+      const matches: Match[] = await Promise.all(
+        (rawMatches as Match[]).map(async (m) => {
+          let teamAName = m.teamAName;
+          let teamBName = m.teamBName;
+
+          if (!teamAName || teamAName === 'Team A') {
+            teamAName = await this.getTeamById(m.teamAId);
+          }
+          if (!teamBName || teamBName === 'Team B') {
+            teamBName = await this.getTeamById(m.teamBId);
+          }
+
+          return {
+            id: m.id,
+            matchDate: m.matchDate,
+            teamAId: m.teamAId,
+            teamBId: m.teamBId,
+            teamAName: teamAName,
+            teamBName: teamBName,
+            scoreA: m.teamAGoals || m.scoreA || 0,
+            scoreB: m.teamBGoals || m.scoreB || 0,
+            status: m.status,
+            isPublic: m.isPublic,
+            location: m.location,
+            cost: m.cost,
+            organiserId: m.organiserId,
+            playerHistory: m.playerHistory || [],
+          };
+        })
+      );
+
+      return matches;
+    } catch (error) {
+      console.error('Error fetching past matches:', error);
+      throw error;
+    }
+  }
+
+  async getMyPastMatches(): Promise<Match[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/matches/past/my-matches`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.authService.getToken()}`,
         },
       });
 

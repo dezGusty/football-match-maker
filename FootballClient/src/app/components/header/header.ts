@@ -31,10 +31,12 @@ export class Header implements OnInit {
       const user = await this.userService.getUserById(userId);
       this.username = user.username;
       this.userRole = this.authService.getUserRole();
-      
+
       if (this.isOrganizer()) {
         try {
-          this.delegationStatus = await this.userService.getDelegationStatus(userId);
+          this.delegationStatus = await this.userService.getDelegationStatus(
+            userId
+          );
         } catch (error) {
           console.error('Error loading delegation status in header:', error);
         }
@@ -55,7 +57,10 @@ export class Header implements OnInit {
   navigateToDashboard() {
     if (this.userRole === UserRole.PLAYER) {
       this.router.navigate(['/player-dashboard']);
-    } else if (this.userRole === UserRole.ORGANISER || this.userRole === UserRole.ADMIN) {
+    } else if (
+      this.userRole === UserRole.ORGANISER ||
+      this.userRole === UserRole.ADMIN
+    ) {
       this.router.navigate(['/organizer-dashboard']);
     }
     this.isMenuOpen = false;
@@ -63,7 +68,9 @@ export class Header implements OnInit {
 
   // Check if user is organizer or admin
   isOrganizer(): boolean {
-    return this.userRole === UserRole.ORGANISER || this.userRole === UserRole.ADMIN;
+    return (
+      this.userRole === UserRole.ORGANISER || this.userRole === UserRole.ADMIN
+    );
   }
 
   // Check if user is player
