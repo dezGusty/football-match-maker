@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FootballAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,6 +28,15 @@ namespace FootballAPI.Migrations
             migrationBuilder.DropColumn(
                 name: "IsDelegatingOrganizer",
                 table: "Users");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "Goals",
+                table: "MatchTeams",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldDefaultValue: 0);
 
             migrationBuilder.AlterColumn<int>(
                 name: "Status",
@@ -213,6 +222,16 @@ namespace FootballAPI.Migrations
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "Goals",
+                table: "MatchTeams",
+                type: "int",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true);
 
             migrationBuilder.AlterColumn<int>(
                 name: "Status",

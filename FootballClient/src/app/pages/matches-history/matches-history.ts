@@ -5,8 +5,7 @@ import { Match } from '../../models/match.interface';
 import { DatePipe } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlayerHistory } from '../../models/player-history.interface';
-import { User } from '../../models/user.interface';
+import { MatchStatus } from '../../models/match-status.enum';
 
 @Component({
   selector: 'app-matches-history',
@@ -16,6 +15,7 @@ import { User } from '../../models/user.interface';
 })
 export class MatchesHistory implements OnInit {
   matches: Match[] = [];
+  MatchStatus = MatchStatus;
 
   constructor(private MatchService: MatchService) {}
 
@@ -39,46 +39,41 @@ export class MatchesHistory implements OnInit {
   selectedTeamBName: string = '';
   selectedTeamAPlayers: string[] = [];
   selectedTeamBPlayers: string[] = [];
-  modalOpen: boolean = false;
+  showDetails: boolean = false;
   selectedMatch: Match | null = null;
+  statusText: string = '';
+  modalOpen = false;
 
-  async openPlayersModal(match: Match) {
-    try {
-      this.selectedMatch = match;
-      this.selectedTeamAName = match.teamAName!;
-      this.selectedTeamBName = match.teamBName!;
-
-      this.selectedTeamAPlayers = match.playerHistory
-        .filter((p) => p.teamId === match.teamAId && p.user)
-        .map(
-          (p) =>
-            `${p.user.firstName} ${p.user.lastName} ${(p.user.rating || 0).toFixed(1)}`,
-        );
-
-      this.selectedTeamBPlayers = match.playerHistory
-        .filter((p) => p.teamId === match.teamBId && p.user)
-        .map(
-          (p) =>
-            `${p.user.firstName} ${p.user.lastName} ${(p.user.rating || 0).toFixed(1)}`,
-        );
-
-      this.modalOpen = true;
-    } catch (error) {
-      console.error('Error loading player data:', error);
-    }
+  openPlayersModal(match: Match): void {
+    this.selectedMatch = match;
+    this.modalOpen = true;
   }
 
   closeModal() {
     this.modalOpen = false;
+    this.selectedMatch = null;
   }
 
-  getPlayers(match: Match | null, teamId?: number): string[] {
+  getPlayers(match: Match | null, teamId?: number | undefined): string[] {
     if (!match || !teamId) return [];
     return match.playerHistory
       .filter((ph) => ph.teamId === teamId && ph.user)
       .map(
         (ph) =>
-          `${ph.user.firstName} ${ph.user.lastName} ${(ph.user.rating || 0).toFixed(1)}`,
+          `${ph.user.firstName} ${ph.user.lastName} ${(
+            ph.user.rating || 0
+          ).toFixed(1)}`
       );
+  }
+
+  getScoreDisplay(match: Match): string {
+    switch (match.status) {
+      case MatchStatus.Finalized:
+        return `${match.scoreA || 0} - ${match.scoreB || 0}`;
+      case MatchStatus.Closed:
+        return "Waiting for organiser's score";
+      default:
+        return `Status: ${match.status}`;
+    }
   }
 }

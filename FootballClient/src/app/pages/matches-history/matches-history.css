@@ -46,7 +46,6 @@
 }
 
 button {
-  margin-top: 20px;
   padding: 8px 16px;
   border: none;
   background-color: var(--primary-600);
@@ -104,4 +103,71 @@ button:hover {
   flex-direction: column;
   gap: 6px;
   align-items: center;
+}
+
+.details-btn {
+  padding: 6px 12px;
+  border: none;
+  background-color: var(--primary-600);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.details-btn:hover {
+  background-color: var(--primary-700);
+}
+
+.details-btn.active {
+  background-color: var(--primary-800);
+}
+
+.details-row {
+  background-color: var(--surface-light, #f8f9fa);
+}
+
+.details-cell {
+  padding: 20px !important;
+}
+
+.match-details {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.match-details .teams-container {
+  display: flex;
+  justify-content: space-around;
+  gap: 30px;
+  padding: 0;
+}
+
+.match-details .team-section {
+  flex: 1;
+  background-color: var(--card, white);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.match-details .team-section h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 16px;
+  text-align: center;
+  color: var(--primary-600);
+}
+
+.match-details .team-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.match-details .team-section li {
+  padding: 4px 0;
+  font-size: 14px;
+  text-align: center;
 }

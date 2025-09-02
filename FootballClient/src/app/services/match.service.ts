@@ -221,6 +221,11 @@ export class MatchService {
             teamBName: teamBName,
             scoreA: m.teamAGoals || m.scoreA || 0,
             scoreB: m.teamBGoals || m.scoreB || 0,
+            status: m.status,
+            isPublic: m.isPublic,
+            location: m.location,
+            cost: m.cost,
+            organiserId: m.organiserId,
             playerHistory: m.playerHistory || [],
           };
         })

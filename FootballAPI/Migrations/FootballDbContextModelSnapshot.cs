@@ -214,10 +214,8 @@ namespace FootballAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Goals")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                    b.Property<int?>("Goals")
+                        .HasColumnType("int");
 
                     b.Property<int>("MatchId")
                         .HasColumnType("int");
