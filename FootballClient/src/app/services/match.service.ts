@@ -162,15 +162,18 @@ export class MatchService {
       teamAId: currentMatch.teamAId,
       teamBId: currentMatch.teamBId,
     };
-    const response = await fetch(`${this.baseUrl}/matches/finalize/${matchId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updateMatchDto),
-    });
+    const response = await fetch(
+      `${this.baseUrl}/matches/finalize/${matchId}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateMatchDto),
+      }
+    );
     if (!response.ok) {
       throw new Error('Failed to update match');
     }
-    if(response.ok){
+    if (response.ok) {
       console.log('Match finalized successfully');
     }
 
@@ -268,6 +271,11 @@ export class MatchService {
             teamBName: teamBName,
             scoreA: m.teamAGoals || m.scoreA || 0,
             scoreB: m.teamBGoals || m.scoreB || 0,
+            status: m.status,
+            isPublic: m.isPublic,
+            location: m.location,
+            cost: m.cost,
+            organiserId: m.organiserId,
             playerHistory: m.playerHistory || [],
           };
         })
@@ -430,7 +438,9 @@ export class MatchService {
         throw new Error('Not authenticated');
       }
       if (response.status === 400) {
-        throw new Error('Could not close match. Match needs at least 10 players or is not in Open status.');
+        throw new Error(
+          'Could not close match. Match needs at least 10 players or is not in Open status.'
+        );
       }
       throw new Error(`Error closing match: ${errorText}`);
     }
@@ -450,7 +460,9 @@ export class MatchService {
         throw new Error('Not authenticated');
       }
       if (response.status === 400) {
-        throw new Error('Could not cancel match. Match not found or invalid status.');
+        throw new Error(
+          'Could not cancel match. Match not found or invalid status.'
+        );
       }
       throw new Error(`Error cancelling match: ${errorText}`);
     }
