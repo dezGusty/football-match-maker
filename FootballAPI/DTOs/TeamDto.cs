@@ -28,7 +28,7 @@ namespace FootballAPI.DTOs
         public int Id { get; set; }
         public int MatchId { get; set; }
         public int TeamId { get; set; }
-        public int Goals { get; set; }
+        public int? Goals { get; set; }
         public MatchDto Match { get; set; } = null!;
         public TeamDto Team { get; set; } = null!;
     }
@@ -43,8 +43,7 @@ namespace FootballAPI.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "TeamId must be greater than 0")]
         public int TeamId { get; set; }
 
-        [Range(0, int.MaxValue, ErrorMessage = "Goals cannot be negative")]
-        public int Goals { get; set; } = 0;
+        public int? Goals { get; set; } = null;
     }
 
     public class UpdateMatchTeamsDto

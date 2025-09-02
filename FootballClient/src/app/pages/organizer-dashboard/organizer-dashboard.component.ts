@@ -54,6 +54,7 @@ export class OrganizerDashboardComponent {
   teamBScore: number | null = null;
   originalTeamAPlayers: User[] = [];
   originalTeamBPlayers: User[] = [];
+  ratingPreviews: any[] = [];
   addingPlayers = false;
   savingPlayers = false;
   addPlayersErrorMessage = '';
@@ -459,6 +460,10 @@ export class OrganizerDashboardComponent {
   async openFinalizeMatchModal(match: MatchDisplay) {
     this.selectedMatch = match;
 
+    this.teamAScore = null;
+    this.teamBScore = null;
+    this.ratingPreviews = [];
+
     try {
       this.matchDetails = await this.matchService.getMatchDetails(match.id);
 
@@ -477,7 +482,16 @@ export class OrganizerDashboardComponent {
     this.showFinalizeMatchModal = false;
   }
   async finalizeMatch() {
-    await this.matchService.finalizeMatchServ(this.selectedMatch!.id);
+    if (this.teamAScore == null || this.teamBScore == null) {
+      this.notificationService.showError('Please enter scores for both teams');
+      return;
+    }
+    await this.matchService.finalizeMatchServ(
+      this.selectedMatch!.id,
+      this.teamAScore,
+      this.teamBScore,
+      this.selectedRatingSystem
+    );
     this.closeFinalizeMatchModal();
     await this.loadMatches();
   }
@@ -529,75 +543,41 @@ export class OrganizerDashboardComponent {
     }
     return 'Add Players';
   }
-  ratingChange(player?: User): string {
-    if (this.selectedRatingSystem == 'Performance') {
-      let playerErrorsChange = 0;
-      switch (player?.errors) {
-        case 1:
-          playerErrorsChange = 0.025;
-          break;
-        case 2:
-          playerErrorsChange = 0.05;
-          break;
-        case 3:
-          playerErrorsChange = 0.075;
-          break;
-        case 4:
-          playerErrorsChange = 0.1;
-          break;
-        default:
-          playerErrorsChange = 0;
-          break;
+  async updateRatingPreview() {
+    if (
+      this.selectedMatch &&
+      this.teamAScore != null &&
+      this.teamBScore != null
+    ) {
+      try {
+        this.ratingPreviews = await this.matchService.calculateRatingPreview(
+          this.selectedMatch.id,
+          this.teamAScore,
+          this.teamBScore,
+          this.selectedRatingSystem
+        );
+      } catch (error) {
+        console.error('Error updating rating preview:', error);
+        this.ratingPreviews = [];
       }
-      const totalRating =
-        (player?.rating ?? 0) * 0.005 +
-        (player?.speed ?? 0) * 0.025 +
-        (player?.stamina ?? 0) * 0.025 +
-        playerErrorsChange;
-
-      if (this.teamAScore != null && this.teamBScore != null) {
-        if (this.teamAScore > this.teamBScore) {
-          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
-            return '+' + totalRating.toFixed(2);
-          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
-            return '-' + totalRating.toFixed(2);
-          }
-        } else if (this.teamAScore < this.teamBScore) {
-          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
-            return '-' + totalRating.toFixed(2);
-          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
-            return '+' + totalRating.toFixed(2);
-          }
-        } else {
-          return '+' + (totalRating / 2).toFixed(2);
-        }
-      }
-      return '0';
-    } else if (this.selectedRatingSystem == 'Linear') {
-      if (this.teamAScore != null && this.teamBScore != null) {
-        const scoreDiff = Math.abs(this.teamAScore - this.teamBScore);
-        const ratingChange = Math.min(0.1 * scoreDiff, 1); // Max change capped at 1 point
-
-        if (this.teamAScore > this.teamBScore) {
-          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
-            return '+' + ratingChange.toFixed(2);
-          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
-            return '-' + ratingChange.toFixed(2);
-          }
-        } else if (this.teamAScore < this.teamBScore) {
-          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
-            return '-' + ratingChange.toFixed(2);
-          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
-            return '+' + ratingChange.toFixed(2);
-          }
-        } else {
-          return '0.00';
-        }
-      }
-      return '0.00';
     } else {
-      return '0.00';
+      this.ratingPreviews = [];
     }
+  }
+
+  getRatingPreviewForPlayer(playerId: number): string {
+    const preview = this.ratingPreviews.find((p) => p.playerId === playerId);
+    return preview ? preview.ratingChange : '0.00';
+  }
+
+  getRatingChangeClass(playerId: number): string {
+    const preview = this.ratingPreviews.find((p) => p.playerId === playerId);
+    if (!preview) return '';
+
+    const change = parseFloat(preview.ratingChange);
+    if (change > 0) return 'positive-rating';
+    if (change < 0) return 'negative-rating';
+    return 'neutral-rating';
   }
 
   async openAddPlayersModal(match: MatchDisplay) {

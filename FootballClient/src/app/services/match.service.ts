@@ -152,26 +152,53 @@ export class MatchService {
     const team = await response.json();
     return team.currentPlayers.map((p: any) => `${p.firstName} ${p.lastName}`);
   }
-  async finalizeMatchServ(matchId: number): Promise<void> {
-    const currentMatch = await this.getMatchById(matchId);
-    if (!currentMatch) {
-      throw new Error('Match not found');
+  async calculateRatingPreview(
+    matchId: number,
+    teamAGoals: number,
+    teamBGoals: number,
+    ratingSystem: string
+  ): Promise<any[]> {
+    const dto = {
+      teamAGoals: teamAGoals,
+      teamBGoals: teamBGoals,
+      ratingSystem: ratingSystem,
+    };
+    const response = await fetch(
+      `${this.baseUrl}/matches/${matchId}/rating-preview`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dto),
+      }
+    );
+    if (!response.ok) {
+      throw new Error('Failed to calculate rating preview');
     }
-    const updateMatchDto = {
-      matchDate: currentMatch.matchDate,
-      teamAId: currentMatch.teamAId,
-      teamBId: currentMatch.teamBId,
+
+    return await response.json();
+  }
+
+  async finalizeMatchServ(
+    matchId: number,
+    teamAGoals: number,
+    teamBGoals: number,
+    ratingSystem: string = 'Performance'
+  ): Promise<void> {
+    const finalizeMatchDto = {
+      teamAGoals: teamAGoals,
+      teamBGoals: teamBGoals,
+      ratingSystem: ratingSystem,
     };
     const response = await fetch(
       `${this.baseUrl}/matches/finalize/${matchId}`,
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updateMatchDto),
+        body: JSON.stringify(finalizeMatchDto),
       }
     );
     if (!response.ok) {
-      throw new Error('Failed to update match');
+      throw new Error('Failed to finalize match');
     }
     if (response.ok) {
       console.log('Match finalized successfully');
