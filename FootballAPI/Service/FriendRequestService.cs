@@ -166,5 +166,17 @@ namespace FootballAPI.Service
 
             return await _friendRequestRepository.DeleteAsync(requestId);
         }
+
+        public async Task<bool> UnfriendAsync(int userId, int friendId)
+        {
+            var relation = await _userRepository.GetPlayerOrganiserRelationAsync(userId, friendId);
+
+            if (relation == null)
+                return false;
+
+            await _userRepository.DeletePlayerOrganiserRelationAsync(relation);
+            return true;
+        }
+
     }
 }

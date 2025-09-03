@@ -18,6 +18,7 @@ import {
   OrganizerDelegateDto,
 } from '../../models/organizer-delegation.interface';
 import { Router } from '@angular/router';
+import { FriendRequestService } from '../../services/friend-request.service';
 
 @Component({
   selector: 'app-manage-players',
@@ -37,7 +38,8 @@ export class ManagePlayersComponent {
     private UserService: UserService,
     private authService: AuthService,
     private matchService: MatchService,
-    private router: Router
+    private router: Router,
+    private friendRequestService: FriendRequestService 
   ) {}
 
   players: User[] = [];
@@ -310,4 +312,21 @@ export class ManagePlayersComponent {
       player.role !== UserRole.ORGANISER
     );
   }
+
+  async unfriend(player: User) {
+  const confirmUnfriend = confirm(
+    `Are you sure you want to unfriend ${player.firstName} ${player.lastName}?`
+  );
+  if (!confirmUnfriend) return;
+
+  try {
+    await this.friendRequestService.unfriend(player.id!);
+    this.players = this.players.filter((p) => p.id !== player.id); // scoatem din listă
+    alert(`${player.firstName} ${player.lastName} has been unfriended.`);
+  } catch (error: any) {
+    console.error('Error unfriending:', error);
+    alert(error.message || 'Failed to unfriend user');
+  }
+}
+
 }

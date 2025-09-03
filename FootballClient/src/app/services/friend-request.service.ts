@@ -117,4 +117,17 @@ export class FriendRequestService {
       throw new Error(errorText || 'Failed to delete friend request');
     }
   }
+
+  async unfriend(friendId: number): Promise<void> {
+  const response = await fetch(`${this.baseUrl}/unfriend/${friendId}`, {
+    method: 'DELETE',
+    headers: this.getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || 'Failed to unfriend user');
+  }
+}
+
 }

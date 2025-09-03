@@ -152,6 +152,7 @@
                 (click)="editPlayer()"
               >
                 Save
+                
               </button>
               <button
                 class="action-btn cancel-btn"
@@ -205,16 +206,24 @@
       Edit
     </button>
     @if (canDelegateToPlayer(player)) {
-    <button
-      class="action-btn delegate-btn"
-      title="Make Organizer"
-      (click)="openDelegateModal(player)"
-    >
-      Make Organizer
-    </button>
+      <button
+        class="action-btn delegate-btn"
+        title="Make Organizer"
+        (click)="openDelegateModal(player)"
+      >
+        Make Organizer
+      </button>
     }
+    <button
+      class="action-btn danger-btn"
+      title="Unfriend"
+      (click)="unfriend(player)"
+    >
+      Unfriend
+    </button>
   }
 </td>
+
           </ng-template>
         </tr>
       </tbody>

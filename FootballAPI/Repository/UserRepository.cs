@@ -410,5 +410,19 @@ namespace FootballAPI.Repository
             await UpdateAsync(user);
             return true;
         }
+
+        public async Task<PlayerOrganiser?> GetPlayerOrganiserRelationAsync(int userId, int friendId)
+        {
+            return await _context.PlayerOrganisers
+                .FirstOrDefaultAsync(po =>
+                (po.OrganiserId == userId && po.PlayerId == friendId) || 
+                (po.OrganiserId == friendId && po.PlayerId == userId));
+        }
+
+        public async Task DeletePlayerOrganiserRelationAsync(PlayerOrganiser relation)
+        {
+            _context.PlayerOrganisers.Remove(relation);
+            await _context.SaveChangesAsync();
+        }
     }
 }

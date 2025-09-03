@@ -133,5 +133,28 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        [HttpDelete("unfriend/{friendId}")]
+        public async Task<ActionResult> Unfriend(int friendId)
+        {
+            try 
+            {
+                var userId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var success = await _friendRequestService.UnfriendAsync(userId, friendId);
+                if (!success)
+                    return NotFound("Friend relationship not found");
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error unfriending user");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
     }
 }

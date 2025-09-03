@@ -43,5 +43,9 @@ namespace FootballAPI.Repository
         Task<bool> RestoreOrganizerPlayerRelationAsync(int organizerId);
         Task<bool> TransferMatchesAsync(int fromOrganizerId, int toOrganizerId);
         Task<bool> UpdateUserRoleAsync(int userId, UserRole newRole);
+        Task<PlayerOrganiser?> GetPlayerOrganiserRelationAsync(int userId, int friendId);
+        Task DeletePlayerOrganiserRelationAsync(PlayerOrganiser relation);
+
+
     }
 }

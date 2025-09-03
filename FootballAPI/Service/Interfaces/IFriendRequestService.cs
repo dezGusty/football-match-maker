@@ -12,5 +12,7 @@ namespace FootballAPI.Service
         Task<IEnumerable<FriendRequestDto>> GetReceivedRequestsAsync(int userId);
         Task<IEnumerable<FriendRequestDto>> GetFriendsAsync(int userId);
         Task<bool> DeleteFriendRequestAsync(int requestId, int userId);
+        Task<bool> UnfriendAsync(int userId, int friendId);
+
     }
 }
