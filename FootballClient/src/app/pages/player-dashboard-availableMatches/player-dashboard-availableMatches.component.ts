@@ -5,16 +5,13 @@ import { AuthService } from '../../services/auth.service';
 import { MatchService } from '../../services/match.service';
 import { NotificationService } from '../../services/notification.service';
 import { Header } from '../../components/header/header';
+import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
 import { Match } from '../../models/match.interface';
 
 @Component({
   selector: 'app-player-dashboard-availableMatches.component',
   standalone: true,
-  imports: [
-    CommonModule,
-    DatePipe,
-    Header,
-  ],
+  imports: [CommonModule, DatePipe, Header, FriendRequestsComponent],
   templateUrl: './player-dashboard-availableMatches.component.html',
   styleUrls: ['./player-dashboard-availableMatches.component.css'],
 })
@@ -40,7 +37,6 @@ export class PlayerDashboardAvailableMatchesComponent implements OnInit {
     await this.loadPublicMatches();
   }
 
-
   async loadPublicMatches() {
     try {
       const publicMatches = await this.matchService.getMyPublicMatches();
@@ -51,7 +47,6 @@ export class PlayerDashboardAvailableMatchesComponent implements OnInit {
       console.error('Error loading public matches:', error);
     }
   }
-
 
   async openJoinMatchModal(match: Match) {
     try {
@@ -101,7 +96,6 @@ export class PlayerDashboardAvailableMatchesComponent implements OnInit {
     this.modalOpen = false;
     this.selectedMatch = null;
   }
-
 
   logout() {
     this.authService.logout();
@@ -153,4 +147,5 @@ export class PlayerDashboardAvailableMatchesComponent implements OnInit {
     }
   }
 
+  setActiveTab(tab: string) {}
 }
