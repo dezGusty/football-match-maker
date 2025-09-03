@@ -144,6 +144,9 @@
             </span>
           </td>
           <td class="actions">
+            <span *ngIf="match.status == 3" class="status-text">
+              No actions available
+            </span>
             <button
               *ngIf="match.status !== 3"
               class="action-btn add-players-btn"
