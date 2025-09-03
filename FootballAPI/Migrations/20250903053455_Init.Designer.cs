@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    [Migration("20250901061645_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250903053455_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,6 +59,116 @@ namespace FootballAPI.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("FriendRequests");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 1,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 2,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 5,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 6,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 7,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 8,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 9,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 10,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 11,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 12,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 13,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ReceiverId = 14,
+                            ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SenderId = 4,
+                            Status = 1
+                        });
                 });
 
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
@@ -90,7 +200,7 @@ namespace FootballAPI.Migrations
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasDefaultValue(1);
+                        .HasDefaultValue(0);
 
                     b.HasKey("Id");
 
@@ -107,10 +217,8 @@ namespace FootballAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Goals")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                    b.Property<int?>("Goals")
+                        .HasColumnType("int");
 
                     b.Property<int>("MatchId")
                         .HasColumnType("int");
@@ -185,6 +293,80 @@ namespace FootballAPI.Migrations
                     b.HasIndex("PlayerId");
 
                     b.ToTable("PlayerOrganisers");
+
+                    b.HasData(
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 1,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 2,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 5,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 6,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 7,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 8,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 9,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 10,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 11,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 12,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 13,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            OrganiserId = 4,
+                            PlayerId = 14,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
                 });
 
             modelBuilder.Entity("FootballAPI.Models.ResetPasswordToken", b =>

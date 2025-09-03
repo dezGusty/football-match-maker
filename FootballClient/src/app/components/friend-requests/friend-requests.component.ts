@@ -5,7 +5,6 @@ import { FriendRequestService } from '../../services/friend-request.service';
 import { AuthService } from '../../services/auth.service';
 import {
   FriendRequest,
-  CreateFriendRequest,
   FriendRequestResponse,
 } from '../../models/friend-request.interface';
 import { UserRole } from '../../models/user-role.enum';

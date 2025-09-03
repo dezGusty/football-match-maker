@@ -1,10 +1,6 @@
 <nav class="header-nav">
   <div class="header-left">
-    <div
-      class="header-profile"
-      (click)="navigateTo('/account')"
-      title="Account"
-    >
+    <div class="header-profile" (click)="navigateToAccount()" title="Account">
       <span class="material-icons profile-icon">person</span>
       <span class="profile-username">{{ username }}</span>
       @if (isDelegating() || isDelegate()) {
@@ -23,7 +19,6 @@
       style="cursor: pointer"
       title="Go to Dashboard"
     >
-    
       <img src="assets/logo_nobg.png" alt="logo-image" class="logo" />
       <h1 class="app-title">Football Match Maker</h1>
     </div>
@@ -54,12 +49,23 @@
       <li *ngIf="isPlayer()">
         <button (click)="navigateToDashboard()">My Matches</button>
       </li>
-
-      <!-- Common Menu Items -->
-      <li>
-        <button (click)="navigateTo('/matches-history')">
-          Matches History
+      <li *ngIf="isPlayer()">
+        <button (click)="navigateTo('/player-dashboard-availableMatches')">
+          Available Matches
         </button>
+      </li>
+      <li *ngIf="isPlayer()">
+        <button (click)="navigateTo('/past-matches')">Past Matches</button>
+      </li>
+
+      <!-- Organizer Menu Items -->
+      <li *ngIf="isOrganizer()">
+        <button (click)="navigateTo('/matches-history')">
+          Old created matches
+        </button>
+      </li>
+      <li *ngIf="isOrganizer()">
+        <button (click)="navigateTo('/past-matches')">Past matches</button>
       </li>
 
       <li>

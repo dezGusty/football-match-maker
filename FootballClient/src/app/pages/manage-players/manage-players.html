@@ -178,7 +178,7 @@
                   : (player.lastName | slice : 0 : 3)
               }}
             </td>
-            <td>{{ player.rating | number : "1.0-2" }}</td>
+            <td>{{ player.rating | number : "1.0-1" }}</td>
             <td>
               <app-player-stats
                 [speed]="player.speed || 2"
@@ -356,7 +356,7 @@
         </div>
         <div class="info-item">
           <strong>Rating:</strong> 
-          {{ selectedPlayerForDelegation.rating | number: "1.0-2" }}
+          {{ selectedPlayerForDelegation.rating | number: "1.0-1" }}
         </div>
         <div class="info-item">
           <strong>Email:</strong> 

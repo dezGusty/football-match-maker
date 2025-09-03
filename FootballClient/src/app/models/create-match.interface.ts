@@ -26,5 +26,9 @@ export interface MatchDisplay {
   teamBName?: string;
   status: number;
   isPublic: boolean;
+  teamAPlayerCount?: number;
+  teamBPlayerCount?: number;
   myTeam?: 'A' | 'B' | null;
+  canJoin?: boolean;
+  canManage?: boolean;
 }

@@ -13,7 +13,7 @@ import { User } from '../../models/user.interface';
 import { environment } from '../../../environments/environment';
 
 @Component({
-  selector: 'app-player-dashboard',
+  selector: 'app-player-dashboard-availableMatches.component',
   standalone: true,
   imports: [
     CommonModule,
@@ -22,10 +22,10 @@ import { environment } from '../../../environments/environment';
     Header,
     FriendRequestsComponent,
   ],
-  templateUrl: './player-dashboard.component.html',
-  styleUrls: ['./player-dashboard.component.css'],
+  templateUrl: './player-dashboard-availableMatches.component.html',
+  styleUrls: ['./player-dashboard-availableMatches.component.css'],
 })
-export class PlayerDashboardComponent implements OnInit {
+export class PlayerDashboardAvailableMatchesComponent implements OnInit {
   activeTab: string = 'future';
   currentPlayer: User | null = null;
 
@@ -49,84 +49,7 @@ export class PlayerDashboardComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    await this.loadPlayerData();
-
-    await this.loadMatches();
-    await this.loadAvailableMatches();
     await this.loadPublicMatches();
-    await this.loadPlayerSpecificMatches();
-  }
-
-  async loadPlayerData() {
-    const userId = this.authService.getUserId();
-
-    if (userId) {
-      try {
-        const userResponse = await fetch(
-          `${environment.apiUrl}/user/${userId}`
-        );
-        if (userResponse.ok) {
-          const user = await userResponse.json();
-          const players = await this.userService.getPlayers();
-          this.currentPlayer =
-            players.find((p) => p.email === user.email) || null;
-        } else {
-          console.error('Failed to fetch user data:', userResponse.status);
-        }
-      } catch (error) {
-        console.error('Error loading player data:', error);
-      }
-    }
-  }
-
-  async loadMatches() {
-    if (!this.currentPlayer?.id) {
-      return;
-    }
-
-    try {
-      await this.loadPlayerSpecificMatches();
-
-      if (this.upcomingMatches.length === 0) {
-        await this.loadMatchesByFiltering();
-      }
-    } catch (error) {
-      console.error('Error loading matches:', error);
-      await this.loadMatchesByFiltering();
-    }
-  }
-
-  async loadPlayerSpecificMatches() {
-    try {
-      const playerMatches = await this.matchService.getPlayerMatches();
-      this.upcomingMatches = playerMatches.filter(
-        (match: any) => new Date(match.matchDate) > new Date()
-      );
-    } catch (error) {}
-  }
-
-  async loadMatchesByFiltering() {
-    try {
-      const futureMatches = await this.matchService.getFutureMatches();
-
-      this.upcomingMatches = futureMatches.filter((match) => {
-        const isPlayerInMatch = match.playerHistory?.some(
-          (ph) => ph.user && ph.user.id === this.currentPlayer?.id
-        );
-        return isPlayerInMatch;
-      });
-
-      for (const match of this.upcomingMatches) {
-        if (!match.teamAName) {
-          match.teamAName = match.teamAName || 'Team A';
-        }
-        if (!match.teamBName) {
-          match.teamBName = match.teamBName || 'Team B';
-        }
-      }
-    } catch (error) {
-      console.error('Error in loadMatchesByFiltering:', error);
-    }
   }
 
   async loadAvailableMatches() {
@@ -161,16 +84,6 @@ export class PlayerDashboardComponent implements OnInit {
     this.activeTab = tab;
   }
 
-  async openPlayersModal(match: Match) {
-    try {
-      this.modalType = 'view';
-      await this.loadMatchDetails(match);
-      this.modalOpen = true;
-    } catch (error) {
-      console.error('Error loading player data:', error);
-    }
-  }
-
   async openJoinMatchModal(match: Match) {
     try {
       this.modalType = 'join';
@@ -198,20 +111,20 @@ export class PlayerDashboardComponent implements OnInit {
       );
 
       this.selectedTeamAPlayers = teamA
-        ? teamA.players.map((p: any) => `${p.username} - ${(p.rating || 0).toFixed(1)}`)
+        ? teamA.players.map((p: any) => `${p.username} - ${p.rating}`)
         : [];
 
       this.selectedTeamBPlayers = teamB
-        ? teamB.players.map((p: any) => `${p.username} - ${(p.rating || 0).toFixed(1)}`)
+        ? teamB.players.map((p: any) => `${p.username} - ${p.rating}`)
         : [];
     } catch (error) {
       this.selectedTeamAPlayers = match.playerHistory
         .filter((p) => p.teamId === match.teamAId && p.user)
-        .map((p) => `${p.user.username}- ${(p.user.rating || 0).toFixed(1)}`);
+        .map((p) => `${p.user.username}- ${p.user.rating}`);
 
       this.selectedTeamBPlayers = match.playerHistory
         .filter((p) => p.teamId === match.teamBId && p.user)
-        .map((p) => `${p.user.username} - ${(p.user.rating || 0).toFixed(1)}`);
+        .map((p) => `${p.user.username} - ${p.user.rating}`);
     }
   }
 
@@ -254,7 +167,6 @@ export class PlayerDashboardComponent implements OnInit {
         return;
       }
       await this.matchService.joinMatch(match.id);
-      await this.loadMatches();
       await this.loadAvailableMatches();
     } catch (error) {
       console.error('Error joining match:', error);
@@ -278,7 +190,6 @@ export class PlayerDashboardComponent implements OnInit {
       }
 
       this.closeModal();
-      await this.loadMatches();
       await this.loadAvailableMatches();
 
       this.notificationService.showSuccess('Successfully joined the match!');
@@ -306,7 +217,6 @@ export class PlayerDashboardComponent implements OnInit {
 
       if (confirm('Are you sure you want to leave this match?')) {
         await this.matchService.leaveMatch(match.id);
-        await this.loadMatches();
         await this.loadAvailableMatches();
         this.notificationService.showSuccess('Successfully left the match!');
       }

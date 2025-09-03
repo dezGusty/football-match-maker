@@ -209,7 +209,6 @@ namespace FootballAPI.Service
             return await _userRepository.GetPlayersByOrganiserAsync(id);
         }
 
-        // Player functionality integrated
         public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange)
         {
             return await _userRepository.UpdatePlayerRatingAsync(userId, ratingChange);
@@ -354,7 +353,7 @@ namespace FootballAPI.Service
             var updatedUser = await _userRepository.UpdateAsync(user);
             return MapToDto(updatedUser);
         }
-        
+
 
         private OrganizerDelegateDto MapToDelegationDto(OrganizerDelegate delegation, User originalOrganizer, User delegateUser)
         {

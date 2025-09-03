@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Match } from '../models/match.interface';
-import { MatchCreated } from '../models/matchCreated.interface';
 import {
   CreateMatchRequest,
   CreateMatchResponse,
@@ -86,18 +85,6 @@ export class MatchService {
     }
   }
 
-  async getPlayersForScheduledMatch(matchId: number): Promise<number[]> {
-    const response = await fetch(
-      `${this.baseUrl}/playermatchhistory/match/${matchId}`
-    );
-    if (!response.ok) {
-      throw new Error('Failed to fetch players for scheduled match');
-    }
-
-    const playerHistory = await response.json();
-    return playerHistory.map((ph: any) => ph.playerId);
-  }
-
   async getTeamById(teamId: number): Promise<string> {
     if (this.teamNamesCache.has(teamId)) {
       return this.teamNamesCache.get(teamId)!;
@@ -125,79 +112,53 @@ export class MatchService {
     }
   }
 
-  async createMatch(
-    teamAId: number,
-    teamBId: number,
-    matchDate: Date
-  ): Promise<MatchCreated> {
-    const response = await fetch(`${this.baseUrl}/matches`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ teamAId, teamBId, matchDate }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to create match');
-    }
-
-    return await response.json();
-  }
-
-  async getPlayersByTeamId(teamId: number): Promise<string[]> {
-    const response = await fetch(`${this.baseUrl}/teams/${teamId}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch team players');
-    }
-
-    const team = await response.json();
-    return team.currentPlayers.map((p: any) => `${p.firstName} ${p.lastName}`);
-  }
-  async finalizeMatchServ(matchId: number): Promise<void> {
-    const currentMatch = await this.getMatchById(matchId);
-    if (!currentMatch) {
-      throw new Error('Match not found');
-    }
-    const updateMatchDto = {
-      matchDate: currentMatch.matchDate,
-      teamAId: currentMatch.teamAId,
-      teamBId: currentMatch.teamBId,
-    };
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updateMatchDto),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to update match');
-    }
-
-    return await response.json();
-  }
-  async updateMatch(
+  async calculateRatingPreview(
     matchId: number,
-    updateData: { teamAGoals: number; teamBGoals: number }
-  ): Promise<Match> {
-    const currentMatch = await this.getMatchById(matchId);
-    if (!currentMatch) {
-      throw new Error('Match not found');
+    teamAGoals: number,
+    teamBGoals: number,
+    ratingSystem: string
+  ): Promise<any[]> {
+    const dto = {
+      teamAGoals: teamAGoals,
+      teamBGoals: teamBGoals,
+      ratingSystem: ratingSystem,
+    };
+    const response = await fetch(
+      `${this.baseUrl}/matches/${matchId}/rating-preview`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dto),
+      }
+    );
+    if (!response.ok) {
+      throw new Error('Failed to calculate rating preview');
     }
 
-    const updateMatchDto = {
-      matchDate: currentMatch.matchDate,
-      teamAId: currentMatch.teamAId,
-      teamBId: currentMatch.teamBId,
-      teamAGoals: updateData.teamAGoals,
-      teamBGoals: updateData.teamBGoals,
+    return await response.json();
+  }
+
+  async finalizeMatchServ(
+    matchId: number,
+    teamAGoals: number,
+    teamBGoals: number,
+    ratingSystem: string = 'Performance'
+  ): Promise<void> {
+    const finalizeMatchDto = {
+      teamAGoals: teamAGoals,
+      teamBGoals: teamBGoals,
+      ratingSystem: ratingSystem,
     };
-
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updateMatchDto),
-    });
-
+    const response = await fetch(
+      `${this.baseUrl}/matches/finalize/${matchId}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalizeMatchDto),
+      }
+    );
     if (!response.ok) {
-      throw new Error('Failed to update match');
+      throw new Error('Failed to finalize match');
     }
 
     return await response.json();
@@ -221,12 +182,6 @@ export class MatchService {
     return match;
   }
 
-  getPlayersFromMatch(match: Match, teamId: number): string[] {
-    return match.playerHistory
-      .filter((ph) => ph.teamId === teamId && ph.user)
-      .map((ph) => `${ph.user.firstName} ${ph.user.lastName}`);
-  }
-
   async getPastMatches(): Promise<Match[]> {
     try {
       const response = await fetch(`${this.baseUrl}/matches/past`, {
@@ -234,6 +189,7 @@ export class MatchService {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.authService.getToken()}`,
         },
       });
 
@@ -265,6 +221,11 @@ export class MatchService {
             teamBName: teamBName,
             scoreA: m.teamAGoals || m.scoreA || 0,
             scoreB: m.teamBGoals || m.scoreB || 0,
+            status: m.status,
+            isPublic: m.isPublic,
+            location: m.location,
+            cost: m.cost,
+            organiserId: m.organiserId,
             playerHistory: m.playerHistory || [],
           };
         })
@@ -277,16 +238,60 @@ export class MatchService {
     }
   }
 
-  clearTeamNamesCache(): void {
-    this.teamNamesCache.clear();
-  }
+  async getMyPastMatches(): Promise<Match[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/matches/past/my-matches`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.authService.getToken()}`,
+        },
+      });
 
-  async preloadTeamNames(teamIds: number[]): Promise<void> {
-    const promises = teamIds
-      .filter((id) => !this.teamNamesCache.has(id))
-      .map((id) => this.getTeamById(id));
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch past matches: ${errorText}`);
+      }
 
-    await Promise.all(promises);
+      const rawMatches = await response.json();
+
+      const matches: Match[] = await Promise.all(
+        (rawMatches as Match[]).map(async (m) => {
+          let teamAName = m.teamAName;
+          let teamBName = m.teamBName;
+
+          if (!teamAName || teamAName === 'Team A') {
+            teamAName = await this.getTeamById(m.teamAId);
+          }
+          if (!teamBName || teamBName === 'Team B') {
+            teamBName = await this.getTeamById(m.teamBId);
+          }
+
+          return {
+            id: m.id,
+            matchDate: m.matchDate,
+            teamAId: m.teamAId,
+            teamBId: m.teamBId,
+            teamAName: teamAName,
+            teamBName: teamBName,
+            scoreA: m.teamAGoals || m.scoreA || 0,
+            scoreB: m.teamBGoals || m.scoreB || 0,
+            status: m.status,
+            isPublic: m.isPublic,
+            location: m.location,
+            cost: m.cost,
+            organiserId: m.organiserId,
+            playerHistory: m.playerHistory || [],
+          };
+        })
+      );
+
+      return matches;
+    } catch (error) {
+      console.error('Error fetching past matches:', error);
+      throw error;
+    }
   }
 
   private getAuthHeaders(): HeadersInit {
@@ -318,18 +323,6 @@ export class MatchService {
         throw new Error('Nu ești autentificat');
       }
       throw new Error(`Eroare la crearea meciului: ${errorText}`);
-    }
-
-    return await response.json();
-  }
-
-  async getAllMatches(): Promise<any[]> {
-    const response = await fetch(`${this.baseUrl}/matches`, {
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch matches');
     }
 
     return await response.json();
@@ -410,6 +403,50 @@ export class MatchService {
         throw new Error('Could not make match private');
       }
       throw new Error(`Error making match private: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async closeMatch(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/close`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error(
+          'Could not close match. Match needs at least 10 players or is not in Open status.'
+        );
+      }
+      throw new Error(`Error closing match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async cancelMatch(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/cancel`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error(
+          'Could not cancel match. Match not found or invalid status.'
+        );
+      }
+      throw new Error(`Error cancelling match: ${errorText}`);
     }
 
     return await response.json();

@@ -2,9 +2,9 @@ namespace FootballAPI.Models.Enums
 {
     public enum Status
     {
-        Open = 1,
-        Closed = 2,
-        Finalized = 4,
-        Cancelled = 8
+        Open = 0,
+        Closed = 1,
+        Finalized = 2,
+        Cancelled = 3
     }
 }

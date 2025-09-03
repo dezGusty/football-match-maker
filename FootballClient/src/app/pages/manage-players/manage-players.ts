@@ -49,18 +49,14 @@ export class ManagePlayersComponent {
   playerErrorMessage = '';
   playerSuccessMessage = '';
 
-  // Edit mode variables
   editIndex: number | null = null;
   editedPlayer: User | null = null;
 
-  // Search functionality
   searchTerm: string = '';
 
-  // Modal states
   showAddModal = false;
   showDelegateModal = false;
 
-  // Delegation variables
   delegationStatus: DelegationStatusDto | null = null;
   delegationLoading = false;
   delegationErrorMessage = '';

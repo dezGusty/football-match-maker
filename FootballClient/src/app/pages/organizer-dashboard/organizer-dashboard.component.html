@@ -96,7 +96,8 @@
           <th>Date & Time</th>
           <th>Teams</th>
           <th>Location</th>
-          <th>Cost</th>
+          <th>Cost Total</th>
+          <th>Status</th>
           <th>Public</th>
           <th>Actions</th>
         </tr>
@@ -117,7 +118,12 @@
             </div>
           </td>
           <td>{{ match.location || "TBD" }}</td>
-          <td>{{ match.cost ? match.cost + " Lei total" : "Free" }}</td>
+          <td>{{ match.cost ? match.cost + " Lei" : "Free" }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(match.status)">
+              {{ getStatusText(match.status) }}
+            </span>
+          </td>
           <td>
             <button
               class="action-btn"
@@ -136,24 +142,42 @@
           <td class="actions">
             <button
               class="action-btn add-players-btn"
-              title="Add Players"
+              [title]="getAddPlayersButtonText(match)"
               (click)="openAddPlayersModal(match)"
             >
-              Add Players
+              {{ getAddPlayersButtonText(match) }}
             </button>
             <button
               class="action-btn edit-btn"
               title="Edit Match"
               (click)="openEditMatchModal(match)"
+              *ngIf="match.status === 0"
             >
               Edit
+            </button>
+            <button
+              class="action-btn close-btn"
+              title="Close Match"
+              (click)="closeMatch(match)"
+              *ngIf="canShowCloseButton(match)"
+            >
+              Close
+            </button>
+            <button
+              class="action-btn cancel-btn"
+              title="Cancel Match"
+              (click)="cancelMatch(match)"
+              *ngIf="match.status === 0"
+            >
+              Cancel
             </button>
             <button
               class="action-btn finalize-btn"
               title="Finalize Match"
               (click)="openFinalizeMatchModal(match)"
+              *ngIf="canShowFinalizeButton(match)"
             >
-              Finalize Match
+              Finalize
             </button>
           </td>
         </tr>
@@ -176,7 +200,7 @@
           <th>Date & Time</th>
           <th>Teams</th>
           <th>Location</th>
-          <th>Cost</th>
+          <th>Cost Total</th>
         </tr>
       </thead>
       <tbody>
@@ -203,7 +227,7 @@
             </div>
           </td>
           <td>{{ match.location || "TBD" }}</td>
-          <td>{{ match.cost ? match.cost + " Lei total" : "Free" }}</td>
+          <td>{{ match.cost ? match.cost + " Lei" : "Free" }}</td>
         </tr>
       </tbody>
     </table>
@@ -238,7 +262,10 @@
           </p>
         </div>
         <div>
-          <select [(ngModel)]="selectedRatingSystem">
+          <select
+            [(ngModel)]="selectedRatingSystem"
+            (ngModelChange)="updateRatingPreview()"
+          >
             <option value="Linear">Linear</option>
             <option value="Performance">Performance</option>
             <!-- <option value="Vote">Vote</option> -->
@@ -257,6 +284,7 @@
                   type="number"
                   placeholder="Team 1 Score"
                   [(ngModel)]="teamAScore"
+                  (ngModelChange)="updateRatingPreview()"
                   min="0"
                   step="1"
                 />
@@ -272,8 +300,10 @@
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
                 <span class="player-rating">
-                  Rating: {{ player.rating || "N/A" }}
-                  {{ ratingChange(player) }}
+                  Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                  <span [class]="getRatingChangeClass(player.id)">{{
+                    getRatingPreviewForPlayer(player.id)
+                  }}</span>
                 </span>
               </div>
 
@@ -300,6 +330,7 @@
                   type="number"
                   placeholder="Team 2 Score"
                   [(ngModel)]="teamBScore"
+                  (ngModelChange)="updateRatingPreview()"
                   min="0"
                   step="1"
                 />
@@ -315,8 +346,10 @@
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
                 <span class="player-rating">
-                  Rating: {{ player.rating || "N/A" }}
-                  {{ ratingChange(player) }}
+                  Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                  <span [class]="getRatingChangeClass(player.id)">{{
+                    getRatingPreviewForPlayer(player.id)
+                  }}</span>
                 </span>
               </div>
 
@@ -679,7 +712,9 @@
             >
               <div class="player-name-rating">
                 <span class="name">{{ player.username }}</span>
-                <span class="rating">({{ player.rating }})</span>
+                <span class="rating"
+                  >({{ player.rating | number : "1.0-1" }})</span
+                >
               </div>
 
               <div class="action-buttons">
@@ -731,7 +766,9 @@
                   class="simple-player-row"
                 >
                   <span class="player-name"
-                    >{{ player.username }} ({{ player.rating }})</span
+                    >{{ player.username }} ({{
+                      player.rating | number : "1.0-1"
+                    }})</span
                   >
                   <div class="player-actions">
                     <button
@@ -781,7 +818,9 @@
                   class="simple-player-row"
                 >
                   <span class="player-name"
-                    >{{ player.username }} ({{ player.rating }})</span
+                    >{{ player.username }} ({{
+                      player.rating | number : "1.0-1"
+                    }})</span
                   >
                   <div class="player-actions">
                     <button

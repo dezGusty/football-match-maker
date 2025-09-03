@@ -1,0 +1,453 @@
+/* ==== Dashboard Styling ==== */
+
+/* Main container */
+.dashboard-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Section headers */
+.content-section h2 {
+  margin: 0 0 16px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Subtitle */
+.subtitle {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 28px;
+  border-radius: 14px;
+  background: rgba(124, 242, 208, 0.05);
+  border: 1px dashed rgba(124, 242, 208, 0.25);
+  color: var(--muted);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+/* Matches Table Wrapper */
+.matches-table {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.02)
+  );
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(124, 242, 208, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+/* Header Row */
+.table-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.2fr;
+  background: linear-gradient(
+    180deg,
+    rgba(21, 28, 36, 0.9),
+    rgba(21, 28, 36, 0.75)
+  );
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(124, 242, 208, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+/* Table Rows */
+.table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.2fr;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(124, 242, 208, 0.08);
+  transition: transform 0.16s ease, background 0.2s ease;
+  min-height: 56px;
+}
+
+.table-row:hover {
+  background: rgba(124, 242, 208, 0.06);
+  transform: translateY(-1px);
+}
+
+/* Table Cells */
+.table-row > div {
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Specific column styling */
+.col-team {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.col-date {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.col-type .match-type {
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.col-type .match-type.public {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.col-type .match-type.private {
+  background: rgba(168, 85, 247, 0.2);
+  color: #a855f7;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* Action column styling */
+.col-action {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+/* Action Buttons */
+.action-btn {
+  padding: 8px 14px;
+  margin: 0;
+  border-radius: 12px;
+  border: 1px solid rgba(124, 242, 208, 0.25);
+  background: linear-gradient(
+    180deg,
+    rgba(21, 28, 36, 0.9),
+    rgba(21, 28, 36, 0.7)
+  );
+  color: var(--text);
+  backdrop-filter: blur(4px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  border-color: var(--primary-600);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 12, 0.55);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  position: relative;
+  width: min(720px, 92vw);
+  border-radius: 18px;
+  padding: 24px;
+  border: 1px solid rgba(124, 242, 208, 0.15);
+  background: linear-gradient(
+    180deg,
+    rgba(17, 22, 29, 0.85),
+    rgba(17, 22, 29, 0.75)
+  );
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  animation: pop 0.24s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+@keyframes pop {
+  from {
+    transform: translateY(8px) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-content h3 {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 32px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-modal-btn:hover {
+  color: var(--text);
+}
+
+/* Teams inside Modal */
+.teams-container {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.team-list {
+  flex: 1;
+  background: rgba(124, 242, 208, 0.05);
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(124, 242, 208, 0.12);
+}
+
+.team-list h4 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  color: var(--primary);
+}
+
+.team-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.team-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(124, 242, 208, 0.06);
+  font-size: 0.95rem;
+}
+
+.vs-divider {
+  font-weight: 800;
+  color: var(--muted);
+  align-self: center;
+  font-size: 1.1rem;
+}
+
+/* Join Modal Styling */
+.join-modal {
+  max-width: 800px;
+  width: 90vw;
+}
+
+.modal-subtitle {
+  margin: 8px 0 24px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.join-teams-container {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.join-team-card {
+  flex: 1;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.04)
+  );
+  border: 1px solid rgba(124, 242, 208, 0.12);
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.join-team-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(124, 242, 208, 0.25);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.08)
+  );
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.team-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(124, 242, 208, 0.1);
+}
+
+.team-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.team-count {
+  background: rgba(124, 242, 208, 0.15);
+  color: #7cf2d0;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.team-players {
+  min-height: 120px;
+  margin-bottom: 16px;
+}
+
+.player-item {
+  padding: 8px 12px;
+  margin: 4px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--text);
+  border-left: 3px solid rgba(124, 242, 208, 0.3);
+}
+
+.no-players {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.join-team-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.join-team-btn:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+.vs-divider-join {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 0 16px;
+  align-self: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .table-header {
+    font-size: 0.75rem;
+    padding: 12px 16px;
+    grid-template-columns: 2fr 1fr 1fr 1.2fr;
+  }
+
+  .table-row {
+    padding: 12px 16px;
+    min-height: 48px;
+    grid-template-columns: 2fr 1fr 1fr 1.2fr;
+  }
+
+  .col-action {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .action-btn {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 720px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr 1fr;
+    font-size: 0.9rem;
+  }
+
+  .teams-container {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .vs-divider {
+    align-self: center;
+  }
+
+  .join-teams-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .vs-divider-join {
+    align-self: center;
+    padding: 12px 0;
+  }
+}

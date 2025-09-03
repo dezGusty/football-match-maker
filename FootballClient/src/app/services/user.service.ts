@@ -72,26 +72,6 @@ export class UserService {
     return result.message || 'Username changed successfully';
   }
 
-  async createPlayerUser(playerUser: any): Promise<any> {
-    const token = localStorage.getItem('authToken');
-    const userId = localStorage.getItem('userId');
-
-    const response = await fetch(`${this.url}/create-player-user`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...(userId && { UserId: userId }),
-      },
-      body: JSON.stringify(playerUser),
-    });
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.message || 'Failed to create player user');
-    }
-    return result;
-  }
-
   private getAuthHeaders(): HeadersInit {
     const token = this.authService.getToken();
     return {
@@ -177,24 +157,6 @@ export class UserService {
     return await response.json();
   }
 
-  async updateUser(userId: number, updateData: Partial<User>): Promise<User> {
-    if (updateData.rating !== undefined) {
-      this.validateRating(updateData.rating);
-    }
-
-    const response = await fetch(`${this.url}/${userId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updateData),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to update user');
-    }
-
-    return await response.json();
-  }
-
   async editUser(user: User): Promise<User> {
     if (user.rating !== undefined) {
       this.validateRating(user.rating);
@@ -244,32 +206,6 @@ export class UserService {
       return true;
     } catch (error) {
       console.error('Error updating player rating:', error);
-      return false;
-    }
-  }
-
-  async updateMultiplePlayerRatings(
-    userRatingUpdates: { userId: number; ratingChange: number }[]
-  ): Promise<boolean> {
-    try {
-      const response = await fetch(`${this.url}/update-multiple-ratings`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          playerRatingUpdates: userRatingUpdates.map((update) => ({
-            userId: update.userId,
-            ratingChange: update.ratingChange,
-          })),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update multiple player ratings');
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error updating multiple player ratings:', error);
       return false;
     }
   }

@@ -1,31 +1,48 @@
 import { Component } from '@angular/core';
 import { Header } from '../../components/header/header';
 import { MatchService } from '../../services/match.service';
+import { AuthService } from '../../services/auth.service';
 import { Match } from '../../models/match.interface';
+import { UserRole } from '../../models/user-role.enum';
 import { DatePipe } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatchStatus } from '../../models/match-status.enum';
 
 @Component({
-  selector: 'app-matches-history',
+  selector: 'app-past-matches.component',
   imports: [Header, DatePipe, CommonModule],
-  templateUrl: './matches-history.html',
-  styleUrl: './matches-history.css',
+  templateUrl: './past-matches.component.html',
+  styleUrls: ['./past-matches.component.css'],
 })
-export class MatchesHistory implements OnInit {
+export class PastMatches implements OnInit {
   matches: Match[] = [];
   MatchStatus = MatchStatus;
+  userRole: UserRole | null = null;
 
-  constructor(private MatchService: MatchService) {}
+  constructor(
+    private MatchService: MatchService,
+    private authService: AuthService
+  ) {}
 
   async ngOnInit() {
+    this.userRole = this.authService.getUserRole();
     await this.init();
+  }
+
+  isPlayer(): boolean {
+    return this.userRole === UserRole.PLAYER;
+  }
+
+  isOrganizer(): boolean {
+    return (
+      this.userRole === UserRole.ORGANISER || this.userRole === UserRole.ADMIN
+    );
   }
 
   async init() {
     try {
-      this.matches = await this.MatchService.getPastMatches();
+      this.matches = await this.MatchService.getMyPastMatches();
       for (const match of this.matches) {
         match.teamAName = await this.MatchService.getTeamById(match.teamAId);
         match.teamBName = await this.MatchService.getTeamById(match.teamBId);

@@ -557,3 +557,24 @@
   border-color: var(--primary-700);
   box-shadow: 0 2px 8px rgba(92, 92, 92, 0.15);
 }
+
+.back-btn {
+  margin: 12px 0 8px 0;
+  padding: 10px 20px;
+  background: var(--primary-700);
+  color: var(--text);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  width: 200px;
+  font-family: inherit;
+}
+
+.back-btn:hover {
+  background: var(--primary-600);
+  box-shadow: 0 2px 8px var(--primary-600);
+  transform: translateY(-1px);
+}

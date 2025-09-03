@@ -94,4 +94,27 @@ namespace FootballAPI.DTOs
         public int Errors { get; set; }
         public PlayerStatus Status { get; set; }
     }
+
+    public class FinalizeMatchDto
+    {
+        public int TeamAGoals { get; set; }
+        public int TeamBGoals { get; set; }
+        public string RatingSystem { get; set; } = "Performance";
+    }
+
+    public class CalculateRatingPreviewDto
+    {
+        public int TeamAGoals { get; set; }
+        public int TeamBGoals { get; set; }
+        public string RatingSystem { get; set; } = "Performance";
+    }
+
+    public class RatingPreviewDto
+    {
+        public int PlayerId { get; set; }
+        public string PlayerName { get; set; } = string.Empty;
+        public float CurrentRating { get; set; }
+        public string RatingChange { get; set; } = string.Empty;
+        public int TeamId { get; set; }
+    }
 }

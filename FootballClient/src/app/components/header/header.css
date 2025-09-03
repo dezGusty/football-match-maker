@@ -30,7 +30,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  
 }
 .logo-container:hover {
   transform: scale(1.05);
@@ -188,6 +187,11 @@
   font-size: 14px;
   display: inline-block;
   animation: pulse 2s infinite;
+}
+
+.menu button.logout-btn {
+  color: #d32f2f;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 @keyframes pulse {

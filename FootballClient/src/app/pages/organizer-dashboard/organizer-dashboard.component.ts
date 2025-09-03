@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.interface';
-import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
 import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
@@ -14,17 +13,12 @@ import {
   CreateMatchRequest,
   MatchDisplay,
 } from '../../models/create-match.interface';
+import { MatchStatus } from '../../models/match-status.enum';
 
 @Component({
   selector: 'app-organizer-dashboard',
   standalone: true,
-  imports: [
-    Header,
-    FormsModule,
-    CommonModule,
-    PlayerStatsComponent,
-    FriendRequestsComponent,
-  ],
+  imports: [Header, FormsModule, CommonModule, FriendRequestsComponent],
   templateUrl: './organizer-dashboard.component.html',
   styleUrls: ['./organizer-dashboard.component.css'],
 })
@@ -59,6 +53,7 @@ export class OrganizerDashboardComponent {
   teamBScore: number | null = null;
   originalTeamAPlayers: User[] = [];
   originalTeamBPlayers: User[] = [];
+  ratingPreviews: any[] = [];
   addingPlayers = false;
   savingPlayers = false;
   addPlayersErrorMessage = '';
@@ -160,16 +155,42 @@ export class OrganizerDashboardComponent {
   async loadMatches() {
     try {
       const allMatches = await this.matchService.getMatchesByOrganiser();
-      this.matches = allMatches.map((match) => ({
-        id: match.id,
-        matchDate: match.matchDate,
-        location: match.location,
-        cost: match.cost,
-        teamAName: match.teamAName,
-        teamBName: match.teamBName,
-        status: match.status,
-        isPublic: match.isPublic,
-      }));
+      this.matches = await Promise.all(
+        allMatches.map(async (match) => {
+          let teamAPlayerCount = 0;
+          let teamBPlayerCount = 0;
+
+          try {
+            const matchDetails = await this.matchService.getMatchDetails(
+              match.id
+            );
+            if (matchDetails.teams && Array.isArray(matchDetails.teams)) {
+              teamAPlayerCount = matchDetails.teams[0]?.players?.length || 0;
+              teamBPlayerCount = matchDetails.teams[1]?.players?.length || 0;
+            }
+          } catch (error) {
+            console.error(
+              'Error fetching match details for match',
+              match.id,
+              ':',
+              error
+            );
+          }
+
+          return {
+            id: match.id,
+            matchDate: match.matchDate,
+            location: match.location,
+            cost: match.cost,
+            teamAName: match.teamAName,
+            teamBName: match.teamBName,
+            status: match.status,
+            isPublic: match.isPublic,
+            teamAPlayerCount,
+            teamBPlayerCount,
+          };
+        })
+      );
     } catch (error) {
       console.error('Error loading matches:', error);
     }
@@ -179,8 +200,6 @@ export class OrganizerDashboardComponent {
     this.init();
     this.loadMatches();
   }
-
-  onSearchChange() {}
 
   newPlayer = {
     firstName: '',
@@ -360,6 +379,14 @@ export class OrganizerDashboardComponent {
       return;
     }
 
+    const selectedDate = new Date(this.newMatch.matchDate);
+    const now = new Date();
+    if (selectedDate <= now) {
+      this.matchErrorMessage =
+        'Cannot create a match in the past. Please select a future date and time.';
+      return;
+    }
+
     this.matchLoading = true;
     this.matchErrorMessage = '';
     this.matchSuccessMessage = '';
@@ -367,7 +394,7 @@ export class OrganizerDashboardComponent {
     try {
       const createMatchRequest: CreateMatchRequest = {
         matchDate: new Date(this.newMatch.matchDate).toISOString(),
-        status: 1,
+        status: MatchStatus.Open,
         location: this.newMatch.location,
         cost: this.newMatch.cost || undefined,
         teamAName: this.newMatch.teamAName || undefined,
@@ -400,13 +427,13 @@ export class OrganizerDashboardComponent {
 
   getStatusText(status: number): string {
     switch (status) {
-      case 1:
+      case MatchStatus.Open:
         return 'Open';
-      case 2:
+      case MatchStatus.Closed:
         return 'Closed';
-      case 4:
+      case MatchStatus.Finalized:
         return 'Finalized';
-      case 8:
+      case MatchStatus.Cancelled:
         return 'Cancelled';
       default:
         return 'Unknown';
@@ -415,13 +442,13 @@ export class OrganizerDashboardComponent {
 
   getStatusClass(status: number): string {
     switch (status) {
-      case 1:
+      case MatchStatus.Open:
         return 'status-open';
-      case 2:
+      case MatchStatus.Closed:
         return 'status-closed';
-      case 4:
+      case MatchStatus.Finalized:
         return 'status-finalized';
-      case 8:
+      case MatchStatus.Cancelled:
         return 'status-cancelled';
       default:
         return 'status-unknown';
@@ -429,6 +456,10 @@ export class OrganizerDashboardComponent {
   }
   async openFinalizeMatchModal(match: MatchDisplay) {
     this.selectedMatch = match;
+
+    this.teamAScore = null;
+    this.teamBScore = null;
+    this.ratingPreviews = [];
 
     try {
       this.matchDetails = await this.matchService.getMatchDetails(match.id);
@@ -448,77 +479,106 @@ export class OrganizerDashboardComponent {
     this.showFinalizeMatchModal = false;
   }
   async finalizeMatch() {
-    await this.matchService.finalizeMatchServ(this.selectedMatch!.id);
-  }
-  ratingChange(player?: User): string {
-    if (this.selectedRatingSystem == 'Performance') {
-      let playerErrorsChange = 0;
-      switch (player?.errors) {
-        case 1:
-          playerErrorsChange = 0.025;
-          break;
-        case 2:
-          playerErrorsChange = 0.05;
-          break;
-        case 3:
-          playerErrorsChange = 0.075;
-          break;
-        case 4:
-          playerErrorsChange = 0.1;
-          break;
-        default:
-          playerErrorsChange = 0;
-          break;
-      }
-      const totalRating =
-        (player?.rating ?? 0) * 0.005 +
-        (player?.speed ?? 0) * 0.025 +
-        (player?.stamina ?? 0) * 0.025 +
-        playerErrorsChange;
-
-      if (this.teamAScore != null && this.teamBScore != null) {
-        if (this.teamAScore > this.teamBScore) {
-          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
-            return '+' + totalRating.toFixed(2);
-          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
-            return '-' + totalRating.toFixed(2);
-          }
-        } else if (this.teamAScore < this.teamBScore) {
-          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
-            return '-' + totalRating.toFixed(2);
-          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
-            return '+' + totalRating.toFixed(2);
-          }
-        } else {
-          return '+' + (totalRating / 2).toFixed(2);
-        }
-      }
-      return '0';
-    } else if (this.selectedRatingSystem == 'Linear') {
-      if (this.teamAScore != null && this.teamBScore != null) {
-        const scoreDiff = Math.abs(this.teamAScore - this.teamBScore);
-        const ratingChange = Math.min(0.1 * scoreDiff, 1); // Max change capped at 1 point
-
-        if (this.teamAScore > this.teamBScore) {
-          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
-            return '+' + ratingChange.toFixed(2);
-          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
-            return '-' + ratingChange.toFixed(2);
-          }
-        } else if (this.teamAScore < this.teamBScore) {
-          if (this.teamAPlayers.some((p) => p.id === player?.id)) {
-            return '-' + ratingChange.toFixed(2);
-          } else if (this.teamBPlayers.some((p) => p.id === player?.id)) {
-            return '+' + ratingChange.toFixed(2);
-          }
-        } else {
-          return '0.00';
-        }
-      }
-      return '0.00';
-    } else {
-      return '0.00';
+    if (this.teamAScore == null || this.teamBScore == null) {
+      this.notificationService.showError('Please enter scores for both teams');
+      return;
     }
+    await this.matchService.finalizeMatchServ(
+      this.selectedMatch!.id,
+      this.teamAScore,
+      this.teamBScore,
+      this.selectedRatingSystem
+    );
+    this.closeFinalizeMatchModal();
+    await this.loadMatches();
+  }
+
+  async closeMatch(match: MatchDisplay) {
+    try {
+      await this.matchService.closeMatch(match.id);
+      this.notificationService.showSuccess('Match closed successfully!');
+      await this.loadMatches();
+    } catch (error: any) {
+      this.notificationService.showError(
+        error.message || 'Error closing match'
+      );
+      console.error('Error closing match:', error);
+    }
+  }
+
+  async cancelMatch(match: MatchDisplay) {
+    try {
+      await this.matchService.cancelMatch(match.id);
+      this.notificationService.showSuccess('Match cancelled successfully!');
+      await this.loadMatches();
+    } catch (error: any) {
+      this.notificationService.showError(
+        error.message || 'Error cancelling match'
+      );
+      console.error('Error cancelling match:', error);
+    }
+  }
+
+  canShowCloseButton(match: MatchDisplay): boolean {
+    return (
+      match.status === MatchStatus.Open &&
+      (match.teamAPlayerCount || 0) + (match.teamBPlayerCount || 0) >= 10
+    );
+  }
+
+  canShowFinalizeButton(match: MatchDisplay): boolean {
+    const matchDate = new Date(match.matchDate);
+    const now = new Date();
+    return matchDate < now && match.status === MatchStatus.Closed;
+  }
+
+  getAddPlayersButtonText(match: MatchDisplay): string {
+    const totalPlayers =
+      (match.teamAPlayerCount || 0) + (match.teamBPlayerCount || 0);
+    if (
+      totalPlayers >= 12 ||
+      match.status === MatchStatus.Closed ||
+      match.status === MatchStatus.Finalized
+    ) {
+      return 'View Players';
+    }
+    return 'Add Players';
+  }
+  async updateRatingPreview() {
+    if (
+      this.selectedMatch &&
+      this.teamAScore != null &&
+      this.teamBScore != null
+    ) {
+      try {
+        this.ratingPreviews = await this.matchService.calculateRatingPreview(
+          this.selectedMatch.id,
+          this.teamAScore,
+          this.teamBScore,
+          this.selectedRatingSystem
+        );
+      } catch (error) {
+        console.error('Error updating rating preview:', error);
+        this.ratingPreviews = [];
+      }
+    } else {
+      this.ratingPreviews = [];
+    }
+  }
+
+  getRatingPreviewForPlayer(playerId: number): string {
+    const preview = this.ratingPreviews.find((p) => p.playerId === playerId);
+    return preview ? preview.ratingChange : '0.0';
+  }
+
+  getRatingChangeClass(playerId: number): string {
+    const preview = this.ratingPreviews.find((p) => p.playerId === playerId);
+    if (!preview) return '';
+
+    const change = parseFloat(preview.ratingChange);
+    if (change > 0) return 'positive-rating';
+    if (change < 0) return 'negative-rating';
+    return 'neutral-rating';
   }
 
   async openAddPlayersModal(match: MatchDisplay) {
@@ -590,14 +650,7 @@ export class OrganizerDashboardComponent {
         this.originalTeamBPlayers.push(player);
       }
 
-      this.addPlayersSuccessMessage = `${player.firstName} ${
-        player.lastName
-      } added to ${
-        team === 'teamA'
-          ? this.selectedMatch.teamAName || 'TeamA'
-          : this.selectedMatch.teamBName || 'TeamB'
-      }`;
-      setTimeout(() => (this.addPlayersSuccessMessage = ''), 2000);
+      await this.loadMatches();
     } catch (error: any) {
       this.addPlayersErrorMessage =
         error.message || 'Error adding player to team';
@@ -633,14 +686,7 @@ export class OrganizerDashboardComponent {
         );
       }
 
-      this.addPlayersSuccessMessage = `${player.firstName} ${
-        player.lastName
-      } removed from ${
-        team === 'teamA'
-          ? this.selectedMatch.teamAName || 'TeamA'
-          : this.selectedMatch.teamBName || 'TeamB'
-      }`;
-      setTimeout(() => (this.addPlayersSuccessMessage = ''), 2000);
+      await this.loadMatches();
     } catch (error: any) {
       this.addPlayersErrorMessage =
         error.message || 'Error removing player from team';
@@ -702,14 +748,7 @@ export class OrganizerDashboardComponent {
         this.originalTeamAPlayers.push(player);
       }
 
-      this.addPlayersSuccessMessage = `${player.firstName} ${
-        player.lastName
-      } moved to ${
-        otherTeam === 'teamA'
-          ? this.selectedMatch.teamAName || 'TeamA'
-          : this.selectedMatch.teamBName || 'TeamB'
-      }`;
-      setTimeout(() => (this.addPlayersSuccessMessage = ''), 2000);
+      await this.loadMatches();
     } catch (error: any) {
       this.addPlayersErrorMessage =
         error.message || 'Error moving player between teams';
@@ -753,13 +792,26 @@ export class OrganizerDashboardComponent {
 
   getDefaultDateTime(): string {
     const now = new Date();
-    now.setHours(now.getHours() + 2);
-    return now.toISOString().slice(0, 16);
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
   getMinDateTime(): string {
     const now = new Date();
-    return now.toISOString().slice(0, 16);
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
   async makeMatchPublic(matchId: number) {
@@ -799,8 +851,17 @@ export class OrganizerDashboardComponent {
   }
 
   openEditMatchModal(match: MatchDisplay) {
+    const matchDate = new Date(match.matchDate);
+
+    const year = matchDate.getFullYear();
+    const month = String(matchDate.getMonth() + 1).padStart(2, '0');
+    const day = String(matchDate.getDate()).padStart(2, '0');
+    const hours = String(matchDate.getHours()).padStart(2, '0');
+    const minutes = String(matchDate.getMinutes()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+
     this.editMatch = {
-      matchDate: new Date(match.matchDate).toISOString().slice(0, 16),
+      matchDate: formattedDate,
       location: match.location || '',
       cost: match.cost || null,
       teamAName: match.teamAName || '',
@@ -815,6 +876,14 @@ export class OrganizerDashboardComponent {
   async updateMatch() {
     if (!this.editMatch.matchDate || !this.editMatch.location) {
       this.editMatchErrorMessage = 'Match date and location are required';
+      return;
+    }
+
+    const selectedDate = new Date(this.editMatch.matchDate);
+    const now = new Date();
+    if (selectedDate <= now) {
+      this.editMatchErrorMessage =
+        'Cannot update match to a past date. Please select a future date and time.';
       return;
     }
 

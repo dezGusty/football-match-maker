@@ -50,6 +50,22 @@ export const routes: Routes = [
     canActivate: [authGuard, playerGuard],
   },
   {
+    path: 'player-dashboard-availableMatches',
+    loadComponent: () =>
+      import(
+        './pages/player-dashboard-availableMatches/player-dashboard-availableMatches.component'
+      ).then((m) => m.PlayerDashboardAvailableMatchesComponent),
+    canActivate: [authGuard, playerGuard],
+  },
+  {
+    path: 'past-matches',
+    loadComponent: () =>
+      import('./pages/past-matches/past-matches.component').then(
+        (m) => m.PastMatches
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: 'organizer-dashboard',
     loadComponent: () =>
       import('./pages/organizer-dashboard/organizer-dashboard.component').then(
@@ -75,14 +91,6 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/player-account/player-account.component').then(
         (m) => m.PlayerAccountComponent
-      ),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'create-match',
-    loadComponent: () =>
-      import('./pages/create-match/create-match.component').then(
-        (m) => m.CreateMatchComponent
       ),
     canActivate: [authGuard],
   },

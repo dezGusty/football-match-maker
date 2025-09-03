@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -19,6 +19,8 @@ export class Header implements OnInit {
   userRole: UserRole | null = null;
   delegationStatus: DelegationStatusDto | null = null;
 
+  @Output() tabChange = new EventEmitter<string>();
+
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -31,10 +33,12 @@ export class Header implements OnInit {
       const user = await this.userService.getUserById(userId);
       this.username = user.username;
       this.userRole = this.authService.getUserRole();
-      
+
       if (this.isOrganizer()) {
         try {
-          this.delegationStatus = await this.userService.getDelegationStatus(userId);
+          this.delegationStatus = await this.userService.getDelegationStatus(
+            userId
+          );
         } catch (error) {
           console.error('Error loading delegation status in header:', error);
         }
@@ -51,11 +55,25 @@ export class Header implements OnInit {
     this.isMenuOpen = false;
   }
 
+  switchTab(tab: string) {
+    this.tabChange.emit(tab);
+    this.isMenuOpen = false;
+  }
+
+  // Navigate to account (unified for all roles)
+  navigateToAccount() {
+    this.router.navigate(['/account']);
+    this.isMenuOpen = false;
+  }
+
   // Navigate to dashboard based on user role
   navigateToDashboard() {
     if (this.userRole === UserRole.PLAYER) {
       this.router.navigate(['/player-dashboard']);
-    } else if (this.userRole === UserRole.ORGANISER || this.userRole === UserRole.ADMIN) {
+    } else if (
+      this.userRole === UserRole.ORGANISER ||
+      this.userRole === UserRole.ADMIN
+    ) {
       this.router.navigate(['/organizer-dashboard']);
     }
     this.isMenuOpen = false;
@@ -63,7 +81,9 @@ export class Header implements OnInit {
 
   // Check if user is organizer or admin
   isOrganizer(): boolean {
-    return this.userRole === UserRole.ORGANISER || this.userRole === UserRole.ADMIN;
+    return (
+      this.userRole === UserRole.ORGANISER || this.userRole === UserRole.ADMIN
+    );
   }
 
   // Check if user is player

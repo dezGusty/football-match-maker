@@ -480,7 +480,7 @@ namespace FootballAPI.Controllers
             {
                 await imageFile.CopyToAsync(stream);
             }
-            
+
             var baseUrl = $"{Request.Scheme}://{Request.Host}";
             var imageUrl = $"{baseUrl}/images/{fileName}";
 
@@ -491,7 +491,7 @@ namespace FootballAPI.Controllers
 
             return Ok(new { message = "Profile image updated successfully", imageUrl });
         }
-        
+
         [HttpDelete("{id}/profile-image")]
         public async Task<IActionResult> DeleteProfileImage(int id)
         {
@@ -508,7 +508,7 @@ namespace FootballAPI.Controllers
                 {
                     System.IO.File.Delete(filePath);
                 }
-                
+
                 user.ProfileImageUrl = null;
                 await _userService.UpdateUserProfileImageAsync(id, null);
             }

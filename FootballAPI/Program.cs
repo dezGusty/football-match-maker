@@ -85,6 +85,9 @@ builder.Services.AddScoped<ITeamPlayersService, TeamPlayersService>();
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();
 
+// Background Services
+builder.Services.AddHostedService<FootballAPI.Services.BackgroundMatchStatusService>();
+
 
 // CORS Configuration - UPDATED FOR SWAGGER
 builder.Services.AddCors(options =>

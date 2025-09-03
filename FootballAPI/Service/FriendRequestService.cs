@@ -141,14 +141,14 @@ namespace FootballAPI.Service
             var friends = await _friendRequestRepository.GetFriendsFromPlayerOrganiserAsync(userId);
             return friends.Select(user => new FriendRequestDto
             {
-                Id = 0, // Not applicable for PlayerOrganiser relationships
+                Id = 0,
                 SenderId = userId,
                 SenderUsername = "",
                 SenderEmail = "",
                 ReceiverId = user.Id,
                 ReceiverUsername = user.Username,
                 ReceiverEmail = user.Email,
-                Status = "Connected", // Custom status for active connections
+                Status = "Connected",
                 CreatedAt = DateTime.Now,
                 ResponsedAt = DateTime.Now
             });

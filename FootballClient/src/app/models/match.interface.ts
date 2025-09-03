@@ -12,5 +12,9 @@ export interface Match {
   teamAGoals?: number;
   teamBGoals?: number;
   isPublic?: boolean;
+  status?: number;
+  location?: string;
+  cost?: number;
+  organiserId?: number;
   playerHistory: PlayerHistory[];
 }
