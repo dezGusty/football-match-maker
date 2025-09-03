@@ -256,8 +256,8 @@ namespace FootballAPI.Service
         public async Task<OrganizerDelegateDto> DelegateOrganizerRoleAsync(int organizerId, DelegateOrganizerRoleDto dto)
         {
             var organizer = await _userRepository.GetByIdAsync(organizerId);
-            if (organizer == null || (organizer.Role != UserRole.ORGANISER && organizer.Role != UserRole.ADMIN))
-                throw new ArgumentException("User is not an organizer or admin");
+            if (organizer == null)
+                throw new ArgumentException("Organizer not found");
 
             var existingDelegation = await _userRepository.GetActiveDelegationByOrganizerId(organizerId);
             if (existingDelegation != null)

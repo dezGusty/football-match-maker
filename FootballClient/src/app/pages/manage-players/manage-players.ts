@@ -312,11 +312,13 @@ export class ManagePlayersComponent {
   }
 
   canDelegateToPlayer(player: User): boolean {
+    const currentUserRole = this.authService.getUserRole();
     return (
       this.isPlayerEnabled(player) &&
       !this.delegationStatus?.isDelegating &&
       !this.delegationStatus?.isDelegate &&
-      player.role !== UserRole.ORGANISER
+      player.role !== UserRole.ORGANISER &&
+      currentUserRole === UserRole.ORGANISER
     );
   }
 }

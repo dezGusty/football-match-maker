@@ -421,6 +421,7 @@ namespace FootballAPI.Controllers
         }
 
 
+        [Authorize(Roles = "ORGANISER")]
         [HttpPost("{id}/delegate-organizer-role")]
         public async Task<ActionResult<OrganizerDelegateDto>> DelegateOrganizerRole(int id, [FromBody] DelegateOrganizerRoleDto dto)
         {
@@ -446,6 +447,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ORGANISER")]
         [HttpPost("{id}/reclaim-organizer-role")]
         public async Task<ActionResult> ReclaimOrganizerRole(int id, [FromBody] ReclaimOrganizerRoleDto dto)
         {
