@@ -29,7 +29,8 @@
     <div class="upload-status">Uploading...</div>
     } @if (uploadError) {
     <div class="upload-error">{{ uploadError }}</div>
-    } @if (user && user.profileImageUrl && !user.profileImageUrl.includes('default-avatar')) {
+    } @if (user && user.profileImageUrl &&
+    !user.profileImageUrl.includes('default-avatar')) {
     <button class="delete-image-btn" (click)="deleteProfileImage()">
       Remove Photo
     </button>

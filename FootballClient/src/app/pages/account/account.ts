@@ -22,17 +22,15 @@ import { PlayerProfileImageService } from '../../services/player-profile-image.s
 export class Account {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   user: User | null = null;
-
+  userRole: UserRole | null = null;
   newPassword = '';
   confirmPassword = '';
   currentPassword = '';
-
   newUsername = '';
   usernamePassword = '';
 
   showPasswordForm = false;
   showUsernameForm = false;
-
   selectedFile: File | null = null;
   isUploadingImage = false;
   uploadError = '';
@@ -45,6 +43,7 @@ export class Account {
     private playerProfileImageService: PlayerProfileImageService,
     private notificationService: NotificationService
   ) {
+    this.userRole = this.authService.getUserRole();
     this.loadUser();
   }
 
@@ -97,7 +96,9 @@ export class Account {
       this.resetForms();
       this.showPasswordForm = false;
     } catch (error: any) {
-      this.notificationService.showError(error.message || 'Password change failed');
+      this.notificationService.showError(
+        error.message || 'Password change failed'
+      );
     }
   }
 
@@ -114,7 +115,9 @@ export class Account {
       this.resetForms();
       this.showUsernameForm = false;
     } catch (error: any) {
-      this.notificationService.showError(error.message || 'Username change failed');
+      this.notificationService.showError(
+        error.message || 'Username change failed'
+      );
     }
   }
 
@@ -161,7 +164,9 @@ export class Account {
 
       if (response) {
         this.user.profileImageUrl = response.imageUrl;
-        this.notificationService.showSuccess('Profile image updated successfully!');
+        this.notificationService.showSuccess(
+          'Profile image updated successfully!'
+        );
       }
     } catch (error: any) {
       this.uploadError = error.error?.message || 'Failed to upload image';
@@ -188,9 +193,13 @@ export class Account {
         .toPromise();
       this.user.profileImageUrl =
         'http://localhost:5145/assets/default-avatar.png';
-      this.notificationService.showSuccess('Profile image deleted successfully!');
+      this.notificationService.showSuccess(
+        'Profile image deleted successfully!'
+      );
     } catch (error: any) {
-      this.notificationService.showError(error.error?.message || 'Failed to delete image');
+      this.notificationService.showError(
+        error.error?.message || 'Failed to delete image'
+      );
       console.error('Delete error:', error);
     }
   }

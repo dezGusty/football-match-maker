@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { PlayerHeaderComponent } from '../../components/player-header/player-header.component';
 import { Header } from '../../components/header/header';
 import { MatchService } from '../../services/match.service';
 import { AuthService } from '../../services/auth.service';
@@ -12,7 +11,7 @@ import { MatchStatus } from '../../models/match-status.enum';
 
 @Component({
   selector: 'app-past-matches.component',
-  imports: [PlayerHeaderComponent, Header, DatePipe, CommonModule],
+  imports: [Header, DatePipe, CommonModule],
   templateUrl: './past-matches.component.html',
   styleUrls: ['./past-matches.component.css'],
 })

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -18,6 +18,8 @@ export class Header implements OnInit {
   isMenuOpen = false;
   userRole: UserRole | null = null;
   delegationStatus: DelegationStatusDto | null = null;
+
+  @Output() tabChange = new EventEmitter<string>();
 
   constructor(
     private router: Router,
@@ -50,6 +52,17 @@ export class Header implements OnInit {
 
   navigateTo(route: string) {
     this.router.navigate([route]);
+    this.isMenuOpen = false;
+  }
+
+  switchTab(tab: string) {
+    this.tabChange.emit(tab);
+    this.isMenuOpen = false;
+  }
+
+  // Navigate to account (unified for all roles)
+  navigateToAccount() {
+    this.router.navigate(['/account']);
     this.isMenuOpen = false;
   }
 

@@ -6,7 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { MatchService } from '../../services/match.service';
 import { UserService } from '../../services/user.service';
 import { NotificationService } from '../../services/notification.service';
-import { PlayerHeaderComponent } from '../../components/player-header/player-header.component';
+import { Header } from '../../components/header/header';
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
 import { Match } from '../../models/match.interface';
 import { User } from '../../models/user.interface';
@@ -19,7 +19,7 @@ import { environment } from '../../../environments/environment';
     CommonModule,
     FormsModule,
     DatePipe,
-    PlayerHeaderComponent,
+    Header,
     FriendRequestsComponent,
   ],
   templateUrl: './player-dashboard-availableMatches.component.html',
