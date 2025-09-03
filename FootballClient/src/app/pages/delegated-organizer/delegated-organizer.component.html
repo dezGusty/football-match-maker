@@ -4,7 +4,9 @@
   <div class="content">
     <div class="header-section">
       <h1>Organizer Role Delegated</h1>
-      <p class="subtitle">Your organizer role has been temporarily delegated to a friend</p>
+      <p class="subtitle">
+        Your organizer role has been temporarily delegated to a friend
+      </p>
     </div>
 
     <div class="status-card" *ngIf="delegationStatus && isDelegatedOrganizer()">
@@ -36,26 +38,72 @@
           <ul>
             <li>Your friend is now acting as the organizer</li>
             <li>They have access to organize matches and manage players</li>
-            <li>You retain your organizer role but cannot access organizer functions</li>
+            <li>
+              You retain your organizer role but cannot access organizer
+              functions
+            </li>
             <li>You can reclaim your role at any time</li>
           </ul>
         </div>
       </div>
 
       <div class="actions">
-        <button 
-          class="reclaim-btn" 
-          (click)="reclaimOrganizerRole()" 
-          [disabled]="loading">
+        <button
+          class="reclaim-btn"
+          (click)="showReclaimConfirmation()"
+          [disabled]="loading"
+        >
           <span *ngIf="loading" class="spinner"></span>
-          {{ loading ? 'Reclaiming...' : 'Reclaim My Organizer Role' }}
+          {{ loading ? "Reclaiming..." : "Reclaim My Organizer Role" }}
         </button>
       </div>
     </div>
 
-    <div class="no-delegation" *ngIf="!loading && (!delegationStatus || !isDelegatedOrganizer())">
+    <div
+      class="confirmation-dialog-overlay"
+      *ngIf="showConfirmDialog"
+      (click)="cancelReclaim()"
+    >
+      <div class="confirmation-dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+          <h3>Confirming role reclaim</h3>
+        </div>
+        <div class="dialog-body">
+          <p>Are you sure you want to reclaim your organizer role?</p>
+          <p>
+            This will remove delegation from your friend and they will no longer
+            have organizer access.
+          </p>
+        </div>
+        <div class="dialog-actions">
+          <button
+            class="btn-cancel"
+            (click)="cancelReclaim()"
+            [disabled]="loading"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn-confirm"
+            (click)="reclaimOrganizerRole()"
+            [disabled]="loading"
+          >
+            <span *ngIf="loading">Processing...</span>
+            <span *ngIf="!loading">Yes, Reclaim Role</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="no-delegation"
+      *ngIf="!loading && (!delegationStatus || !isDelegatedOrganizer())"
+    >
       <h2>No Active Delegation</h2>
-      <p>You don't have any active delegation. Redirecting to organizer dashboard...</p>
+      <p>
+        You don't have any active delegation. Redirecting to organizer
+        dashboard...
+      </p>
     </div>
 
     <div class="loading" *ngIf="loading && !delegationStatus">

@@ -140,9 +140,7 @@ export class OrganizerDashboardComponent {
       this.availablePlayers = [...this.players];
     } else if (role === UserRole.ORGANISER) {
       try {
-        this.players = await this.UserService.getPlayersForOrganiser(
-          this.authService.getUserId()!
-        );
+        this.players = await this.UserService.getPlayersForOrganiser();
       } catch (error) {
         this.players = [];
       }
@@ -240,9 +238,7 @@ export class OrganizerDashboardComponent {
       this.players.push(addedPlayer);
 
       this.resetPlayer();
-      this.players = await this.UserService.getPlayersForOrganiser(
-        this.authService.getUserId()!
-      );
+      this.players = await this.UserService.getPlayersForOrganiser();
 
       this.showAddModal = false;
       this.notificationService.showSuccess(

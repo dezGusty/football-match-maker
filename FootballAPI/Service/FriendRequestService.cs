@@ -103,15 +103,19 @@ namespace FootballAPI.Service
 
             int organiserId, userId;
 
-            if (sender.Role == UserRole.ORGANISER)
+            if (sender.Role == UserRole.ORGANISER || sender.Role == UserRole.ADMIN)
             {
                 organiserId = senderId;
                 userId = receiverId;
             }
-            else
+            else if (receiver.Role == UserRole.ORGANISER || receiver.Role == UserRole.ADMIN)
             {
                 organiserId = receiverId;
                 userId = senderId;
+            }
+            else
+            {
+                throw new ArgumentException("At least one user must be an organizer or admin");
             }
 
             var relation = new PlayerOrganiser

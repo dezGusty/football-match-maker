@@ -74,13 +74,8 @@ export class ManagePlayersComponent {
   async init() {
     const role = this.authService.getUserRole();
 
-    if (role === UserRole.ADMIN) {
-      this.players = await this.UserService.getPlayers();
-      this.availablePlayers = [...this.players];
-    } else if (role === UserRole.ORGANISER) {
-      this.players = await this.UserService.getPlayersForOrganiser(
-        this.authService.getUserId()!
-      );
+    if (role === UserRole.ADMIN || role === UserRole.ORGANISER) {
+      this.players = await this.UserService.getPlayersForOrganiser();
     }
 
     await this.loadDelegationStatus();
@@ -148,9 +143,7 @@ export class ManagePlayersComponent {
       this.playerSuccessMessage = `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`;
 
       this.resetPlayer();
-      this.players = await this.UserService.getPlayersForOrganiser(
-        this.authService.getUserId()!
-      );
+      this.players = await this.UserService.getPlayersForOrganiser();
 
       setTimeout(() => {
         this.showAddModal = false;
@@ -207,13 +200,13 @@ export class ManagePlayersComponent {
   }
 
   async enablePlayer(playerId: number) {
-    const confirmEnable = confirm('Are you sure?');
+    const confirmEnable = confirm(
+      'Are you sure you want to reactivate this player?'
+    );
     if (!confirmEnable) return;
 
     try {
-      const success = await this.UserService.editUser(
-        this.players.find((p) => p.id === playerId)!
-      );
+      const success = await this.UserService.reactivateUser(playerId);
       if (success) {
         const playerIndex = this.players.findIndex((p) => p.id === playerId);
         if (playerIndex !== -1) {
@@ -221,7 +214,7 @@ export class ManagePlayersComponent {
         }
       }
     } catch (error) {
-      console.error('Error enabling player:', error);
+      console.error('Error reactivating player:', error);
       alert('Failed to reactivate player. Please try again.');
     }
   }
@@ -308,11 +301,13 @@ export class ManagePlayersComponent {
   }
 
   canDelegateToPlayer(player: User): boolean {
+    const currentUserRole = this.authService.getUserRole();
     return (
       this.isPlayerEnabled(player) &&
       !this.delegationStatus?.isDelegating &&
       !this.delegationStatus?.isDelegate &&
-      player.role !== UserRole.ORGANISER
+      player.role !== UserRole.ORGANISER &&
+      currentUserRole === UserRole.ORGANISER
     );
   }
 

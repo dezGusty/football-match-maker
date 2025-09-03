@@ -38,10 +38,22 @@
 
   <div class="menu" [class.open]="isMenuOpen">
     <ul>
-      <li *ngIf="isOrganizer()">
+      <!-- Admin Menu Items -->
+      <li *ngIf="isAdmin()">
         <button (click)="navigateToDashboard()">Home</button>
       </li>
-      <li *ngIf="isOrganizer()">
+      <li *ngIf="isAdmin()">
+        <button (click)="navigateTo('/manage-players')">Players</button>
+      </li>
+      <li *ngIf="isAdmin()">
+        <button (click)="navigateTo('/manage-all-players')">Manage Players</button>
+      </li>
+
+      <!-- Organizer Menu Items (non-admin organizers) -->
+      <li *ngIf="isOrganizer() && !isAdmin()">
+        <button (click)="navigateToDashboard()">Home</button>
+      </li>
+      <li *ngIf="isOrganizer() && !isAdmin()">
         <button (click)="navigateTo('/manage-players')">Players</button>
       </li>
 
@@ -58,13 +70,23 @@
         <button (click)="navigateTo('/past-matches')">Past Matches</button>
       </li>
 
-      <!-- Organizer Menu Items -->
-      <li *ngIf="isOrganizer()">
+      <!-- Admin Menu Items (continued) -->
+      <li *ngIf="isAdmin()">
         <button (click)="navigateTo('/matches-history')">
           Old created matches
         </button>
       </li>
-      <li *ngIf="isOrganizer()">
+      <li *ngIf="isAdmin()">
+        <button (click)="navigateTo('/past-matches')">Past matches</button>
+      </li>
+
+      <!-- Organizer Menu Items (non-admin organizers) -->
+      <li *ngIf="isOrganizer() && !isAdmin()">
+        <button (click)="navigateTo('/matches-history')">
+          Old created matches
+        </button>
+      </li>
+      <li *ngIf="isOrganizer() && !isAdmin()">
         <button (click)="navigateTo('/past-matches')">Past matches</button>
       </li>
 

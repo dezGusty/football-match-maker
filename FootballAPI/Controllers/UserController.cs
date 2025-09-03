@@ -204,6 +204,27 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [HttpPatch("{id}/reactivate")]
+        public async Task<ActionResult> ReactivateUser(int id)
+        {
+            try
+            {
+                var reactivated = await _userService.ReactivateUserAsync(id);
+
+                if (!reactivated)
+                {
+                    return NotFound($"User with ID {id} was not found.");
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reactivating user");
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
+
         [HttpPost("authenticate")]
         public async Task<ActionResult<UserResponseDto>> Authenticate([FromBody] LoginDto loginDto)
         {
@@ -306,12 +327,25 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
             }
         }
-
-        [HttpGet("{id}/players")]
-        public async Task<ActionResult> GetPlayersForOrganiser(int id)
+        [Authorize]
+        [HttpGet("organiser/players")]
+        public async Task<ActionResult> GetPlayersForOrganiser()
         {
-            var players = await _userService.GetPlayersByOrganiserAsync(id);
-            return Ok(players ?? []);
+            try
+            {
+                var organizerId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var players = await _userService.GetPlayersByOrganiserAsync(organizerId);
+                return Ok(players ?? []);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting players for organiser");
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
         }
 
         [HttpPost("player-organiser")]
@@ -387,6 +421,7 @@ namespace FootballAPI.Controllers
         }
 
 
+        [Authorize(Roles = "ORGANISER")]
         [HttpPost("{id}/delegate-organizer-role")]
         public async Task<ActionResult<OrganizerDelegateDto>> DelegateOrganizerRole(int id, [FromBody] DelegateOrganizerRoleDto dto)
         {
@@ -412,6 +447,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ORGANISER")]
         [HttpPost("{id}/reclaim-organizer-role")]
         public async Task<ActionResult> ReclaimOrganizerRole(int id, [FromBody] ReclaimOrganizerRoleDto dto)
         {

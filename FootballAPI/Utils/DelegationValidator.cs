@@ -24,11 +24,6 @@ namespace FootballAPI.Utils
                 return result;
             }
 
-            if (organizer.Role != UserRole.ORGANISER)
-            {
-                result.AddError("User is not an organizer");
-                return result;
-            }
 
             var isDelegate = await _userRepository.GetActiveDelegationByDelegateId(organizerId);
             if (isDelegate != null)

@@ -97,8 +97,11 @@ export class UserService {
     return players;
   }
 
-  async getPlayersForOrganiser(organiserId: number): Promise<User[]> {
-    const response = await fetch(`${this.url}/${organiserId}/players`);
+  async getPlayersForOrganiser(): Promise<User[]> {
+    const headers = this.getAuthHeaders();
+    const response = await fetch(`${this.url}/organiser/players`, {
+      headers
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch players for organiser');
     }
@@ -183,6 +186,19 @@ export class UserService {
 
     if (!response.ok) {
       throw new Error('Failed to delete user');
+    }
+
+    return true;
+  }
+
+  async reactivateUser(userId: number): Promise<boolean> {
+    const response = await fetch(`${this.url}/${userId}/reactivate`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to reactivate user');
     }
 
     return true;
