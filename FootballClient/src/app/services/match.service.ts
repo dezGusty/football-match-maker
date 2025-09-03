@@ -476,6 +476,19 @@ export class MatchService {
     return await response.json();
   }
 
+  async getMyPublicMatches(): Promise<any[]> {
+    const response = await fetch(`${this.baseUrl}/matches/my-public-matches`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch public matches');
+    }
+
+    return await response.json();
+  }
+
+
   async getAvailableMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/available`, {
       headers: this.getAuthHeaders(),

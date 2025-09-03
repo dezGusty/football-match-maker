@@ -34,6 +34,16 @@ namespace FootballAPI.Repository
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Match>> GetMyPublicMatchesAsync(int id)
+        {
+            return await _context.Matches
+                .Where(m => m.IsPublic && 
+                           m.Status == Status.Open &&
+                           m.OrganiserId != id &&
+                           !m.MatchTeams.Any(mt => mt.TeamPlayers.Any(tp => tp.UserId == id)))
+                .OrderByDescending(m => m.MatchDate)
+                .ToListAsync();
+        }
         public async Task<IEnumerable<Match>> GetPublicMatchesAsync()
         {
             return await _context.Matches

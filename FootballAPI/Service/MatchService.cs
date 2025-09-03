@@ -101,6 +101,7 @@ namespace FootballAPI.Service
             return match == null ? null : await MapToDtoAsync(match);
         }
 
+
         public async Task<IEnumerable<MatchDto>> GetMatchesByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
             var matches = await _matchRepository.GetMatchesByDateRangeAsync(startDate, endDate);
@@ -251,6 +252,17 @@ namespace FootballAPI.Service
         public async Task<IEnumerable<MatchDto>> GetMatchesByOrganiserAsync(int organiserId)
         {
             var matches = await _matchRepository.GetMatchesByOrganiserAsync(organiserId);
+            var matchDtos = new List<MatchDto>();
+            foreach (var match in matches)
+            {
+                matchDtos.Add(await MapToDtoAsync(match));
+            }
+            return matchDtos;
+        }
+
+        public async Task<IEnumerable<MatchDto>> GetMyPublicMatchesAsync(int id)
+        {
+            var matches = await _matchRepository.GetMyPublicMatchesAsync(id);
             var matchDtos = new List<MatchDto>();
             foreach (var match in matches)
             {

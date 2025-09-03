@@ -16,6 +16,7 @@ namespace FootballAPI.Service
         Task<IEnumerable<MatchDto>> GetMatchesByStatusAsync(Status status);
 
         Task<IEnumerable<MatchDto>> GetPastMatchesByParticipantAsync(int userId);
+        Task<IEnumerable<MatchDto>> GetMyPublicMatchesAsync(int id);
 
         Task<IEnumerable<MatchDto>> GetFutureMatchesAsync();
         Task<IEnumerable<MatchDto>> GetPastMatchesAsync(int id);

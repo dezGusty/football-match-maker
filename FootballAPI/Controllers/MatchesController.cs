@@ -356,6 +356,26 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [HttpGet("my-public-matches")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetMyPublicMatches()
+        {
+            try
+            {
+                var userId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var matches = await _matchService.GetMyPublicMatchesAsync(userId);
+                return Ok(matches);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error getting my public matches: {ex.Message}");
+            }
+        }
+
         [HttpGet("organiser/matches")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatchesByOrganiserAsync()

@@ -68,7 +68,7 @@ export class PlayerDashboardAvailableMatchesComponent implements OnInit {
 
   async loadPublicMatches() {
     try {
-      const publicMatches = await this.matchService.getPublicMatches();
+      const publicMatches = await this.matchService.getMyPublicMatches();
       const now = new Date();
       this.availableMatches = publicMatches.filter(
         (match: any) =>

@@ -163,7 +163,7 @@ namespace FootballAPI.Repository
             if (user == null)
                 return false;
 
-            user.Rating += ratingChange;
+            user.Rating = Math.Max(0f, user.Rating + ratingChange);
             user.UpdatedAt = DateTime.UtcNow;
             await UpdateAsync(user);
             return true;
