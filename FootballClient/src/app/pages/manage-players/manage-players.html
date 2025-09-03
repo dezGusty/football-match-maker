@@ -194,41 +194,27 @@
                 {{ isPlayerEnabled(player) ? "Active" : "Inactive" }}
               </span>
             </td>
-            <td class="actions">
-              @if (isPlayerEnabled(player)) {
-              <button
-                class="action-btn edit-btn"
-                title="Edit"
-                (click)="setEditIndex(i)"
-              >
-                Edit
-              </button>
-              @if (canDelegateToPlayer(player)) {
-              <button
-                class="action-btn delegate-btn"
-                title="Make Organizer"
-                (click)="openDelegateModal(player)"
-              >
-                Make Organizer
-              </button>
-              }
-              <button
-                class="action-btn delete-btn"
-                title="Disable"
-                (click)="deletePlayer(player.id!)"
-              >
-                Disable
-              </button>
-              } @else {
-              <button
-                class="action-btn reactivate-btn"
-                title="Reactivate"
-                (click)="enablePlayer(player.id!)"
-              >
-                Reactivate
-              </button>
-              }
-            </td>
+           
+<td class="actions">
+  @if (isPlayerEnabled(player)) {
+    <button
+      class="action-btn edit-btn"
+      title="Edit"
+      (click)="setEditIndex(i)"
+    >
+      Edit
+    </button>
+    @if (canDelegateToPlayer(player)) {
+    <button
+      class="action-btn delegate-btn"
+      title="Make Organizer"
+      (click)="openDelegateModal(player)"
+    >
+      Make Organizer
+    </button>
+    }
+  }
+</td>
           </ng-template>
         </tr>
       </tbody>

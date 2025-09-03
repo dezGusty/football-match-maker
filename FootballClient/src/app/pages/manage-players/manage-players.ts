@@ -199,23 +199,7 @@ export class ManagePlayersComponent {
     }
   }
 
-  async deletePlayer(playerId: number) {
-    const confirmDelete = confirm('Are you sure ?');
-    if (!confirmDelete) return;
-
-    try {
-      const success = await this.UserService.deleteUser(playerId);
-      if (success) {
-        const playerIndex = this.players.findIndex((p) => p.id === playerId);
-        if (playerIndex !== -1) {
-          this.players[playerIndex].isDeleted = true;
-        }
-      }
-    } catch (error) {
-      console.error('Error deleting player:', error);
-      alert('Failed to delete player. Please try again.');
-    }
-  }
+  
 
   async enablePlayer(playerId: number) {
     const confirmEnable = confirm('Are you sure?');
