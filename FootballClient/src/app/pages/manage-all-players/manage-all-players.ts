@@ -6,6 +6,7 @@ import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.interface';
 import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-manage-all-players',
@@ -17,7 +18,8 @@ import { UserRole } from '../../models/user-role.enum';
 export class ManageAllPlayersComponent {
   constructor(
     private UserService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationService: NotificationService
   ) {}
 
   players: User[] = [];
@@ -28,6 +30,11 @@ export class ManageAllPlayersComponent {
 
   editIndex: number | null = null;
   editedPlayer: User | null = null;
+
+  showDeleteConfirmDialog = false;
+  playerToDelete: number | null = null;
+  showReactivateConfirmDialog = false;
+  playerToReactivate: number | null = null;
 
   searchTerm: string = '';
 
@@ -99,16 +106,34 @@ export class ManageAllPlayersComponent {
         this.filteredPlayers[filteredIndex] = updatedPlayer;
       }
       this.clearEditIndex();
+      this.notificationService.showSuccess('Player updated successfully!');
     } catch (error) {
       console.error('Error updating player:', error);
     }
   }
 
+  showDeleteConfirmation(playerId: number) {
+    this.playerToDelete = playerId;
+    this.showDeleteConfirmDialog = true;
+  }
+
+  showReactivateConfirmation(playerId: number) {
+    this.playerToReactivate = playerId;
+    this.showReactivateConfirmDialog = true;
+  }
+
+  cancelDelete() {
+    this.showDeleteConfirmDialog = false;
+    this.playerToDelete = null;
+  }
+
+  cancelReactivate() {
+    this.showReactivateConfirmDialog = false;
+    this.playerToReactivate = null;
+  }
+
   async deletePlayer(playerId: number) {
-    const confirmDelete = confirm(
-      'Are you sure you want to delete this player?'
-    );
-    if (!confirmDelete) return;
+    this.showDeleteConfirmDialog = false;
 
     try {
       const success = await this.UserService.deleteUser(playerId);
@@ -123,18 +148,20 @@ export class ManageAllPlayersComponent {
         if (filteredIndex !== -1) {
           this.filteredPlayers[filteredIndex].isDeleted = true;
         }
+        this.notificationService.showSuccess('Player deleted successfully!');
       }
     } catch (error) {
       console.error('Error deleting player:', error);
-      alert('Failed to delete player. Please try again.');
+      this.notificationService.showError(
+        'Failed to delete player. Please try again.'
+      );
+    } finally {
+      this.playerToDelete = null;
     }
   }
 
   async enablePlayer(playerId: number) {
-    const confirmEnable = confirm(
-      'Are you sure you want to reactivate this player?'
-    );
-    if (!confirmEnable) return;
+    this.showReactivateConfirmDialog = false;
 
     try {
       const success = await this.UserService.reactivateUser(playerId);
@@ -149,10 +176,15 @@ export class ManageAllPlayersComponent {
         if (filteredIndex !== -1) {
           this.filteredPlayers[filteredIndex].isDeleted = false;
         }
+        this.notificationService.showSuccess(
+          'Player reactivated successfully!'
+        );
       }
     } catch (error) {
       console.error('Error reactivating player:', error);
-      alert('Failed to reactivate player. Please try again.');
+      this.notificationService.showError(
+        'Failed to reactivate player. Please try again.'
+      );
     }
   }
 
