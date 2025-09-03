@@ -43,6 +43,7 @@ export class OrganizerDashboardComponent {
   showEditMatchModal = false;
   showAddPlayersModal = false;
   showFinalizeMatchModal = false;
+  isViewOnlyMode = false;
   activeTab: 'players' | 'matches' | 'myMatches' = 'matches';
   selectedMatch: MatchDisplay | null = null;
   selectedRatingSystem: string = 'Linear'; // Default rating system
@@ -532,7 +533,6 @@ export class OrganizerDashboardComponent {
     const totalPlayers =
       (match.teamAPlayerCount || 0) + (match.teamBPlayerCount || 0);
     if (
-      totalPlayers >= 12 ||
       match.status === MatchStatus.Closed ||
       match.status === MatchStatus.Finalized
     ) {
@@ -581,6 +581,10 @@ export class OrganizerDashboardComponent {
     this.selectedMatch = match;
     this.addPlayersErrorMessage = '';
     this.addPlayersSuccessMessage = '';
+
+    // Determine if this is view-only mode
+    this.isViewOnlyMode =
+      this.getAddPlayersButtonText(match) === 'View Players';
 
     try {
       await this.loadAvailablePlayers();

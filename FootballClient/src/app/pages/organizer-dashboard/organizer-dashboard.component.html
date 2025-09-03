@@ -126,6 +126,7 @@
           </td>
           <td>
             <button
+              *ngIf="match.status == 0"
               class="action-btn"
               [class.make-public-btn]="!match.isPublic"
               [class.make-private-btn]="match.isPublic"
@@ -138,9 +139,13 @@
             >
               {{ match.isPublic ? "Make Private" : "Make Public" }}
             </button>
+            <span *ngIf="match.status != 0" class="status-text">
+              {{ match.isPublic ? "Public" : "Private" }}
+            </span>
           </td>
           <td class="actions">
             <button
+              *ngIf="match.status !== 3"
               class="action-btn add-players-btn"
               [title]="getAddPlayersButtonText(match)"
               (click)="openAddPlayersModal(match)"
@@ -680,7 +685,9 @@
         &times;
       </button>
 
-      <h3>Add Players to Match</h3>
+      <h3>
+        {{ isViewOnlyMode ? "View Match Players" : "Add Players to Match" }}
+      </h3>
       <div class="match-info">
         <p>
           <strong
@@ -770,7 +777,7 @@
                       player.rating | number : "1.0-1"
                     }})</span
                   >
-                  <div class="player-actions">
+                  <div class="player-actions" *ngIf="!isViewOnlyMode">
                     <button
                       class="move-btn"
                       (click)="movePlayerToOtherTeam(player, 'teamA')"
@@ -822,7 +829,7 @@
                       player.rating | number : "1.0-1"
                     }})</span
                   >
-                  <div class="player-actions">
+                  <div class="player-actions" *ngIf="!isViewOnlyMode">
                     <button
                       class="move-btn"
                       (click)="movePlayerToOtherTeam(player, 'teamB')"
