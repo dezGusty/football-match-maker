@@ -39,7 +39,7 @@ export class ManagePlayersComponent {
     private authService: AuthService,
     private matchService: MatchService,
     private router: Router,
-    private friendRequestService: FriendRequestService 
+    private friendRequestService: FriendRequestService
   ) {}
 
   players: User[] = [];
@@ -65,6 +65,11 @@ export class ManagePlayersComponent {
   delegationSuccessMessage = '';
   selectedPlayerForDelegation: User | null = null;
   delegationNotes = '';
+
+  showUnfriendModal = false;
+  unfriendMessage = '';
+  unfriendError = false; // true dacă e eroare
+  unfriendTarget: User | null = null;
 
   async init() {
     const role = this.authService.getUserRole();
@@ -201,8 +206,6 @@ export class ManagePlayersComponent {
     }
   }
 
-  
-
   async enablePlayer(playerId: number) {
     const confirmEnable = confirm('Are you sure?');
     if (!confirmEnable) return;
@@ -314,19 +317,35 @@ export class ManagePlayersComponent {
   }
 
   async unfriend(player: User) {
-  const confirmUnfriend = confirm(
-    `Are you sure you want to unfriend ${player.firstName} ${player.lastName}?`
-  );
-  if (!confirmUnfriend) return;
+  this.unfriendTarget = player;
+  this.showUnfriendModal = true;
+  this.unfriendMessage = '';
+  this.unfriendError = false;
+}
+
+async confirmUnfriend() {
+  if (!this.unfriendTarget) return;
 
   try {
-    await this.friendRequestService.unfriend(player.id!);
-    this.players = this.players.filter((p) => p.id !== player.id); // scoatem din listă
-    alert(`${player.firstName} ${player.lastName} has been unfriended.`);
+    await this.friendRequestService.unfriend(this.unfriendTarget.id!);
+    this.players = this.players.filter(p => p.id !== this.unfriendTarget!.id);
+    this.unfriendMessage = `${this.unfriendTarget.firstName} ${this.unfriendTarget.lastName} has been unfriended.`;
+    this.unfriendError = false;
+
+    setTimeout(() => this.closeUnfriendModal(), 2000); // închide automat după 2 sec
   } catch (error: any) {
     console.error('Error unfriending:', error);
-    alert(error.message || 'Failed to unfriend user');
+    this.unfriendMessage = error.message || 'Failed to unfriend user';
+    this.unfriendError = true;
   }
 }
+
+closeUnfriendModal() {
+  this.showUnfriendModal = false;
+  this.unfriendTarget = null;
+  this.unfriendMessage = '';
+  this.unfriendError = false;
+}
+
 
 }

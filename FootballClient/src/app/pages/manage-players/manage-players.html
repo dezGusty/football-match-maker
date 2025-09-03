@@ -207,7 +207,7 @@
     </button>
     @if (canDelegateToPlayer(player)) {
       <button
-        class="action-btn delegate-btn"
+        class="action-btn makeorganiser-btn"
         title="Make Organizer"
         (click)="openDelegateModal(player)"
       >
@@ -215,7 +215,7 @@
       </button>
     }
     <button
-      class="action-btn danger-btn"
+      class="action-btn delete-btn"
       title="Unfriend"
       (click)="unfriend(player)"
     >
@@ -407,5 +407,23 @@
       </div>
     </div>
   </div>
+  }
+
+   <!-- Unfriend Modal -->
+  @if (showUnfriendModal && unfriendTarget) {
+    <div class="modal-backdrop" (click)="closeUnfriendModal()">
+      <div class="modal-content glass" (click)="$event.stopPropagation()">
+        <button class="close-modal-btn" (click)="closeUnfriendModal()" title="Close">&times;</button>
+        <h3>Unfriend {{ unfriendTarget.firstName }} {{ unfriendTarget.lastName }}</h3>
+        <p *ngIf="!unfriendMessage">Are you sure you want to unfriend this user?</p>
+        <div *ngIf="unfriendMessage" [class.error-message]="unfriendError" [class.success-message]="!unfriendError">
+          {{ unfriendMessage }}
+        </div>
+        <div class="modal-actions" *ngIf="!unfriendMessage">
+          <button class="secondary-btn" (click)="closeUnfriendModal()">Cancel</button>
+          <button class="danger-btn" (click)="confirmUnfriend()">Unfriend</button>
+        </div>
+      </div>
+    </div>
   }
 </div>
