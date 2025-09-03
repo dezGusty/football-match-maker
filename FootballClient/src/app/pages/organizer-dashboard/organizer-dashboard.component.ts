@@ -535,7 +535,11 @@ export class OrganizerDashboardComponent {
   getAddPlayersButtonText(match: MatchDisplay): string {
     const totalPlayers =
       (match.teamAPlayerCount || 0) + (match.teamBPlayerCount || 0);
-    if (totalPlayers >= 12 || match.status === MatchStatus.Closed) {
+    if (
+      totalPlayers >= 12 ||
+      match.status === MatchStatus.Closed ||
+      match.status === MatchStatus.Finalized
+    ) {
       return 'View Players';
     }
     return 'Add Players';
