@@ -204,6 +204,27 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [HttpPatch("{id}/reactivate")]
+        public async Task<ActionResult> ReactivateUser(int id)
+        {
+            try
+            {
+                var reactivated = await _userService.ReactivateUserAsync(id);
+
+                if (!reactivated)
+                {
+                    return NotFound($"User with ID {id} was not found.");
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reactivating user");
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
+
         [HttpPost("authenticate")]
         public async Task<ActionResult<UserResponseDto>> Authenticate([FromBody] LoginDto loginDto)
         {

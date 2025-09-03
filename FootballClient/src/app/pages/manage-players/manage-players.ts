@@ -67,10 +67,8 @@ export class ManagePlayersComponent {
   async init() {
     const role = this.authService.getUserRole();
 
-    if (role === UserRole.ADMIN) {
-      this.players = await this.UserService.getPlayers();
-      this.availablePlayers = [...this.players];
-    } else if (role === UserRole.ORGANISER) {
+    // Both admin and organizer see their own players (friends)
+    if (role === UserRole.ADMIN || role === UserRole.ORGANISER) {
       this.players = await this.UserService.getPlayersForOrganiser(
         this.authService.getUserId()!
       );
@@ -218,13 +216,11 @@ export class ManagePlayersComponent {
   }
 
   async enablePlayer(playerId: number) {
-    const confirmEnable = confirm('Are you sure?');
+    const confirmEnable = confirm('Are you sure you want to reactivate this player?');
     if (!confirmEnable) return;
 
     try {
-      const success = await this.UserService.editUser(
-        this.players.find((p) => p.id === playerId)!
-      );
+      const success = await this.UserService.reactivateUser(playerId);
       if (success) {
         const playerIndex = this.players.findIndex((p) => p.id === playerId);
         if (playerIndex !== -1) {
@@ -232,7 +228,7 @@ export class ManagePlayersComponent {
         }
       }
     } catch (error) {
-      console.error('Error enabling player:', error);
+      console.error('Error reactivating player:', error);
       alert('Failed to reactivate player. Please try again.');
     }
   }

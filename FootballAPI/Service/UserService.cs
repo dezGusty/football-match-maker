@@ -156,6 +156,11 @@ namespace FootballAPI.Service
             return await _userRepository.DeleteAsync(id);
         }
 
+        public async Task<bool> ReactivateUserAsync(int id)
+        {
+            return await _userRepository.ReactivateAsync(id);
+        }
+
         public async Task<UserResponseDto> AuthenticateAsync(LoginDto loginDto)
         {
             var user = await _userRepository.AuthenticateAsync(loginDto.Email, loginDto.Password);

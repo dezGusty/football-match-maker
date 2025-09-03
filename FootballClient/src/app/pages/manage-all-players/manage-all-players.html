@@ -1,0 +1,175 @@
+<app-header></app-header>
+
+<div class="manage-all-players-container">
+  <div class="header-section">
+    <h1>Manage All Players</h1>
+  </div>
+
+  <div class="search-section">
+    <div class="search-container">
+      <input
+        type="text"
+        placeholder="Search players by name, username, or email..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        class="search-input"
+      />
+      <span class="search-icon material-icons">search</span>
+    </div>
+  </div>
+
+  <div class="players-section">
+    <div class="section-header">
+      <h2>All Players ({{ filteredPlayers.length }})</h2>
+    </div>
+
+    <div *ngIf="playerLoading" class="loading">
+      <p>Loading players...</p>
+    </div>
+
+    <div *ngIf="playerErrorMessage" class="error-message">
+      {{ playerErrorMessage }}
+    </div>
+
+    <div *ngIf="playerSuccessMessage" class="success-message">
+      {{ playerSuccessMessage }}
+    </div>
+
+    <div class="players-table" *ngIf="!playerLoading">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Rating</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let player of filteredPlayers; let i = index"
+            [class.disabled-row]="!isPlayerEnabled(player)"
+          >
+            <!-- Name -->
+            <td>
+              <div *ngIf="editIndex !== i">
+                {{ player.firstName }} {{ player.lastName }}
+              </div>
+              <div *ngIf="editIndex === i" class="edit-fields">
+                <input
+                  type="text"
+                  [(ngModel)]="editedPlayer!.firstName"
+                  placeholder="First Name"
+                  class="edit-input"
+                />
+                <input
+                  type="text"
+                  [(ngModel)]="editedPlayer!.lastName"
+                  placeholder="Last Name"
+                  class="edit-input"
+                />
+              </div>
+            </td>
+
+            <!-- Username -->
+            <td>
+              <div *ngIf="editIndex !== i">{{ player.username }}</div>
+              <input
+                *ngIf="editIndex === i"
+                type="text"
+                [(ngModel)]="editedPlayer!.username"
+                class="edit-input"
+              />
+            </td>
+
+            <!-- Email -->
+            <td>
+              <div *ngIf="editIndex !== i">{{ player.email }}</div>
+              <input
+                *ngIf="editIndex === i"
+                type="email"
+                [(ngModel)]="editedPlayer!.email"
+                class="edit-input"
+              />
+            </td>
+
+            <!-- Rating -->
+            <td>
+              <div *ngIf="editIndex !== i">{{ player.rating }}</div>
+              <input
+                *ngIf="editIndex === i"
+                type="number"
+                min="0"
+                max="10"
+                [(ngModel)]="editedPlayer!.rating"
+                class="edit-input rating-input"
+              />
+            </td>
+
+            <!-- Status -->
+            <td>
+              <span
+                class="status-badge"
+                [class.active]="isPlayerEnabled(player)"
+                [class.inactive]="!isPlayerEnabled(player)"
+              >
+                {{ isPlayerEnabled(player) ? "Active" : "Inactive" }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="action-buttons">
+                <div *ngIf="editIndex !== i">
+                  <button
+                    class="edit-btn"
+                    (click)="setEditIndex(i)"
+                    [disabled]="!isPlayerEnabled(player)"
+                  >
+                    <span class="material-icons">edit</span>
+                  </button>
+
+                  <button
+                    *ngIf="isPlayerEnabled(player)"
+                    class="delete-btn"
+                    (click)="deletePlayer(player.id!)"
+                    title="Delete Player"
+                  >
+                    <span class="material-icons">delete</span>
+                  </button>
+
+                  <button
+                    *ngIf="!isPlayerEnabled(player)"
+                    class="enable-btn"
+                    (click)="enablePlayer(player.id!)"
+                    title="Reactivate Player"
+                  >
+                    <span class="material-icons">restore</span>
+                  </button>
+                </div>
+
+                <div *ngIf="editIndex === i" class="edit-actions">
+                  <button class="save-btn" (click)="editPlayer()">
+                    <span class="material-icons">save</span>
+                  </button>
+                  <button class="cancel-btn" (click)="clearEditIndex()">
+                    <span class="material-icons">cancel</span>
+                  </button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div
+        *ngIf="filteredPlayers.length === 0 && !playerLoading"
+        class="no-players"
+      >
+        <p>No players found matching your search criteria.</p>
+      </div>
+    </div>
+  </div>
+</div>

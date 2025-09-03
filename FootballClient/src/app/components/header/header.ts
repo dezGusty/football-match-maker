@@ -91,6 +91,11 @@ export class Header implements OnInit {
     return this.userRole === UserRole.PLAYER;
   }
 
+  // Check if user is admin
+  isAdmin(): boolean {
+    return this.userRole === UserRole.ADMIN;
+  }
+
   // Check delegation status
   isDelegating(): boolean {
     return !!this.delegationStatus?.isDelegating;

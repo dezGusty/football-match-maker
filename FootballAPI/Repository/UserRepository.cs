@@ -68,7 +68,20 @@ namespace FootballAPI.Repository
             if (user == null)
                 return false;
 
-            _context.Set<User>().Remove(user);
+            user.DeletedAt = DateTime.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> ReactivateAsync(int id)
+        {
+            var user = await _context.Set<User>().FindAsync(id);
+            if (user == null)
+                return false;
+
+            user.DeletedAt = null;
+            user.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             return true;
         }

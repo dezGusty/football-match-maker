@@ -188,6 +188,19 @@ export class UserService {
     return true;
   }
 
+  async reactivateUser(userId: number): Promise<boolean> {
+    const response = await fetch(`${this.url}/${userId}/reactivate`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to reactivate user');
+    }
+
+    return true;
+  }
+
   async updatePlayerRating(
     userId: number,
     ratingChange: number

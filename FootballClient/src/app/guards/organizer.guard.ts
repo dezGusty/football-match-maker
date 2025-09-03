@@ -10,7 +10,7 @@ export const organizerGuard = async () => {
   const userRole = authService.getUserRole();
   
   // If no valid role, redirect to login
-  if (!userRole) {
+  if (userRole === null || userRole === undefined) {
     router.navigate(['/login']);
     return false;
   }

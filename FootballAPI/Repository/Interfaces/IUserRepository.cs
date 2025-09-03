@@ -14,6 +14,7 @@ namespace FootballAPI.Repository
         Task<User> CreateAsync(User user);
         Task<User> UpdateAsync(User user);
         Task<bool> DeleteAsync(int id);
+        Task<bool> ReactivateAsync(int id);
         Task<bool> ExistsAsync(int id);
         Task<bool> UsernameExistsAsync(string username);
         Task<bool> UsernameExistsAsync(string username, int excludeUserId);

@@ -15,6 +15,7 @@ namespace FootballAPI.Service
         Task<UserDto> CreatePlayerUserAsync(CreatePlayerUserDto dto, int? organizerId = null);
         Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updateUserDto);
         Task<bool> DeleteUserAsync(int id);
+        Task<bool> ReactivateUserAsync(int id);
         Task<UserResponseDto> AuthenticateAsync(LoginDto loginDto);
         Task<bool> ChangePasswordAsync(int userId, ChangePasswordDto changePasswordDto);
         Task<IEnumerable<UserDto>> GetUsersByRoleAsync(UserRole role);
