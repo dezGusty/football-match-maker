@@ -67,11 +67,8 @@ export class ManagePlayersComponent {
   async init() {
     const role = this.authService.getUserRole();
 
-    // Both admin and organizer see their own players (friends)
     if (role === UserRole.ADMIN || role === UserRole.ORGANISER) {
-      this.players = await this.UserService.getPlayersForOrganiser(
-        this.authService.getUserId()!
-      );
+      this.players = await this.UserService.getPlayersForOrganiser();
     }
 
     await this.loadDelegationStatus();
@@ -139,9 +136,7 @@ export class ManagePlayersComponent {
       this.playerSuccessMessage = `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`;
 
       this.resetPlayer();
-      this.players = await this.UserService.getPlayersForOrganiser(
-        this.authService.getUserId()!
-      );
+      this.players = await this.UserService.getPlayersForOrganiser();
 
       setTimeout(() => {
         this.showAddModal = false;
@@ -216,7 +211,9 @@ export class ManagePlayersComponent {
   }
 
   async enablePlayer(playerId: number) {
-    const confirmEnable = confirm('Are you sure you want to reactivate this player?');
+    const confirmEnable = confirm(
+      'Are you sure you want to reactivate this player?'
+    );
     if (!confirmEnable) return;
 
     try {

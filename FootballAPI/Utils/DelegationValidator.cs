@@ -24,9 +24,9 @@ namespace FootballAPI.Utils
                 return result;
             }
 
-            if (organizer.Role != UserRole.ORGANISER)
+            if (organizer.Role != UserRole.ORGANISER && organizer.Role != UserRole.ADMIN)
             {
-                result.AddError("User is not an organizer");
+                result.AddError("User is not an organizer or admin");
                 return result;
             }
 
