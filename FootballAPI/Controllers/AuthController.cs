@@ -174,6 +174,66 @@ namespace FootballAPI.Controllers
         }
 
 
+        [HttpPost("create-user-account")]
+        [Authorize]
+        public async Task<IActionResult> CreateUserAccount([FromBody] CreateUserDto dto)
+        {
+            try
+            {
+                var organizerId = UserUtils.GetCurrentUserId(User, Request.Headers);
+
+                var existingUser = await _userService.GetUserByEmailAsync(dto.Email);
+                if (existingUser != null)
+                {
+                    return BadRequest(new { message = "User with this email already exists." });
+                }
+
+                if (string.IsNullOrWhiteSpace(dto.Password))
+                {
+                    dto.Password = Guid.NewGuid().ToString();
+                }
+
+                var createdUser = await _userService.CreateUserAsync(dto);
+
+                var resetToken = await _passwordResetService.GeneratePasswordResetTokenAsync(createdUser.Id);
+
+                var frontendUrl = _configuration["Frontend:BaseUrl"];
+                var setPasswordUrl = $"{frontendUrl}/reset-password?token={resetToken}";
+
+                await _emailService.SendSetPasswordEmailAsync(dto.Email, dto.Username, setPasswordUrl);
+
+                _logger.LogInformation("User account created and password reset email sent to {Email}", dto.Email);
+
+                return Ok(new
+                {
+                    message = "User account created successfully. Password setup email sent.",
+                    id = createdUser.Id,
+                    email = createdUser.Email,
+                    username = createdUser.Username,
+                    firstName = createdUser.FirstName,
+                    lastName = createdUser.LastName,
+                    rating = createdUser.Rating,
+                    speed = createdUser.Speed,
+                    stamina = createdUser.Stamina,
+                    errors = createdUser.Errors,
+                    role = createdUser.Role
+                });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating user account for {Email}", dto.Email);
+                return StatusCode(500, new { message = "An error occurred while creating the account." });
+            }
+        }
+
         [HttpPost("set-password")]
         public async Task<IActionResult> SetPassword([FromBody] SetPasswordDto dto)
         {

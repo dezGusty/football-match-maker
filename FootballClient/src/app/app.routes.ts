@@ -42,6 +42,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'manage-accounts',
+    loadComponent: () =>
+      import('./pages/manage-accounts/manage-accounts.component').then(
+        (m) => m.ManageAccountsComponent
+      ),
+    canActivate: [authGuard, organizerGuard],
+  },
+  {
     path: 'player-dashboard',
     loadComponent: () =>
       import('./pages/player-dashboard/player-dashboard.component').then(

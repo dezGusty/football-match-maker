@@ -46,7 +46,13 @@
         <button (click)="navigateTo('/manage-players')">Players</button>
       </li>
       <li *ngIf="isAdmin()">
-        <button (click)="navigateTo('/manage-all-players')">Manage Players</button>
+        <button (click)="navigateTo('/manage-all-players')">
+          Manage Players
+        </button>
+      </li>
+
+      <li *ngIf="isAdmin()">
+        <button (click)="navigateTo('/manage-accounts')">Manage Users</button>
       </li>
 
       <!-- Organizer Menu Items (non-admin organizers) -->
