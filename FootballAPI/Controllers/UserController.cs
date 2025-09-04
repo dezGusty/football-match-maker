@@ -22,6 +22,7 @@ namespace FootballAPI.Controllers
             _logger = logger;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
         {
@@ -37,6 +38,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
@@ -58,6 +60,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("username/{username}")]
         public async Task<ActionResult<UserDto>> GetUserByUsername(string username)
         {
@@ -79,6 +82,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("email/{email}")]
         public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
         {
@@ -100,6 +104,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpGet("role/{role}")]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersByRole(UserRole role)
         {
@@ -115,6 +120,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPost]
         public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto dto)
         {
@@ -122,6 +128,7 @@ namespace FootballAPI.Controllers
             return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
         }
 
+        [AllowAnonymous]
         [HttpPost("create-player-user")]
         public async Task<ActionResult<UserDto>> CreatePlayerUser([FromBody] CreatePlayerUserDto dto)
         {
@@ -152,6 +159,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
         {
@@ -183,6 +191,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(int id)
         {
@@ -204,6 +213,8 @@ namespace FootballAPI.Controllers
             }
         }
 
+
+        [Authorize(Roles = "ADMIN")]
         [HttpPatch("{id}/reactivate")]
         public async Task<ActionResult> ReactivateUser(int id)
         {
@@ -225,109 +236,7 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpPost("authenticate")]
-        public async Task<ActionResult<UserResponseDto>> Authenticate([FromBody] LoginDto loginDto)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var userResponse = await _userService.AuthenticateAsync(loginDto);
-
-                if (userResponse == null)
-                {
-                    return Unauthorized("Incorrect username or password.");
-                }
-
-                return Ok(userResponse);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error authenticating user");
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
-        }
-
-        [HttpPost("{id}/change-password")]
-        public async Task<ActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto changePasswordDto)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var success = await _userService.ChangePasswordAsync(id, changePasswordDto);
-
-                if (!success)
-                {
-                    return NotFound($"User with ID {id} was not found.");
-                }
-
-                return Ok(new { message = "Password changed successfully" });
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "Validation error changing password");
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error changing password");
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
-        }
-
-        [HttpGet("check-username/{username}")]
-        public async Task<ActionResult<bool>> CheckUsernameExists(string username)
-        {
-            try
-            {
-                var exists = await _userService.UsernameExistsAsync(username);
-                return Ok(new { exists });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error checking username existence");
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
-        }
-
-        [HttpPost("{id}/change-username")]
-        public async Task<ActionResult> ChangeUsername(int id, [FromBody] ChangeUsernameDto changeUsernameDto)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var success = await _userService.ChangeUsernameAsync(id, changeUsernameDto);
-
-                if (!success)
-                {
-                    return NotFound($"User with ID {id} was not found.");
-                }
-
-                return Ok(new { message = "Username changed successfully" });
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "Validation error changing username");
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error changing username");
-                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
-            }
-        }
-        [Authorize]
+        [Authorize(Roles = "ORGANISER")]
         [HttpGet("organiser/players")]
         public async Task<ActionResult> GetPlayersForOrganiser()
         {
@@ -348,6 +257,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ORGANISER")]
         [HttpPost("player-organiser")]
         public async Task<ActionResult> AddPlayerOrganiserRelation([FromBody] PlayerOrganiserRelationRequest request)
         {
@@ -363,6 +273,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpGet("players")]
         public async Task<ActionResult> GetAllPlayers()
         {
@@ -378,6 +289,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPatch("{userId}/update-rating")]
         public async Task<ActionResult> UpdateUserRating(int userId, [FromBody] RatingUpdateRequest request)
         {
@@ -396,6 +308,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPatch("update-multiple-ratings")]
         public async Task<ActionResult> UpdateMultipleUserRatings([FromBody] MultipleRatingUpdateRequest request)
         {
@@ -466,6 +379,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpGet("{id}/delegation-status")]
         public async Task<ActionResult<DelegationStatusDto>> GetDelegationStatus(int id)
         {
@@ -481,6 +395,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("{id}/friends")]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetFriends(int id)
         {
@@ -495,6 +410,8 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
             }
         }
+
+        [Authorize]
         [HttpPut("{id}/profile-image")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> UpdateProfileImage(int id, [FromForm] IFormFile imageFile)
@@ -528,6 +445,7 @@ namespace FootballAPI.Controllers
             return Ok(new { message = "Profile image updated successfully", imageUrl });
         }
 
+        [Authorize]
         [HttpDelete("{id}/profile-image")]
         public async Task<IActionResult> DeleteProfileImage(int id)
         {
@@ -551,10 +469,6 @@ namespace FootballAPI.Controllers
 
             return Ok(new { message = "Profile image deleted successfully" });
         }
-
-
-
-
     }
 
     public class PlayerOrganiserRelationRequest

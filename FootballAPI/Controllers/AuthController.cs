@@ -38,6 +38,7 @@ namespace FootballAPI.Controllers
         }
 
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
@@ -116,8 +117,8 @@ namespace FootballAPI.Controllers
             });
         }
 
-        [HttpPost("create-player-account")]
         [Authorize]
+        [HttpPost("create-player-account")]
         public async Task<IActionResult> CreatePlayerAccount([FromBody] CreatePlayerUserDto dto)
         {
             try
@@ -173,7 +174,7 @@ namespace FootballAPI.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpPost("set-password")]
         public async Task<IActionResult> SetPassword([FromBody] SetPasswordDto dto)
         {
@@ -208,33 +209,7 @@ namespace FootballAPI.Controllers
         }
 
 
-
-        [HttpGet("validate-reset-token/{token}")]
-        public async Task<IActionResult> ValidateResetToken(string token)
-        {
-            try
-            {
-                var user = await _passwordResetService.GetUserByResetTokenAsync(token);
-                if (user == null)
-                {
-                    return BadRequest(new { message = "Invalid or expired token.", isValid = false });
-                }
-
-                return Ok(new
-                {
-                    message = "Token is valid.",
-                    isValid = true,
-                    userEmail = user.Email,
-                    username = user.Username
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error validating reset token");
-                return StatusCode(500, new { message = "An error occurred while validating the token." });
-            }
-        }
-
+        [AllowAnonymous]
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {

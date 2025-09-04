@@ -21,6 +21,14 @@ export class AuthService {
     this.LoadAuthState();
   }
 
+   private getAuthHeaders(): HeadersInit {
+    const token = this.getToken();
+    return {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+  }
+
   private LoadAuthState() {
     const token = this.getToken();
     if (token && !this.isTokenExpired(token)) {
@@ -50,6 +58,8 @@ export class AuthService {
   ): Promise<void> {
     try {
       let response: Response;
+      const headers = this.getAuthHeaders();
+
       if (role === UserRole.PLAYER) {
         const playerUser: PlayerUser = {
           email,
@@ -62,13 +72,7 @@ export class AuthService {
         };
         response = await fetch(`${this.apiUrl}/user/create-player-user`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(this.getToken() && {
-              Authorization: `Bearer ${this.getToken()}`,
-            }),
-            ...(this.getUserId() && { UserId: this.getUserId()!.toString() }),
-          },
+          headers,
           body: JSON.stringify(playerUser),
         });
       } else {
@@ -83,13 +87,7 @@ export class AuthService {
         };
         response = await fetch(`${this.apiUrl}/user/create-player-user`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(this.getToken() && {
-              Authorization: `Bearer ${this.getToken()}`,
-            }),
-            ...(this.getUserId() && { UserId: this.getUserId()!.toString() }),
-          },
+          headers,
           body: JSON.stringify(organiserUser),
         });
       }
@@ -210,10 +208,7 @@ export class AuthService {
       const response = await fetch(
         `${this.apiUrl}/user/${userId}/delegation-status`,
         {
-          headers: {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json',
-          },
+          headers: this.getAuthHeaders()
         }
       );
 

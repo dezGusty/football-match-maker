@@ -20,9 +20,17 @@ export class UserService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
+  private getAuthHeaders(): HeadersInit {
+    const token = this.authService.getToken();
+    return {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+  }
+
   async getUserById(id: number): Promise<User> {
     const response = await fetch(`${this.url}/${id}`, {
-      headers: { 'Content-Type': 'application/json' },
+      headers: this.getAuthHeaders(),
     });
     if (!response.ok) {
       throw new Error('Failed to fetch user data');
@@ -38,7 +46,7 @@ export class UserService {
   ): Promise<string> {
     const response = await fetch(`${this.url}/${userId}/change-password`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: this.getAuthHeaders(),
       body: JSON.stringify({
         currentPassword,
         newPassword,
@@ -59,7 +67,7 @@ export class UserService {
   ): Promise<string> {
     const response = await fetch(`${this.url}/${userId}/change-username`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: this.getAuthHeaders(),
       body: JSON.stringify({
         newUsername,
         password,
@@ -72,14 +80,6 @@ export class UserService {
     return result.message || 'Username changed successfully';
   }
 
-  private getAuthHeaders(): HeadersInit {
-    const token = this.authService.getToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    };
-  }
-
   private validateRating(rating: number): void {
     if (rating < this.MIN_RATING || rating > this.MAX_RATING) {
       throw new Error(
@@ -89,18 +89,18 @@ export class UserService {
   }
 
   async getPlayers(): Promise<User[]> {
-    const response = await fetch(`${this.url}/players`);
+    const response = await fetch(`${this.url}/players`, {
+      headers: this.getAuthHeaders(),
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch players');
     }
-    const players = await response.json();
-    return players;
+    return await response.json();
   }
 
   async getPlayersForOrganiser(): Promise<User[]> {
-    const headers = this.getAuthHeaders();
     const response = await fetch(`${this.url}/organiser/players`, {
-      headers
+      headers: this.getAuthHeaders(),
     });
     if (!response.ok) {
       throw new Error('Failed to fetch players for organiser');
@@ -120,39 +120,22 @@ export class UserService {
   }): Promise<User> {
     this.validateRating(player.rating);
 
-    const token = localStorage.getItem('authToken');
-    const userId = localStorage.getItem('userId');
-
     const payload = {
-      firstName: player.firstName,
-      lastName: player.lastName,
-      email: player.email,
-      rating: player.rating,
-      username: player.username,
-      speed: player.speed,
-      stamina: player.stamina,
-      errors: player.errors,
+      ...player,
       role: 2,
     };
 
-    const response = await fetch(
-      'http://localhost:5145/api/Auth/create-player-account',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }),
-          ...(userId && { UserId: userId }),
-        },
-        body: JSON.stringify(payload),
-      }
-    );
+    const response = await fetch(`${this.url}/create-player-account`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(payload),
+    });
 
     if (!response.ok) {
       let errorMsg = 'Failed to add player';
       try {
         const err = await response.json();
-        if (err && err.message) errorMsg = err.message;
+        if (err?.message) errorMsg = err.message;
       } catch {}
       throw new Error(errorMsg);
     }
@@ -167,7 +150,7 @@ export class UserService {
 
     const response = await fetch(`${this.url}/${user.id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(user),
     });
 
@@ -181,7 +164,7 @@ export class UserService {
   async deleteUser(userId: number): Promise<boolean> {
     const response = await fetch(`${this.url}/${userId}`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -194,7 +177,7 @@ export class UserService {
   async reactivateUser(userId: number): Promise<boolean> {
     const response = await fetch(`${this.url}/${userId}/reactivate`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -211,7 +194,7 @@ export class UserService {
     try {
       const response = await fetch(`${this.url}/${userId}/update-rating`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.getAuthHeaders(),
         body: JSON.stringify({ ratingChange }),
       });
 
@@ -233,11 +216,10 @@ export class UserService {
     }
 
     const body = { userId, organiserId };
-    const headers = this.getAuthHeaders();
 
     const response = await fetch(`${this.url}/player-organiser`, {
       method: 'POST',
-      headers,
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(body),
     });
 
@@ -255,14 +237,12 @@ export class UserService {
     friendUserId: number,
     notes?: string
   ): Promise<OrganizerDelegateDto> {
-    const headers = this.getAuthHeaders();
     const body: DelegateOrganizerRoleDto = { friendUserId, notes };
-
     const response = await fetch(
       `${this.url}/${userId}/delegate-organizer-role`,
       {
         method: 'POST',
-        headers,
+        headers: this.getAuthHeaders(),
         body: JSON.stringify(body),
       }
     );
@@ -276,19 +256,17 @@ export class UserService {
 
     return await response.json();
   }
-
   async reclaimOrganizerRole(
     userId: number,
     delegationId: number
   ): Promise<boolean> {
-    const headers = this.getAuthHeaders();
     const body: ReclaimOrganizerRoleDto = { delegationId };
 
     const response = await fetch(
       `${this.url}/${userId}/reclaim-organizer-role`,
       {
         method: 'POST',
-        headers,
+        headers: this.getAuthHeaders(),
         body: JSON.stringify(body),
       }
     );
@@ -304,11 +282,9 @@ export class UserService {
   }
 
   async getDelegationStatus(userId: number): Promise<DelegationStatusDto> {
-    const headers = this.getAuthHeaders();
-
     const response = await fetch(`${this.url}/${userId}/delegation-status`, {
       method: 'GET',
-      headers,
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
