@@ -100,7 +100,7 @@ export class UserService {
   async getPlayersForOrganiser(): Promise<User[]> {
     const headers = this.getAuthHeaders();
     const response = await fetch(`${this.url}/organiser/players`, {
-      headers
+      headers,
     });
     if (!response.ok) {
       throw new Error('Failed to fetch players for organiser');

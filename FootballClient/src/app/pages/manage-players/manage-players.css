@@ -70,13 +70,11 @@
   }
 }
 
-/* Inputs and selects */
 .players-table input[type="text"],
 .players-table input[type="number"],
 .modal-content input[type="text"],
 .modal-content input[type="number"],
 .modal-content input[type="email"],
-.stat-control-group select,
 .stat-edit-group select {
   width: 100%;
   padding: 10px 12px;
@@ -91,30 +89,11 @@
 
 .players-table input:focus,
 .modal-content input:focus,
-.stat-control-group select:focus,
 .stat-edit-group select:focus {
   box-shadow: 0 0 0 6px var(--ring);
   border-color: var(--primary-600);
 }
 
-/* Status badges */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 18px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.8rem;
-  border: 1px solid rgba(124, 242, 208, 0.18);
-  background: rgba(124, 242, 208, 0.06);
-  color: var(--muted);
-}
-.status-badge.enabled {
-  color: #00ff86;
-  background: rgba(74, 222, 128, 0.18);
-  border-color: rgba(74, 222, 128, 0.35);
-}
 
 /* Actions */
 .actions {
@@ -178,16 +157,12 @@
 .grid.two {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-.grid.three {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
+
 @media (max-width: 720px) {
   .grid.two {
     grid-template-columns: 1fr;
   }
-  .grid.three {
-    grid-template-columns: 1fr;
-  }
+
 }
 
 /* Modal */
@@ -278,53 +253,6 @@
   font-size: 0.9rem;
 }
 
-.username-field,
-.password-field {
-  display: flex;
-  gap: 8px;
-  margin: 7px;
-}
-
-.username-field input,
-.password-field input {
-  flex: 1;
-  margin: 0;
-}
-
-.generate-btn {
-  padding: 10px 16px;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
-}
-
-.generate-btn:hover {
-  background: linear-gradient(135deg, #d97706, #b45309);
-  transform: translateY(-1px);
-}
-
-.create-account-info {
-  background: rgba(34, 197, 94, 0.05);
-  border-color: rgba(34, 197, 94, 0.15);
-}
-
-.create-account-info p {
-  color: #22c55e;
-}
-
-.create-account-info ul {
-  color: var(--muted);
-}
-
-.create-account-info li {
-  color: var(--text-secondary);
-}
-
 /* FABs */
 .fab-stack {
   position: fixed;
@@ -365,51 +293,6 @@
   background: linear-gradient(180deg, #3b82f6, #2563eb);
   color: white;
 }
-.create-account-fab {
-  margin-top: 8px;
-}
-
-.search-fab button {
-  border: none;
-  background: none;
-  margin-left: 4px;
-}
-.search-fab {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px;
-  border-radius: 999px;
-  background: linear-gradient(
-    180deg,
-    rgba(21, 28, 36, 0.9),
-    rgba(21, 28, 36, 0.7)
-  );
-  border: 1px solid rgba(124, 242, 208, 0.22);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
-}
-.search-fab .fab-input {
-  width: 0;
-  opacity: 0;
-  pointer-events: none;
-  border: none;
-  background: transparent;
-  color: var(--text);
-  transition: width 0.25s ease, opacity 0.2s ease;
-  font-size: 0.95rem;
-}
-.search-fab:hover .fab-input,
-.search-fab .fab-input:focus,
-.search-fab.expanded .fab-input {
-  width: 220px;
-  opacity: 1;
-  pointer-events: auto;
-  outline: none;
-}
-.search-fab:hover {
-  width: 220px;
-}
-
 
 /* Responsive */
 @media (max-width: 980px) {
@@ -443,34 +326,14 @@
 .grid.two {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-.grid.three {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
+
 @media (max-width: 720px) {
   .grid.two {
     grid-template-columns: 1fr;
   }
-  .grid.three {
-    grid-template-columns: 1fr;
-  }
+
 }
 
-/* Stats controls */
-.stats-controls {
-  margin-top: 20px;
-}
-.stats-controls h4 {
-  font-size: 18px;
-  align-content: center;
-  justify-self: center;
-}
-.stat-control-group {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
 
 .stat-icons.editable {
   display: flex;
@@ -678,24 +541,6 @@
 .reclaim-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.delegate-btn {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-right: 8px;
-}
-
-.delegate-btn:hover {
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
-  transform: translateY(-1px);
 }
 
 .delegation-info {

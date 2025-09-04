@@ -94,14 +94,7 @@ export const routes: Routes = [
     redirectTo: '/',
     pathMatch: 'full',
   },
-  {
-    path: 'player-account',
-    loadComponent: () =>
-      import('./pages/player-account/player-account.component').then(
-        (m) => m.PlayerAccountComponent
-      ),
-    canActivate: [authGuard],
-  },
+
   {
     path: 'delegated-organizer',
     loadComponent: () =>

@@ -76,3 +76,20 @@
   font-weight: 500;
   margin-bottom: 2px;
 }
+
+.stat-control-group select {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 7px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid rgba(124, 242, 208, 0.18);
+  border-radius: 12px;
+  outline: none;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.06s ease;
+}
+
+.stat-control-group select:focus {
+  box-shadow: 0 0 0 6px var(--ring);
+  border-color: var(--primary-600);
+}
