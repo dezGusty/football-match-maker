@@ -273,7 +273,7 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "ADMIN, ORGANISER")]
+        [Authorize]
         [HttpGet("players")]
         public async Task<ActionResult> GetAllPlayers()
         {

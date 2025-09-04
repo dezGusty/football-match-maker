@@ -57,14 +57,23 @@ export class PlayerDashboardComponent implements OnInit {
     await this.loadPlayerSpecificMatches();
   }
 
+   private getAuthHeaders(): HeadersInit {
+    const token = this.authService.getToken();
+    return {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+  }
+
+
   async loadPlayerData() {
     const userId = this.authService.getUserId();
 
     if (userId) {
       try {
-        const userResponse = await fetch(
-          `${environment.apiUrl}/user/${userId}`
-        );
+         const userResponse = await fetch(`${environment.apiUrl}/user/${userId}`, {
+        headers: this.getAuthHeaders(), 
+      });
         if (userResponse.ok) {
           const user = await userResponse.json();
           const players = await this.userService.getPlayers();

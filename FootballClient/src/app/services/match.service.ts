@@ -16,8 +16,18 @@ export class MatchService {
 
   constructor(private authService: AuthService) {}
 
+  private getAuthHeaders(): HeadersInit {
+    const token = this.authService.getToken();
+    return {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+  }
+
   async getMatches(): Promise<Match[]> {
-    const response = await fetch(`${this.baseUrl}/matches`);
+    const response = await fetch(`${this.baseUrl}/matches`, {
+      headers: this.getAuthHeaders(),
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch matches');
     }
@@ -42,47 +52,29 @@ export class MatchService {
   }
 
   async getFutureMatches(): Promise<Match[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/matches/future`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+    const response = await fetch(`${this.baseUrl}/matches/future`, {
+      headers: this.getAuthHeaders(),
+    });
+    if (!response.ok) throw new Error('Failed to fetch future matches');
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch future matches: ${errorText}`);
-      }
-
-      const rawMatches = await response.json();
-
-      const matches: Match[] = await Promise.all(
-        (rawMatches as any[]).map(async (m) => {
-          return {
-            id: m.id,
-            matchDate: m.matchDate,
-            teamAId: m.teamAId, // These might be undefined
-            teamBId: m.teamBId, // These might be undefined
-            teamAName: m.teamAName || 'Team A',
-            teamBName: m.teamBName || 'Team B',
-            scoreA: m.teamAGoals || m.scoreA || 0,
-            scoreB: m.teamBGoals || m.scoreB || 0,
-            playerHistory: m.playerHistory || [],
-            isPublic: m.isPublic,
-            location: m.location,
-            cost: m.cost,
-            organiserId: m.organiserId,
-          };
-        })
-      );
-
-      return matches;
-    } catch (error) {
-      console.error('Error fetching future matches:', error);
-      throw error;
-    }
+    const rawMatches = await response.json();
+    return Promise.all(
+      (rawMatches as any[]).map(async (m) => ({
+        id: m.id,
+        matchDate: m.matchDate,
+        teamAId: m.teamAId,
+        teamBId: m.teamBId,
+        teamAName: m.teamAName || 'Team A',
+        teamBName: m.teamBName || 'Team B',
+        scoreA: m.teamAGoals || m.scoreA || 0,
+        scoreB: m.teamBGoals || m.scoreB || 0,
+        playerHistory: m.playerHistory || [],
+        isPublic: m.isPublic,
+        location: m.location,
+        cost: m.cost,
+        organiserId: m.organiserId,
+      }))
+    );
   }
 
   async getTeamById(teamId: number): Promise<string> {
@@ -91,7 +83,9 @@ export class MatchService {
     }
 
     try {
-      const response = await fetch(`${this.baseUrl}/teams/${teamId}`);
+      const response = await fetch(`${this.baseUrl}/teams/${teamId}`, {
+        headers: this.getAuthHeaders(),
+      });
       if (!response.ok) {
         console.error(`Failed to fetch team ${teamId}`);
         const fallbackName = `Team ${teamId}`;
@@ -127,13 +121,11 @@ export class MatchService {
       `${this.baseUrl}/matches/${matchId}/rating-preview`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.getAuthHeaders(),
         body: JSON.stringify(dto),
       }
     );
-    if (!response.ok) {
-      throw new Error('Failed to calculate rating preview');
-    }
+    if (!response.ok) throw new Error('Failed to calculate rating preview');
 
     return await response.json();
   }
@@ -153,22 +145,22 @@ export class MatchService {
       `${this.baseUrl}/matches/finalize/${matchId}`,
       {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.getAuthHeaders(),
         body: JSON.stringify(finalizeMatchDto),
       }
     );
-    if (!response.ok) {
-      throw new Error('Failed to finalize match');
-    }
+    if (!response.ok) throw new Error('Failed to finalize match');
 
     return await response.json();
   }
 
   async getMatchById(matchId: number): Promise<Match> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}`);
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
+      headers: this.getAuthHeaders(),
+    });
     if (!response.ok) {
-      throw new Error('Failed to fetch match');
-    }
+    throw new Error('Failed to fetch match');
+  }
 
     const match = await response.json();
 
@@ -185,12 +177,7 @@ export class MatchService {
   async getPastMatches(): Promise<Match[]> {
     try {
       const response = await fetch(`${this.baseUrl}/matches/past`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.authService.getToken()}`,
-        },
+        headers: this.getAuthHeaders(),
       });
 
       if (!response.ok) {
@@ -242,11 +229,7 @@ export class MatchService {
     try {
       const response = await fetch(`${this.baseUrl}/matches/past/my-matches`, {
         method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.authService.getToken()}`,
-        },
+        headers: this.getAuthHeaders(),
       });
 
       if (!response.ok) {
@@ -292,14 +275,6 @@ export class MatchService {
       console.error('Error fetching past matches:', error);
       throw error;
     }
-  }
-
-  private getAuthHeaders(): HeadersInit {
-    const token = this.authService.getToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    };
   }
 
   async createNewMatch(
@@ -487,7 +462,6 @@ export class MatchService {
 
     return await response.json();
   }
-
 
   async getAvailableMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/available`, {

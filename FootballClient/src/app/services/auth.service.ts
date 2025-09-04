@@ -21,7 +21,7 @@ export class AuthService {
     this.LoadAuthState();
   }
 
-   private getAuthHeaders(): HeadersInit {
+  private getAuthHeaders(): HeadersInit {
     const token = this.getToken();
     return {
       'Content-Type': 'application/json',
@@ -208,7 +208,7 @@ export class AuthService {
       const response = await fetch(
         `${this.apiUrl}/user/${userId}/delegation-status`,
         {
-          headers: this.getAuthHeaders()
+          headers: this.getAuthHeaders(),
         }
       );
 
