@@ -116,22 +116,31 @@ export class MatchService {
     matchId: number,
     teamAGoals: number,
     teamBGoals: number,
-    ratingSystem: string
+    ratingSystem: string,
+    ratingMultiplier: number = 1.0
   ): Promise<any[]> {
     const dto = {
       teamAGoals: teamAGoals,
       teamBGoals: teamBGoals,
       ratingSystem: ratingSystem,
+      ratingMultiplier: ratingMultiplier
     };
+
     const response = await fetch(
       `${this.baseUrl}/matches/${matchId}/rating-preview`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...this.getAuthHeaders()
+        },
         body: JSON.stringify(dto),
       }
     );
+
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Rating preview error:', errorText);
       throw new Error('Failed to calculate rating preview');
     }
 
@@ -142,26 +151,33 @@ export class MatchService {
     matchId: number,
     teamAGoals: number,
     teamBGoals: number,
-    ratingSystem: string = 'Performance'
+    ratingSystem: string = 'Performance',
+    manualRatings: { [key: number]: number } = {},
+    ratingMultiplier: number = 1.0
   ): Promise<void> {
     const finalizeMatchDto = {
       teamAGoals: teamAGoals,
       teamBGoals: teamBGoals,
       ratingSystem: ratingSystem,
+      ratingMultiplier: ratingMultiplier,
+      manualAdjustments: Object.entries(manualRatings).map(([userId, change]) => ({
+        userId: parseInt(userId),
+        ratingChange: change
+      }))
     };
-    const response = await fetch(
-      `${this.baseUrl}/matches/finalize/${matchId}`,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(finalizeMatchDto),
-      }
-    );
+
+    const response = await fetch(`${this.baseUrl}/matches/finalize/${matchId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...this.getAuthHeaders()
+      },
+      body: JSON.stringify(finalizeMatchDto)
+    });
+
     if (!response.ok) {
       throw new Error('Failed to finalize match');
     }
-
-    return await response.json();
   }
 
   async getMatchById(matchId: number): Promise<Match> {

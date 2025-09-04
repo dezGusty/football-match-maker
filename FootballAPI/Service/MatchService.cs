@@ -1,4 +1,4 @@
-using FootballAPI.DTOs;
+    using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Models.Enums;
 using FootballAPI.Repository;
@@ -671,7 +671,7 @@ namespace FootballAPI.Service
             return Math.Min(0.1f * scoreDiff, 1f); // Max change capped at 1 point
         }
 
-        private async Task<List<RatingPreviewDto>> CalculateRatingChanges(int matchId, int teamAGoals, int teamBGoals, string ratingSystem)
+        private async Task<List<RatingPreviewDto>> CalculateRatingChanges(int matchId, int teamAGoals, int teamBGoals, string ratingSystem, double RatingMultiplier)
         {
             var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(matchId);
             if (matchTeams.Count() != 2)
@@ -729,6 +729,45 @@ namespace FootballAPI.Service
                         ratingChange = -linearRating;
                     }
                 }
+                else if (ratingSystem == "Custom Linear")
+                {
+                    int scoreDiff = Math.Abs(teamAGoals - teamBGoals);
+                    float linearRating = CalculateLinearRating(scoreDiff) * (float)RatingMultiplier;
+
+                    if (isTie)
+                    {
+                        ratingChange = 0f;
+                    }
+                    else if ((isWinnerA && isTeamA) || (isWinnerB && !isTeamA))
+                    {
+                        ratingChange = linearRating;
+                    }
+                    else
+                    {
+                        ratingChange = -linearRating;
+                    }
+                }
+                else if (ratingSystem == "Custom Performance")
+                {
+                    float performanceRating = CalculatePerformanceRating(player.User) * (float)RatingMultiplier;
+
+                    if (isTie)
+                    {
+                        ratingChange = performanceRating / 2;
+                    }
+                    else if ((isWinnerA && isTeamA) || (isWinnerB && !isTeamA))
+                    {
+                        ratingChange = performanceRating;
+                    }
+                    else
+                    {
+                        ratingChange = -performanceRating;
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid rating system specified.");
+                }
 
                 string ratingChangeStr = ratingChange >= 0 ?
                     $"+{ratingChange:F2}" :
@@ -749,7 +788,7 @@ namespace FootballAPI.Service
 
         public async Task<List<RatingPreviewDto>> CalculateRatingPreviewAsync(int matchId, CalculateRatingPreviewDto dto)
         {
-            return await CalculateRatingChanges(matchId, dto.TeamAGoals, dto.TeamBGoals, dto.RatingSystem);
+            return await CalculateRatingChanges(matchId, dto.TeamAGoals, dto.TeamBGoals, dto.RatingSystem, dto.RatingMultiplier);
         }
 
         public async Task<MatchDto> FinalizeMatchAsync(int matchId, FinalizeMatchDto finalizeMatchDto)
@@ -785,13 +824,20 @@ namespace FootballAPI.Service
             await _matchTeamsService.UpdateMatchTeamAsync(teamA.Id, updateTeamADto);
             await _matchTeamsService.UpdateMatchTeamAsync(teamB.Id, updateTeamBDto);
 
-            // Calculate and apply rating changes
-            var ratingChanges = await CalculateRatingChanges(matchId, finalizeMatchDto.TeamAGoals, finalizeMatchDto.TeamBGoals, finalizeMatchDto.RatingSystem);
+            // Calculate and apply automatic rating changes
+            var ratingChanges = await CalculateRatingChanges(matchId, finalizeMatchDto.TeamAGoals, finalizeMatchDto.TeamBGoals, finalizeMatchDto.RatingSystem, finalizeMatchDto.RatingMultiplier);
 
             foreach (var ratingChange in ratingChanges)
             {
                 float change = float.Parse(ratingChange.RatingChange);
                 await _userService.UpdatePlayerRatingAsync(ratingChange.PlayerId, change);
+            }
+
+            // Apply manual adjustments
+            foreach (var adjustment in finalizeMatchDto.ManualAdjustments)
+            {
+                Console.WriteLine($"Adjusting rating for UserId: {adjustment.UserId}, Change: {adjustment.RatingChange}");
+                await _userService.UpdatePlayerRatingAsync(adjustment.UserId, adjustment.RatingChange);
             }
 
             match.Status = Status.Finalized;

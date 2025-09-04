@@ -269,6 +269,23 @@
             {{ selectedMatch?.location }}
           </p>
         </div>
+        <!-- Rating Multiplier Slider -->
+          <div class="rating-multiplier" *ngIf="selectedRatingSystem.startsWith('Custom')">
+            <label>Rating Multiplier: {{ratingMultiplier}}x</label>
+            <input 
+              type="range" 
+              [(ngModel)]="ratingMultiplier" 
+              (input)="updateRatingPreview()"
+              min="0.5" 
+              max="2" 
+              step="0.1"
+              class="slider"
+            />
+            <div class="slider-marks">
+              <span>0.5x</span>
+              <span>2x</span>
+            </div>
+          </div>
         <div>
           <select
             [(ngModel)]="selectedRatingSystem"
@@ -276,9 +293,13 @@
           >
             <option value="Linear">Linear</option>
             <option value="Performance">Performance</option>
+            <option value="Custom Linear">Custom Linear</option>
+            <option value="Custom Performance">Custom Performance</option>
             <!-- <option value="Vote">Vote</option> -->
           </select>
+          
         </div>
+        
       </div>
       <div class="teams-panel-fin">
         <div class="teams-container-fin">
@@ -304,15 +325,34 @@
                 *ngFor="let player of teamAPlayers; let i = index"
                 class="simple-player-row"
               >
+                
                 <span class="player-name"
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
-                <span class="player-rating">
-                  Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
-                  <span [class]="getRatingChangeClass(player.id)">{{
-                    getRatingPreviewForPlayer(player.id)
-                  }}</span>
-                </span>
+                <div class="rating-info">
+                  <span class="player-rating">
+                    Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                    <span [class]="getRatingChangeClass(player.id)">{{
+                      getRatingPreviewForPlayer(player.id)
+                    }}</span>
+                    
+                  </span>
+                  <!-- Manual rating input -->
+                  <div class="manual-rating">
+                      <div class="manual-rating">
+                        <input
+                          class="manual-rating-input"
+                          type="number"
+                          [(ngModel)]="manualRatings[player.id]"
+                          (ngModelChange)="updateManualRating(player.id)"
+                          min="-10"
+                          max="10"
+                          step="0.1"
+                          placeholder="0.0"
+                        />
+                      </div>
+                  </div>
+                </div>
               </div>
 
               <!-- Empty slots -->
@@ -353,12 +393,29 @@
                 <span class="player-name"
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
-                <span class="player-rating">
-                  Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
-                  <span [class]="getRatingChangeClass(player.id)">{{
-                    getRatingPreviewForPlayer(player.id)
-                  }}</span>
-                </span>
+                <div class="rating-info">
+                  <span class="player-rating">
+                    Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                    <span [class]="getRatingChangeClass(player.id)">{{
+                      getRatingPreviewForPlayer(player.id)
+                    }}</span>
+                  </span>
+                  <!-- Manual rating input -->
+                  <div class="manual-rating">
+                      <div class="manual-rating">
+                        <input
+                          class="manual-rating-input"
+                          type="number"
+                          [(ngModel)]="manualRatings[player.id]"
+                          (ngModelChange)="updateManualRating(player.id)"
+                          min="-10"
+                          max="10"
+                          step="0.1"
+                          placeholder="0.0"
+                        />
+                      </div>
+                  </div>
+                </div>
               </div>
 
               <!-- Empty slots -->
@@ -736,13 +793,26 @@
 
         <!-- Teams Display (Right) -->
         <div class="teams-panel">
+          <div class="panel-header">
+            <button class="action-btn" title="Shuffle" (click)="shuffleTeams()">
+              Shuffle Teams
+            </button>
+            <select class="balance-mode-select"
+              (ngModelChange)="balanceTeams()"
+            >
+              <option value="rating">Balance by Rating</option>
+              <option value="random">Random Shuffle</option>
+            </select>
+          </div>
           <div class="teams-container">
             <!-- Team 1 -->
             <div class="team-table">
               <div class="team-header">
-                <h4>Team 1</h4>
-                <div class="team-stats">
-                  <span class="count">{{ teamAPlayers.length }}/6</span>
+                <div class="team-title">
+                  <h4>{{selectedMatch?.teamAName || 'Team A'}}</h4>
+                  <div class="team-avg-rating" [ngClass]="getTeamRatingClass(getTeamAverageRating(teamAPlayers))">
+                    Average Rating: {{getTeamAverageRatingDisplay(teamAPlayers)}}
+                  </div>
                 </div>
               </div>
 
@@ -792,11 +862,13 @@
             <!-- Team 2 -->
             <div class="team-table">
               <div class="team-header">
-                <h4>Team 2</h4>
-                <div class="team-stats">
-                  <span class="count">{{ teamBPlayers.length }}/6</span>
+              <div class="team-title">
+                <h4>{{selectedMatch?.teamBName || 'Team B'}}</h4>
+                <div class="team-avg-rating" [ngClass]="getTeamRatingClass(getTeamAverageRating(teamBPlayers))">
+                  Average Rating: {{getTeamAverageRatingDisplay(teamBPlayers)}}
                 </div>
               </div>
+            </div>
 
               <div class="team-players-simple">
                 <div
