@@ -5,22 +5,24 @@
   <!-- Delegation Status -->
   @if (delegationStatus?.isDelegating && delegationStatus?.currentDelegation) {
   <div class="delegation-status-banner warning">
-    <strong>⚠️ Role Delegated:</strong> 
-    You have delegated your organizer role to <strong>{{ delegationStatus?.currentDelegation?.delegateUserName }}</strong>
-    <button 
+    <strong>⚠️ Role Delegated:</strong>
+    You have delegated your organizer role to
+    <strong>{{ delegationStatus?.currentDelegation?.delegateUserName }}</strong>
+    <button
       class="reclaim-btn"
       (click)="reclaimOrganizerRole()"
       [disabled]="delegationLoading"
     >
-      {{ delegationLoading ? 'Reclaiming...' : 'Reclaim Role' }}
+      {{ delegationLoading ? "Reclaiming..." : "Reclaim Role" }}
     </button>
   </div>
-  }
-
-  @if (delegationStatus?.isDelegate && delegationStatus?.receivedDelegation) {
+  } @if (delegationStatus?.isDelegate && delegationStatus?.receivedDelegation) {
   <div class="delegation-status-banner info">
-    <strong>👑 Acting as Organizer:</strong> 
-    You are acting as organizer for <strong>{{ delegationStatus?.receivedDelegation?.originalOrganizerName }}</strong>
+    <strong>👑 Acting as Organizer:</strong>
+    You are acting as organizer for
+    <strong>{{
+      delegationStatus?.receivedDelegation?.originalOrganizerName
+    }}</strong>
   </div>
   }
 
@@ -83,7 +85,6 @@
           <th>Last name</th>
           <th>Rating</th>
           <th>Individual Stats</th>
-          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -116,35 +117,46 @@
             <td>
               <div class="edit-stats">
                 <div class="stat-edit-group">
-                  <label>Speed:</label>
-                  <select [(ngModel)]="editedPlayer!.speed">
-                    <option value="1">Low</option>
-                    <option value="2">Medium</option>
-                    <option value="3">High</option>
-                    <option value="4">Extreme</option>
-                  </select>
+                  <div class="stat-icons editable">
+                    <span
+                      *ngFor="let i of [1, 2, 3, 4]"
+                      class="stat-icon"
+                      [class.active]="i <= editedPlayer!.speed"
+                      [class.speed]="true"
+                      (click)="editedPlayer!.speed = i"
+                    >
+                      ⚡
+                    </span>
+                  </div>
                 </div>
                 <div class="stat-edit-group">
-                  <label>Stamina:</label>
-                  <select [(ngModel)]="editedPlayer!.stamina">
-                    <option value="1">Low</option>
-                    <option value="2">Medium</option>
-                    <option value="3">High</option>
-                    <option value="4">Extreme</option>
-                  </select>
+                  <div class="stat-icons editable">
+                    <span
+                      *ngFor="let i of [1, 2, 3, 4]"
+                      class="stat-icon"
+                      [class.active]="i <= editedPlayer!.stamina"
+                      [class.stamina]="true"
+                      (click)="editedPlayer!.stamina = i"
+                    >
+                      💪
+                    </span>
+                  </div>
                 </div>
                 <div class="stat-edit-group">
-                  <label>Errors:</label>
-                  <select [(ngModel)]="editedPlayer!.errors">
-                    <option value="1">Low</option>
-                    <option value="2">Medium</option>
-                    <option value="3">High</option>
-                    <option value="4">Extreme</option>
-                  </select>
+                  <div class="stat-icons editable">
+                    <span
+                      *ngFor="let i of [1, 2, 3, 4]"
+                      class="stat-icon"
+                      [class.active]="i <= editedPlayer!.errors"
+                      [class.errors]="true"
+                      (click)="editedPlayer!.errors = i"
+                    >
+                      ❌
+                    </span>
+                  </div>
                 </div>
               </div>
             </td>
-            <td><span class="status-badge enabled">Active</span></td>
             <td class="actions">
               <button
                 class="action-btn save-btn"
@@ -152,7 +164,6 @@
                 (click)="editPlayer()"
               >
                 Save
-                
               </button>
               <button
                 class="action-btn cancel-btn"
@@ -187,43 +198,34 @@
                 [errors]="player.errors || 2"
               ></app-player-stats>
             </td>
-            <td>
-              <span
-                class="status-badge"
-                [class.enabled]="isPlayerEnabled(player)"
-              >
-                {{ isPlayerEnabled(player) ? "Active" : "Inactive" }}
-              </span>
-            </td>
-           
-<td class="actions">
-  @if (isPlayerEnabled(player)) {
-    <button
-      class="action-btn edit-btn"
-      title="Edit"
-      (click)="setEditIndex(i)"
-    >
-      Edit
-    </button>
-    @if (canDelegateToPlayer(player)) {
-      <button
-        class="action-btn makeorganiser-btn"
-        title="Make Organizer"
-        (click)="openDelegateModal(player)"
-      >
-        Make Organizer
-      </button>
-    }
-    <button
-      class="action-btn delete-btn"
-      title="Unfriend"
-      (click)="unfriend(player)"
-    >
-      Unfriend
-    </button>
-  }
-</td>
 
+            <td class="actions">
+              @if (isPlayerEnabled(player)) {
+              <button
+                class="action-btn edit-btn"
+                title="Edit"
+                (click)="setEditIndex(i)"
+              >
+                Edit
+              </button>
+              @if (canDelegateToPlayer(player)) {
+              <button
+                class="action-btn makeorganiser-btn"
+                title="Make Organizer"
+                (click)="openDelegateModal(player)"
+              >
+                Make Organizer
+              </button>
+              }
+              <button
+                class="action-btn delete-btn"
+                title="Unfriend"
+                (click)="unfriend(player)"
+              >
+                Unfriend
+              </button>
+              }
+            </td>
           </ng-template>
         </tr>
       </tbody>
@@ -274,38 +276,14 @@
         step="1"
       />
 
-      <div class="stats-controls">
-        <h4>Individual Stats</h4>
-        <div class="grid three">
-          <div class="stat-control-group">
-            <label>Speed:</label>
-            <select [(ngModel)]="newPlayer.speed">
-              <option value="1">Low ⚡</option>
-              <option value="2" selected>Medium ⚡⚡</option>
-              <option value="3">High ⚡⚡⚡</option>
-              <option value="4">Extreme ⚡⚡⚡⚡</option>
-            </select>
-          </div>
-          <div class="stat-control-group">
-            <label>Stamina:</label>
-            <select [(ngModel)]="newPlayer.stamina">
-              <option value="1">Low 💪</option>
-              <option value="2" selected>Medium 💪💪</option>
-              <option value="3">High 💪💪💪</option>
-              <option value="4">Extreme 💪💪💪💪</option>
-            </select>
-          </div>
-          <div class="stat-control-group">
-            <label>Error Rate:</label>
-            <select [(ngModel)]="newPlayer.errors">
-              <option value="1">Low ❌</option>
-              <option value="2" selected>Medium ❌❌</option>
-              <option value="3">High ❌❌❌</option>
-              <option value="4">Extreme ❌❌❌❌</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      <app-stat-selector
+        [speed]="newPlayer.speed"
+        [stamina]="newPlayer.stamina"
+        [errors]="newPlayer.errors"
+        (speedChange)="newPlayer.speed = $event"
+        (staminaChange)="newPlayer.stamina = $event"
+        (errorsChange)="newPlayer.errors = $event"
+      ></app-stat-selector>
       <!-- Messages -->
       <div *ngIf="playerErrorMessage" class="error-message">
         {{ playerErrorMessage }}
@@ -340,21 +318,26 @@
       </button>
       <h3>Delegate Organizer Role</h3>
       <p class="modal-subtitle">
-        Make <strong>{{ selectedPlayerForDelegation.firstName }} {{ selectedPlayerForDelegation.lastName }}</strong> 
+        Make
+        <strong
+          >{{ selectedPlayerForDelegation.firstName }}
+          {{ selectedPlayerForDelegation.lastName }}</strong
+        >
         the temporary organizer
       </p>
 
       <div class="delegation-info">
         <div class="info-item">
-          <strong>Player:</strong> 
-          {{ selectedPlayerForDelegation.firstName }} {{ selectedPlayerForDelegation.lastName }}
+          <strong>Player:</strong>
+          {{ selectedPlayerForDelegation.firstName }}
+          {{ selectedPlayerForDelegation.lastName }}
         </div>
         <div class="info-item">
-          <strong>Rating:</strong> 
-          {{ selectedPlayerForDelegation.rating | number: "1.0-1" }}
+          <strong>Rating:</strong>
+          {{ selectedPlayerForDelegation.rating | number : "1.0-1" }}
         </div>
         <div class="info-item">
-          <strong>Email:</strong> 
+          <strong>Email:</strong>
           {{ selectedPlayerForDelegation.email }}
         </div>
       </div>
@@ -409,21 +392,37 @@
   </div>
   }
 
-   <!-- Unfriend Modal -->
+  <!-- Unfriend Modal -->
   @if (showUnfriendModal && unfriendTarget) {
-    <div class="modal-backdrop" (click)="closeUnfriendModal()">
-      <div class="modal-content glass" (click)="$event.stopPropagation()">
-        <button class="close-modal-btn" (click)="closeUnfriendModal()" title="Close">&times;</button>
-        <h3>Unfriend {{ unfriendTarget.firstName }} {{ unfriendTarget.lastName }}</h3>
-        <p *ngIf="!unfriendMessage">Are you sure you want to unfriend this user?</p>
-        <div *ngIf="unfriendMessage" [class.error-message]="unfriendError" [class.success-message]="!unfriendError">
-          {{ unfriendMessage }}
-        </div>
-        <div class="modal-actions" *ngIf="!unfriendMessage">
-          <button class="secondary-btn" (click)="closeUnfriendModal()">Cancel</button>
-          <button class="danger-btn" (click)="confirmUnfriend()">Unfriend</button>
-        </div>
+  <div class="modal-backdrop" (click)="closeUnfriendModal()">
+    <div class="modal-content glass" (click)="$event.stopPropagation()">
+      <button
+        class="close-modal-btn"
+        (click)="closeUnfriendModal()"
+        title="Close"
+      >
+        &times;
+      </button>
+      <h3>
+        Unfriend {{ unfriendTarget.firstName }} {{ unfriendTarget.lastName }}
+      </h3>
+      <p *ngIf="!unfriendMessage">
+        Are you sure you want to unfriend this user?
+      </p>
+      <div
+        *ngIf="unfriendMessage"
+        [class.error-message]="unfriendError"
+        [class.success-message]="!unfriendError"
+      >
+        {{ unfriendMessage }}
+      </div>
+      <div class="modal-actions" *ngIf="!unfriendMessage">
+        <button class="secondary-btn" (click)="closeUnfriendModal()">
+          Cancel
+        </button>
+        <button class="danger-btn" (click)="confirmUnfriend()">Unfriend</button>
       </div>
     </div>
+  </div>
   }
 </div>

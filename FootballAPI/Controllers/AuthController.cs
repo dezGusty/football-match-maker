@@ -1,4 +1,4 @@
-﻿using FootballAPI.DTOs;
+using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Models.Enums;
 using FootballAPI.Service;
@@ -163,6 +163,10 @@ namespace FootballAPI.Controllers
                 return Unauthorized(ex.Message);
             }
             catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }

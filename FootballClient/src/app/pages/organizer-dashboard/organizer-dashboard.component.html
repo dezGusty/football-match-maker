@@ -440,38 +440,14 @@
         step="1"
       />
 
-      <div class="stats-controls">
-        <h4>Individual Stats</h4>
-        <div class="grid three">
-          <div class="stat-control-group">
-            <label>Speed:</label>
-            <select [(ngModel)]="newPlayer.speed">
-              <option value="1">Low ⚡</option>
-              <option value="2" selected>Medium ⚡⚡</option>
-              <option value="3">High ⚡⚡⚡</option>
-              <option value="4">Extreme ⚡⚡⚡⚡</option>
-            </select>
-          </div>
-          <div class="stat-control-group">
-            <label>Stamina:</label>
-            <select [(ngModel)]="newPlayer.stamina">
-              <option value="1">Low 💪</option>
-              <option value="2" selected>Medium 💪💪</option>
-              <option value="3">High 💪💪💪</option>
-              <option value="4">Extreme 💪💪💪💪</option>
-            </select>
-          </div>
-          <div class="stat-control-group">
-            <label>Error Rate:</label>
-            <select [(ngModel)]="newPlayer.errors">
-              <option value="1">Low ❌</option>
-              <option value="2" selected>Medium ❌❌</option>
-              <option value="3">High ❌❌❌</option>
-              <option value="4">Extreme ❌❌❌❌</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      <app-stat-selector
+        [speed]="newPlayer.speed"
+        [stamina]="newPlayer.stamina"
+        [errors]="newPlayer.errors"
+        (speedChange)="newPlayer.speed = $event"
+        (staminaChange)="newPlayer.stamina = $event"
+        (errorsChange)="newPlayer.errors = $event"
+      ></app-stat-selector>
       <!-- Messages -->
       <div *ngIf="playerErrorMessage" class="error-message">
         {{ playerErrorMessage }}

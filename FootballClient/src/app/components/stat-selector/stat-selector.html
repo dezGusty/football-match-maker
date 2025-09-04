@@ -1,0 +1,47 @@
+<div class="stats-controls">
+  <h4>Individual Stats</h4>
+  <div class="grid three">
+    <div class="stat-control-group">
+      <label>Speed:</label>
+      <div class="stat-icons editable">
+        <span
+          *ngFor="let i of [1, 2, 3, 4]"
+          class="stat-icon"
+          [class.active]="i <= speed"
+          [class.speed]="true"
+          (click)="updateSpeed(i)"
+        >
+          ⚡
+        </span>
+      </div>
+    </div>
+    <div class="stat-control-group">
+      <label>Stamina:</label>
+      <div class="stat-icons editable">
+        <span
+          *ngFor="let i of [1, 2, 3, 4]"
+          class="stat-icon"
+          [class.active]="i <= stamina"
+          [class.stamina]="true"
+          (click)="updateStamina(i)"
+        >
+          💪
+        </span>
+      </div>
+    </div>
+    <div class="stat-control-group">
+      <label>Error Rate:</label>
+      <div class="stat-icons editable">
+        <span
+          *ngFor="let i of [1, 2, 3, 4]"
+          class="stat-icon"
+          [class.active]="i <= errors"
+          [class.errors]="true"
+          (click)="updateErrors(i)"
+        >
+          ❌
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

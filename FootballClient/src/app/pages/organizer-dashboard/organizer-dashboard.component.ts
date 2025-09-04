@@ -7,6 +7,7 @@ import { User } from '../../models/user.interface';
 import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
+import { StatSelector } from '../../components/stat-selector/stat-selector';
 import { MatchService } from '../../services/match.service';
 import { NotificationService } from '../../services/notification.service';
 import {
@@ -18,7 +19,13 @@ import { MatchStatus } from '../../models/match-status.enum';
 @Component({
   selector: 'app-organizer-dashboard',
   standalone: true,
-  imports: [Header, FormsModule, CommonModule, FriendRequestsComponent],
+  imports: [
+    Header,
+    FormsModule,
+    CommonModule,
+    FriendRequestsComponent,
+    StatSelector,
+  ],
   templateUrl: './organizer-dashboard.component.html',
   styleUrls: ['./organizer-dashboard.component.css'],
 })

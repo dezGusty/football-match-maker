@@ -106,6 +106,11 @@ namespace FootballAPI.Service
                     throw new ArgumentException("Only organizers and admins can create player users");
             }
 
+            if (await _userRepository.UsernameExistsAsync(dto.Username))
+            {
+                throw new ArgumentException("Username already exists. Please choose a different username.");
+            }
+
             var user = new User
             {
                 Email = dto.Email,
