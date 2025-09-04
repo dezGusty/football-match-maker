@@ -269,6 +269,23 @@
             {{ selectedMatch?.location }}
           </p>
         </div>
+        <!-- Rating Multiplier Slider -->
+          <div class="rating-multiplier" *ngIf="selectedRatingSystem.startsWith('Custom')">
+            <label>Rating Multiplier: {{ratingMultiplier}}x</label>
+            <input 
+              type="range" 
+              [(ngModel)]="ratingMultiplier" 
+              (input)="updateRatingPreview()"
+              min="0.5" 
+              max="2" 
+              step="0.1"
+              class="slider"
+            />
+            <div class="slider-marks">
+              <span>0.5x</span>
+              <span>2x</span>
+            </div>
+          </div>
         <div>
           <select
             [(ngModel)]="selectedRatingSystem"
@@ -276,9 +293,13 @@
           >
             <option value="Linear">Linear</option>
             <option value="Performance">Performance</option>
+            <option value="Custom Linear">Custom Linear</option>
+            <option value="Custom Performance">Custom Performance</option>
             <!-- <option value="Vote">Vote</option> -->
           </select>
+          
         </div>
+        
       </div>
       <div class="teams-panel-fin">
         <div class="teams-container-fin">

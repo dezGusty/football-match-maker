@@ -100,6 +100,7 @@ namespace FootballAPI.DTOs
         public int TeamAGoals { get; set; }
         public int TeamBGoals { get; set; }
         public string RatingSystem { get; set; }
+        public double RatingMultiplier { get; set; } = 1.0;
         public List<ManualRatingAdjustmentDto> ManualAdjustments { get; set; } = new();
     }
 
@@ -113,7 +114,8 @@ namespace FootballAPI.DTOs
     {
         public int TeamAGoals { get; set; }
         public int TeamBGoals { get; set; }
-        public string RatingSystem { get; set; } = "Performance";
+        public string RatingSystem { get; set; }
+        public double RatingMultiplier { get; set; } = 1.0f;
     }
 
     public class RatingPreviewDto

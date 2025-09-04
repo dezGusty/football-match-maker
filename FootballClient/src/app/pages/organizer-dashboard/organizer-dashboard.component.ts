@@ -63,6 +63,7 @@ export class OrganizerDashboardComponent {
   playerErrorMessage = '';
   playerSuccessMessage = '';
   manualRatings: { [key: number]: number } = {};
+  ratingMultiplier: number = 1.0;
 
   private async loadAvailablePlayers() {
     const organiserId = this.authService.getUserId()!;
@@ -488,13 +489,17 @@ export class OrganizerDashboardComponent {
         .filter(([_, value]) => value !== undefined && value !== 0)
     );
 
+    // Use multiplier only for custom rating systems
+    const multiplier = this.selectedRatingSystem.startsWith('Custom') ? this.ratingMultiplier : 1.0;
+    
     try {
       await this.matchService.finalizeMatchServ(
         this.selectedMatch!.id,
         this.teamAScore,
         this.teamBScore,
         this.selectedRatingSystem,
-        filteredManualRatings
+        filteredManualRatings,
+        multiplier
       );
       
       this.notificationService.showSuccess('Match finalized successfully');
@@ -562,24 +567,25 @@ export class OrganizerDashboardComponent {
     }
 
     try {
-      // Get base rating changes from selected system
+      const baseSystem = this.selectedRatingSystem.replace('Custom', '').trim();
+      
       const previewResponse = await this.matchService.calculateRatingPreview(
         this.selectedMatch!.id,
         this.teamAScore,
         this.teamBScore,
-        this.selectedRatingSystem
+        this.selectedRatingSystem,
+        this.selectedRatingSystem.startsWith('Custom') ? this.ratingMultiplier : 1.0
       );
 
-      // Apply manual adjustments over the calculated ratings
       this.ratingPreviews = previewResponse.map(preview => {
         const manualAdjustment = this.manualRatings[preview.playerId] || 0;
-        const baseRating = parseFloat(preview.ratingChange);
+        let baseRating = parseFloat(preview.ratingChange);
         const totalChange = baseRating + manualAdjustment;
         
         return {
           ...preview,
-          baseRatingChange: preview.ratingChange, // Store original rating
-          ratingChange: totalChange.toFixed(1)    // Store adjusted rating
+          baseRatingChange: preview.ratingChange,
+          ratingChange: totalChange.toFixed(2)
         };
       });
 
