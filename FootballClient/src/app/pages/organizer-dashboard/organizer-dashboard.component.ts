@@ -803,7 +803,20 @@ export class OrganizerDashboardComponent {
       this.teamBPlayers.some((p) => p.id === player.id)
     );
   }
+  getTeamAverageRating(team: User[]): number {
+    if (team.length === 0) return 0;
+    return team.reduce((sum, player) => sum + (player.rating || 0), 0) / team.length;
+  }
 
+  getTeamAverageRatingDisplay(team: User[]): string {
+    return this.getTeamAverageRating(team).toFixed(1);
+  }
+
+  getTeamRatingClass(rating: number): string {
+    if (rating >= 8) return 'rating-high';
+    if (rating >= 6) return 'rating-medium';
+    return 'rating-low';
+  }
   getRatingClass(rating?: number): string {
     if (!rating) return 'rating-low';
     if (rating >= 8) return 'rating-high';
@@ -811,12 +824,12 @@ export class OrganizerDashboardComponent {
     return 'rating-low';
   }
 
-  getTeamAverageRating(team: User[]): string {
-    if (team.length === 0) return '0.0';
-    const avg =
-      team.reduce((sum, player) => sum + (player.rating || 0), 0) / team.length;
-    return avg.toFixed(1);
-  }
+  // getTeamAverageRating(team: User[]): string {
+  //   if (team.length === 0) return '0.0';
+  //   const avg =
+  //     team.reduce((sum, player) => sum + (player.rating || 0), 0) / team.length;
+  //   return avg.toFixed(1);
+  // }
 
   getEmptySlots(currentPlayers: number): any[] {
     const emptyCount = Math.max(0, 6 - currentPlayers);
@@ -992,6 +1005,11 @@ export class OrganizerDashboardComponent {
   }
 
   shuffleTeams() {
+    if (!this.selectedMatch || this.selectedMatch.status !== 0) {
+      this.notificationService.showError('Teams can only be shuffled when the match is Open');
+      return;
+    }
+    
     const combinedPlayers = [...this.teamAPlayers, ...this.teamBPlayers];
     for (let i = combinedPlayers.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -1003,10 +1021,64 @@ export class OrganizerDashboardComponent {
     this.teamAPlayers = combinedPlayers.slice(0, 6);
     this.teamBPlayers = combinedPlayers.slice(6, 12);
   }
-  balanceTeams(){
+  balanceTeams(mode: string = 'rating') {
+    if (!this.selectedMatch || this.selectedMatch.status !== 0) {
+      this.notificationService.showError('Teams can only be balanced when the match is Open');
+      return;
+    }
+
     const combinedPlayers = [...this.teamAPlayers, ...this.teamBPlayers];
-    combinedPlayers.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-    this.teamAPlayers = [];
-    this.teamBPlayers = [];
+    
+    if (mode === 'random') {
+      // Random shuffle
+      for (let i = combinedPlayers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [combinedPlayers[i], combinedPlayers[j]] = [combinedPlayers[j], combinedPlayers[i]];
+      }
+    } else {
+      // Sort by rating (highest to lowest)
+      combinedPlayers.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      
+      const tempTeamA: User[] = [];
+      const tempTeamB: User[] = [];
+      
+      // Distribute players alternately to balance teams
+      combinedPlayers.forEach((player, index) => {
+        if (index % 2 === 0) {
+          tempTeamA.push(player);
+        } else {
+          tempTeamB.push(player);
+        }
+      });
+      
+      // Calculate team ratings
+      const teamARating = tempTeamA.reduce((sum, player) => sum + (player.rating || 0), 0) / tempTeamA.length;
+      const teamBRating = tempTeamB.reduce((sum, player) => sum + (player.rating || 0), 0) / tempTeamB.length;
+      
+      // If ratings are too unbalanced, try swapping some players
+      if (Math.abs(teamARating - teamBRating) > 1) {
+        for (let i = 0; i < tempTeamA.length; i++) {
+          for (let j = 0; j < tempTeamB.length; j++) {
+            const newTeamARating = (teamARating * tempTeamA.length - (tempTeamA[i].rating || 0) + (tempTeamB[j].rating || 0)) / tempTeamA.length;
+            const newTeamBRating = (teamBRating * tempTeamB.length - (tempTeamB[j].rating || 0) + (tempTeamA[i].rating || 0)) / tempTeamB.length;
+            
+            if (Math.abs(newTeamARating - newTeamBRating) < Math.abs(teamARating - teamBRating)) {
+              // Swap players
+              const temp = tempTeamA[i];
+              tempTeamA[i] = tempTeamB[j];
+              tempTeamB[j] = temp;
+              break;
+            }
+          }
+        }
+      }
+      
+      combinedPlayers.splice(0); // Clear array
+      combinedPlayers.push(...tempTeamA, ...tempTeamB);
+    }
+    
+    const halfLength = Math.floor(combinedPlayers.length / 2);
+    this.teamAPlayers = combinedPlayers.slice(0, halfLength);
+    this.teamBPlayers = combinedPlayers.slice(halfLength);
   }
 }

@@ -821,7 +821,7 @@
             <button class="action-btn" title="Shuffle" (click)="shuffleTeams()">
               Shuffle Teams
             </button>
-            <select
+            <select class="balance-mode-select"
               (ngModelChange)="balanceTeams()"
             >
               <option value="rating">Balance by Rating</option>
@@ -832,9 +832,11 @@
             <!-- Team 1 -->
             <div class="team-table">
               <div class="team-header">
-                <h4>Team 1</h4>
-                <div class="team-stats">
-                  <span class="count">{{ teamAPlayers.length }}/6</span>
+                <div class="team-title">
+                  <h4>{{selectedMatch?.teamAName || 'Team A'}}</h4>
+                  <div class="team-avg-rating" [ngClass]="getTeamRatingClass(getTeamAverageRating(teamAPlayers))">
+                    Average Rating: {{getTeamAverageRatingDisplay(teamAPlayers)}}
+                  </div>
                 </div>
               </div>
 
@@ -884,11 +886,13 @@
             <!-- Team 2 -->
             <div class="team-table">
               <div class="team-header">
-                <h4>Team 2</h4>
-                <div class="team-stats">
-                  <span class="count">{{ teamBPlayers.length }}/6</span>
+              <div class="team-title">
+                <h4>{{selectedMatch?.teamBName || 'Team B'}}</h4>
+                <div class="team-avg-rating" [ngClass]="getTeamRatingClass(getTeamAverageRating(teamBPlayers))">
+                  Average Rating: {{getTeamAverageRatingDisplay(teamBPlayers)}}
                 </div>
               </div>
+            </div>
 
               <div class="team-players-simple">
                 <div
