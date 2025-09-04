@@ -144,11 +144,13 @@ export class ManagePlayersComponent {
 
       this.players.push(addedPlayer);
 
-      this.notificationService.showSuccess(`Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`);
+      this.notificationService.showSuccess(
+        `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`
+      );
 
       this.resetPlayer();
       this.players = await this.UserService.getPlayersForOrganiser();
-      
+
       this.showAddModal = false;
     } catch (error: any) {
       this.playerErrorMessage =
@@ -194,9 +196,16 @@ export class ManagePlayersComponent {
       if (index !== -1) {
         this.players[index] = updatedPlayer;
       }
+
+      this.notificationService.showSuccess(
+        `Player ${updatedPlayer.firstName} ${updatedPlayer.lastName} updated successfully!`
+      );
       this.clearEditIndex();
     } catch (error) {
       console.error('Error updating player:', error);
+      this.notificationService.showError(
+        'Failed to update player. Please try again.'
+      );
     }
   }
 
@@ -313,35 +322,35 @@ export class ManagePlayersComponent {
   }
 
   async unfriend(player: User) {
-  this.unfriendTarget = player;
-  this.showUnfriendModal = true;
-  this.unfriendMessage = '';
-  this.unfriendError = false;
-}
-
-async confirmUnfriend() {
-  if (!this.unfriendTarget) return;
-
-  try {
-    await this.friendRequestService.unfriend(this.unfriendTarget.id!);
-    this.players = this.players.filter(p => p.id !== this.unfriendTarget!.id);
-    this.unfriendMessage = `${this.unfriendTarget.firstName} ${this.unfriendTarget.lastName} has been unfriended.`;
+    this.unfriendTarget = player;
+    this.showUnfriendModal = true;
+    this.unfriendMessage = '';
     this.unfriendError = false;
-
-    setTimeout(() => this.closeUnfriendModal(), 2000); // închide automat după 2 sec
-  } catch (error: any) {
-    console.error('Error unfriending:', error);
-    this.unfriendMessage = error.message || 'Failed to unfriend user';
-    this.unfriendError = true;
   }
-}
 
-closeUnfriendModal() {
-  this.showUnfriendModal = false;
-  this.unfriendTarget = null;
-  this.unfriendMessage = '';
-  this.unfriendError = false;
-}
+  async confirmUnfriend() {
+    if (!this.unfriendTarget) return;
 
+    try {
+      await this.friendRequestService.unfriend(this.unfriendTarget.id!);
+      this.players = this.players.filter(
+        (p) => p.id !== this.unfriendTarget!.id
+      );
+      this.unfriendMessage = `${this.unfriendTarget.firstName} ${this.unfriendTarget.lastName} has been unfriended.`;
+      this.unfriendError = false;
 
+      setTimeout(() => this.closeUnfriendModal(), 2000); // închide automat după 2 sec
+    } catch (error: any) {
+      console.error('Error unfriending:', error);
+      this.unfriendMessage = error.message || 'Failed to unfriend user';
+      this.unfriendError = true;
+    }
+  }
+
+  closeUnfriendModal() {
+    this.showUnfriendModal = false;
+    this.unfriendTarget = null;
+    this.unfriendMessage = '';
+    this.unfriendError = false;
+  }
 }
