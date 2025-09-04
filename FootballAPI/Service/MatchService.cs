@@ -1,4 +1,4 @@
-using FootballAPI.DTOs;
+    using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Models.Enums;
 using FootballAPI.Repository;
@@ -785,13 +785,20 @@ namespace FootballAPI.Service
             await _matchTeamsService.UpdateMatchTeamAsync(teamA.Id, updateTeamADto);
             await _matchTeamsService.UpdateMatchTeamAsync(teamB.Id, updateTeamBDto);
 
-            // Calculate and apply rating changes
+            // Calculate and apply automatic rating changes
             var ratingChanges = await CalculateRatingChanges(matchId, finalizeMatchDto.TeamAGoals, finalizeMatchDto.TeamBGoals, finalizeMatchDto.RatingSystem);
 
             foreach (var ratingChange in ratingChanges)
             {
                 float change = float.Parse(ratingChange.RatingChange);
                 await _userService.UpdatePlayerRatingAsync(ratingChange.PlayerId, change);
+            }
+
+            // Apply manual adjustments
+            foreach (var adjustment in finalizeMatchDto.ManualAdjustments)
+            {
+                Console.WriteLine($"Adjusting rating for UserId: {adjustment.UserId}, Change: {adjustment.RatingChange}");
+                await _userService.UpdatePlayerRatingAsync(adjustment.UserId, adjustment.RatingChange);
             }
 
             match.Status = Status.Finalized;

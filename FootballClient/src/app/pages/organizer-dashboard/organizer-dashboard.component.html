@@ -304,15 +304,34 @@
                 *ngFor="let player of teamAPlayers; let i = index"
                 class="simple-player-row"
               >
+                
                 <span class="player-name"
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
-                <span class="player-rating">
-                  Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
-                  <span [class]="getRatingChangeClass(player.id)">{{
-                    getRatingPreviewForPlayer(player.id)
-                  }}</span>
-                </span>
+                <div class="rating-info">
+                  <span class="player-rating">
+                    Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                    <span [class]="getRatingChangeClass(player.id)">{{
+                      getRatingPreviewForPlayer(player.id)
+                    }}</span>
+                    
+                  </span>
+                  <!-- Manual rating input -->
+                  <div class="manual-rating">
+                      <div class="manual-rating">
+                        <input
+                          class="manual-rating-input"
+                          type="number"
+                          [(ngModel)]="manualRatings[player.id]"
+                          (ngModelChange)="updateManualRating(player.id)"
+                          min="-10"
+                          max="10"
+                          step="0.1"
+                          placeholder="0.0"
+                        />
+                      </div>
+                  </div>
+                </div>
               </div>
 
               <!-- Empty slots -->
@@ -353,12 +372,29 @@
                 <span class="player-name"
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
-                <span class="player-rating">
-                  Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
-                  <span [class]="getRatingChangeClass(player.id)">{{
-                    getRatingPreviewForPlayer(player.id)
-                  }}</span>
-                </span>
+                <div class="rating-info">
+                  <span class="player-rating">
+                    Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                    <span [class]="getRatingChangeClass(player.id)">{{
+                      getRatingPreviewForPlayer(player.id)
+                    }}</span>
+                  </span>
+                  <!-- Manual rating input -->
+                  <div class="manual-rating">
+                      <div class="manual-rating">
+                        <input
+                          class="manual-rating-input"
+                          type="number"
+                          [(ngModel)]="manualRatings[player.id]"
+                          (ngModelChange)="updateManualRating(player.id)"
+                          min="-10"
+                          max="10"
+                          step="0.1"
+                          placeholder="0.0"
+                        />
+                      </div>
+                  </div>
+                </div>
               </div>
 
               <!-- Empty slots -->
@@ -760,6 +796,17 @@
 
         <!-- Teams Display (Right) -->
         <div class="teams-panel">
+          <div class="panel-header">
+            <button class="action-btn" title="Shuffle" (click)="shuffleTeams()">
+              Shuffle Teams
+            </button>
+            <select
+              (ngModelChange)="balanceTeams()"
+            >
+              <option value="rating">Balance by Rating</option>
+              <option value="random">Random Shuffle</option>
+            </select>
+          </div>
           <div class="teams-container">
             <!-- Team 1 -->
             <div class="team-table">

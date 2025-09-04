@@ -62,6 +62,7 @@ export class OrganizerDashboardComponent {
   playerLoading = false;
   playerErrorMessage = '';
   playerSuccessMessage = '';
+  manualRatings: { [key: number]: number } = {};
 
   private async loadAvailablePlayers() {
     const organiserId = this.authService.getUserId()!;
@@ -480,14 +481,29 @@ export class OrganizerDashboardComponent {
       this.notificationService.showError('Please enter scores for both teams');
       return;
     }
-    await this.matchService.finalizeMatchServ(
-      this.selectedMatch!.id,
-      this.teamAScore,
-      this.teamBScore,
-      this.selectedRatingSystem
+
+    // Filter out any undefined or 0 manual ratings
+    const filteredManualRatings = Object.fromEntries(
+      Object.entries(this.manualRatings)
+        .filter(([_, value]) => value !== undefined && value !== 0)
     );
-    this.closeFinalizeMatchModal();
-    await this.loadMatches();
+
+    try {
+      await this.matchService.finalizeMatchServ(
+        this.selectedMatch!.id,
+        this.teamAScore,
+        this.teamBScore,
+        this.selectedRatingSystem,
+        filteredManualRatings
+      );
+      
+      this.notificationService.showSuccess('Match finalized successfully');
+      this.closeFinalizeMatchModal();
+      await this.loadMatches();
+    } catch (error) {
+      this.notificationService.showError('Failed to finalize match');
+      console.error('Error finalizing match:', error);
+    }
   }
 
   async closeMatch(match: MatchDisplay) {
@@ -541,24 +557,35 @@ export class OrganizerDashboardComponent {
     return 'Add Players';
   }
   async updateRatingPreview() {
-    if (
-      this.selectedMatch &&
-      this.teamAScore != null &&
-      this.teamBScore != null
-    ) {
-      try {
-        this.ratingPreviews = await this.matchService.calculateRatingPreview(
-          this.selectedMatch.id,
-          this.teamAScore,
-          this.teamBScore,
-          this.selectedRatingSystem
-        );
-      } catch (error) {
-        console.error('Error updating rating preview:', error);
-        this.ratingPreviews = [];
-      }
-    } else {
-      this.ratingPreviews = [];
+    if (this.teamAScore === null || this.teamBScore === null) {
+      return;
+    }
+
+    try {
+      // Get base rating changes from selected system
+      const previewResponse = await this.matchService.calculateRatingPreview(
+        this.selectedMatch!.id,
+        this.teamAScore,
+        this.teamBScore,
+        this.selectedRatingSystem
+      );
+
+      // Apply manual adjustments over the calculated ratings
+      this.ratingPreviews = previewResponse.map(preview => {
+        const manualAdjustment = this.manualRatings[preview.playerId] || 0;
+        const baseRating = parseFloat(preview.ratingChange);
+        const totalChange = baseRating + manualAdjustment;
+        
+        return {
+          ...preview,
+          baseRatingChange: preview.ratingChange, // Store original rating
+          ratingChange: totalChange.toFixed(1)    // Store adjusted rating
+        };
+      });
+
+    } catch (error) {
+      console.error('Error previewing ratings:', error);
+      this.notificationService.showError('Failed to preview rating changes');
     }
   }
 
@@ -932,5 +959,48 @@ export class OrganizerDashboardComponent {
     } finally {
       this.editMatchLoading = false;
     }
+  }
+
+  updateManualRating(playerId: number) {
+    const manualRating = this.manualRatings[playerId];
+    if (manualRating !== undefined) {
+      // Validate the input
+      if (manualRating < -10 || manualRating > 10) {
+        this.notificationService.showError('Manual rating adjustment must be between -10 and +10');
+        return;
+      }
+      
+      // Update the preview by adding manual adjustment to base rating
+      this.ratingPreviews = this.ratingPreviews.map(preview => {
+        if (preview.playerId === playerId) {
+          const baseChange = parseFloat(preview.baseRatingChange);
+          const totalChange = baseChange + manualRating;
+          return {
+            ...preview,
+            ratingChange: totalChange.toFixed(1)
+          };
+        }
+        return preview;
+      });
+    }
+  }
+
+  shuffleTeams() {
+    const combinedPlayers = [...this.teamAPlayers, ...this.teamBPlayers];
+    for (let i = combinedPlayers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [combinedPlayers[i], combinedPlayers[j]] = [
+        combinedPlayers[j],
+        combinedPlayers[i],
+      ];
+    }
+    this.teamAPlayers = combinedPlayers.slice(0, 6);
+    this.teamBPlayers = combinedPlayers.slice(6, 12);
+  }
+  balanceTeams(){
+    const combinedPlayers = [...this.teamAPlayers, ...this.teamBPlayers];
+    combinedPlayers.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    this.teamAPlayers = [];
+    this.teamBPlayers = [];
   }
 }

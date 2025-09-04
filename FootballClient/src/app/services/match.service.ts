@@ -142,26 +142,31 @@ export class MatchService {
     matchId: number,
     teamAGoals: number,
     teamBGoals: number,
-    ratingSystem: string = 'Performance'
+    ratingSystem: string = 'Performance',
+    manualRatings: { [key: number]: number } = {}
   ): Promise<void> {
     const finalizeMatchDto = {
       teamAGoals: teamAGoals,
       teamBGoals: teamBGoals,
       ratingSystem: ratingSystem,
+      manualAdjustments: Object.entries(manualRatings).map(([userId, change]) => ({
+        userId: parseInt(userId),
+        ratingChange: change
+      }))
     };
-    const response = await fetch(
-      `${this.baseUrl}/matches/finalize/${matchId}`,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(finalizeMatchDto),
-      }
-    );
+
+    const response = await fetch(`${this.baseUrl}/matches/finalize/${matchId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...this.getAuthHeaders()
+      },
+      body: JSON.stringify(finalizeMatchDto)
+    });
+
     if (!response.ok) {
       throw new Error('Failed to finalize match');
     }
-
-    return await response.json();
   }
 
   async getMatchById(matchId: number): Promise<Match> {

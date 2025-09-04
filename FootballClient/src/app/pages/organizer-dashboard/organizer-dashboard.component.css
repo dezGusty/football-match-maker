@@ -1052,6 +1052,20 @@
 .btn-secondary:hover {
   background: rgba(156, 163, 175, 0.3);
 }
+.manual-rating-input{
+  width: 60px !important;
+  padding: 8px 8px !important;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid rgba(124, 242, 208, 0.2);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.rating-info{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* Responsive */
 

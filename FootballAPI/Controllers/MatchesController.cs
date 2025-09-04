@@ -473,9 +473,8 @@ namespace FootballAPI.Controllers
         }
 
         [HttpPut("finalize/{id}")]
-        public async Task<ActionResult<MatchDto>> Finalizematch(int id, FinalizeMatchDto finalizeMatchDto)
+        public async Task<ActionResult<MatchDto>> FinalizeMatch(int id, FinalizeMatchDto finalizeMatchDto)
         {
-
             try
             {
                 var match = await _matchService.FinalizeMatchAsync(id, finalizeMatchDto);
