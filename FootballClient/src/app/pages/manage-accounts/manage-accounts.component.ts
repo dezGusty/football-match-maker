@@ -142,6 +142,10 @@ export class ManageAccountsComponent {
     }
 
     try {
+      if (this.editedUser.role !== undefined) {
+        this.editedUser.role = Number(this.editedUser.role);
+      }
+
       const updatedUser = await this.UserService.editUser(this.editedUser);
       const userIndex = this.users.findIndex((u) => u.id === updatedUser.id);
       if (userIndex !== -1) {

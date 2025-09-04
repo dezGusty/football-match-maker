@@ -148,11 +148,20 @@
               />
             </td>
 
-            <!-- Rating -->
+            <!-- Role -->
             <td>
               <div *ngIf="editIndex !== i">
                 {{ getRoleString(user.role) }}
               </div>
+              <select
+                *ngIf="editIndex === i"
+                [(ngModel)]="editedUser!.role"
+                class="edit-input role-select"
+              >
+                <option value="0">Admin</option>
+                <option value="1">Organizer</option>
+                <option value="2">Player</option>
+              </select>
             </td>
 
             <!-- Status -->
