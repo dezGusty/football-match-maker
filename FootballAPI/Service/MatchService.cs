@@ -208,6 +208,35 @@ namespace FootballAPI.Service
             if (existingMatch == null)
                 return null;
 
+            // Update match properties from DTO
+            if (DateTime.TryParse(updateMatchDto.MatchDate, out var matchDate))
+                existingMatch.MatchDate = matchDate;
+            
+            if (!string.IsNullOrEmpty(updateMatchDto.Location))
+                existingMatch.Location = updateMatchDto.Location;
+            
+            if (updateMatchDto.Cost.HasValue)
+                existingMatch.Cost = updateMatchDto.Cost.Value;
+
+            // Update team names if provided
+            if (!string.IsNullOrEmpty(updateMatchDto.TeamAName) || !string.IsNullOrEmpty(updateMatchDto.TeamBName))
+            {
+                var matchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(id);
+                var teams = matchTeams.ToList();
+                
+                if (!string.IsNullOrEmpty(updateMatchDto.TeamAName) && teams.Count > 0)
+                {
+                    teams[0].Team.Name = updateMatchDto.TeamAName;
+                    await _teamService.UpdateTeamAsync(teams[0].Team.Id, new UpdateTeamDto { Name = updateMatchDto.TeamAName });
+                }
+                
+                if (!string.IsNullOrEmpty(updateMatchDto.TeamBName) && teams.Count > 1)
+                {
+                    teams[1].Team.Name = updateMatchDto.TeamBName;
+                    await _teamService.UpdateTeamAsync(teams[1].Team.Id, new UpdateTeamDto { Name = updateMatchDto.TeamBName });
+                }
+            }
+
             var updatedMatch = await _matchRepository.UpdateAsync(existingMatch);
             return await MapToDtoAsync(updatedMatch);
         }
