@@ -198,11 +198,15 @@ export class PlayerDashboardComponent implements OnInit {
       );
 
       this.selectedTeamAPlayers = teamA
-        ? teamA.players.map((p: any) => `${p.username} - ${(p.rating || 0).toFixed(1)}`)
+        ? teamA.players.map(
+            (p: any) => `${p.username} - ${(p.rating || 0).toFixed(1)}`
+          )
         : [];
 
       this.selectedTeamBPlayers = teamB
-        ? teamB.players.map((p: any) => `${p.username} - ${(p.rating || 0).toFixed(1)}`)
+        ? teamB.players.map(
+            (p: any) => `${p.username} - ${(p.rating || 0).toFixed(1)}`
+          )
         : [];
     } catch (error) {
       this.selectedTeamAPlayers = match.playerHistory
@@ -316,5 +320,42 @@ export class PlayerDashboardComponent implements OnInit {
         'Failed to leave match. Please try again.'
       );
     }
+  }
+
+  calculatePricePerPlayer(
+    totalCost: number | undefined,
+    playerCount: number
+  ): number {
+    if (!totalCost || totalCost <= 0) return 0;
+    return Math.round((totalCost / playerCount) * 100) / 100;
+  }
+
+  getPriceInfo(match: Match): {
+    for10: number;
+    for11: number;
+    for12: number;
+    exactPrice?: number;
+    totalPlayers?: number;
+  } {
+    const totalCost = match.cost || 0;
+
+    if (match.status === 1) {
+      const totalPlayers = match.playerHistory?.length || 0;
+      if (totalPlayers > 0) {
+        return {
+          for10: this.calculatePricePerPlayer(totalCost, 10),
+          for11: this.calculatePricePerPlayer(totalCost, 11),
+          for12: this.calculatePricePerPlayer(totalCost, 12),
+          exactPrice: this.calculatePricePerPlayer(totalCost, totalPlayers),
+          totalPlayers,
+        };
+      }
+    }
+
+    return {
+      for10: this.calculatePricePerPlayer(totalCost, 10),
+      for11: this.calculatePricePerPlayer(totalCost, 11),
+      for12: this.calculatePricePerPlayer(totalCost, 12),
+    };
   }
 }

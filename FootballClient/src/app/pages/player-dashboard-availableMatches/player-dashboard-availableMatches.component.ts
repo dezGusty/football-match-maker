@@ -148,4 +148,18 @@ export class PlayerDashboardAvailableMatchesComponent implements OnInit {
   }
 
   setActiveTab(tab: string) {}
+
+  calculatePricePerPlayer(totalCost: number | undefined, playerCount: number): number {
+    if (!totalCost || totalCost <= 0) return 0;
+    return Math.round((totalCost / playerCount) * 100) / 100;
+  }
+
+  getPriceInfo(match: Match): { for10: number, for11: number, for12: number } {
+    const totalCost = match.cost || 0;
+    return {
+      for10: this.calculatePricePerPlayer(totalCost, 10),
+      for11: this.calculatePricePerPlayer(totalCost, 11),
+      for12: this.calculatePricePerPlayer(totalCost, 12)
+    };
+  }
 }

@@ -17,6 +17,7 @@
           <div class="col-team">Teams</div>
           <div class="col-date">Date</div>
           <div class="col-type">Type</div>
+          <div class="col-price">Price per Player</div>
           <div class="col-action">Action</div>
         </div>
 
@@ -34,6 +35,26 @@
             >
               {{ match.isPublic ? "Public" : "Private" }}
             </span>
+          </div>
+          <div class="col-price">
+            <div
+              class="price-breakdown"
+              *ngIf="match.cost && match.cost > 0; else noCost"
+            >
+              <div class="price-option">
+                10 players: <strong>{{ getPriceInfo(match).for10 }} lei</strong>
+              </div>
+              <div class="price-option">
+                11 players: <strong>{{ getPriceInfo(match).for11 }} lei</strong>
+              </div>
+              <div class="price-option">
+                12 players:
+                <strong>{{ getPriceInfo(match).for12 }} lei </strong>
+              </div>
+            </div>
+            <ng-template #noCost>
+              <span class="free-match">FREE</span>
+            </ng-template>
           </div>
           <div class="col-action">
             <button class="action-btn" (click)="openJoinMatchModal(match)">
