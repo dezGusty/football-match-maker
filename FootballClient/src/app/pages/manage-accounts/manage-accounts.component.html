@@ -1,0 +1,408 @@
+<app-header></app-header>
+
+<div class="manage-all-players-container">
+  <div class="header-section">
+    <h1>Manage All Users</h1>
+  </div>
+
+  <div class="search-section">
+    <div class="search-container">
+      <input
+        type="text"
+        placeholder="Search users by name, username, or email..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        class="search-input"
+      />
+      <span class="search-icon material-icons">search</span>
+    </div>
+
+    <div class="filter-container">
+      <select
+        id="roleFilter"
+        [(ngModel)]="selectedRole"
+        (change)="onRoleFilterChange()"
+        class="role-filter-select"
+      >
+        <option value="all">All Roles</option>
+        <option value="0">Admin</option>
+        <option value="1">Organizer</option>
+        <option value="2">Player</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Floating Actions -->
+  <div class="fab-stack">
+    <button
+      class="fab primary"
+      (click)="showAddModal = true"
+      aria-label="Add new player"
+    >
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+        <!-- Player icon -->
+        <path
+          d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+          stroke="currentColor"
+          stroke-width="2"
+          fill="none"
+        />
+        <circle
+          cx="8.5"
+          cy="7"
+          r="4"
+          stroke="currentColor"
+          stroke-width="2"
+          fill="none"
+        />
+        <!-- Plus sign for adding -->
+        <line
+          x1="20"
+          y1="8"
+          x2="20"
+          y2="14"
+          stroke="currentColor"
+          stroke-width="2"
+        />
+        <line
+          x1="17"
+          y1="11"
+          x2="23"
+          y2="11"
+          stroke="currentColor"
+          stroke-width="2"
+        />
+      </svg>
+    </button>
+  </div>
+  <div class="players-section">
+    <div *ngIf="userLoading" class="loading">
+      <p>Loading users...</p>
+    </div>
+
+    <div *ngIf="userErrorMessage" class="error-message">
+      {{ userErrorMessage }}
+    </div>
+
+    <div *ngIf="userSuccessMessage" class="success-message">
+      {{ userSuccessMessage }}
+    </div>
+
+    <div class="players-table" *ngIf="!userLoading">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let user of filteredUsers; let i = index"
+            [class.disabled-row]="!isUserEnabled(user)"
+          >
+            <!-- Name -->
+            <td>
+              <div *ngIf="editIndex !== i">
+                {{ user.firstName }} {{ user.lastName }}
+              </div>
+              <div *ngIf="editIndex === i" class="edit-fields">
+                <input
+                  type="text"
+                  [(ngModel)]="editedUser!.firstName"
+                  placeholder="First Name"
+                  class="edit-input"
+                />
+                <input
+                  type="text"
+                  [(ngModel)]="editedUser!.lastName"
+                  placeholder="Last Name"
+                  class="edit-input"
+                />
+              </div>
+            </td>
+
+            <!-- Username -->
+            <td>
+              <div *ngIf="editIndex !== i">{{ user.username }}</div>
+              <input
+                *ngIf="editIndex === i"
+                type="text"
+                [(ngModel)]="editedUser!.username"
+                class="edit-input"
+              />
+            </td>
+
+            <!-- Email -->
+            <td>
+              <div *ngIf="editIndex !== i">{{ user.email }}</div>
+              <input
+                *ngIf="editIndex === i"
+                type="email"
+                [(ngModel)]="editedUser!.email"
+                class="edit-input"
+              />
+            </td>
+
+            <!-- Role -->
+            <td>
+              <div *ngIf="editIndex !== i">
+                {{ getRoleString(user.role) }}
+              </div>
+              <select
+                *ngIf="editIndex === i"
+                [(ngModel)]="editedUser!.role"
+                class="edit-input role-select"
+              >
+                <option value="0">Admin</option>
+                <option value="1">Organizer</option>
+                <option value="2">Player</option>
+              </select>
+            </td>
+
+            <!-- Status -->
+            <td>
+              <span
+                class="status-badge"
+                [class.active]="isUserEnabled(user)"
+                [class.inactive]="!isUserEnabled(user)"
+              >
+                {{ isUserEnabled(user) ? "Active" : "Inactive" }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="action-buttons">
+                <div *ngIf="editIndex !== i">
+                  <button
+                    class="edit-btn"
+                    (click)="setEditIndex(i)"
+                    [disabled]="!isUserEnabled(user)"
+                  >
+                    <span class="material-icons">edit</span>
+                  </button>
+
+                  <button
+                    *ngIf="isUserEnabled(user)"
+                    class="delete-btn"
+                    (click)="showDeleteConfirmation(user.id!)"
+                    title="Delete User"
+                  >
+                    <span class="material-icons">delete</span>
+                  </button>
+
+                  <button
+                    *ngIf="!isUserEnabled(user)"
+                    class="enable-btn"
+                    (click)="showReactivateConfirmation(user.id!)"
+                    title="Reactivate User"
+                  >
+                    <span class="material-icons">restore</span>
+                  </button>
+                </div>
+
+                <div *ngIf="editIndex === i" class="edit-actions">
+                  <button class="save-btn" (click)="editUser()">
+                    <span class="material-icons">save</span>
+                  </button>
+                  <button class="cancel-btn" (click)="clearEditIndex()">
+                    <span class="material-icons">cancel</span>
+                  </button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div
+        *ngIf="filteredUsers.length === 0 && !userLoading"
+        class="no-users-found"
+      >
+        <p>No users found matching your search criteria.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="confirmation-dialog-overlay"
+  *ngIf="showDeleteConfirmDialog"
+  (click)="cancelDelete()"
+>
+  <div class="confirmation-dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h3>Confirm Delete</h3>
+    </div>
+    <div class="dialog-body">
+      <p>Are you sure you want to delete this user?</p>
+      <p class="warning-text">
+        This action cannot be undone and the user will be marked as deleted.
+      </p>
+    </div>
+    <div class="dialog-actions">
+      <button
+        class="btn-cancel"
+        (click)="cancelDelete()"
+        [disabled]="userLoading"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn-confirm"
+        (click)="deleteUser(userToDelete!)"
+        [disabled]="userLoading"
+      >
+        <span *ngIf="userLoading">Deleting...</span>
+        <span *ngIf="!userLoading">Yes, Delete</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="confirmation-dialog-overlay"
+  *ngIf="showReactivateConfirmDialog"
+  (click)="cancelReactivate()"
+>
+  <div class="confirmation-dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h3>Confirm Reactivate</h3>
+    </div>
+    <div class="dialog-body">
+      <p>Are you sure you want to reactivate this user?</p>
+      <p class="warning-text">
+        This action cannot be undone and the user will be restored.
+      </p>
+    </div>
+    <div class="dialog-actions">
+      <button
+        class="btn-cancel"
+        (click)="cancelReactivate()"
+        [disabled]="userLoading"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn-confirm"
+        (click)="enableUser(userToReactivate!)"
+        [disabled]="userLoading"
+      >
+        <span *ngIf="userLoading">Reactivating...</span>
+        <span *ngIf="!userLoading">Yes, Reactivate</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+@if (showAddModal) {
+<div class="modal-backdrop" (click)="showAddModal = false">
+  <div class="modal-content glass" (click)="$event.stopPropagation()">
+    <button
+      class="close-modal-btn"
+      (click)="showAddModal = false"
+      title="Close"
+    >
+      &times;
+    </button>
+    <h3>Add New User</h3>
+    <div class="grid two">
+      <input
+        type="text"
+        placeholder="First Name *"
+        [(ngModel)]="newUser.firstName"
+      />
+      <input
+        type="text"
+        placeholder="Last Name *"
+        [(ngModel)]="newUser.lastName"
+      />
+    </div>
+
+    <input type="email" placeholder="Email *" [(ngModel)]="newUser.email" />
+
+    <input
+      type="text"
+      placeholder="Username *"
+      [(ngModel)]="newUser.username"
+    />
+
+    <input
+      type="number"
+      placeholder="Rating (0-10)"
+      [(ngModel)]="newUser.rating"
+      min="0"
+      max="10"
+      step="0.1"
+    />
+
+    <div class="stats-controls">
+      <h4>Individual Stats</h4>
+      <div class="grid three">
+        <div class="stat-control-group">
+          <label>Speed:</label>
+          <select [(ngModel)]="newUser.speed">
+            <option value="1">Low ⚡</option>
+            <option value="2" selected>Medium ⚡⚡</option>
+            <option value="3">High ⚡⚡⚡</option>
+            <option value="4">Extreme ⚡⚡⚡⚡</option>
+          </select>
+        </div>
+        <div class="stat-control-group">
+          <label>Stamina:</label>
+          <select [(ngModel)]="newUser.stamina">
+            <option value="1">Low 💪</option>
+            <option value="2" selected>Medium 💪💪</option>
+            <option value="3">High 💪💪💪</option>
+            <option value="4">Extreme 💪💪💪💪</option>
+          </select>
+        </div>
+        <div class="stat-control-group">
+          <label>Error Rate:</label>
+          <select [(ngModel)]="newUser.errors">
+            <option value="1">Low ❌</option>
+            <option value="2" selected>Medium ❌❌</option>
+            <option value="3">High ❌❌❌</option>
+            <option value="4">Extreme ❌❌❌❌</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select
+          id="role"
+          [(ngModel)]="newUser.role"
+          name="role"
+          class="form-input"
+        >
+          <option value="2">Player</option>
+          <option value="1">Organizer</option>
+          <option value="0">Admin</option>
+        </select>
+      </div>
+    </div>
+    <!-- Messages -->
+    <div *ngIf="userErrorMessage" class="error-message">
+      {{ userErrorMessage }}
+    </div>
+
+    <div *ngIf="userSuccessMessage" class="success-message">
+      {{ userSuccessMessage }}
+    </div>
+
+    <button class="primary-cta" (click)="addUser()" [disabled]="userLoading">
+      <span *ngIf="userLoading">Adding Player...</span>
+      <span *ngIf="!userLoading">Add Player</span>
+    </button>
+  </div>
+</div>
+}
