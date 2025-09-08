@@ -58,7 +58,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // Database Context - Using SQL Server
 builder.Services.AddDbContext<FootballDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Repository Registration
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
