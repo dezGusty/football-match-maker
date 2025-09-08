@@ -585,7 +585,7 @@
 }
 
 .tab-btn.active {
-  background: var(--primary-600);
+  background: var(--primary-700);
   color: white;
   box-shadow: 0 2px 8px rgba(124, 242, 208, 0.3);
 }
