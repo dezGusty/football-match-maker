@@ -5,7 +5,7 @@
   background: var(--primary-700);
   color: var(--text);
   border: none;
-  padding: 12px 20px;
+  padding: 12px 12px;
   border-radius: 25px;
   cursor: pointer;
   font-size: 14px;
@@ -354,7 +354,7 @@
   .friend-requests-btn {
     top: 10px;
     right: 60px;
-    padding: 8px 14px;
+    padding: 8px 10px;
     font-size: 12px;
   }
 
@@ -409,7 +409,7 @@
   .friend-requests-btn {
     top: 15px;
     right: 50px;
-    padding: 6px 12px;
+    padding: 6px 8px;
     font-size: 11px;
   }
 
