@@ -123,16 +123,16 @@ export class MatchService {
       teamAGoals: teamAGoals,
       teamBGoals: teamBGoals,
       ratingSystem: ratingSystem,
-      ratingMultiplier: ratingMultiplier
+      ratingMultiplier: ratingMultiplier,
     };
 
     const response = await fetch(
       `${this.baseUrl}/matches/${matchId}/rating-preview`,
       {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          ...this.getAuthHeaders()
+          ...this.getAuthHeaders(),
         },
         body: JSON.stringify(dto),
       }
@@ -160,20 +160,25 @@ export class MatchService {
       teamBGoals: teamBGoals,
       ratingSystem: ratingSystem,
       ratingMultiplier: ratingMultiplier,
-      manualAdjustments: Object.entries(manualRatings).map(([userId, change]) => ({
-        userId: parseInt(userId),
-        ratingChange: change
-      }))
+      manualAdjustments: Object.entries(manualRatings).map(
+        ([userId, change]) => ({
+          userId: parseInt(userId),
+          ratingChange: change,
+        })
+      ),
     };
 
-    const response = await fetch(`${this.baseUrl}/matches/finalize/${matchId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.getAuthHeaders()
-      },
-      body: JSON.stringify(finalizeMatchDto)
-    });
+    const response = await fetch(
+      `${this.baseUrl}/matches/finalize/${matchId}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getAuthHeaders(),
+        },
+        body: JSON.stringify(finalizeMatchDto),
+      }
+    );
 
     if (!response.ok) {
       throw new Error('Failed to finalize match');
@@ -503,7 +508,6 @@ export class MatchService {
 
     return await response.json();
   }
-
 
   async getAvailableMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/available`, {
