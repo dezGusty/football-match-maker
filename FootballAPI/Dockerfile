@@ -1,21 +1,4 @@
-﻿# FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-# WORKDIR /app
-
-# COPY . ./
-
-# RUN dotnet restore
-# RUN dotnet publish -c Release -o out
-
-# FROM mcr.microsoft.com/dotnet/aspnet:9.0
-# WORKDIR /app
-# COPY --from=build /app/out .
-
-# EXPOSE 5145
-
-# ENTRYPOINT ["dotnet", "FootballAPI.dll"]
-
-# ...existing code...
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+﻿FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 COPY *.csproj .
@@ -37,9 +20,16 @@ ENV DOTNET_RUNNING_IN_CONTAINER=true \
 
 COPY --from=build /app/publish .
 
+# Create directory for SQLite and set permissions
+RUN mkdir -p /app/data && \
+    chown -R 1000:1000 /app/data && \
+    chmod -R 755 /app/data
+
+# Install wget for healthcheck
+RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
+
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:5145/health || exit 1
+  CMD wget -q --spider http://localhost:5145/health || exit 1
 
 EXPOSE 5145
 ENTRYPOINT ["dotnet", "FootballAPI.dll"]
-# ...existing code...

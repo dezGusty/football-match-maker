@@ -14,15 +14,12 @@ services:
     volumes:
       - sqlite_data:/app/data
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:5145/health || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:5145/api/health || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
     restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    user: "${UID:-1000}:${GID:-1000}"
     networks:
       - football-network
 
@@ -34,26 +31,19 @@ services:
         - BUILD_CONFIG=production
     image: football-client:${TAG:-latest}
     ports:
-      - "80:80"
+      - "4200:80"
     env_file:
       - ./prod.env
     depends_on:
       backend:
         condition: service_healthy
     restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    user: "${UID:-1000}:${GID:-1000}"
     networks:
       - football-network
 
 volumes:
   sqlite_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/data
-      o: bind
+    name: football-sqlite-data
 
 networks:
   football-network:
