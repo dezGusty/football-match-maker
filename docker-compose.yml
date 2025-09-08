@@ -11,6 +11,8 @@ services:
       - "5145:5145"
     env_file:
       - ./prod.env
+    environment:
+      - TZ=Europe/Bucharest
     volumes:
       - sqlite_data:/app/data
     healthcheck:
