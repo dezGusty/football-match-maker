@@ -7,11 +7,12 @@ import { User } from '../../models/user.interface';
 import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
 import { NotificationService } from '../../services/notification.service';
+import { StatSelector } from '../../components/stat-selector/stat-selector';
 
 @Component({
   selector: 'app-manage-accounts',
   standalone: true,
-  imports: [Header, FormsModule, CommonModule],
+  imports: [Header, FormsModule, CommonModule, StatSelector],
   templateUrl: './manage-accounts.component.html',
   styleUrls: ['./manage-accounts.component.css'],
 })
@@ -29,16 +30,16 @@ export class ManageAccountsComponent {
   userSuccessMessage = '';
   showAddModal = false;
 
-  newUser: Partial<User> = {
+  newUser = {
     firstName: '',
     lastName: '',
     username: '',
     email: '',
     role: UserRole.PLAYER,
     rating: 5,
-    speed: 5,
-    stamina: 5,
-    errors: 0,
+    speed: 2,
+    stamina: 2,
+    errors: 2,
     isDeleted: false,
   };
 
@@ -261,9 +262,9 @@ export class ManageAccountsComponent {
       email: '',
       role: UserRole.PLAYER,
       rating: 5,
-      speed: 5,
-      stamina: 5,
-      errors: 0,
+      speed: 2,
+      stamina: 2,
+      errors: 2,
       isDeleted: false,
     };
   }
@@ -300,9 +301,9 @@ export class ManageAccountsComponent {
         username: this.newUser.username!,
         email: this.newUser.email!,
         rating: this.newUser.rating || 5,
-        speed: this.newUser.speed || 5,
-        stamina: this.newUser.stamina || 5,
-        errors: this.newUser.errors || 0,
+        speed: this.newUser.speed || 2,
+        stamina: this.newUser.stamina || 2,
+        errors: this.newUser.errors || 2,
         role: Number(this.newUser.role) || 2,
       };
 

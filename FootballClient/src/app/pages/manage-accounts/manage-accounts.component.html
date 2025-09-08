@@ -342,38 +342,14 @@
       step="0.1"
     />
 
-    <div class="stats-controls">
-      <h4>Individual Stats</h4>
-      <div class="grid three">
-        <div class="stat-control-group">
-          <label>Speed:</label>
-          <select [(ngModel)]="newUser.speed">
-            <option value="1">Low ⚡</option>
-            <option value="2" selected>Medium ⚡⚡</option>
-            <option value="3">High ⚡⚡⚡</option>
-            <option value="4">Extreme ⚡⚡⚡⚡</option>
-          </select>
-        </div>
-        <div class="stat-control-group">
-          <label>Stamina:</label>
-          <select [(ngModel)]="newUser.stamina">
-            <option value="1">Low 💪</option>
-            <option value="2" selected>Medium 💪💪</option>
-            <option value="3">High 💪💪💪</option>
-            <option value="4">Extreme 💪💪💪💪</option>
-          </select>
-        </div>
-        <div class="stat-control-group">
-          <label>Error Rate:</label>
-          <select [(ngModel)]="newUser.errors">
-            <option value="1">Low ❌</option>
-            <option value="2" selected>Medium ❌❌</option>
-            <option value="3">High ❌❌❌</option>
-            <option value="4">Extreme ❌❌❌❌</option>
-          </select>
-        </div>
-      </div>
-    </div>
+    <app-stat-selector
+      [speed]="newUser.speed"
+      [stamina]="newUser.stamina"
+      [errors]="newUser.errors"
+      (speedChange)="newUser.speed = $event"
+      (staminaChange)="newUser.stamina = $event"
+      (errorsChange)="newUser.errors = $event"
+    ></app-stat-selector>
 
     <div class="form-row">
       <div class="form-group">
@@ -400,8 +376,8 @@
     </div>
 
     <button class="primary-cta" (click)="addUser()" [disabled]="userLoading">
-      <span *ngIf="userLoading">Adding Player...</span>
-      <span *ngIf="!userLoading">Add Player</span>
+      <span *ngIf="userLoading">Adding User...</span>
+      <span *ngIf="!userLoading">Add User</span>
     </button>
   </div>
 </div>
