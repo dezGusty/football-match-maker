@@ -8,9 +8,11 @@
   backdrop-filter: blur(6px);
   border: 1px solid rgba(124, 242, 208, 0.08);
   border-radius: 16px;
-  margin: 40px;
+  margin: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   overflow: auto;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Modern Table */
@@ -67,6 +69,73 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Responsive styles */
+@media screen and (max-width: 1024px) {
+  .table-wrapper {
+    margin: 15px;
+  }
+
+  .players-table.modern td,
+  .players-table.modern th {
+    padding: 12px 14px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .table-wrapper {
+    margin: 10px;
+  }
+
+  .players-table.modern {
+    font-size: 14px;
+  }
+
+  .players-table.modern td,
+  .players-table.modern th {
+    padding: 10px 12px;
+  }
+
+  .stats-controls h4 {
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .table-wrapper {
+    margin: 5px;
+    border-radius: 8px;
+  }
+
+  .players-table.modern {
+    font-size: 13px;
+  }
+
+  .players-table.modern td,
+  .players-table.modern th {
+    padding: 8px 10px;
+  }
+
+  .players-table input[type="text"],
+  .players-table input[type="number"],
+  .modal-content input[type="text"],
+  .modal-content input[type="number"],
+  .modal-content input[type="email"],
+  .stat-control-group select,
+  .stat-edit-group select {
+    padding: 8px 10px;
+    margin: 5px;
+    border-radius: 8px;
+  }
+
+  .stats-controls h4 {
+    font-size: 15px;
+  }
+
+  .stat-control-group {
+    margin-top: 8px;
   }
 }
 
@@ -516,7 +585,7 @@
 }
 
 .tab-btn.active {
-  background: var(--primary-600);
+  background: var(--primary-700);
   color: white;
   box-shadow: 0 2px 8px rgba(124, 242, 208, 0.3);
 }
@@ -739,9 +808,6 @@
   border-radius: 8px;
   font-size: 1rem;
 }
-.score-input {
-}
-
 .match-info-fin p {
   margin: 4px 0;
   color: var(--text);

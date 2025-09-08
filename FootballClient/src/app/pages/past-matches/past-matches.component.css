@@ -1,11 +1,12 @@
 .matches-table {
-  width: 80%;
-  margin: 40px auto;
+  width: 90%;
+  max-width: 1200px;
+  margin: 20px auto;
   border-collapse: collapse;
   background: var(--surface);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .matches-table th,
