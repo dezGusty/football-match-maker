@@ -2,10 +2,12 @@
 
 .login-wrapper {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   justify-content: center;
-  top: 40px;
-  left: 50%;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .login-left .overlay {
@@ -75,6 +77,7 @@
   backdrop-filter: blur(12px);
   color: white;
   animation: slideUp 0.8s ease-out;
+  margin: 0 auto;
 }
 
 .login-form h2 {
