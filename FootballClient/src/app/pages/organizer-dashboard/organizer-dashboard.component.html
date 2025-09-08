@@ -208,7 +208,7 @@
           <th>Date & Time</th>
           <th>Teams</th>
           <th>Location</th>
-          <th>Cost Total</th>
+          <th>Price per Player</th>
         </tr>
       </thead>
       <tbody>
@@ -235,7 +235,25 @@
             </div>
           </td>
           <td>{{ match.location || "TBD" }}</td>
-          <td>{{ match.cost ? match.cost + " Lei" : "Free" }}</td>
+          <td>
+            <div *ngIf="match.cost && match.cost > 0; else noCost" class="price-breakdown">
+              <!-- Show exact price for closed matches -->
+              <div *ngIf="match.status === 1 && getPriceInfo(match).exactPrice; else showEstimatedPrices" class="exact-price">
+                <div class="price-option exact">
+                  <strong>{{ getPriceInfo(match).exactPrice }} lei</strong>
+                </div>
+              </div>
+              <!-- Show estimated prices for open matches -->
+              <ng-template #showEstimatedPrices>
+                <div class="price-option">10 players: <strong>{{ getPriceInfo(match).for10 }} lei</strong></div>
+                <div class="price-option">11 players: <strong>{{ getPriceInfo(match).for11 }} lei</strong></div>
+                <div class="price-option">12 players: <strong>{{ getPriceInfo(match).for12 }} lei</strong></div>
+              </ng-template>
+            </div>
+            <ng-template #noCost>
+              <span class="free-match">FREE</span>
+            </ng-template>
+          </td>
         </tr>
       </tbody>
     </table>

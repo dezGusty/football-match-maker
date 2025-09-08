@@ -1050,7 +1050,7 @@ export class OrganizerDashboardComponent {
 
     try {
       this.addingPlayers = true;
-      
+
       // Remove all players from both teams first
       for (const player of this.teamAPlayers) {
         await this.removePlayerFromTeam(player, 'teamA');
@@ -1069,12 +1069,14 @@ export class OrganizerDashboardComponent {
 
       this.teamAPlayers = newTeamAPlayers;
       this.teamBPlayers = newTeamBPlayers;
-      
-      this.notificationService.showSuccess('Teams shuffled and saved successfully');
+
+      this.notificationService.showSuccess(
+        'Teams shuffled and saved successfully'
+      );
     } catch (error) {
       this.notificationService.showError('Failed to save shuffled teams');
       console.error('Error saving shuffled teams:', error);
-      
+
       // Revert to original teams if there's an error
       this.teamAPlayers = [...this.originalTeamAPlayers];
       this.teamBPlayers = [...this.originalTeamBPlayers];
@@ -1161,5 +1163,42 @@ export class OrganizerDashboardComponent {
     const halfLength = Math.floor(combinedPlayers.length / 2);
     this.teamAPlayers = combinedPlayers.slice(0, halfLength);
     this.teamBPlayers = combinedPlayers.slice(halfLength);
+  }
+
+  calculatePricePerPlayer(
+    totalCost: number | undefined,
+    playerCount: number
+  ): number {
+    if (!totalCost || totalCost <= 0) return 0;
+    return Math.round((totalCost / playerCount) * 100) / 100;
+  }
+
+  getPriceInfo(match: MatchDisplay | any): {
+    for10: number;
+    for11: number;
+    for12: number;
+    exactPrice?: number;
+    totalPlayers?: number;
+  } {
+    const totalCost = match.cost || 0;
+
+    if (match.status === 1) {
+      const totalPlayers = match.playerHistory?.length || 0;
+      if (totalPlayers > 0) {
+        return {
+          for10: this.calculatePricePerPlayer(totalCost, 10),
+          for11: this.calculatePricePerPlayer(totalCost, 11),
+          for12: this.calculatePricePerPlayer(totalCost, 12),
+          exactPrice: this.calculatePricePerPlayer(totalCost, totalPlayers),
+          totalPlayers,
+        };
+      }
+    }
+
+    return {
+      for10: this.calculatePricePerPlayer(totalCost, 10),
+      for11: this.calculatePricePerPlayer(totalCost, 11),
+      for12: this.calculatePricePerPlayer(totalCost, 12),
+    };
   }
 }
