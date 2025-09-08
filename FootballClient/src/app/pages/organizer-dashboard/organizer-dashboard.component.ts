@@ -971,6 +971,8 @@ export class OrganizerDashboardComponent {
           matchDate: updatedMatch.matchDate,
           location: updatedMatch.location,
           cost: updatedMatch.cost,
+          teamAName: updatedMatch.teamAName,
+          teamBName: updatedMatch.teamBName,
         };
       }
 
