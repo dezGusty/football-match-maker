@@ -1013,7 +1013,7 @@ export class OrganizerDashboardComponent {
     }
   }
 
-  shuffleTeams() {
+  async shuffleTeams() {
     if (!this.selectedMatch || this.selectedMatch.status !== 0) {
       this.notificationService.showError('Teams can only be shuffled when the match is Open');
       return;
@@ -1027,8 +1027,45 @@ export class OrganizerDashboardComponent {
         combinedPlayers[i],
       ];
     }
-    this.teamAPlayers = combinedPlayers.slice(0, 6);
-    this.teamBPlayers = combinedPlayers.slice(6, 12);
+
+    // Split players into two teams
+    const halfLength = Math.floor(combinedPlayers.length / 2);
+    const newTeamAPlayers = combinedPlayers.slice(0, halfLength);
+    const newTeamBPlayers = combinedPlayers.slice(halfLength);
+
+    try {
+      this.addingPlayers = true;
+      
+      // Remove all players from both teams first
+      for (const player of this.teamAPlayers) {
+        await this.removePlayerFromTeam(player, 'teamA');
+      }
+      for (const player of this.teamBPlayers) {
+        await this.removePlayerFromTeam(player, 'teamB');
+      }
+
+      // Add players to their new teams
+      for (const player of newTeamAPlayers) {
+        await this.addPlayerToTeam(player, 'teamA');
+      }
+      for (const player of newTeamBPlayers) {
+        await this.addPlayerToTeam(player, 'teamB');
+      }
+
+      this.teamAPlayers = newTeamAPlayers;
+      this.teamBPlayers = newTeamBPlayers;
+      
+      this.notificationService.showSuccess('Teams shuffled and saved successfully');
+    } catch (error) {
+      this.notificationService.showError('Failed to save shuffled teams');
+      console.error('Error saving shuffled teams:', error);
+      
+      // Revert to original teams if there's an error
+      this.teamAPlayers = [...this.originalTeamAPlayers];
+      this.teamBPlayers = [...this.originalTeamBPlayers];
+    } finally {
+      this.addingPlayers = false;
+    }
   }
   balanceTeams(mode: string = 'rating') {
     if (!this.selectedMatch || this.selectedMatch.status !== 0) {
