@@ -4,72 +4,60 @@ services:
     build:
       context: ./FootballAPI
       dockerfile: Dockerfile
+      args:
+        - BUILD_CONFIG=Release
+    image: football-api:${TAG:-latest}
     ports:
       - "5145:5145"
     env_file:
       - ./prod.env
-    depends_on:
-      - db
+    volumes:
+      - sqlite_data:/app/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5145/api/health"]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:5145/health || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
+      start_period: 10s
     restart: unless-stopped
-
-  db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sql_server_db
-    environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: ${SA_PASSWORD}
-    ports:
-      - "5000:1433"
-    volumes:
-      - sql_data:/var/opt/mssql
-    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    user: "${UID:-1000}:${GID:-1000}"
+    networks:
+      - football-network
 
   frontend:
     build:
       context: ./FootballClient
       dockerfile: Dockerfile
+      args:
+        - BUILD_CONFIG=production
+    image: football-client:${TAG:-latest}
     ports:
-      - "4200:80"
+      - "80:80"
     env_file:
       - ./prod.env
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
-
-  # Only for testing purposes
-  # k6 load testing tool
-  # InfluxDB 1.8
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    depends_on:
-      - backend
-    restart: unless-stopped
-
-  # Grafana
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin123
-    depends_on:
-      - prometheus
-    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    user: "${UID:-1000}:${GID:-1000}"
+    networks:
+      - football-network
 
 volumes:
-  sql_data:
+  sqlite_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/data
+      o: bind
+
+networks:
+  football-network:
+    driver: bridge
 
     
 
