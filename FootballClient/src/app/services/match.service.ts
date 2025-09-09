@@ -24,54 +24,6 @@ export class MatchService {
     };
   }
 
-  // unused
-  async getMatches(): Promise<Match[]> {
-    const response = await fetch(`${this.baseUrl}/matches`, {
-      headers: this.getAuthHeaders(),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch matches');
-    }
-
-    const rawMatches = await response.json();
-
-    const matches: Match[] = await Promise.all(
-      (rawMatches as Match[]).map(async (m) => ({
-        id: m.id,
-        matchDate: m.matchDate,
-        teamAId: m.teamAId,
-        teamBId: m.teamBId,
-        teamAName: m.teamAName || (await this.getTeamById(m.teamAId)),
-        teamBName: m.teamBName || (await this.getTeamById(m.teamBId)),
-        scoreA: m.scoreA,
-        scoreB: m.scoreB,
-        playerHistory: m.playerHistory,
-      }))
-    );
-
-    return matches;
-  }
-
-  // unused
-  async getMatchById(matchId: number): Promise<Match> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
-      headers: this.getAuthHeaders(),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch match');
-    }
-
-    const match = await response.json();
-
-    if (!match.teamAName) {
-      match.teamAName = await this.getTeamById(match.teamAId);
-    }
-    if (!match.teamBName) {
-      match.teamBName = await this.getTeamById(match.teamBId);
-    }
-
-    return match;
-  }
 
   async getPublicMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/public`, {

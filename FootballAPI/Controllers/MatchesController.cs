@@ -48,14 +48,6 @@ namespace FootballAPI.Controllers
             return Ok(matches);
         }
 
-        [Authorize] // IS THIS NEEDED?
-        [HttpGet("status/{status}")]
-        public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatchesByStatus(Status status)
-        {
-            var matches = await _matchService.GetMatchesByStatusAsync(status);
-            return Ok(matches);
-        }
-
         [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPost]
         public async Task<ActionResult<MatchDto>> CreateMatch(CreateMatchDto createMatchDto)
