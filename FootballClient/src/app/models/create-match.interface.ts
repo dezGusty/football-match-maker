@@ -31,4 +31,5 @@ export interface MatchDisplay {
   myTeam?: 'A' | 'B' | null;
   canJoin?: boolean;
   canManage?: boolean;
+  playerHistory?: any[];
 }

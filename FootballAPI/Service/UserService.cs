@@ -87,6 +87,14 @@ namespace FootballAPI.Service
                 Username = dto.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10),
                 Role = dto.Role,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Rating = dto.Rating,
+                Speed = dto.Speed,
+                Stamina = dto.Stamina,
+                Errors = dto.Errors,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
 
             var createdUser = await _userRepository.CreateAsync(user);

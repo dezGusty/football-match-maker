@@ -57,3 +57,5 @@ FootballAPI/appsettings.json
 
 .vscode/
 .claude/
+FootballAPI/sqlite3.exe
+FootballAPI/footballdb.sqlite
