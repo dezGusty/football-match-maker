@@ -133,7 +133,9 @@ export class UserService {
       role: 2,
     };
 
-    const response = await fetch(`${this.url}/create-player-account`, {
+    const response = await fetch(
+      'http://localhost:5145/api/Auth/create-player-account',
+      {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(payload),

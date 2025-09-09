@@ -155,9 +155,16 @@ export class SetPasswordComponent implements OnInit {
       password: this.setPasswordForm.get('password')?.value,
     };
 
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.auth.getToken()}`,
+    };
+
     try {
       const response = await this.http
-        .post<ApiResponse>(`${this.API_URL}/set-password`, requestData)
+        .post<ApiResponse>(`${this.API_URL}/set-password`, requestData, {
+          headers,
+        })
         .toPromise();
 
       this.successMessage =
