@@ -24,7 +24,6 @@ export class MatchService {
     };
   }
 
-
   async getPublicMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/public`, {
       headers: this.getAuthHeaders(),
@@ -94,29 +93,41 @@ export class MatchService {
   }
 
   async getFutureMatches(): Promise<Match[]> {
-    const response = await fetch(`${this.baseUrl}/matches/future`, {
-      headers: this.getAuthHeaders(),
-    });
-    if (!response.ok) throw new Error('Failed to fetch future matches');
+    try {
+      const response = await fetch(`${this.baseUrl}/matches/future`, {
+        headers: this.getAuthHeaders(),
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch future matches: ${errorText}`);
+      }
 
-    const rawMatches = await response.json();
-    return Promise.all(
-      (rawMatches as any[]).map(async (m) => ({
-        id: m.id,
-        matchDate: m.matchDate,
-        teamAId: m.teamAId,
-        teamBId: m.teamBId,
-        teamAName: m.teamAName || 'Team A',
-        teamBName: m.teamBName || 'Team B',
-        scoreA: m.teamAGoals || m.scoreA || 0,
-        scoreB: m.teamBGoals || m.scoreB || 0,
-        playerHistory: m.playerHistory || [],
-        isPublic: m.isPublic,
-        location: m.location,
-        cost: m.cost,
-        organiserId: m.organiserId,
-      }))
-    );
+      const rawMatches = await response.json();
+      const matches: Match[] = await Promise.all(
+        (rawMatches as any[]).map(async (m) => {
+          return {
+            id: m.id,
+            matchDate: m.matchDate,
+            teamAId: m.teamAId,
+            teamBId: m.teamBId,
+            teamAName: m.teamAName || 'Team A',
+            teamBName: m.teamBName || 'Team B',
+            scoreA: m.teamAGoals || m.scoreA || 0,
+            scoreB: m.teamBGoals || m.scoreB || 0,
+            playerHistory: m.playerHistory || [],
+            isPublic: m.isPublic,
+            location: m.location,
+            cost: m.cost,
+            organiserId: m.organiserId,
+          };
+        })
+      );
+
+      return matches;
+    } catch (error) {
+      console.error('Error fetching future matches:', error);
+      throw error;
+    }
   }
 
   async getPastMatches(): Promise<Match[]> {
@@ -435,12 +446,14 @@ export class MatchService {
     matchId: number,
     teamAGoals: number,
     teamBGoals: number,
-    ratingSystem: string
+    ratingSystem: string,
+    ratingMultiplier: number = 1.0
   ): Promise<any[]> {
     const dto = {
       teamAGoals: teamAGoals,
       teamBGoals: teamBGoals,
       ratingSystem: ratingSystem,
+      ratingMultiplier: ratingMultiplier,
     };
     const response = await fetch(
       `${this.baseUrl}/matches/${matchId}/rating-preview`,
@@ -450,8 +463,11 @@ export class MatchService {
         body: JSON.stringify(dto),
       }
     );
-    if (!response.ok) throw new Error('Failed to calculate rating preview');
-
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Rating preview error:', errorText);
+      throw new Error('Failed to calculate rating preview');
+    }
     return await response.json();
   }
 
@@ -459,12 +475,21 @@ export class MatchService {
     matchId: number,
     teamAGoals: number,
     teamBGoals: number,
-    ratingSystem: string = 'Performance'
+    ratingSystem: string = 'Performance',
+    manualRatings: { [key: number]: number } = {},
+    ratingMultiplier: number = 1.0
   ): Promise<void> {
     const finalizeMatchDto = {
       teamAGoals: teamAGoals,
       teamBGoals: teamBGoals,
       ratingSystem: ratingSystem,
+      ratingMultiplier: ratingMultiplier,
+      manualAdjustments: Object.entries(manualRatings).map(
+        ([userId, change]) => ({
+          userId: parseInt(userId),
+          ratingChange: change,
+        })
+      ),
     };
     const response = await fetch(
       `${this.baseUrl}/matches/finalize/${matchId}`,
@@ -558,5 +583,31 @@ export class MatchService {
       this.teamNamesCache.set(teamId, fallbackName);
       return fallbackName;
     }
+  }
+
+  // IS IT USED ANYWHERE?
+  async getMatches(): Promise<Match[]> {
+    const response = await fetch(`${this.baseUrl}/matches`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch matches');
+    }
+
+    const rawMatches = await response.json();
+
+    const matches: Match[] = await Promise.all(
+      (rawMatches as Match[]).map(async (m) => ({
+        id: m.id,
+        matchDate: m.matchDate,
+        teamAId: m.teamAId,
+        teamBId: m.teamBId,
+        teamAName: m.teamAName || (await this.getTeamById(m.teamAId)),
+        teamBName: m.teamBName || (await this.getTeamById(m.teamBId)),
+        scoreA: m.scoreA,
+        scoreB: m.scoreB,
+        playerHistory: m.playerHistory,
+      }))
+    );
+
+    return matches;
   }
 }
