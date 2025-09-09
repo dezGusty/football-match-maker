@@ -21,7 +21,7 @@ namespace FootballAPI.Controllers
             _matchService = matchService;
         }
 
-
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetAllMatches()
         {
@@ -29,6 +29,7 @@ namespace FootballAPI.Controllers
             return Ok(matches);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<MatchDto>> GetMatch(int id)
         {
@@ -39,15 +40,7 @@ namespace FootballAPI.Controllers
             return Ok(match);
         }
 
-        [HttpGet("daterange")]
-        public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatchesByDateRange(
-            [FromQuery] DateTime startDate,
-            [FromQuery] DateTime endDate)
-        {
-            var matches = await _matchService.GetMatchesByDateRangeAsync(startDate, endDate);
-            return Ok(matches);
-        }
-
+        [Authorize]
         [HttpGet("public")]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetPublicMatches()
         {
@@ -55,6 +48,7 @@ namespace FootballAPI.Controllers
             return Ok(matches);
         }
 
+        [Authorize] // IS THIS NEEDED?
         [HttpGet("status/{status}")]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatchesByStatus(Status status)
         {
@@ -62,8 +56,8 @@ namespace FootballAPI.Controllers
             return Ok(matches);
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<MatchDto>> CreateMatch(CreateMatchDto createMatchDto)
         {
             try
@@ -82,6 +76,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPut("{id}")]
         public async Task<ActionResult<MatchDto>> UpdateMatch(int id, UpdateMatchDto updateMatchDto)
         {
@@ -100,15 +95,7 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteMatch(int id)
-        {
-            var result = await _matchService.DeleteMatchAsync(id);
-            if (!result)
-                return NotFound($"Match with ID {id} not found.");
-
-            return NoContent();
-        }
+        [Authorize]
         [HttpGet("future")]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetFutureMatches()
         {
@@ -122,7 +109,8 @@ namespace FootballAPI.Controllers
                 return BadRequest($"Error getting future matches: {ex.Message}");
             }
         }
-        [Authorize]
+
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpGet("past")]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetPastMatches()
         {
@@ -154,10 +142,8 @@ namespace FootballAPI.Controllers
             }
         }
 
-
-
+        [Authorize(Roles = "ADMIN, ORGANISER")] 
         [HttpPost("{id}/players")]
-        [Authorize]
         public async Task<ActionResult> AddPlayerToMatch(int id, AddPlayerToMatchDto addPlayerDto)
         {
             try
@@ -175,8 +161,8 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpPost("{id}/join")]
         [Authorize]
+        [HttpPost("{id}/join")]
         public async Task<ActionResult> JoinPublicMatch(int id)
         {
             try
@@ -198,8 +184,8 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpPost("{matchId}/teams/{teamId}/join")]
         [Authorize]
+        [HttpPost("{matchId}/teams/{teamId}/join")]
         public async Task<ActionResult> JoinTeam(int matchId, int teamId)
         {
             try
@@ -221,26 +207,8 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpPut("{id}/players/{userId}/move")]
-        [Authorize]
-        public async Task<ActionResult> MovePlayerBetweenTeams(int id, int userId, MovePlayerDto movePlayerDto)
-        {
-            try
-            {
-                var result = await _matchService.MovePlayerBetweenTeamsAsync(id, userId, movePlayerDto.NewTeamId);
-                if (!result)
-                    return BadRequest("Could not move player. Target team might be full or player not found.");
-
-                return Ok(new { message = "Player moved successfully between teams." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error moving player: {ex.Message}");
-            }
-        }
-
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPost("{id}/publish")]
-        [Authorize]
         public async Task<ActionResult<MatchDto>> PublishMatch(int id)
         {
             try
@@ -257,8 +225,8 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPost("{id}/unpublish")]
-        [Authorize]
         public async Task<ActionResult<MatchDto>> UnpublishMatch(int id)
         {
             try
@@ -275,6 +243,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("{id}/details")]
         public async Task<ActionResult<MatchDetailsDto>> GetMatchDetails(int id)
         {
@@ -292,8 +261,8 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpDelete("{id}/leave")]
         [Authorize]
+        [HttpDelete("{id}/leave")]
         public async Task<ActionResult> LeaveMatch(int id)
         {
             try
@@ -316,8 +285,8 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpGet("my-matches")]
         [Authorize]
+        [HttpGet("my-matches")]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetMyMatches()
         {
             try
@@ -336,8 +305,8 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [HttpGet("available")]
         [Authorize]
+        [HttpGet("available")]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetAvailableMatches()
         {
             try
@@ -376,8 +345,8 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpGet("organiser/matches")]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatchesByOrganiserAsync()
         {
             try
@@ -396,8 +365,8 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPost("{id}/close")]
-        [Authorize]
         public async Task<ActionResult<MatchDto>> CloseMatch(int id)
         {
             try
@@ -432,8 +401,8 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpDelete("{matchId}/players/{userId}")]
-        [Authorize]
         public async Task<ActionResult> RemovePlayerFromMatch(int matchId, int userId)
         {
             try
@@ -458,6 +427,7 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPost("{id}/rating-preview")]
         public async Task<ActionResult<IEnumerable<RatingPreviewDto>>> CalculateRatingPreview(int id, CalculateRatingPreviewDto dto)
         {
@@ -472,10 +442,10 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPut("finalize/{id}")]
         public async Task<ActionResult<MatchDto>> Finalizematch(int id, FinalizeMatchDto finalizeMatchDto)
         {
-
             try
             {
                 var match = await _matchService.FinalizeMatchAsync(id, finalizeMatchDto);
