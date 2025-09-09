@@ -497,9 +497,12 @@ export class OrganizerDashboardComponent {
       return;
     }
 
+    // First update preview one last time to ensure we have latest changes
+    await this.updateRatingPreview();
+
     const filteredManualRatings = Object.fromEntries(
       Object.entries(this.manualRatings).filter(
-        ([_, value]) => value !== undefined && value !== 0
+        ([_, value]) => value !== undefined && value !== 0 && value !== null
       )
     );
 
@@ -582,8 +585,7 @@ export class OrganizerDashboardComponent {
     }
 
     try {
-      const baseSystem = this.selectedRatingSystem.replace('Custom', '').trim();
-
+      // Use the same rating system name handling as finalization
       const previewResponse = await this.matchService.calculateRatingPreview(
         this.selectedMatch!.id,
         this.teamAScore,

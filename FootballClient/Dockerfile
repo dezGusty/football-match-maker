@@ -16,11 +16,6 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy built app (adjust output path if your build outputs different folder)
 COPY --from=build /app/dist/FootballClient/browser /usr/share/nginx/html
 
-# run as non-root
-# RUN addgroup -S appgroup && adduser -S appuser -G appgroup \
-#  && chown -R appuser:appgroup /usr/share/nginx/html \
-#  && chown -R appuser:appgroup /var/cache/nginx /var/run
-# USER appuser
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
