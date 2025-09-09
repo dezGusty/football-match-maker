@@ -374,8 +374,10 @@ export class MatchService {
     if (!response.ok) {
       throw new Error('Failed to fetch matches by organiser');
     }
-
-    return await response.json();
+    
+    const matches = await response.json();
+    console.log('Matches from API:', matches); // Log matches from API
+    return matches;
   }
 
   async closeMatch(matchId: number): Promise<any> {

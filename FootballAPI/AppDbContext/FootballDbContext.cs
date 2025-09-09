@@ -17,6 +17,7 @@ namespace FootballAPI.Data
         public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
         public DbSet<PlayerOrganiser> PlayerOrganisers { get; set; }
         public DbSet<OrganizerDelegate> OrganizerDelegates { get; set; }
+        public DbSet<MatchTemplate> MatchTemplates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -157,6 +158,21 @@ namespace FootballAPI.Data
                 entity.HasIndex(e => new { e.OriginalOrganizerId, e.IsActive })
                     .IsUnique()
                     .HasFilter("[IsActive] = 1");
+            });
+
+            modelBuilder.Entity<MatchTemplate>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Location).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Cost).IsRequired().HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Name).HasMaxLength(100);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             SeedData(modelBuilder);

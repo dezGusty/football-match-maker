@@ -10,11 +10,13 @@ import { FriendRequestsComponent } from '../../components/friend-requests/friend
 import { StatSelector } from '../../components/stat-selector/stat-selector';
 import { MatchService } from '../../services/match.service';
 import { NotificationService } from '../../services/notification.service';
+import { MatchTemplateService } from '../../services/match-template.service';
 import {
   CreateMatchRequest,
   MatchDisplay,
 } from '../../models/create-match.interface';
 import { MatchStatus } from '../../models/match-status.enum';
+import { MatchTemplate, CreateMatchTemplateRequest, UpdateMatchTemplateRequest } from '../../models/match-template.interface';
 
 @Component({
   selector: 'app-organizer-dashboard',
@@ -34,6 +36,7 @@ export class OrganizerDashboardComponent {
     private UserService: UserService,
     private authService: AuthService,
     private matchService: MatchService,
+    private matchTemplateService: MatchTemplateService,
     private notificationService: NotificationService
   ) {}
 
@@ -71,6 +74,26 @@ export class OrganizerDashboardComponent {
   playerSuccessMessage = '';
   manualRatings: { [key: number]: number } = {};
   ratingMultiplier: number = 1.0;
+  
+  // Template variables
+  templates: MatchTemplate[] = [];
+  showTemplateManagementModal = false;
+  showEditTemplateModal = false;
+  selectedTemplate: MatchTemplate | null = null;
+  newTemplate: CreateMatchTemplateRequest = {
+    name: '',
+    location: '',
+    cost: null,
+    teamAName: '',
+    teamBName: ''
+  };
+  editingTemplate: UpdateMatchTemplateRequest = {
+    name: '',
+    location: '',
+    cost: null,
+    teamAName: '',
+    teamBName: ''
+  };
 
   private async loadAvailablePlayers() {
     const organiserId = this.authService.getUserId()!;
@@ -170,6 +193,7 @@ export class OrganizerDashboardComponent {
   async loadMatches() {
     try {
       const allMatches = await this.matchService.getMatchesByOrganiser();
+      console.log('Loaded matches:', allMatches); // Log matches to inspect team names
       this.matches = await Promise.all(
         allMatches.map(async (match) => {
           let teamAPlayerCount = 0;
@@ -214,6 +238,16 @@ export class OrganizerDashboardComponent {
   ngOnInit() {
     this.init();
     this.loadMatches();
+    this.loadTemplates();
+  }
+  
+  async loadTemplates() {
+    try {
+      this.templates = await this.matchTemplateService.getTemplates();
+    } catch (error) {
+      console.error('Error loading match templates:', error);
+      this.notificationService.showError('Error loading match templates');
+    }
   }
 
   newPlayer = {
@@ -413,6 +447,8 @@ export class OrganizerDashboardComponent {
         teamAName: this.newMatch.teamAName || undefined,
         teamBName: this.newMatch.teamBName || undefined,
       };
+      
+      console.log('Creating match with request:', createMatchRequest);
 
       const createdMatch = await this.matchService.createNewMatch(
         createMatchRequest
@@ -1202,5 +1238,130 @@ export class OrganizerDashboardComponent {
       for11: this.calculatePricePerPlayer(totalCost, 11),
       for12: this.calculatePricePerPlayer(totalCost, 12),
     };
+  }
+
+  // Template Methods
+  async openTemplateManagementModal() {
+    await this.loadTemplates();
+    this.showTemplateManagementModal = true;
+  }
+
+  closeTemplateManagementModal() {
+    this.showTemplateManagementModal = false;
+  }
+
+  async createTemplate() {
+    if (!this.newTemplate.location) {
+      this.notificationService.showError('Template location is required');
+      return;
+    }
+
+    if (!this.newTemplate.name) {
+      this.notificationService.showError('Template name is required');
+      return;
+    }
+
+    try {
+      await this.matchTemplateService.createTemplate(this.newTemplate);
+      await this.loadTemplates();
+      this.resetNewTemplate();
+      this.notificationService.showSuccess('Template created successfully');
+    } catch (error) {
+      console.error('Error creating template:', error);
+      this.notificationService.showError('Failed to create template');
+    }
+  }
+
+  resetNewTemplate() {
+    this.newTemplate = {
+      name: '',
+      location: '',
+      cost: null,
+      teamAName: '',
+      teamBName: ''
+    };
+  }
+
+  openEditTemplateModal(template: MatchTemplate) {
+    this.selectedTemplate = template;
+    this.editingTemplate = {
+      name: template.name,
+      location: template.location,
+      cost: template.cost,
+      teamAName: template.teamAName || '',
+      teamBName: template.teamBName || ''
+    };
+    this.showEditTemplateModal = true;
+  }
+
+  closeEditTemplateModal() {
+    this.showEditTemplateModal = false;
+    this.selectedTemplate = null;
+  }
+
+  async updateTemplate() {
+    if (!this.selectedTemplate || !this.selectedTemplate.id) {
+      return;
+    }
+
+    if (!this.editingTemplate.location) {
+      this.notificationService.showError('Template location is required');
+      return;
+    }
+
+    if (!this.editingTemplate.name) {
+      this.notificationService.showError('Template name is required');
+      return;
+    }
+
+    try {
+      await this.matchTemplateService.updateTemplate(
+        this.selectedTemplate.id,
+        this.editingTemplate
+      );
+      await this.loadTemplates();
+      this.closeEditTemplateModal();
+      this.notificationService.showSuccess('Template updated successfully');
+    } catch (error) {
+      console.error('Error updating template:', error);
+      this.notificationService.showError('Failed to update template');
+    }
+  }
+
+  async deleteTemplate(templateId: number) {
+    const confirmed = confirm('Are you sure you want to delete this template?');
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await this.matchTemplateService.deleteTemplate(templateId);
+      await this.loadTemplates();
+      this.notificationService.showSuccess('Template deleted successfully');
+    } catch (error) {
+      console.error('Error deleting template:', error);
+      this.notificationService.showError('Failed to delete template');
+    }
+  }
+
+  applyTemplate(template: MatchTemplate) {
+    console.log('Applying template:', template); // Log the template being applied
+    
+    this.newMatch.location = template.location;
+    this.newMatch.cost = template.cost;
+    
+    // Apply team names if they exist in the template
+    if (template.teamAName) {
+      console.log('Setting teamAName:', template.teamAName);
+      this.newMatch.teamAName = template.teamAName;
+    }
+    
+    if (template.teamBName) {
+      console.log('Setting teamBName:', template.teamBName);
+      this.newMatch.teamBName = template.teamBName;
+    }
+    
+    console.log('New match after applying template:', this.newMatch);
+    this.notificationService.showSuccess('Template applied successfully');
   }
 }

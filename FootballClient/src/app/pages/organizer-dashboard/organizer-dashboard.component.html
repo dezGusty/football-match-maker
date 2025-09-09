@@ -547,7 +547,7 @@
   <!-- Create Match Modal -->
   @if (showCreateMatchModal) {
   <div class="modal-backdrop" (click)="showCreateMatchModal = false">
-    <div class="modal-content glass" (click)="$event.stopPropagation()">
+    <div class="modal-content glass create-match-modal" (click)="$event.stopPropagation()">
       <button
         class="close-modal-btn"
         (click)="showCreateMatchModal = false"
@@ -557,60 +557,141 @@
       </button>
       <h3>Create New Match</h3>
 
-      <!-- Date & Time -->
-      <div class="form-group">
-        <label>Match Date & Time *</label>
-        <input
-          type="datetime-local"
-          [(ngModel)]="newMatch.matchDate"
-          [min]="getMinDateTime()"
-          required
-        />
-      </div>
-
-      <!-- Location -->
-      <div class="form-group">
-        <label>Location *</label>
-        <input
-          type="text"
-          placeholder="e.g., Central Stadium, Synthetic Field..."
-          [(ngModel)]="newMatch.location"
-          required
-        />
-      </div>
-
-      <!-- Cost -->
-      <div class="form-group">
-        <label>Total Match Cost (Lei)</label>
-        <input
-          type="number"
-          placeholder="e.g., 300"
-          [(ngModel)]="newMatch.cost"
-          min="0"
-          step="0.01"
-        />
-      </div>
-
-      <!-- Team Names -->
-      <div class="team-names-section">
-        <div class="grid two">
+      <div class="match-template-layout">
+        <div class="match-form-section">
+          <!-- Date & Time -->
           <div class="form-group">
-            <label>Team A Name</label>
+            <label>Match Date & Time *</label>
             <input
-              type="text"
-              placeholder="Leave empty for 'TeamA'"
-              [(ngModel)]="newMatch.teamAName"
-              maxlength="50"
+              type="datetime-local"
+              [(ngModel)]="newMatch.matchDate"
+              [min]="getMinDateTime()"
+              required
             />
           </div>
+
+          <!-- Location -->
           <div class="form-group">
-            <label>Team B Name</label>
+            <label>Location *</label>
             <input
               type="text"
-              placeholder="Leave empty for 'TeamB'"
-              [(ngModel)]="newMatch.teamBName"
-              maxlength="50"
+              placeholder="e.g., Central Stadium, Synthetic Field..."
+              [(ngModel)]="newMatch.location"
+              required
             />
+          </div>
+
+          <!-- Cost -->
+          <div class="form-group">
+            <label>Total Match Cost (Lei)</label>
+            <input
+              type="number"
+              placeholder="e.g., 300"
+              [(ngModel)]="newMatch.cost"
+              min="0"
+              step="0.01"
+            />
+          </div>
+
+          <!-- Team Names -->
+          <div class="team-names-section">
+            <div class="grid two">
+              <div class="form-group">
+                <label>Team A Name</label>
+                <input
+                  type="text"
+                  placeholder="Leave empty for 'TeamA'"
+                  [(ngModel)]="newMatch.teamAName"
+                  maxlength="50"
+                />
+              </div>
+              <div class="form-group">
+                <label>Team B Name</label>
+                <input
+                  type="text"
+                  placeholder="Leave empty for 'TeamB'"
+                  [(ngModel)]="newMatch.teamBName"
+                  maxlength="50"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="templates-section">
+          <h4>Match Templates</h4>
+          <p class="template-info">Save frequently used locations, costs, and team names for quick access</p>
+
+          <div class="template-list-container">
+            <div class="template-list">
+              <div class="template-list-header">
+                <span class="template-name-header">Name</span>
+                <span class="template-location-header">Location</span>
+                <span class="template-cost-header">Cost</span>
+                <span class="template-team-a-header">Team A</span>
+                <span class="template-team-b-header">Team B</span>
+                <span class="template-actions-header">Actions</span>
+              </div>
+              
+              <div *ngIf="templates.length === 0" class="empty-templates">
+                <p>No templates saved yet</p>
+              </div>
+              
+              <div *ngFor="let template of templates" class="template-item">
+                <span class="template-name">{{template.name}}</span>
+                <span class="template-location">{{template.location}}</span>
+                <span class="template-cost">{{template.cost ? template.cost + ' Lei' : 'Free'}}</span>
+                <span class="template-team-a" [class.empty-value]="!template.teamAName">{{template.teamAName || '-'}}</span>
+                <span class="template-team-b" [class.empty-value]="!template.teamBName">{{template.teamBName || '-'}}</span>
+                <div class="template-actions">
+                  <button class="template-action-btn apply-btn" (click)="applyTemplate(template)" title="Apply template">
+                    Apply
+                  </button>
+                  <button class="template-action-btn edit-btn" (click)="openEditTemplateModal(template)" title="Edit template">
+                    Edit
+                  </button>
+                  <button class="template-action-btn delete-btn" (click)="deleteTemplate(template.id!)" title="Delete template">
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="create-template-section">
+            <h5>Save Current Settings as Template</h5>
+            <div class="create-template-form">
+              <div class="form-group">
+                <input
+                  type="text"
+                  placeholder="Enter template name..."
+                  [(ngModel)]="newTemplate.name"
+                  required
+                />
+              </div>
+              <!-- <div class="template-teams-container">
+                <div class="form-group">
+                  <input
+                    type="text"
+                    placeholder="Team A name"
+                    [(ngModel)]="newTemplate.teamAName"
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="text"
+                    placeholder="Team B name"
+                    [(ngModel)]="newTemplate.teamBName"
+                  />
+                </div>
+              </div> -->
+              <button 
+                class="save-template-btn"
+                (click)="newTemplate.location = newMatch.location; newTemplate.cost = newMatch.cost; newTemplate.teamAName = newMatch.teamAName; newTemplate.teamBName = newMatch.teamBName; createTemplate()"
+                [disabled]="!newTemplate.name || !newMatch.location">
+                Save Template
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -624,14 +705,111 @@
         {{ matchSuccessMessage }}
       </div>
 
+      <div class="modal-actions">
+        <button
+          class="primary-cta"
+          (click)="createMatch()"
+          [disabled]="matchLoading"
+        >
+          <span *ngIf="matchLoading">Creating...</span>
+          <span *ngIf="!matchLoading">Create Match</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+  
+  <!-- Edit Template Modal -->
+  @if (showEditTemplateModal) {
+  <div class="modal-backdrop" (click)="closeEditTemplateModal()">
+    <div class="modal-content glass medium" (click)="$event.stopPropagation()">
       <button
-        class="primary-cta"
-        (click)="createMatch()"
-        [disabled]="matchLoading"
+        class="close-modal-btn"
+        (click)="closeEditTemplateModal()"
+        title="Close"
       >
-        <span *ngIf="matchLoading">Creating...</span>
-        <span *ngIf="!matchLoading">Create Match</span>
+        &times;
       </button>
+      <h3>Edit Template</h3>
+      
+      <!-- Name -->
+      <div class="form-group">
+        <label for="templateName">Template Name *</label>
+        <input
+          id="templateName"
+          type="text"
+          placeholder="Enter template name"
+          [(ngModel)]="editingTemplate.name"
+          required
+          class="modern-input"
+        />
+      </div>
+
+      <!-- Location -->
+      <div class="form-group">
+        <label for="templateLocation">Location *</label>
+        <input
+          id="templateLocation"
+          type="text"
+          placeholder="e.g., Central Stadium, Synthetic Field"
+          [(ngModel)]="editingTemplate.location"
+          required
+          class="modern-input"
+        />
+      </div>
+
+      <!-- Cost -->
+      <div class="form-group">
+        <label for="templateCost">Total Match Cost (€)</label>
+        <input
+          id="templateCost"
+          type="number"
+          placeholder="e.g., 300"
+          [(ngModel)]="editingTemplate.cost"
+          min="0"
+          step="0.01"
+          class="modern-input"
+        />
+        <small class="hint-text">Leave empty for free matches</small>
+      </div>
+      
+      <!-- Team Names -->
+      <div class="template-team-fields">
+        <h4>Team Names</h4>
+        <div class="team-fields-grid">
+          <div class="form-group">
+            <label for="templateTeamA">Team A Name</label>
+            <input
+              id="templateTeamA"
+              type="text"
+              placeholder="e.g., Red Team"
+              [(ngModel)]="editingTemplate.teamAName"
+              class="modern-input"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="templateTeamB">Team B Name</label>
+            <input
+              id="templateTeamB"
+              type="text"
+              placeholder="e.g., Blue Team"
+              [(ngModel)]="editingTemplate.teamBName"
+              class="modern-input"
+            />
+          </div>
+        </div>
+        <small class="hint-text">These names will be suggested when creating a match</small>
+      </div>
+      
+      <div class="modal-actions">
+        <button
+          class="primary-cta template-update-btn"
+          (click)="updateTemplate()"
+        >
+          Save Changes
+        </button>
+      </div>
     </div>
   </div>
   }
