@@ -96,7 +96,7 @@ namespace FootballAPI.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Status).HasDefaultValue(FriendRequestStatus.Pending);
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
                 entity.HasOne(e => e.Sender)
                     .WithMany(u => u.SentFriendRequests)
@@ -125,7 +125,7 @@ namespace FootballAPI.Data
             modelBuilder.Entity<PlayerOrganiser>(entity =>
             {
                 entity.HasKey(e => new { e.OrganiserId, e.PlayerId });
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
                 entity.HasOne(e => e.Organiser)
                     .WithMany(u => u.OrganisedPlayers)

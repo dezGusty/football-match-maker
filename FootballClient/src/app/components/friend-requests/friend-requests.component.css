@@ -5,7 +5,7 @@
   background: var(--primary-700);
   color: var(--text);
   border: none;
-  padding: 12px 20px;
+  padding: 12px 12px;
   border-radius: 25px;
   cursor: pointer;
   font-size: 14px;
@@ -353,8 +353,8 @@
 @media (max-width: 768px) {
   .friend-requests-btn {
     top: 10px;
-    right: 10px;
-    padding: 10px 16px;
+    right: 60px;
+    padding: 8px 10px;
     font-size: 12px;
   }
 
@@ -403,6 +403,21 @@
   font-size: 0.8rem;
   display: block;
   margin-top: 2px;
+}
+
+@media (max-width: 480px) {
+  .friend-requests-btn {
+    top: 15px;
+    right: 50px;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .friend-requests-btn .badge {
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+  }
 }
 
 .status-accepted {

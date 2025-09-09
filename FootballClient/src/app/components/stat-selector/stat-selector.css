@@ -1,0 +1,95 @@
+/* Stats controls */
+.stats-controls {
+  margin-top: 20px;
+}
+.stats-controls h4 {
+  font-size: 18px;
+  align-content: center;
+  justify-self: center;
+}
+.stat-control-group {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Grid helpers */
+.grid {
+  display: grid;
+  gap: 12px;
+}
+.grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 720px) {
+  .grid.three {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Editable stat icons */
+.stat-icons.editable {
+  display: flex;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.stat-icons.editable .stat-icon {
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  opacity: 0.3;
+  filter: grayscale(1);
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.stat-icons.editable .stat-icon:hover {
+  background: rgba(124, 242, 208, 0.1);
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.stat-icons.editable .stat-icon.active {
+  opacity: 1;
+  filter: grayscale(0);
+  transform: scale(1.05);
+}
+
+.stat-icons.editable .stat-icon.speed.active {
+  text-shadow: 0 0 6px #ff6b00;
+}
+
+.stat-icons.editable .stat-icon.stamina.active {
+  text-shadow: 0 0 6px #e91e63;
+}
+
+.stat-icons.editable .stat-icon.errors.active {
+  text-shadow: 0 0 6px #f44336;
+}
+
+.stat-control-group label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.stat-control-group select {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 7px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid rgba(124, 242, 208, 0.18);
+  border-radius: 12px;
+  outline: none;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.06s ease;
+}
+
+.stat-control-group select:focus {
+  box-shadow: 0 0 0 6px var(--ring);
+  border-color: var(--primary-600);
+}

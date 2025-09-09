@@ -87,6 +87,14 @@ namespace FootballAPI.Service
                 Username = dto.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10),
                 Role = dto.Role,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Rating = dto.Rating,
+                Speed = dto.Speed,
+                Stamina = dto.Stamina,
+                Errors = dto.Errors,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
 
             var createdUser = await _userRepository.CreateAsync(user);
@@ -104,6 +112,11 @@ namespace FootballAPI.Service
 
                 if (organizer.Role != UserRole.ORGANISER && organizer.Role != UserRole.ADMIN)
                     throw new ArgumentException("Only organizers and admins can create player users");
+            }
+
+            if (await _userRepository.UsernameExistsAsync(dto.Username))
+            {
+                throw new ArgumentException("Username already exists. Please choose a different username.");
             }
 
             var user = new User

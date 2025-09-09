@@ -98,6 +98,14 @@ export class UserService {
     return await response.json();
   }
 
+  async getAllUsers(): Promise<User[]> {
+    const response = await fetch(`${this.url}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch users');
+    }
+    return await response.json();
+  }
+
   async getPlayersForOrganiser(): Promise<User[]> {
     const response = await fetch(`${this.url}/organiser/players`, {
       headers: this.getAuthHeaders(),
@@ -136,6 +144,59 @@ export class UserService {
       try {
         const err = await response.json();
         if (err?.message) errorMsg = err.message;
+      } catch {}
+      throw new Error(errorMsg);
+    }
+
+    return await response.json();
+  }
+
+  async addUser(user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    rating: number;
+    username: string;
+    speed: number;
+    stamina: number;
+    errors: number;
+    role: number;
+  }): Promise<User> {
+    this.validateRating(user.rating);
+
+    const token = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('userId');
+
+    const payload = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      rating: user.rating,
+      username: user.username,
+      speed: user.speed,
+      stamina: user.stamina,
+      errors: user.errors,
+      role: user.role,
+    };
+
+    const response = await fetch(
+      `${environment.apiUrl}/Auth/create-user-account`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
+          ...(userId && { UserId: userId }),
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (!response.ok) {
+      let errorMsg = 'Failed to add user';
+      try {
+        const err = await response.json();
+        if (err && err.message) errorMsg = err.message;
       } catch {}
       throw new Error(errorMsg);
     }

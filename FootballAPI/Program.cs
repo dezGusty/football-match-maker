@@ -58,7 +58,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // Database Context - Using SQL Server
 builder.Services.AddDbContext<FootballDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Repository Registration
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
@@ -135,12 +135,21 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddHttpLogging(options =>
+{
+    options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
+    options.RequestBodyLogLimit = 4096;
+    options.ResponseBodyLogLimit = 4096;
+});
+
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
 app.UseHttpMetrics();
 app.MapMetrics();
+
+app.UseHttpLogging();
 
 app.MapGet("/", () => "Hello from Football Match Maker!");
 

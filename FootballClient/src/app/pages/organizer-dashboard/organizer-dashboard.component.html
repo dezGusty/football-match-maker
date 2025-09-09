@@ -208,7 +208,7 @@
           <th>Date & Time</th>
           <th>Teams</th>
           <th>Location</th>
-          <th>Cost Total</th>
+          <th>Price per Player</th>
         </tr>
       </thead>
       <tbody>
@@ -235,7 +235,25 @@
             </div>
           </td>
           <td>{{ match.location || "TBD" }}</td>
-          <td>{{ match.cost ? match.cost + " Lei" : "Free" }}</td>
+          <td>
+            <div *ngIf="match.cost && match.cost > 0; else noCost" class="price-breakdown">
+              <!-- Show exact price for closed matches -->
+              <div *ngIf="match.status === 1 && getPriceInfo(match).exactPrice; else showEstimatedPrices" class="exact-price">
+                <div class="price-option exact">
+                  <strong>{{ getPriceInfo(match).exactPrice }} lei</strong>
+                </div>
+              </div>
+              <!-- Show estimated prices for open matches -->
+              <ng-template #showEstimatedPrices>
+                <div class="price-option">10 players: <strong>{{ getPriceInfo(match).for10 }} lei</strong></div>
+                <div class="price-option">11 players: <strong>{{ getPriceInfo(match).for11 }} lei</strong></div>
+                <div class="price-option">12 players: <strong>{{ getPriceInfo(match).for12 }} lei</strong></div>
+              </ng-template>
+            </div>
+            <ng-template #noCost>
+              <span class="free-match">FREE</span>
+            </ng-template>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -269,6 +287,23 @@
             {{ selectedMatch?.location }}
           </p>
         </div>
+        <!-- Rating Multiplier Slider -->
+          <div class="rating-multiplier" *ngIf="selectedRatingSystem.startsWith('Custom')">
+            <label>Rating Multiplier: {{ratingMultiplier}}x</label>
+            <input 
+              type="range" 
+              [(ngModel)]="ratingMultiplier" 
+              (input)="updateRatingPreview()"
+              min="0.5" 
+              max="2" 
+              step="0.1"
+              class="slider"
+            />
+            <div class="slider-marks">
+              <span>0.5x</span>
+              <span>2x</span>
+            </div>
+          </div>
         <div>
           <select
             [(ngModel)]="selectedRatingSystem"
@@ -276,9 +311,13 @@
           >
             <option value="Linear">Linear</option>
             <option value="Performance">Performance</option>
+            <option value="Custom Linear">Custom Linear</option>
+            <option value="Custom Performance">Custom Performance</option>
             <!-- <option value="Vote">Vote</option> -->
           </select>
+          
         </div>
+        
       </div>
       <div class="teams-panel-fin">
         <div class="teams-container-fin">
@@ -304,15 +343,34 @@
                 *ngFor="let player of teamAPlayers; let i = index"
                 class="simple-player-row"
               >
+                
                 <span class="player-name"
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
-                <span class="player-rating">
-                  Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
-                  <span [class]="getRatingChangeClass(player.id)">{{
-                    getRatingPreviewForPlayer(player.id)
-                  }}</span>
-                </span>
+                <div class="rating-info">
+                  <span class="player-rating">
+                    Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                    <span [class]="getRatingChangeClass(player.id)">{{
+                      getRatingPreviewForPlayer(player.id)
+                    }}</span>
+                    
+                  </span>
+                  <!-- Manual rating input -->
+                  <div class="manual-rating">
+                      <div class="manual-rating">
+                        <input
+                          class="manual-rating-input"
+                          type="number"
+                          [(ngModel)]="manualRatings[player.id]"
+                          (ngModelChange)="updateManualRating(player.id)"
+                          min="-10"
+                          max="10"
+                          step="0.1"
+                          placeholder="0.0"
+                        />
+                      </div>
+                  </div>
+                </div>
               </div>
 
               <!-- Empty slots -->
@@ -353,12 +411,29 @@
                 <span class="player-name"
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
-                <span class="player-rating">
-                  Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
-                  <span [class]="getRatingChangeClass(player.id)">{{
-                    getRatingPreviewForPlayer(player.id)
-                  }}</span>
-                </span>
+                <div class="rating-info">
+                  <span class="player-rating">
+                    Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                    <span [class]="getRatingChangeClass(player.id)">{{
+                      getRatingPreviewForPlayer(player.id)
+                    }}</span>
+                  </span>
+                  <!-- Manual rating input -->
+                  <div class="manual-rating">
+                      <div class="manual-rating">
+                        <input
+                          class="manual-rating-input"
+                          type="number"
+                          [(ngModel)]="manualRatings[player.id]"
+                          (ngModelChange)="updateManualRating(player.id)"
+                          min="-10"
+                          max="10"
+                          step="0.1"
+                          placeholder="0.0"
+                        />
+                      </div>
+                  </div>
+                </div>
               </div>
 
               <!-- Empty slots -->
@@ -440,38 +515,14 @@
         step="1"
       />
 
-      <div class="stats-controls">
-        <h4>Individual Stats</h4>
-        <div class="grid three">
-          <div class="stat-control-group">
-            <label>Speed:</label>
-            <select [(ngModel)]="newPlayer.speed">
-              <option value="1">Low ⚡</option>
-              <option value="2" selected>Medium ⚡⚡</option>
-              <option value="3">High ⚡⚡⚡</option>
-              <option value="4">Extreme ⚡⚡⚡⚡</option>
-            </select>
-          </div>
-          <div class="stat-control-group">
-            <label>Stamina:</label>
-            <select [(ngModel)]="newPlayer.stamina">
-              <option value="1">Low 💪</option>
-              <option value="2" selected>Medium 💪💪</option>
-              <option value="3">High 💪💪💪</option>
-              <option value="4">Extreme 💪💪💪💪</option>
-            </select>
-          </div>
-          <div class="stat-control-group">
-            <label>Error Rate:</label>
-            <select [(ngModel)]="newPlayer.errors">
-              <option value="1">Low ❌</option>
-              <option value="2" selected>Medium ❌❌</option>
-              <option value="3">High ❌❌❌</option>
-              <option value="4">Extreme ❌❌❌❌</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      <app-stat-selector
+        [speed]="newPlayer.speed"
+        [stamina]="newPlayer.stamina"
+        [errors]="newPlayer.errors"
+        (speedChange)="newPlayer.speed = $event"
+        (staminaChange)="newPlayer.stamina = $event"
+        (errorsChange)="newPlayer.errors = $event"
+      ></app-stat-selector>
       <!-- Messages -->
       <div *ngIf="playerErrorMessage" class="error-message">
         {{ playerErrorMessage }}
@@ -760,13 +811,26 @@
 
         <!-- Teams Display (Right) -->
         <div class="teams-panel">
+          <div class="panel-header">
+            <button class="action-btn" title="Shuffle" (click)="shuffleTeams()">
+              Shuffle Teams
+            </button>
+            <select class="balance-mode-select"
+              (ngModelChange)="balanceTeams()"
+            >
+              <option value="rating">Balance by Rating</option>
+              <option value="random">Random Shuffle</option>
+            </select>
+          </div>
           <div class="teams-container">
             <!-- Team 1 -->
             <div class="team-table">
               <div class="team-header">
-                <h4>Team 1</h4>
-                <div class="team-stats">
-                  <span class="count">{{ teamAPlayers.length }}/6</span>
+                <div class="team-title">
+                  <h4>{{selectedMatch?.teamAName || 'Team A'}}</h4>
+                  <div class="team-avg-rating" [ngClass]="getTeamRatingClass(getTeamAverageRating(teamAPlayers))">
+                    Average Rating: {{getTeamAverageRatingDisplay(teamAPlayers)}}
+                  </div>
                 </div>
               </div>
 
@@ -816,11 +880,13 @@
             <!-- Team 2 -->
             <div class="team-table">
               <div class="team-header">
-                <h4>Team 2</h4>
-                <div class="team-stats">
-                  <span class="count">{{ teamBPlayers.length }}/6</span>
+              <div class="team-title">
+                <h4>{{selectedMatch?.teamBName || 'Team B'}}</h4>
+                <div class="team-avg-rating" [ngClass]="getTeamRatingClass(getTeamAverageRating(teamBPlayers))">
+                  Average Rating: {{getTeamAverageRatingDisplay(teamBPlayers)}}
                 </div>
               </div>
+            </div>
 
               <div class="team-players-simple">
                 <div

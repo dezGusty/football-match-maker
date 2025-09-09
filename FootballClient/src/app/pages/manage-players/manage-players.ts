@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.interface';
 import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
+import { StatSelector } from '../../components/stat-selector/stat-selector';
 import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
@@ -19,6 +20,7 @@ import {
 } from '../../models/organizer-delegation.interface';
 import { Router } from '@angular/router';
 import { FriendRequestService } from '../../services/friend-request.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-manage-players',
@@ -29,6 +31,7 @@ import { FriendRequestService } from '../../services/friend-request.service';
     CommonModule,
     PlayerStatsComponent,
     FriendRequestsComponent,
+    StatSelector,
   ],
   templateUrl: './manage-players.html',
   styleUrls: ['./manage-players.css'],
@@ -39,7 +42,8 @@ export class ManagePlayersComponent {
     private authService: AuthService,
     private matchService: MatchService,
     private router: Router,
-    private friendRequestService: FriendRequestService
+    private friendRequestService: FriendRequestService,
+    private notificationService: NotificationService
   ) {}
 
   players: User[] = [];
@@ -140,15 +144,14 @@ export class ManagePlayersComponent {
 
       this.players.push(addedPlayer);
 
-      this.playerSuccessMessage = `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`;
+      this.notificationService.showSuccess(
+        `Player ${this.newPlayer.firstName} ${this.newPlayer.lastName} added successfully!`
+      );
 
       this.resetPlayer();
       this.players = await this.UserService.getPlayersForOrganiser();
 
-      setTimeout(() => {
-        this.showAddModal = false;
-        this.playerSuccessMessage = '';
-      }, 2000);
+      this.showAddModal = false;
     } catch (error: any) {
       this.playerErrorMessage =
         error.message || 'Failed to add player. Please try again.';
@@ -193,9 +196,16 @@ export class ManagePlayersComponent {
       if (index !== -1) {
         this.players[index] = updatedPlayer;
       }
+
+      this.notificationService.showSuccess(
+        `Player ${updatedPlayer.firstName} ${updatedPlayer.lastName} updated successfully!`
+      );
       this.clearEditIndex();
     } catch (error) {
       console.error('Error updating player:', error);
+      this.notificationService.showError(
+        'Failed to update player. Please try again.'
+      );
     }
   }
 
@@ -312,35 +322,35 @@ export class ManagePlayersComponent {
   }
 
   async unfriend(player: User) {
-  this.unfriendTarget = player;
-  this.showUnfriendModal = true;
-  this.unfriendMessage = '';
-  this.unfriendError = false;
-}
-
-async confirmUnfriend() {
-  if (!this.unfriendTarget) return;
-
-  try {
-    await this.friendRequestService.unfriend(this.unfriendTarget.id!);
-    this.players = this.players.filter(p => p.id !== this.unfriendTarget!.id);
-    this.unfriendMessage = `${this.unfriendTarget.firstName} ${this.unfriendTarget.lastName} has been unfriended.`;
+    this.unfriendTarget = player;
+    this.showUnfriendModal = true;
+    this.unfriendMessage = '';
     this.unfriendError = false;
-
-    setTimeout(() => this.closeUnfriendModal(), 2000); // închide automat după 2 sec
-  } catch (error: any) {
-    console.error('Error unfriending:', error);
-    this.unfriendMessage = error.message || 'Failed to unfriend user';
-    this.unfriendError = true;
   }
-}
 
-closeUnfriendModal() {
-  this.showUnfriendModal = false;
-  this.unfriendTarget = null;
-  this.unfriendMessage = '';
-  this.unfriendError = false;
-}
+  async confirmUnfriend() {
+    if (!this.unfriendTarget) return;
 
+    try {
+      await this.friendRequestService.unfriend(this.unfriendTarget.id!);
+      this.players = this.players.filter(
+        (p) => p.id !== this.unfriendTarget!.id
+      );
+      this.unfriendMessage = `${this.unfriendTarget.firstName} ${this.unfriendTarget.lastName} has been unfriended.`;
+      this.unfriendError = false;
 
+      setTimeout(() => this.closeUnfriendModal(), 2000); // închide automat după 2 sec
+    } catch (error: any) {
+      console.error('Error unfriending:', error);
+      this.unfriendMessage = error.message || 'Failed to unfriend user';
+      this.unfriendError = true;
+    }
+  }
+
+  closeUnfriendModal() {
+    this.showUnfriendModal = false;
+    this.unfriendTarget = null;
+    this.unfriendMessage = '';
+    this.unfriendError = false;
+  }
 }

@@ -42,6 +42,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'manage-accounts',
+    loadComponent: () =>
+      import('./pages/manage-accounts/manage-accounts.component').then(
+        (m) => m.ManageAccountsComponent
+      ),
+    canActivate: [authGuard, organizerGuard],
+  },
+  {
     path: 'player-dashboard',
     loadComponent: () =>
       import('./pages/player-dashboard/player-dashboard.component').then(
@@ -82,26 +90,11 @@ export const routes: Routes = [
     canActivate: [authGuard, organizerGuard],
   },
   {
-    path: 'manage-all-players',
-    loadComponent: () =>
-      import('./pages/manage-all-players/manage-all-players').then(
-        (m) => m.ManageAllPlayersComponent
-      ),
-    canActivate: [authGuard, organizerGuard],
-  },
-  {
     path: 'home',
     redirectTo: '/',
     pathMatch: 'full',
   },
-  {
-    path: 'player-account',
-    loadComponent: () =>
-      import('./pages/player-account/player-account.component').then(
-        (m) => m.PlayerAccountComponent
-      ),
-    canActivate: [authGuard],
-  },
+
   {
     path: 'delegated-organizer',
     loadComponent: () =>

@@ -99,14 +99,23 @@ namespace FootballAPI.DTOs
     {
         public int TeamAGoals { get; set; }
         public int TeamBGoals { get; set; }
-        public string RatingSystem { get; set; } = "Performance";
+        public string RatingSystem { get; set; }
+        public double RatingMultiplier { get; set; } = 1.0;
+        public List<ManualRatingAdjustmentDto> ManualAdjustments { get; set; } = new();
+    }
+
+    public class ManualRatingAdjustmentDto
+    {
+        public int UserId { get; set; }
+        public float RatingChange { get; set; }
     }
 
     public class CalculateRatingPreviewDto
     {
         public int TeamAGoals { get; set; }
         public int TeamBGoals { get; set; }
-        public string RatingSystem { get; set; } = "Performance";
+        public string RatingSystem { get; set; }
+        public double RatingMultiplier { get; set; } = 1.0;
     }
 
     public class RatingPreviewDto

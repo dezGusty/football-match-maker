@@ -7,6 +7,7 @@ import { User } from '../../models/user.interface';
 import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
+import { StatSelector } from '../../components/stat-selector/stat-selector';
 import { MatchService } from '../../services/match.service';
 import { NotificationService } from '../../services/notification.service';
 import {
@@ -18,7 +19,13 @@ import { MatchStatus } from '../../models/match-status.enum';
 @Component({
   selector: 'app-organizer-dashboard',
   standalone: true,
-  imports: [Header, FormsModule, CommonModule, FriendRequestsComponent],
+  imports: [
+    Header,
+    FormsModule,
+    CommonModule,
+    FriendRequestsComponent,
+    StatSelector,
+  ],
   templateUrl: './organizer-dashboard.component.html',
   styleUrls: ['./organizer-dashboard.component.css'],
 })
@@ -62,11 +69,19 @@ export class OrganizerDashboardComponent {
   playerLoading = false;
   playerErrorMessage = '';
   playerSuccessMessage = '';
+  manualRatings: { [key: number]: number } = {};
+  ratingMultiplier: number = 1.0;
 
   private async loadAvailablePlayers() {
     const organiserId = this.authService.getUserId()!;
 
-    this.availablePlayers = [...this.players];
+    try {
+      const friendPlayers = await this.UserService.getPlayersForOrganiser();
+      this.availablePlayers = [...friendPlayers];
+    } catch (error) {
+      console.error('Error fetching players for organiser:', error);
+      this.availablePlayers = [];
+    }
 
     try {
       const organiser = await this.UserService.getUserById(organiserId);
@@ -138,7 +153,8 @@ export class OrganizerDashboardComponent {
 
     if (role === UserRole.ADMIN) {
       this.players = await this.UserService.getPlayers();
-      this.availablePlayers = [...this.players];
+      this.loadMatches();
+      this.LoadMyMatches();
     } else if (role === UserRole.ORGANISER) {
       try {
         this.players = await this.UserService.getPlayersForOrganiser();
@@ -480,14 +496,37 @@ export class OrganizerDashboardComponent {
       this.notificationService.showError('Please enter scores for both teams');
       return;
     }
-    await this.matchService.finalizeMatchServ(
-      this.selectedMatch!.id,
-      this.teamAScore,
-      this.teamBScore,
-      this.selectedRatingSystem
+
+    // First update preview one last time to ensure we have latest changes
+    await this.updateRatingPreview();
+
+    const filteredManualRatings = Object.fromEntries(
+      Object.entries(this.manualRatings).filter(
+        ([_, value]) => value !== undefined && value !== 0 && value !== null
+      )
     );
-    this.closeFinalizeMatchModal();
-    await this.loadMatches();
+
+    const multiplier = this.selectedRatingSystem.startsWith('Custom')
+      ? this.ratingMultiplier
+      : 1.0;
+
+    try {
+      await this.matchService.finalizeMatchServ(
+        this.selectedMatch!.id,
+        this.teamAScore,
+        this.teamBScore,
+        this.selectedRatingSystem,
+        filteredManualRatings,
+        multiplier
+      );
+
+      this.notificationService.showSuccess('Match finalized successfully');
+      this.closeFinalizeMatchModal();
+      await this.loadMatches();
+    } catch (error) {
+      this.notificationService.showError('Failed to finalize match');
+      console.error('Error finalizing match:', error);
+    }
   }
 
   async closeMatch(match: MatchDisplay) {
@@ -541,24 +580,36 @@ export class OrganizerDashboardComponent {
     return 'Add Players';
   }
   async updateRatingPreview() {
-    if (
-      this.selectedMatch &&
-      this.teamAScore != null &&
-      this.teamBScore != null
-    ) {
-      try {
-        this.ratingPreviews = await this.matchService.calculateRatingPreview(
-          this.selectedMatch.id,
-          this.teamAScore,
-          this.teamBScore,
-          this.selectedRatingSystem
-        );
-      } catch (error) {
-        console.error('Error updating rating preview:', error);
-        this.ratingPreviews = [];
-      }
-    } else {
-      this.ratingPreviews = [];
+    if (this.teamAScore === null || this.teamBScore === null) {
+      return;
+    }
+
+    try {
+      // Use the same rating system name handling as finalization
+      const previewResponse = await this.matchService.calculateRatingPreview(
+        this.selectedMatch!.id,
+        this.teamAScore,
+        this.teamBScore,
+        this.selectedRatingSystem,
+        this.selectedRatingSystem.startsWith('Custom')
+          ? this.ratingMultiplier
+          : 1.0
+      );
+
+      this.ratingPreviews = previewResponse.map((preview) => {
+        const manualAdjustment = this.manualRatings[preview.playerId] || 0;
+        let baseRating = parseFloat(preview.ratingChange);
+        const totalChange = baseRating + manualAdjustment;
+
+        return {
+          ...preview,
+          baseRatingChange: preview.ratingChange,
+          ratingChange: totalChange.toFixed(2),
+        };
+      });
+    } catch (error) {
+      console.error('Error previewing ratings:', error);
+      this.notificationService.showError('Failed to preview rating changes');
     }
   }
 
@@ -770,7 +821,22 @@ export class OrganizerDashboardComponent {
       this.teamBPlayers.some((p) => p.id === player.id)
     );
   }
+  getTeamAverageRating(team: User[]): number {
+    if (team.length === 0) return 0;
+    return (
+      team.reduce((sum, player) => sum + (player.rating || 0), 0) / team.length
+    );
+  }
 
+  getTeamAverageRatingDisplay(team: User[]): string {
+    return this.getTeamAverageRating(team).toFixed(1);
+  }
+
+  getTeamRatingClass(rating: number): string {
+    if (rating >= 8) return 'rating-high';
+    if (rating >= 6) return 'rating-medium';
+    return 'rating-low';
+  }
   getRatingClass(rating?: number): string {
     if (!rating) return 'rating-low';
     if (rating >= 8) return 'rating-high';
@@ -778,12 +844,12 @@ export class OrganizerDashboardComponent {
     return 'rating-low';
   }
 
-  getTeamAverageRating(team: User[]): string {
-    if (team.length === 0) return '0.0';
-    const avg =
-      team.reduce((sum, player) => sum + (player.rating || 0), 0) / team.length;
-    return avg.toFixed(1);
-  }
+  // getTeamAverageRating(team: User[]): string {
+  //   if (team.length === 0) return '0.0';
+  //   const avg =
+  //     team.reduce((sum, player) => sum + (player.rating || 0), 0) / team.length;
+  //   return avg.toFixed(1);
+  // }
 
   getEmptySlots(currentPlayers: number): any[] {
     const emptyCount = Math.max(0, 6 - currentPlayers);
@@ -918,6 +984,8 @@ export class OrganizerDashboardComponent {
           matchDate: updatedMatch.matchDate,
           location: updatedMatch.location,
           cost: updatedMatch.cost,
+          teamAName: updatedMatch.teamAName,
+          teamBName: updatedMatch.teamBName,
         };
       }
 
@@ -932,5 +1000,207 @@ export class OrganizerDashboardComponent {
     } finally {
       this.editMatchLoading = false;
     }
+  }
+
+  updateManualRating(playerId: number) {
+    const manualRating = this.manualRatings[playerId];
+    if (manualRating !== undefined) {
+      // Validate the input
+      if (manualRating < -10 || manualRating > 10) {
+        this.notificationService.showError(
+          'Manual rating adjustment must be between -10 and +10'
+        );
+        return;
+      }
+
+      // Update the preview by adding manual adjustment to base rating
+      this.ratingPreviews = this.ratingPreviews.map((preview) => {
+        if (preview.playerId === playerId) {
+          const baseChange = parseFloat(preview.baseRatingChange);
+          const totalChange = baseChange + manualRating;
+          return {
+            ...preview,
+            ratingChange: totalChange.toFixed(1),
+          };
+        }
+        return preview;
+      });
+    }
+  }
+
+  async shuffleTeams() {
+    if (!this.selectedMatch || this.selectedMatch.status !== 0) {
+      this.notificationService.showError(
+        'Teams can only be shuffled when the match is Open'
+      );
+      return;
+    }
+
+    const combinedPlayers = [...this.teamAPlayers, ...this.teamBPlayers];
+    for (let i = combinedPlayers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [combinedPlayers[i], combinedPlayers[j]] = [
+        combinedPlayers[j],
+        combinedPlayers[i],
+      ];
+    }
+
+    // Split players into two teams
+    const halfLength = Math.floor(combinedPlayers.length / 2);
+    const newTeamAPlayers = combinedPlayers.slice(0, halfLength);
+    const newTeamBPlayers = combinedPlayers.slice(halfLength);
+
+    try {
+      this.addingPlayers = true;
+
+      // Remove all players from both teams first
+      for (const player of this.teamAPlayers) {
+        await this.removePlayerFromTeam(player, 'teamA');
+      }
+      for (const player of this.teamBPlayers) {
+        await this.removePlayerFromTeam(player, 'teamB');
+      }
+
+      // Add players to their new teams
+      for (const player of newTeamAPlayers) {
+        await this.addPlayerToTeam(player, 'teamA');
+      }
+      for (const player of newTeamBPlayers) {
+        await this.addPlayerToTeam(player, 'teamB');
+      }
+
+      this.teamAPlayers = newTeamAPlayers;
+      this.teamBPlayers = newTeamBPlayers;
+
+      this.notificationService.showSuccess(
+        'Teams shuffled and saved successfully'
+      );
+    } catch (error) {
+      this.notificationService.showError('Failed to save shuffled teams');
+      console.error('Error saving shuffled teams:', error);
+
+      // Revert to original teams if there's an error
+      this.teamAPlayers = [...this.originalTeamAPlayers];
+      this.teamBPlayers = [...this.originalTeamBPlayers];
+    } finally {
+      this.addingPlayers = false;
+    }
+  }
+  balanceTeams(mode: string = 'rating') {
+    if (!this.selectedMatch || this.selectedMatch.status !== 0) {
+      this.notificationService.showError(
+        'Teams can only be balanced when the match is Open'
+      );
+      return;
+    }
+
+    const combinedPlayers = [...this.teamAPlayers, ...this.teamBPlayers];
+
+    if (mode === 'random') {
+      // Random shuffle
+      for (let i = combinedPlayers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [combinedPlayers[i], combinedPlayers[j]] = [
+          combinedPlayers[j],
+          combinedPlayers[i],
+        ];
+      }
+    } else {
+      // Sort by rating (highest to lowest)
+      combinedPlayers.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
+      const tempTeamA: User[] = [];
+      const tempTeamB: User[] = [];
+
+      // Distribute players alternately to balance teams
+      combinedPlayers.forEach((player, index) => {
+        if (index % 2 === 0) {
+          tempTeamA.push(player);
+        } else {
+          tempTeamB.push(player);
+        }
+      });
+
+      // Calculate team ratings
+      const teamARating =
+        tempTeamA.reduce((sum, player) => sum + (player.rating || 0), 0) /
+        tempTeamA.length;
+      const teamBRating =
+        tempTeamB.reduce((sum, player) => sum + (player.rating || 0), 0) /
+        tempTeamB.length;
+
+      // If ratings are too unbalanced, try swapping some players
+      if (Math.abs(teamARating - teamBRating) > 1) {
+        for (let i = 0; i < tempTeamA.length; i++) {
+          for (let j = 0; j < tempTeamB.length; j++) {
+            const newTeamARating =
+              (teamARating * tempTeamA.length -
+                (tempTeamA[i].rating || 0) +
+                (tempTeamB[j].rating || 0)) /
+              tempTeamA.length;
+            const newTeamBRating =
+              (teamBRating * tempTeamB.length -
+                (tempTeamB[j].rating || 0) +
+                (tempTeamA[i].rating || 0)) /
+              tempTeamB.length;
+
+            if (
+              Math.abs(newTeamARating - newTeamBRating) <
+              Math.abs(teamARating - teamBRating)
+            ) {
+              // Swap players
+              const temp = tempTeamA[i];
+              tempTeamA[i] = tempTeamB[j];
+              tempTeamB[j] = temp;
+              break;
+            }
+          }
+        }
+      }
+
+      combinedPlayers.splice(0); // Clear array
+      combinedPlayers.push(...tempTeamA, ...tempTeamB);
+    }
+
+    const halfLength = Math.floor(combinedPlayers.length / 2);
+    this.teamAPlayers = combinedPlayers.slice(0, halfLength);
+    this.teamBPlayers = combinedPlayers.slice(halfLength);
+  }
+
+  calculatePricePerPlayer(
+    totalCost: number | undefined,
+    playerCount: number
+  ): number {
+    if (!totalCost || totalCost <= 0) return 0;
+    return Math.round((totalCost / playerCount) * 100) / 100;
+  }
+
+  getPriceInfo(match: MatchDisplay | any): {
+    for10: number;
+    for11: number;
+    for12: number;
+    exactPrice?: number;
+    totalPlayers?: number;
+  } {
+    const totalCost = match.cost || 0;
+
+    if (match.status === 1) {
+      const totalPlayers = match.playerHistory?.length || 0;
+      if (totalPlayers > 0) {
+        return {
+          for10: this.calculatePricePerPlayer(totalCost, 10),
+          for11: this.calculatePricePerPlayer(totalCost, 11),
+          for12: this.calculatePricePerPlayer(totalCost, 12),
+          exactPrice: this.calculatePricePerPlayer(totalCost, totalPlayers),
+          totalPlayers,
+        };
+      }
+    }
+
+    return {
+      for10: this.calculatePricePerPlayer(totalCost, 10),
+      for11: this.calculatePricePerPlayer(totalCost, 11),
+      for12: this.calculatePricePerPlayer(totalCost, 12),
+    };
   }
 }

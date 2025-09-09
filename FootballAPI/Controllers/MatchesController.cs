@@ -436,7 +436,7 @@ namespace FootballAPI.Controllers
 
         [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPut("finalize/{id}")]
-        public async Task<ActionResult<MatchDto>> Finalizematch(int id, FinalizeMatchDto finalizeMatchDto)
+        public async Task<ActionResult<MatchDto>> FinalizeMatch(int id, FinalizeMatchDto finalizeMatchDto)
         {
             try
             {
