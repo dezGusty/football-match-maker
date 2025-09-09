@@ -24,6 +24,7 @@ export class MatchService {
     };
   }
 
+  // unused
   async getMatches(): Promise<Match[]> {
     const response = await fetch(`${this.baseUrl}/matches`, {
       headers: this.getAuthHeaders(),
@@ -51,6 +52,95 @@ export class MatchService {
     return matches;
   }
 
+  // unused
+  async getMatchById(matchId: number): Promise<Match> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
+      headers: this.getAuthHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch match');
+    }
+
+    const match = await response.json();
+
+    if (!match.teamAName) {
+      match.teamAName = await this.getTeamById(match.teamAId);
+    }
+    if (!match.teamBName) {
+      match.teamBName = await this.getTeamById(match.teamBId);
+    }
+
+    return match;
+  }
+
+  async getPublicMatches(): Promise<any[]> {
+    const response = await fetch(`${this.baseUrl}/matches/public`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch public matches');
+    }
+
+    return await response.json();
+  }
+
+  async createNewMatch(
+    createMatchRequest: CreateMatchRequest
+  ): Promise<CreateMatchResponse> {
+    const token = this.authService.getToken();
+
+    if (!token) {
+      throw new Error('You are not authenticated');
+    }
+
+    const response = await fetch(`${this.baseUrl}/matches`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(createMatchRequest),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('You are not authenticated');
+      }
+      throw new Error(`Error creating match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async updateMatchPlayer(
+    matchId: number,
+    updateData: {
+      matchDate: string;
+      location: string;
+      cost?: number;
+      teamAName?: string;
+      teamBName?: string;
+    }
+  ): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(updateData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 404) {
+        throw new Error('Match not found');
+      }
+      throw new Error(`Error updating match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
   async getFutureMatches(): Promise<Match[]> {
     const response = await fetch(`${this.baseUrl}/matches/future`, {
       headers: this.getAuthHeaders(),
@@ -75,103 +165,6 @@ export class MatchService {
         organiserId: m.organiserId,
       }))
     );
-  }
-
-  async getTeamById(teamId: number): Promise<string> {
-    if (this.teamNamesCache.has(teamId)) {
-      return this.teamNamesCache.get(teamId)!;
-    }
-
-    try {
-      const response = await fetch(`${this.baseUrl}/teams/${teamId}`, {
-        headers: this.getAuthHeaders(),
-      });
-      if (!response.ok) {
-        console.error(`Failed to fetch team ${teamId}`);
-        const fallbackName = `Team ${teamId}`;
-        this.teamNamesCache.set(teamId, fallbackName);
-        return fallbackName;
-      }
-
-      const team = await response.json();
-      const teamName = team.name || `Team ${teamId}`;
-
-      this.teamNamesCache.set(teamId, teamName);
-      return teamName;
-    } catch (error) {
-      console.error(`Error fetching team ${teamId}:`, error);
-      const fallbackName = `Team ${teamId}`;
-      this.teamNamesCache.set(teamId, fallbackName);
-      return fallbackName;
-    }
-  }
-
-  async calculateRatingPreview(
-    matchId: number,
-    teamAGoals: number,
-    teamBGoals: number,
-    ratingSystem: string
-  ): Promise<any[]> {
-    const dto = {
-      teamAGoals: teamAGoals,
-      teamBGoals: teamBGoals,
-      ratingSystem: ratingSystem,
-    };
-    const response = await fetch(
-      `${this.baseUrl}/matches/${matchId}/rating-preview`,
-      {
-        method: 'POST',
-        headers: this.getAuthHeaders(),
-        body: JSON.stringify(dto),
-      }
-    );
-    if (!response.ok) throw new Error('Failed to calculate rating preview');
-
-    return await response.json();
-  }
-
-  async finalizeMatchServ(
-    matchId: number,
-    teamAGoals: number,
-    teamBGoals: number,
-    ratingSystem: string = 'Performance'
-  ): Promise<void> {
-    const finalizeMatchDto = {
-      teamAGoals: teamAGoals,
-      teamBGoals: teamBGoals,
-      ratingSystem: ratingSystem,
-    };
-    const response = await fetch(
-      `${this.baseUrl}/matches/finalize/${matchId}`,
-      {
-        method: 'PUT',
-        headers: this.getAuthHeaders(),
-        body: JSON.stringify(finalizeMatchDto),
-      }
-    );
-    if (!response.ok) throw new Error('Failed to finalize match');
-
-    return await response.json();
-  }
-
-  async getMatchById(matchId: number): Promise<Match> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
-      headers: this.getAuthHeaders(),
-    });
-    if (!response.ok) {
-    throw new Error('Failed to fetch match');
-  }
-
-    const match = await response.json();
-
-    if (!match.teamAName) {
-      match.teamAName = await this.getTeamById(match.teamAId);
-    }
-    if (!match.teamBName) {
-      match.teamBName = await this.getTeamById(match.teamBId);
-    }
-
-    return match;
   }
 
   async getPastMatches(): Promise<Match[]> {
@@ -223,6 +216,315 @@ export class MatchService {
       console.error('Error fetching past matches:', error);
       throw error;
     }
+  }
+
+  async addPlayerToMatch(
+    matchId: number,
+    playerId: number,
+    teamId: number
+  ): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/players`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({
+        userId: playerId,
+        teamId: teamId,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      throw new Error(`Error adding player: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async joinMatch(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/join`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error(
+          'Could not join match. Match might be full, private, or you might already be in it.'
+        );
+      }
+      throw new Error(`Error joining match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async joinTeam(matchId: number, teamId: number): Promise<any> {
+    const response = await fetch(
+      `${this.baseUrl}/matches/${matchId}/teams/${teamId}/join`,
+      {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error(
+          'Could not join team. Team might be full or you might already be in the match.'
+        );
+      }
+      throw new Error(`Error joining team: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async publishMatch(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/publish`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error('Could not make match public');
+      }
+      throw new Error(`Error publishing match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async makeMatchPrivate(matchId: number): Promise<any> {
+    const response = await fetch(
+      `${this.baseUrl}/matches/${matchId}/unpublish`,
+      {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error('Could not make match private');
+      }
+      throw new Error(`Error making match private: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async getMatchDetails(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/details`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch match details');
+    }
+
+    return await response.json();
+  }
+
+  async leaveMatch(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/leave`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error(
+          'Could not leave match. You might not be part of this match.'
+        );
+      }
+      throw new Error(`Error leaving match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async getPlayerMatches(): Promise<any[]> {
+    const response = await fetch(`${this.baseUrl}/matches/my-matches`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch player matches');
+    }
+
+    return await response.json();
+  }
+
+  async getAvailableMatches(): Promise<any[]> {
+    const response = await fetch(`${this.baseUrl}/matches/available`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch available matches');
+    }
+
+    return await response.json();
+  }
+
+  async getMyPublicMatches(): Promise<any[]> {
+    const response = await fetch(`${this.baseUrl}/matches/my-public-matches`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch public matches');
+    }
+
+    return await response.json();
+  }
+
+  async getMatchesByOrganiser(): Promise<any[]> {
+    const response = await fetch(`${this.baseUrl}/matches/organiser/matches`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch matches by organiser');
+    }
+
+    return await response.json();
+  }
+
+  async closeMatch(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/close`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error(
+          'Could not close match. Match needs at least 10 players or is not in Open status.'
+        );
+      }
+      throw new Error(`Error closing match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async cancelMatch(matchId: number): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/matches/${matchId}/cancel`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      if (response.status === 400) {
+        throw new Error(
+          'Could not cancel match. Match not found or invalid status.'
+        );
+      }
+      throw new Error(`Error cancelling match: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async removePlayerFromMatch(matchId: number, playerId: number): Promise<any> {
+    const response = await fetch(
+      `${this.baseUrl}/matches/${matchId}/players/${playerId}`,
+      {
+        method: 'DELETE',
+        headers: this.getAuthHeaders(),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 401) {
+        throw new Error('Not authenticated');
+      }
+      throw new Error(`Error removing player: ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  async calculateRatingPreview(
+    matchId: number,
+    teamAGoals: number,
+    teamBGoals: number,
+    ratingSystem: string
+  ): Promise<any[]> {
+    const dto = {
+      teamAGoals: teamAGoals,
+      teamBGoals: teamBGoals,
+      ratingSystem: ratingSystem,
+    };
+    const response = await fetch(
+      `${this.baseUrl}/matches/${matchId}/rating-preview`,
+      {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(dto),
+      }
+    );
+    if (!response.ok) throw new Error('Failed to calculate rating preview');
+
+    return await response.json();
+  }
+
+  async finalizeMatchServ(
+    matchId: number,
+    teamAGoals: number,
+    teamBGoals: number,
+    ratingSystem: string = 'Performance'
+  ): Promise<void> {
+    const finalizeMatchDto = {
+      teamAGoals: teamAGoals,
+      teamBGoals: teamBGoals,
+      ratingSystem: ratingSystem,
+    };
+    const response = await fetch(
+      `${this.baseUrl}/matches/finalize/${matchId}`,
+      {
+        method: 'PUT',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(finalizeMatchDto),
+      }
+    );
+    if (!response.ok) throw new Error('Failed to finalize match');
+
+    return await response.json();
   }
 
   async getMyPastMatches(): Promise<Match[]> {
@@ -277,332 +579,32 @@ export class MatchService {
     }
   }
 
-  async createNewMatch(
-    createMatchRequest: CreateMatchRequest
-  ): Promise<CreateMatchResponse> {
-    const token = this.authService.getToken();
-
-    if (!token) {
-      throw new Error('Nu ești autentificat');
+  async getTeamById(teamId: number): Promise<string> {
+    if (this.teamNamesCache.has(teamId)) {
+      return this.teamNamesCache.get(teamId)!;
     }
 
-    const response = await fetch(`${this.baseUrl}/matches`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(createMatchRequest),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 401) {
-        throw new Error('Nu ești autentificat');
-      }
-      throw new Error(`Eroare la crearea meciului: ${errorText}`);
-    }
-
-    return await response.json();
-  }
-
-  async getMatchesByOrganiser(): Promise<any[]> {
-    const response = await fetch(`${this.baseUrl}/matches/organiser/matches`, {
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch matches by organiser');
-    }
-
-    return await response.json();
-  }
-
-  async addPlayerToMatch(
-    matchId: number,
-    playerId: number,
-    teamId: number
-  ): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}/players`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify({
-        userId: playerId,
-        teamId: teamId,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 401) {
-        throw new Error('Not authenticated');
-      }
-      throw new Error(`Error adding player: ${errorText}`);
-    }
-
-    return await response.json();
-  }
-
-  async publishMatch(matchId: number): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}/publish`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 401) {
-        throw new Error('Not authenticated');
-      }
-      if (response.status === 400) {
-        throw new Error('Could not make match public');
-      }
-      throw new Error(`Error publishing match: ${errorText}`);
-    }
-
-    return await response.json();
-  }
-
-  async makeMatchPrivate(matchId: number): Promise<any> {
-    const response = await fetch(
-      `${this.baseUrl}/matches/${matchId}/unpublish`,
-      {
-        method: 'POST',
+    try {
+      const response = await fetch(`${this.baseUrl}/teams/${teamId}`, {
         headers: this.getAuthHeaders(),
+      });
+      if (!response.ok) {
+        console.error(`Failed to fetch team ${teamId}`);
+        const fallbackName = `Team ${teamId}`;
+        this.teamNamesCache.set(teamId, fallbackName);
+        return fallbackName;
       }
-    );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 401) {
-        throw new Error('Not authenticated');
-      }
-      if (response.status === 400) {
-        throw new Error('Could not make match private');
-      }
-      throw new Error(`Error making match private: ${errorText}`);
+      const team = await response.json();
+      const teamName = team.name || `Team ${teamId}`;
+
+      this.teamNamesCache.set(teamId, teamName);
+      return teamName;
+    } catch (error) {
+      console.error(`Error fetching team ${teamId}:`, error);
+      const fallbackName = `Team ${teamId}`;
+      this.teamNamesCache.set(teamId, fallbackName);
+      return fallbackName;
     }
-
-    return await response.json();
-  }
-
-  async closeMatch(matchId: number): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}/close`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 401) {
-        throw new Error('Not authenticated');
-      }
-      if (response.status === 400) {
-        throw new Error(
-          'Could not close match. Match needs at least 10 players or is not in Open status.'
-        );
-      }
-      throw new Error(`Error closing match: ${errorText}`);
-    }
-
-    return await response.json();
-  }
-
-  async cancelMatch(matchId: number): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}/cancel`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 401) {
-        throw new Error('Not authenticated');
-      }
-      if (response.status === 400) {
-        throw new Error(
-          'Could not cancel match. Match not found or invalid status.'
-        );
-      }
-      throw new Error(`Error cancelling match: ${errorText}`);
-    }
-
-    return await response.json();
-  }
-
-  async getPlayerMatches(): Promise<any[]> {
-    const response = await fetch(`${this.baseUrl}/matches/my-matches`, {
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch player matches');
-    }
-
-    return await response.json();
-  }
-
-  async getPublicMatches(): Promise<any[]> {
-    const response = await fetch(`${this.baseUrl}/matches/public`, {
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch public matches');
-    }
-
-    return await response.json();
-  }
-
-  async getMyPublicMatches(): Promise<any[]> {
-    const response = await fetch(`${this.baseUrl}/matches/my-public-matches`, {
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch public matches');
-    }
-
-    return await response.json();
-  }
-
-  async getAvailableMatches(): Promise<any[]> {
-    const response = await fetch(`${this.baseUrl}/matches/available`, {
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch available matches');
-    }
-
-    return await response.json();
-  }
-
-  async joinMatch(matchId: number): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}/join`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 401) {
-        throw new Error('Not authenticated');
-      }
-      if (response.status === 400) {
-        throw new Error(
-          'Could not join match. Match might be full, private, or you might already be in it.'
-        );
-      }
-      throw new Error(`Error joining match: ${errorText}`);
-    }
-
-    return await response.json();
-  }
-
-  async joinTeam(matchId: number, teamId: number): Promise<any> {
-    const response = await fetch(
-      `${this.baseUrl}/matches/${matchId}/teams/${teamId}/join`,
-      {
-        method: 'POST',
-        headers: this.getAuthHeaders(),
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 401) {
-        throw new Error('Not authenticated');
-      }
-      if (response.status === 400) {
-        throw new Error(
-          'Could not join team. Team might be full or you might already be in the match.'
-        );
-      }
-      throw new Error(`Error joining team: ${errorText}`);
-    }
-
-    return await response.json();
-  }
-
-  async getMatchDetails(matchId: number): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}/details`, {
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch match details');
-    }
-
-    return await response.json();
-  }
-
-  async removePlayerFromMatch(matchId: number, playerId: number): Promise<any> {
-    const response = await fetch(
-      `${this.baseUrl}/matches/${matchId}/players/${playerId}`,
-      {
-        method: 'DELETE',
-        headers: this.getAuthHeaders(),
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 401) {
-        throw new Error('Not authenticated');
-      }
-      throw new Error(`Error removing player: ${errorText}`);
-    }
-
-    return await response.json();
-  }
-
-  async leaveMatch(matchId: number): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}/leave`, {
-      method: 'DELETE',
-      headers: this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 401) {
-        throw new Error('Not authenticated');
-      }
-      if (response.status === 400) {
-        throw new Error(
-          'Could not leave match. You might not be part of this match.'
-        );
-      }
-      throw new Error(`Error leaving match: ${errorText}`);
-    }
-
-    return await response.json();
-  }
-
-  async updateMatchPlayer(
-    matchId: number,
-    updateData: {
-      matchDate: string;
-      location: string;
-      cost?: number;
-      teamAName?: string;
-      teamBName?: string;
-    }
-  ): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
-      method: 'PUT',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(updateData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 401) {
-        throw new Error('Not authenticated');
-      }
-      if (response.status === 404) {
-        throw new Error('Match not found');
-      }
-      throw new Error(`Error updating match: ${errorText}`);
-    }
-
-    return await response.json();
   }
 }
