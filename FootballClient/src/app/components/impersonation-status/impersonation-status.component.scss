@@ -1,14 +1,18 @@
 .impersonation-status {
   background-color: rgba(247, 201, 72, 0.1);
-  border-bottom: 2px solid var(--warning);
+  border-top: 2px solid var(--warning); /* Changed from border-bottom to border-top */
   color: var(--warning);
-  padding: 10px 20px;
+  padding: 5px 20px; /* Reduced padding for smaller height */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 1050;
+  position: fixed; /* Fixed position so it stays at the bottom */
+  bottom: 0; /* Position at the bottom of the viewport */
+  left: 0; /* Ensure it spans the entire width */
+  z-index: 1060; /* Higher z-index to ensure it stays above other elements */
+  width: 100%;
+  font-size: 14px; /* Smaller font size for compact appearance */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow at the top for better visual separation */
 }
 
 .impersonation-message {
@@ -16,27 +20,27 @@
   align-items: center;
   
   .material-icons {
-    margin-right: 8px;
-    font-size: 18px;
+    margin-right: 6px;
+    font-size: 16px; /* Smaller icon */
   }
 
   strong {
     font-weight: 600;
-    margin-left: 4px;
+    margin-left: 3px;
   }
 }
 
 .action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
+  gap: 6px;
+  padding: 3px 10px; /* Smaller padding for a compact button */
   font-weight: 500;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px; /* Smaller border radius */
   cursor: pointer;
   transition: all 0.2s;
-  font-size: 14px;
+  font-size: 12px; /* Smaller font size */
 }
 
 .action-btn.danger {
@@ -50,5 +54,5 @@
 
 /* Material Icons */
 .material-icons {
-  font-size: 18px;
+  font-size: 16px; /* Smaller icon size */
 }

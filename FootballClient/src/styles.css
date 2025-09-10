@@ -19,13 +19,16 @@
 }
 
 * { box-sizing: border-box; margin: 0}
-body { background: var(--bg);
+body { 
+  background: var(--bg);
   color: var(--text);
   font-family: 'Inter', sans-serif;
+  padding-bottom: 32px; /* Add padding to prevent content from being hidden behind the impersonation bar */
 }
 
 .page{
   padding: 24px clamp(16px, 3vw, 40px);
+  padding-bottom: 36px; /* Additional padding at the bottom to account for impersonation bar */
   background: var(--gradient);
   min-height: 100vh;
 }
