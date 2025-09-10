@@ -5,6 +5,8 @@ import {
 } from '../models/friend-request.interface';
 import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
+import { getAuthHeaders } from '../utils/http-helpers';
+
 
 @Injectable({
   providedIn: 'root',
@@ -14,18 +16,11 @@ export class FriendRequestService {
 
   constructor(private authService: AuthService) {}
 
-  private getAuthHeaders(): HeadersInit {
-    const token = this.authService.getToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    };
-  }
 
   async sendFriendRequest(receiverEmail: string): Promise<FriendRequest> {
     const response = await fetch(this.baseUrl, {
       method: 'POST',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
       body: JSON.stringify({ receiverEmail }),
     });
 
@@ -43,7 +38,7 @@ export class FriendRequestService {
   ): Promise<FriendRequest> {
     const responseHttp = await fetch(`${this.baseUrl}/${requestId}/respond`, {
       method: 'PUT',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
       body: JSON.stringify(response),
     });
 
@@ -58,7 +53,7 @@ export class FriendRequestService {
   async getSentRequests(): Promise<FriendRequest[]> {
     const response = await fetch(`${this.baseUrl}/sent`, {
       method: 'GET',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -77,7 +72,7 @@ export class FriendRequestService {
   async getReceivedRequests(): Promise<FriendRequest[]> {
     const response = await fetch(`${this.baseUrl}/received`, {
       method: 'GET',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -96,7 +91,7 @@ export class FriendRequestService {
   async getFriends(): Promise<FriendRequest[]> {
     const response = await fetch(`${this.baseUrl}/friends`, {
       method: 'GET',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -109,7 +104,7 @@ export class FriendRequestService {
   async deleteFriendRequest(requestId: number): Promise<void> {
     const response = await fetch(`${this.baseUrl}/${requestId}`, {
       method: 'DELETE',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -121,7 +116,7 @@ export class FriendRequestService {
   async unfriend(friendId: number): Promise<void> {
   const response = await fetch(`${this.baseUrl}/unfriend/${friendId}`, {
     method: 'DELETE',
-    headers: this.getAuthHeaders(),
+    headers: getAuthHeaders(this.authService),
   });
 
   if (!response.ok) {

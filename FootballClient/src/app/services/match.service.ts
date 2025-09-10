@@ -6,6 +6,7 @@ import {
 } from '../models/create-match.interface';
 import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
+import { getAuthHeaders } from '../utils/http-helpers';
 
 @Injectable({
   providedIn: 'root',
@@ -16,17 +17,11 @@ export class MatchService {
 
   constructor(private authService: AuthService) {}
 
-  private getAuthHeaders(): HeadersInit {
-    const token = this.authService.getToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    };
-  }
+  
 
   async getPublicMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/public`, {
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -47,7 +42,7 @@ export class MatchService {
 
     const response = await fetch(`${this.baseUrl}/matches`, {
       method: 'POST',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
       body: JSON.stringify(createMatchRequest),
     });
 
@@ -74,7 +69,7 @@ export class MatchService {
   ): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}`, {
       method: 'PUT',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
       body: JSON.stringify(updateData),
     });
 
@@ -95,7 +90,7 @@ export class MatchService {
   async getFutureMatches(): Promise<Match[]> {
     try {
       const response = await fetch(`${this.baseUrl}/matches/future`, {
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
       });
       if (!response.ok) {
         const errorText = await response.text();
@@ -133,7 +128,7 @@ export class MatchService {
   async getPastMatches(): Promise<Match[]> {
     try {
       const response = await fetch(`${this.baseUrl}/matches/past`, {
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
       });
 
       if (!response.ok) {
@@ -188,7 +183,7 @@ export class MatchService {
   ): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}/players`, {
       method: 'POST',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
       body: JSON.stringify({
         userId: playerId,
         teamId: teamId,
@@ -209,7 +204,7 @@ export class MatchService {
   async joinMatch(matchId: number): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}/join`, {
       method: 'POST',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -233,7 +228,7 @@ export class MatchService {
       `${this.baseUrl}/matches/${matchId}/teams/${teamId}/join`,
       {
         method: 'POST',
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
       }
     );
 
@@ -256,7 +251,7 @@ export class MatchService {
   async publishMatch(matchId: number): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}/publish`, {
       method: 'POST',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -278,7 +273,7 @@ export class MatchService {
       `${this.baseUrl}/matches/${matchId}/unpublish`,
       {
         method: 'POST',
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
       }
     );
 
@@ -298,7 +293,7 @@ export class MatchService {
 
   async getMatchDetails(matchId: number): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}/details`, {
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -311,7 +306,7 @@ export class MatchService {
   async leaveMatch(matchId: number): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}/leave`, {
       method: 'DELETE',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -332,7 +327,7 @@ export class MatchService {
 
   async getPlayerMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/my-matches`, {
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -344,7 +339,7 @@ export class MatchService {
 
   async getAvailableMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/available`, {
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -356,7 +351,7 @@ export class MatchService {
 
   async getMyPublicMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/my-public-matches`, {
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -368,7 +363,7 @@ export class MatchService {
 
   async getMatchesByOrganiser(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/organiser/matches`, {
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -383,7 +378,7 @@ export class MatchService {
   async closeMatch(matchId: number): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}/close`, {
       method: 'POST',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -405,7 +400,7 @@ export class MatchService {
   async cancelMatch(matchId: number): Promise<any> {
     const response = await fetch(`${this.baseUrl}/matches/${matchId}/cancel`, {
       method: 'POST',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -429,7 +424,7 @@ export class MatchService {
       `${this.baseUrl}/matches/${matchId}/players/${playerId}`,
       {
         method: 'DELETE',
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
       }
     );
 
@@ -461,7 +456,7 @@ export class MatchService {
       `${this.baseUrl}/matches/${matchId}/rating-preview`,
       {
         method: 'POST',
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
         body: JSON.stringify(dto),
       }
     );
@@ -497,7 +492,7 @@ export class MatchService {
       `${this.baseUrl}/matches/finalize/${matchId}`,
       {
         method: 'PUT',
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
         body: JSON.stringify(finalizeMatchDto),
       }
     );
@@ -510,7 +505,7 @@ export class MatchService {
     try {
       const response = await fetch(`${this.baseUrl}/matches/past/my-matches`, {
         method: 'GET',
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
       });
 
       if (!response.ok) {
@@ -565,7 +560,7 @@ export class MatchService {
 
     try {
       const response = await fetch(`${this.baseUrl}/teams/${teamId}`, {
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
       });
       if (!response.ok) {
         console.error(`Failed to fetch team ${teamId}`);
@@ -587,29 +582,5 @@ export class MatchService {
     }
   }
 
-  // IS IT USED ANYWHERE?
-  async getMatches(): Promise<Match[]> {
-    const response = await fetch(`${this.baseUrl}/matches`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch matches');
-    }
-
-    const rawMatches = await response.json();
-
-    const matches: Match[] = await Promise.all(
-      (rawMatches as Match[]).map(async (m) => ({
-        id: m.id,
-        matchDate: m.matchDate,
-        teamAId: m.teamAId,
-        teamBId: m.teamBId,
-        teamAName: m.teamAName || (await this.getTeamById(m.teamAId)),
-        teamBName: m.teamBName || (await this.getTeamById(m.teamBId)),
-        scoreA: m.scoreA,
-        scoreB: m.scoreB,
-        playerHistory: m.playerHistory,
-      }))
-    );
-
-    return matches;
-  }
+  
 }

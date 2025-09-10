@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { LoginRequest } from '../models/auth.interface';
 import { UserRole } from '../models/user-role.enum';
 import { HttpClient } from '@angular/common/http';
-import { PlayerUser } from '../models/player-user.interface'; // importă interfața
+import { PlayerUser } from '../models/player-user.interface'; 
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { getAuthHeaders } from '../utils/http-helpers';
+
 
 @Injectable({
   providedIn: 'root',
@@ -19,14 +21,6 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {
     this.LoadAuthState();
-  }
-
-  private getAuthHeaders(): HeadersInit {
-    const token = this.getToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    };
   }
 
   private LoadAuthState() {
@@ -58,7 +52,7 @@ export class AuthService {
   ): Promise<void> {
     try {
       let response: Response;
-      const headers = this.getAuthHeaders();
+      const headers = getAuthHeaders(this);
 
       if (role === UserRole.PLAYER) {
         const playerUser: PlayerUser = {
@@ -208,7 +202,7 @@ export class AuthService {
       const response = await fetch(
         `${this.apiUrl}/user/${userId}/delegation-status`,
         {
-          headers: this.getAuthHeaders(),
+          headers: getAuthHeaders(this),
         }
       );
 

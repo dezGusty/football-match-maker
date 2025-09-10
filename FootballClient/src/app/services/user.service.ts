@@ -9,6 +9,7 @@ import {
   OrganizerDelegateDto,
   DelegationStatusDto,
 } from '../models/organizer-delegation.interface';
+import { getAuthHeaders } from '../utils/http-helpers';
 
 @Injectable({
   providedIn: 'root',
@@ -20,17 +21,9 @@ export class UserService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  private getAuthHeaders(): HeadersInit {
-    const token = this.authService.getToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    };
-  }
-
   async getUserById(id: number): Promise<User> {
     const response = await fetch(`${this.url}/${id}`, {
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
     if (!response.ok) {
       throw new Error('Failed to fetch user data');
@@ -46,7 +39,7 @@ export class UserService {
   ): Promise<string> {
     const response = await fetch(`${this.url}/${userId}/change-password`, {
       method: 'POST',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
       body: JSON.stringify({
         currentPassword,
         newPassword,
@@ -67,7 +60,7 @@ export class UserService {
   ): Promise<string> {
     const response = await fetch(`${this.url}/${userId}/change-username`, {
       method: 'POST',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
       body: JSON.stringify({
         newUsername,
         password,
@@ -90,7 +83,7 @@ export class UserService {
 
   async getPlayers(): Promise<User[]> {
     const response = await fetch(`${this.url}/players`, {
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
     if (!response.ok) {
       throw new Error('Failed to fetch players');
@@ -108,7 +101,7 @@ export class UserService {
 
   async getPlayersForOrganiser(): Promise<User[]> {
     const response = await fetch(`${this.url}/organiser/players`, {
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
     if (!response.ok) {
       throw new Error('Failed to fetch players for organiser');
@@ -136,10 +129,11 @@ export class UserService {
     const response = await fetch(
       'http://localhost:5145/api/Auth/create-player-account',
       {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(payload),
-    });
+        method: 'POST',
+        headers: getAuthHeaders(this.authService),
+        body: JSON.stringify(payload),
+      }
+    );
 
     if (!response.ok) {
       let errorMsg = 'Failed to add player';
@@ -213,7 +207,7 @@ export class UserService {
 
     const response = await fetch(`${this.url}/${user.id}`, {
       method: 'PUT',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
       body: JSON.stringify(user),
     });
 
@@ -227,7 +221,7 @@ export class UserService {
   async deleteUser(userId: number): Promise<boolean> {
     const response = await fetch(`${this.url}/${userId}`, {
       method: 'DELETE',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -240,7 +234,7 @@ export class UserService {
   async reactivateUser(userId: number): Promise<boolean> {
     const response = await fetch(`${this.url}/${userId}/reactivate`, {
       method: 'PATCH',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
@@ -257,7 +251,7 @@ export class UserService {
     try {
       const response = await fetch(`${this.url}/${userId}/update-rating`, {
         method: 'PATCH',
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
         body: JSON.stringify({ ratingChange }),
       });
 
@@ -282,7 +276,7 @@ export class UserService {
 
     const response = await fetch(`${this.url}/player-organiser`, {
       method: 'POST',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
       body: JSON.stringify(body),
     });
 
@@ -305,7 +299,7 @@ export class UserService {
       `${this.url}/${userId}/delegate-organizer-role`,
       {
         method: 'POST',
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
         body: JSON.stringify(body),
       }
     );
@@ -329,7 +323,7 @@ export class UserService {
       `${this.url}/${userId}/reclaim-organizer-role`,
       {
         method: 'POST',
-        headers: this.getAuthHeaders(),
+        headers: getAuthHeaders(this.authService),
         body: JSON.stringify(body),
       }
     );
@@ -347,7 +341,7 @@ export class UserService {
   async getDelegationStatus(userId: number): Promise<DelegationStatusDto> {
     const response = await fetch(`${this.url}/${userId}/delegation-status`, {
       method: 'GET',
-      headers: this.getAuthHeaders(),
+      headers: getAuthHeaders(this.authService),
     });
 
     if (!response.ok) {
