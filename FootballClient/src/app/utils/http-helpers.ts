@@ -9,3 +9,16 @@ export function getAuthHeaders(authService: AuthService): HeadersInit {
     ...(token && { Authorization: `Bearer ${token}` }),
   };
 }
+
+export function getAngularAuthHeaders(authService: AuthService): HttpHeaders {
+  const token = authService.getToken();
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json'
+  });
+  
+  if (token) {
+    return headers.set('Authorization', `Bearer ${token}`);
+  }
+  
+  return headers;
+}
