@@ -1,0 +1,8 @@
+<div *ngIf="isImpersonating" class="impersonation-status">
+  <div class="impersonation-message">
+    <span class="material-icons">visibility</span> Impersonating: <strong>{{impersonatedUser?.username}}</strong>
+  </div>
+  <button class="action-btn danger" (click)="stopImpersonation()">
+    <span class="material-icons">exit_to_app</span> Exit
+  </button>
+</div>

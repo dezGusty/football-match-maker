@@ -49,6 +49,9 @@
       <li *ngIf="isAdmin()">
         <button (click)="navigateTo('/manage-accounts')">Manage Users</button>
       </li>
+      <li *ngIf="isAdmin()">
+        <button (click)="navigateTo('/user-impersonation')">User Impersonation</button>
+      </li>
 
       <!-- Organizer Menu Items (non-admin organizers) -->
       <li *ngIf="isOrganizer() && !isAdmin()">

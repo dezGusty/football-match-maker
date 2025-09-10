@@ -1,0 +1,85 @@
+<app-header></app-header>
+
+<div class="page">
+  <!-- Impersonation Banner -->
+  <div *ngIf="isImpersonating" class="impersonation-banner">
+    <div class="banner-content">
+      <div class="banner-text">
+        <span class="material-icons banner-icon">person_off</span>
+        <strong>You are currently impersonating:</strong> 
+        {{impersonatedUser?.username}} ({{getRoleName(impersonatedUser?.role)}})
+      </div>
+      <button class="action-btn danger" (click)="stopImpersonation()">
+        End Impersonation
+      </button>
+    </div>
+  </div>
+
+  <div class="header-section">
+    <h1>User Impersonation</h1>
+    <p class="subtitle">View the application as another user to assist with troubleshooting</p>
+  </div>
+
+  <!-- Admin Controls - Only visible to admins -->
+  <div *ngIf="isAdmin" class="user-impersonation-container">
+    <div class="search-section">
+      <div class="search-container">
+        <input
+          type="text"
+          placeholder="Search users by name, username, or email..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          class="search-input"
+        />
+        <span class="search-icon material-icons">search</span>
+      </div>
+
+      <div class="filter-container">
+        <select
+          [(ngModel)]="roleFilter"
+          (change)="onRoleFilterChange()"
+          class="role-filter-select"
+        >
+          <option value="all">All Roles</option>
+          <option value="0">Admin</option>
+          <option value="1">Organizer</option>
+          <option value="2">Player</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="users-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers">
+            <td>{{user.username}}</td>
+            <td>{{user.firstName}} {{user.lastName}}</td>
+            <td>{{user.email}}</td>
+            <td>{{getRoleName(user.role)}}</td>
+            <td>
+              <button 
+                class="action-btn primary" 
+                (click)="startImpersonation(user.id)"
+                [disabled]="isImpersonating && impersonatedUser?.id === user.id"
+              >
+                <span class="material-icons">visibility</span> Impersonate
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredUsers.length === 0">
+            <td colspan="5" class="empty-state">No users found matching the criteria</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { PlayerUser } from '../models/player-user.interface'; // importă interfața
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -16,9 +17,22 @@ export class AuthService {
   private userRole: UserRole | null = null;
   errorMessage: string = '';
   email: string = '';
+  
+  private currentUserSubject = new BehaviorSubject<any>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {
     this.LoadAuthState();
+    
+    // Initialize the current user behavior subject
+    const userId = this.getUserId();
+    const userRole = this.getUserRole();
+    if (userId && userRole !== null) {
+      this.currentUserSubject.next({ 
+        id: userId, 
+        role: userRole 
+      });
+    }
   }
 
   private getAuthHeaders(): HeadersInit {
@@ -144,6 +158,9 @@ export class AuthService {
       this.isAuthenticated = true;
       this.userId = loginResponse.user.id;
       this.userRole = loginResponse.user.role;
+      
+      // Update the current user subject
+      this.currentUserSubject.next(loginResponse.user);
 
       if (loginResponse.user.role === UserRole.PLAYER) {
         this.router.navigate(['/player-dashboard']);
@@ -258,6 +275,26 @@ export class AuthService {
     localStorage.removeItem('userId');
     localStorage.removeItem('userRole');
     localStorage.removeItem('authExpiresAt');
+    this.currentUserSubject.next(null);
+  }
+  
+  /**
+   * Update user data after impersonation
+   */
+  setUserData(userData: any): void {
+    if (userData) {
+      localStorage.setItem('authToken', localStorage.getItem('token') || '');
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userId', userData.id.toString());
+      localStorage.setItem('userRole', userData.role.toString());
+
+      this.isAuthenticated = true;
+      this.userId = userData.id;
+      this.userRole = userData.role;
+      
+      // Update the current user subject
+      this.currentUserSubject.next(userData);
+    }
   }
   async logout(redirect: boolean = true): Promise<void> {
     try {
