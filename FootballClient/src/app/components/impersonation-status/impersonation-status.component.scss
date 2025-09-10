@@ -1,0 +1,54 @@
+.impersonation-status {
+  background-color: rgba(247, 201, 72, 0.1);
+  border-bottom: 2px solid var(--warning);
+  color: var(--warning);
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1050;
+}
+
+.impersonation-message {
+  display: flex;
+  align-items: center;
+  
+  .material-icons {
+    margin-right: 8px;
+    font-size: 18px;
+  }
+
+  strong {
+    font-weight: 600;
+    margin-left: 4px;
+  }
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.action-btn.danger {
+  background: var(--danger);
+  color: white;
+}
+
+.action-btn.danger:hover {
+  filter: brightness(1.1);
+}
+
+/* Material Icons */
+.material-icons {
+  font-size: 18px;
+}

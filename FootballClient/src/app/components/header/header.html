@@ -1,4 +1,7 @@
 <nav class="header-nav">
+  <!-- Impersonation Status Banner -->
+  <app-impersonation-status></app-impersonation-status>
+
   <div class="header-left">
     <div class="header-profile" (click)="navigateToAccount()" title="Account">
       <span class="material-icons profile-icon">person</span>
@@ -48,6 +51,9 @@
 
       <li *ngIf="isAdmin()">
         <button (click)="navigateTo('/manage-accounts')">Manage Users</button>
+      </li>
+      <li *ngIf="isAdmin()">
+        <button (click)="navigateTo('/user-impersonation')">User Impersonation</button>
       </li>
 
       <!-- Organizer Menu Items (non-admin organizers) -->
