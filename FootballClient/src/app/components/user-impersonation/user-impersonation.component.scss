@@ -1,0 +1,199 @@
+/* User Impersonation Container */
+.user-impersonation-container {
+  width: 100%;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: 25px;
+  padding: 10px 0;
+}
+
+.header-section h1 {
+  color: var(--text);
+  margin-bottom: 10px;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--primary-700));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-section .subtitle {
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+/* Impersonation Banner */
+.impersonation-banner {
+  background-color: rgba(247, 201, 72, 0.15);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.banner-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.banner-text {
+  display: flex;
+  align-items: center;
+  color: var(--warning);
+}
+
+.banner-icon {
+  margin-right: 8px;
+}
+
+/* Search Section */
+.search-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  padding: 16px 24px;
+  flex-wrap: wrap;
+}
+
+.search-container {
+  position: relative;
+  max-width: 500px;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 40px;
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.search-input:focus {
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.filter-container {
+  min-width: 150px;
+}
+
+.role-filter-select {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  outline: none;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.role-filter-select:focus {
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+/* Users Table */
+.users-table {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0 24px 24px;
+}
+
+.users-table table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.users-table th {
+  padding: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.users-table td {
+  padding: 16px 12px;
+  color: var(--text);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.users-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.users-table tr:last-child td {
+  border-bottom: none;
+}
+
+.users-table .empty-state {
+  text-align: center;
+  padding: 32px;
+  color: var(--muted);
+}
+
+/* Action Button */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn.primary {
+  background: var(--primary-700);
+  color: white;
+}
+
+.action-btn.primary:hover {
+  background: var(--primary-600);
+}
+
+.action-btn.danger {
+  background: var(--danger);
+  color: white;
+}
+
+.action-btn.danger:hover {
+  filter: brightness(1.1);
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Material Icons */
+.material-icons {
+  font-size: 18px;
+}

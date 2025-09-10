@@ -3,6 +3,7 @@ import { authGuard } from './components/auth/auth.guard';
 import { playerGuard } from './guards/player.guard';
 import { organizerGuard } from './guards/organizer.guard';
 import { roleRedirectGuard } from './guards/role-redirect.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -102,5 +103,13 @@ export const routes: Routes = [
         (m) => m.DelegatedOrganizerComponent
       ),
     canActivate: [authGuard],
+  },
+  {
+    path: 'user-impersonation',
+    loadComponent: () =>
+      import('./components/user-impersonation/user-impersonation.component').then(
+        (m) => m.UserImpersonationComponent
+      ),
+    canActivate: [authGuard, adminGuard],
   },
 ];

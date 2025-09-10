@@ -5,11 +5,12 @@ import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { UserRole } from '../../models/user-role.enum';
 import { DelegationStatusDto } from '../../models/organizer-delegation.interface';
+import { ImpersonationStatusComponent } from '../impersonation-status/impersonation-status.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ImpersonationStatusComponent],
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
 })
