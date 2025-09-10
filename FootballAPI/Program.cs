@@ -1,5 +1,6 @@
 using FootballAPI.Data;
 using FootballAPI.Repository;
+using FootballAPI.Repository.Interfaces;
 using FootballAPI.Service;
 using FootballAPI.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -69,6 +70,7 @@ builder.Services.AddScoped<IResetPasswordTokenRepository, ResetPasswordTokenRepo
 builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
 builder.Services.AddScoped<IMatchTeamsRepository, MatchTeamsRepository>();
 builder.Services.AddScoped<ITeamPlayersRepository, TeamPlayersRepository>();
+builder.Services.AddScoped<IMatchTemplateRepository, MatchTemplateRepository>();
 
 // Service Registration
 builder.Services.AddScoped<ITeamService, TeamService>();
@@ -81,6 +83,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
 builder.Services.AddScoped<IMatchTeamsService, MatchTeamsService>();
 builder.Services.AddScoped<ITeamPlayersService, TeamPlayersService>();
+builder.Services.AddScoped<IMatchTemplateService, MatchTemplateService>();
 
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();
