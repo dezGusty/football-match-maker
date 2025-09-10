@@ -24,6 +24,13 @@ namespace FootballAPI.Repository
                 .OrderByDescending(mt => mt.UpdatedAt)
                 .ToListAsync();
         }
+        
+        public async Task<IEnumerable<MatchTemplate>> GetAllAsync()
+        {
+            return await _context.MatchTemplates
+                .OrderByDescending(mt => mt.UpdatedAt)
+                .ToListAsync();
+        }
 
         public async Task<MatchTemplate> GetByIdAsync(int id)
         {

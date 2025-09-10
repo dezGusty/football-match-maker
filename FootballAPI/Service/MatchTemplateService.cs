@@ -20,7 +20,16 @@ namespace FootballAPI.Service
 
         public async Task<IEnumerable<MatchTemplateDto>> GetAllByUserIdAsync(int userId)
         {
+            // Get templates by userId - the controller will determine if an admin
+            // should see all templates or just their own
             var templates = await _matchTemplateRepository.GetAllByUserIdAsync(userId);
+            return templates.Select(MapToDto);
+        }
+        
+        public async Task<IEnumerable<MatchTemplateDto>> GetAllAsync()
+        {
+            // Get all templates for admins
+            var templates = await _matchTemplateRepository.GetAllAsync();
             return templates.Select(MapToDto);
         }
 
@@ -70,7 +79,8 @@ namespace FootballAPI.Service
 
         public async Task<bool> DeleteAsync(int id, int userId)
         {
-            if (!await _matchTemplateRepository.BelongsToUserAsync(id, userId))
+            var template = await _matchTemplateRepository.GetByIdAsync(id);
+            if (template == null || template.UserId != userId)
                 return false;
 
             return await _matchTemplateRepository.DeleteAsync(id);

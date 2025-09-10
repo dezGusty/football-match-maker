@@ -27,13 +27,14 @@ namespace FootballAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var userId = GetUserId();
-            
-            // Ensure the user is an organizer
-            if (!IsUserOrganizer())
+
+            // Ensure the user is an organizer or admin
+            if (!IsUserOrganizer() && !IsUserAdmin())
             {
                 return Forbid();
             }
 
+            // Both admins and organizers should only see their own templates
             var templates = await _matchTemplateService.GetAllByUserIdAsync(userId);
             return Ok(templates);
         }
@@ -42,13 +43,14 @@ namespace FootballAPI.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var userId = GetUserId();
-            
-            // Ensure the user is an organizer
-            if (!IsUserOrganizer())
+
+            // Ensure the user is an organizer or admin
+            if (!IsUserOrganizer() && !IsUserAdmin())
             {
                 return Forbid();
             }
 
+            // Both admins and organizers should only access their own templates
             var template = await _matchTemplateService.GetByIdAsync(id, userId);
             if (template == null)
                 return NotFound();
@@ -60,9 +62,9 @@ namespace FootballAPI.Controllers
         public async Task<IActionResult> Create([FromBody] CreateMatchTemplateDto dto)
         {
             var userId = GetUserId();
-            
-            // Ensure the user is an organizer
-            if (!IsUserOrganizer())
+
+            // Ensure the user is an organizer or admin
+            if (!IsUserOrganizer() && !IsUserAdmin())
             {
                 return Forbid();
             }
@@ -75,13 +77,14 @@ namespace FootballAPI.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] UpdateMatchTemplateDto dto)
         {
             var userId = GetUserId();
-            
-            // Ensure the user is an organizer
-            if (!IsUserOrganizer())
+
+            // Ensure the user is an organizer or admin
+            if (!IsUserOrganizer() && !IsUserAdmin())
             {
                 return Forbid();
             }
 
+            // Both admins and organizers should only update their own templates
             var updated = await _matchTemplateService.UpdateAsync(id, dto, userId);
             if (updated == null)
                 return NotFound();
@@ -93,13 +96,14 @@ namespace FootballAPI.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var userId = GetUserId();
-            
-            // Ensure the user is an organizer
-            if (!IsUserOrganizer())
+
+            // Ensure the user is an organizer or admin
+            if (!IsUserOrganizer() && !IsUserAdmin())
             {
                 return Forbid();
             }
 
+            // Both admins and organizers should only delete their own templates
             var result = await _matchTemplateService.DeleteAsync(id, userId);
             if (!result)
                 return NotFound();
@@ -116,6 +120,11 @@ namespace FootballAPI.Controllers
         {
             var role = User.FindFirstValue(ClaimTypes.Role);
             return role == UserRole.ORGANISER.ToString();
+        }
+        private bool IsUserAdmin()
+        {
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            return role == UserRole.ADMIN.ToString();
         }
     }
 }
