@@ -87,4 +87,15 @@ export class ImpersonationService {
   getOriginalAdminId(): string | null {
     return localStorage.getItem('originalAdminId');
   }
+  
+  // Method to clear impersonation state and update subjects
+  clearImpersonationState(): void {
+    localStorage.removeItem('isImpersonating');
+    localStorage.removeItem('originalAdminId');
+    localStorage.removeItem('impersonatedUser');
+    
+    // Update the behavior subjects
+    this.isImpersonatingSubject.next(false);
+    this.impersonatedUserSubject.next(null);
+  }
 }
