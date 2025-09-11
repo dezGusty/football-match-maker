@@ -84,6 +84,34 @@ namespace FootballAPI.Service
 
         public async Task LogoutAsync(HttpContext httpContext)
         {
+            // Check if this is an impersonation session
+            if (httpContext.User.Identity.IsAuthenticated)
+            {
+                var isImpersonating = httpContext.User.FindFirst("IsImpersonating")?.Value;
+                if (!string.IsNullOrEmpty(isImpersonating) && isImpersonating.Equals("true", StringComparison.OrdinalIgnoreCase))
+                {
+                    // This is an impersonation session, get the impersonationLogId
+                    var impersonationLogIdClaim = httpContext.User.FindFirst("ImpersonationLogId")?.Value;
+                    var originalAdminIdClaim = httpContext.User.FindFirst("OriginalAdminId")?.Value;
+                    
+                    // If we have an ImpersonationLogService instance, use it to end the impersonation
+                    var impersonationLogService = httpContext.RequestServices.GetService<IImpersonationLogService>();
+                    if (impersonationLogService != null)
+                    {
+                        // Try to end by specific log ID first
+                        if (!string.IsNullOrEmpty(impersonationLogIdClaim) && int.TryParse(impersonationLogIdClaim, out var logId))
+                        {
+                            await impersonationLogService.EndImpersonation(logId);
+                        }
+                        // Fallback to ending all active impersonations by this admin
+                        else if (!string.IsNullOrEmpty(originalAdminIdClaim) && int.TryParse(originalAdminIdClaim, out var adminId))
+                        {
+                            await impersonationLogService.EndAllActiveImpersonationsByAdmin(adminId);
+                        }
+                    }
+                }
+            }
+            
             await Task.CompletedTask;
         }
     }

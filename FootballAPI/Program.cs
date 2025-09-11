@@ -82,6 +82,7 @@ builder.Services.AddScoped<IResetPasswordService, ResetPasswordService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
 builder.Services.AddScoped<IMatchTeamsService, MatchTeamsService>();
+builder.Services.AddScoped<IImpersonationLogService, ImpersonationLogService>();
 builder.Services.AddScoped<ITeamPlayersService, TeamPlayersService>();
 builder.Services.AddScoped<IMatchTemplateService, MatchTemplateService>();
 

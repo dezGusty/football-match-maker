@@ -161,6 +161,33 @@ namespace FootballAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("FootballAPI.Models.ImpersonationLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AdminId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ImpersonatedUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
+
+                    b.HasIndex("ImpersonatedUserId");
+
+                    b.ToTable("ImpersonationLogs");
+                });
+
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
                 {
                     b.Property<int>("Id")
@@ -801,6 +828,25 @@ namespace FootballAPI.Migrations
                     b.Navigation("Receiver");
 
                     b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("FootballAPI.Models.ImpersonationLog", b =>
+                {
+                    b.HasOne("FootballAPI.Models.User", "Admin")
+                        .WithMany()
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("FootballAPI.Models.User", "ImpersonatedUser")
+                        .WithMany()
+                        .HasForeignKey("ImpersonatedUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Admin");
+
+                    b.Navigation("ImpersonatedUser");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.Match", b =>

@@ -18,6 +18,7 @@ namespace FootballAPI.Data
         public DbSet<PlayerOrganiser> PlayerOrganisers { get; set; }
         public DbSet<OrganizerDelegate> OrganizerDelegates { get; set; }
         public DbSet<MatchTemplate> MatchTemplates { get; set; }
+        public DbSet<ImpersonationLog> ImpersonationLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -173,6 +174,23 @@ namespace FootballAPI.Data
                     .WithMany()
                     .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ImpersonationLog>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.StartTime).IsRequired();
+                
+                // Configure relationships
+                entity.HasOne(e => e.Admin)
+                    .WithMany()
+                    .HasForeignKey(e => e.AdminId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(e => e.ImpersonatedUser)
+                    .WithMany()
+                    .HasForeignKey(e => e.ImpersonatedUserId)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
 
             SeedData(modelBuilder);
