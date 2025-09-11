@@ -305,6 +305,14 @@ export class AuthService {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
+      // Clear any impersonation state
+      localStorage.removeItem('isImpersonating');
+      localStorage.removeItem('originalAdminId');
+      localStorage.removeItem('impersonatedUser');
+      
+      // Need to dispatch an event to update the UI for impersonation status
+      window.dispatchEvent(new CustomEvent('impersonation-ended'));
+      
       this.clearAuthState();
       if (redirect) {
         this.router.navigate(['/login']);

@@ -16,15 +16,18 @@ namespace FootballAPI.Controllers
     public class ImpersonationController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IImpersonationLogService _impersonationLogService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<ImpersonationController> _logger;
 
         public ImpersonationController(
             IUserService userService,
+            IImpersonationLogService impersonationLogService,
             IConfiguration configuration,
             ILogger<ImpersonationController> logger)
         {
             _userService = userService;
+            _impersonationLogService = impersonationLogService;
             _configuration = configuration;
             _logger = logger;
         }
@@ -48,8 +51,13 @@ namespace FootballAPI.Controllers
                     return NotFound(new { message = "User to impersonate not found." });
                 }
 
+                // Log the impersonation
+                int impersonationLogId = await _impersonationLogService.StartImpersonation(
+                    int.Parse(adminId), 
+                    userToImpersonate.Id);
+
                 // Generate impersonation token
-                var token = GenerateImpersonationToken(userToImpersonate, int.Parse(adminId));
+                var token = GenerateImpersonationToken(userToImpersonate, int.Parse(adminId), impersonationLogId);
 
                 return Ok(new
                 {
@@ -63,7 +71,8 @@ namespace FootballAPI.Controllers
                         username = userToImpersonate.Username
                     },
                     isImpersonating = true,
-                    originalAdminId = adminId
+                    originalAdminId = adminId,
+                    impersonationLogId = impersonationLogId
                 });
             }
             catch (Exception ex)
@@ -76,6 +85,7 @@ namespace FootballAPI.Controllers
         public class StopImpersonationRequest
         {
             public string? OriginalAdminId { get; set; }
+            public int? ImpersonationLogId { get; set; }
         }
 
         [HttpPost("stop")]
@@ -105,6 +115,28 @@ namespace FootballAPI.Controllers
                     return NotFound(new { message = "Original admin user not found." });
                 }
 
+                // Get impersonation log ID from request or from claims
+                int? impersonationLogId = request?.ImpersonationLogId;
+                if (!impersonationLogId.HasValue)
+                {
+                    var logIdClaim = User.FindFirst("ImpersonationLogId")?.Value;
+                    if (!string.IsNullOrEmpty(logIdClaim) && int.TryParse(logIdClaim, out int parsedLogId))
+                    {
+                        impersonationLogId = parsedLogId;
+                    }
+                }
+
+                // End the impersonation log if we have a log ID
+                if (impersonationLogId.HasValue)
+                {
+                    await _impersonationLogService.EndImpersonation(impersonationLogId.Value);
+                }
+                else
+                {
+                    // If we couldn't get the exact log ID, end all active impersonations by this admin
+                    await _impersonationLogService.EndAllActiveImpersonationsByAdmin(int.Parse(originalAdminId));
+                }
+
                 // Generate token for the admin
                 var token = GenerateRegularToken(adminUser);
 
@@ -129,7 +161,7 @@ namespace FootballAPI.Controllers
             }
         }
 
-        private string GenerateImpersonationToken(UserDto userToImpersonate, int adminId)
+        private string GenerateImpersonationToken(UserDto userToImpersonate, int adminId, int impersonationLogId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"] ?? "your_super_secret_key_at_least_32_characters_long");
@@ -142,7 +174,8 @@ namespace FootballAPI.Controllers
                 new Claim(ClaimTypes.Name, userToImpersonate.Username),
                 // Add special claims for impersonation
                 new Claim("IsImpersonating", "true"),
-                new Claim("OriginalAdminId", adminId.ToString())
+                new Claim("OriginalAdminId", adminId.ToString()),
+                new Claim("ImpersonationLogId", impersonationLogId.ToString())
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor
