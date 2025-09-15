@@ -255,14 +255,7 @@ namespace FootballAPI.Service
 
             if (organizer != null && user != null)
             {
-                var relation = new PlayerOrganiser
-                {
-                    OrganiserId = organiserId,
-                    PlayerId = userId,
-                    CreatedAt = DateTime.Now
-                };
-
-                await _userRepository.AddPlayerOrganiserRelationAsync(relation);
+                await _userRepository.AddPlayerOrganiserRelationAsync(organiserId, userId);
             }
         }
 
@@ -277,8 +270,8 @@ namespace FootballAPI.Service
                 throw new InvalidOperationException("User already has an active delegation");
 
             var friend = await _userRepository.GetByIdAsync(dto.FriendUserId);
-            if (friend == null || friend.Role != UserRole.PLAYER)
-                throw new ArgumentException("Friend must be a player");
+            if (friend == null)
+                throw new ArgumentException("Friend not found");
 
             var areFriends = await _userRepository.AreFriends(organizerId, dto.FriendUserId);
             if (!areFriends)

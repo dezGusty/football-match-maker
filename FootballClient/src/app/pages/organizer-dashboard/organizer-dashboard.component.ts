@@ -284,7 +284,7 @@ export class OrganizerDashboardComponent {
 
     try {
       const addedPlayer = await this.UserService.addPlayer(this.newPlayer);
-      await this.UserService.addPlayerOrganiserRelation(addedPlayer.id!);
+      // Player relation is now managed through friend requests - no separate relation needed
 
       this.players.push(addedPlayer);
 

@@ -29,7 +29,7 @@ namespace FootballAPI.Repository
         Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange);
         Task<string> UpdatePlayerProfileImageAsync(int userId, IFormFile imageFile);
         Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates);
-        Task AddPlayerOrganiserRelationAsync(PlayerOrganiser relation);
+        Task AddPlayerOrganiserRelationAsync(int organizerId, int playerId);
         Task<bool> RemovePlayerOrganiserRelationAsync(int organizerId, int playerId);
 
         // Organizer delegation functionality
@@ -44,8 +44,8 @@ namespace FootballAPI.Repository
         Task<bool> RestoreOrganizerPlayerRelationAsync(int organizerId);
         Task<bool> TransferMatchesAsync(int fromOrganizerId, int toOrganizerId);
         Task<bool> UpdateUserRoleAsync(int userId, UserRole newRole);
-        Task<PlayerOrganiser?> GetPlayerOrganiserRelationAsync(int userId, int friendId);
-        Task DeletePlayerOrganiserRelationAsync(PlayerOrganiser relation);
+        Task<FriendRequest?> GetFriendRequestRelationAsync(int userId, int friendId);
+        Task DeleteFriendRequestRelationAsync(FriendRequest relation);
 
 
     }

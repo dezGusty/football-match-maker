@@ -86,19 +86,24 @@ namespace FootballAPI.Repository
 
         public async Task<IEnumerable<User>> GetFriendsFromPlayerOrganiserAsync(int userId)
         {
-            var asOrganiser = await _context.PlayerOrganisers
-                .Where(po => po.OrganiserId == userId)
-                .Include(po => po.Player)
-                .Select(po => po.Player)
+            // Get all accepted friend requests for this user
+            var friendRequests = await _context.FriendRequests
+                .Where(fr => fr.Status == FriendRequestStatus.Accepted &&
+                           (fr.SenderId == userId || fr.ReceiverId == userId))
+                .Include(fr => fr.Sender)
+                .Include(fr => fr.Receiver)
                 .ToListAsync();
 
-            var asPlayer = await _context.PlayerOrganisers
-                .Where(po => po.PlayerId == userId)
-                .Include(po => po.Organiser)
-                .Select(po => po.Organiser)
-                .ToListAsync();
+            // Extract the friend users and remove duplicates
+            var friends = friendRequests
+                .Select(fr => fr.SenderId == userId ? fr.Receiver : fr.Sender)
+                .Where(user => user != null)
+                .GroupBy(u => u.Id)
+                .Select(g => g.First())
+                .OrderBy(u => u.Username)
+                .ToList();
 
-            return [.. asOrganiser.Union(asPlayer).OrderBy(u => u.Username)];
+            return friends;
         }
 
         public async Task<IEnumerable<FriendRequest>> GetAcceptedFriendsAsync(int userId)

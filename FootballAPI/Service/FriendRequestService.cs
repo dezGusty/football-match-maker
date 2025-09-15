@@ -50,10 +50,7 @@ namespace FootballAPI.Service
             if (existingRequests.Any())
                 throw new ArgumentException("A pending friend request already exists between these users");
 
-            if (sender.Role == UserRole.PLAYER && receiver.Role == UserRole.PLAYER)
-            {
-                throw new ArgumentException("Friend requests between two players are not allowed. At least one must be an organizer.");
-            }
+            // Friend requests are now allowed between all role combinations
 
             var friendRequest = new FriendRequest
             {
@@ -85,48 +82,12 @@ namespace FootballAPI.Service
 
             var updatedRequest = await _friendRequestRepository.UpdateAsync(friendRequest);
 
-            if (response.Accept)
-            {
-                await CreatePlayerOrganiserRelation(friendRequest.SenderId, friendRequest.ReceiverId);
-            }
+            // Friend request is now accepted - no need to create separate PlayerOrganiser relation
+            // The accepted FriendRequest itself represents the friendship
 
             return MapToDto(updatedRequest);
         }
 
-        private async Task CreatePlayerOrganiserRelation(int senderId, int receiverId)
-        {
-            var sender = await _userRepository.GetByIdAsync(senderId);
-            var receiver = await _userRepository.GetByIdAsync(receiverId);
-
-            if (sender == null || receiver == null)
-                throw new ArgumentException("Sender or receiver not found");
-
-            int organiserId, userId;
-
-            if (sender.Role == UserRole.ORGANISER || sender.Role == UserRole.ADMIN)
-            {
-                organiserId = senderId;
-                userId = receiverId;
-            }
-            else if (receiver.Role == UserRole.ORGANISER || receiver.Role == UserRole.ADMIN)
-            {
-                organiserId = receiverId;
-                userId = senderId;
-            }
-            else
-            {
-                throw new ArgumentException("At least one user must be an organizer or admin");
-            }
-
-            var relation = new PlayerOrganiser
-            {
-                OrganiserId = organiserId,
-                PlayerId = userId,
-                CreatedAt = DateTime.Now
-            };
-
-            await _userRepository.AddPlayerOrganiserRelationAsync(relation);
-        }
 
         public async Task<IEnumerable<FriendRequestDto>> GetSentRequestsAsync(int userId)
         {
@@ -173,12 +134,12 @@ namespace FootballAPI.Service
 
         public async Task<bool> UnfriendAsync(int userId, int friendId)
         {
-            var relation = await _userRepository.GetPlayerOrganiserRelationAsync(userId, friendId);
+            var relation = await _userRepository.GetFriendRequestRelationAsync(userId, friendId);
 
             if (relation == null)
                 return false;
 
-            await _userRepository.DeletePlayerOrganiserRelationAsync(relation);
+            await _userRepository.DeleteFriendRequestRelationAsync(relation);
             return true;
         }
 

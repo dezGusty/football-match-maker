@@ -58,8 +58,6 @@ namespace FootballAPI.Models
         public virtual ICollection<FriendRequest> SentFriendRequests { get; set; } = new List<FriendRequest>();
         public virtual ICollection<FriendRequest> ReceivedFriendRequests { get; set; } = new List<FriendRequest>();
         public virtual ICollection<ResetPasswordToken> ResetPasswordTokens { get; set; } = new List<ResetPasswordToken>();
-        public virtual ICollection<PlayerOrganiser> OrganisedPlayers { get; set; } = new List<PlayerOrganiser>();
-        public virtual ICollection<PlayerOrganiser> PlayerRelations { get; set; } = new List<PlayerOrganiser>();
         public virtual ICollection<Match> OrganisedMatches { get; set; } = new List<Match>();
         public virtual ICollection<TeamPlayers> TeamPlayers { get; set; } = new List<TeamPlayers>();
         public virtual ICollection<OrganizerDelegate> OriginalDelegations { get; set; } = new List<OrganizerDelegate>();
