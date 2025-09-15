@@ -76,17 +76,9 @@ namespace FootballAPI.Repository
             return true;
         }
 
-        public async Task<bool> ExistsPendingRequestAsync(int senderId, int receiverId)
-        {
-            return await _context.FriendRequests
-                .AnyAsync(fr => fr.SenderId == senderId &&
-                               fr.ReceiverId == receiverId &&
-                               fr.Status == FriendRequestStatus.Pending);
-        }
 
         public async Task<IEnumerable<User>> GetFriendsFromPlayerOrganiserAsync(int userId)
         {
-            // Get all accepted friend requests for this user
             var friendRequests = await _context.FriendRequests
                 .Where(fr => fr.Status == FriendRequestStatus.Accepted &&
                            (fr.SenderId == userId || fr.ReceiverId == userId))
@@ -94,7 +86,6 @@ namespace FootballAPI.Repository
                 .Include(fr => fr.Receiver)
                 .ToListAsync();
 
-            // Extract the friend users and remove duplicates
             var friends = friendRequests
                 .Select(fr => fr.SenderId == userId ? fr.Receiver : fr.Sender)
                 .Where(user => user != null)
@@ -111,7 +102,7 @@ namespace FootballAPI.Repository
             return await _context.FriendRequests
                 .Include(fr => fr.Sender)
                 .Include(fr => fr.Receiver)
-                .Where(fr => (fr.SenderId == userId || fr.ReceiverId == userId) && 
+                .Where(fr => (fr.SenderId == userId || fr.ReceiverId == userId) &&
                             fr.Status == FriendRequestStatus.Accepted)
                 .ToListAsync();
         }

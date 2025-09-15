@@ -3,7 +3,6 @@ using FootballAPI.Data;
 using FootballAPI.Models;
 using FootballAPI.Models.Enums;
 using FootballAPI.DTOs;
-using Microsoft.AspNetCore.Http;
 
 namespace FootballAPI.Repository
 {
@@ -86,11 +85,6 @@ namespace FootballAPI.Repository
             return true;
         }
 
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await _context.Set<User>().AnyAsync(u => u.Id == id);
-        }
-
         public async Task<bool> UsernameExistsAsync(string username)
         {
             return await _context.Set<User>()
@@ -138,7 +132,6 @@ namespace FootballAPI.Repository
 
         public async Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id)
         {
-            // Get all friends regardless of role
             var users = await _context.FriendRequests
                 .Where(fr => fr.Status == FriendRequestStatus.Accepted &&
                            (fr.SenderId == id || fr.ReceiverId == id))
@@ -159,7 +152,6 @@ namespace FootballAPI.Repository
             return await query.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        // Player functionality integrated
         public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange)
         {
             var user = await GetByIdAsync(userId);
@@ -178,8 +170,6 @@ namespace FootballAPI.Repository
             if (user == null)
                 throw new ArgumentException("User not found");
 
-            // This would typically involve file storage logic
-            // For now, just updating the path
             var imagePath = $"/images/players/{userId}_{DateTime.UtcNow:yyyyMMddHHmmss}.jpg";
             user.ProfileImagePath = imagePath;
             user.UpdatedAt = DateTime.UtcNow;
@@ -206,7 +196,6 @@ namespace FootballAPI.Repository
 
         public async Task AddPlayerOrganiserRelationAsync(int organizerId, int playerId)
         {
-            // Check if a friend request already exists between these users
             var existingRequest = await _context.FriendRequests
                 .FirstOrDefaultAsync(fr =>
                     (fr.SenderId == organizerId && fr.ReceiverId == playerId) ||
@@ -214,7 +203,6 @@ namespace FootballAPI.Repository
 
             if (existingRequest == null)
             {
-                // Create a new accepted friend request
                 var friendRequest = new FriendRequest
                 {
                     SenderId = organizerId,
@@ -228,38 +216,12 @@ namespace FootballAPI.Repository
             }
             else if (existingRequest.Status != FriendRequestStatus.Accepted)
             {
-                // Update existing request to accepted
                 existingRequest.Status = FriendRequestStatus.Accepted;
                 existingRequest.ResponsedAt = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
             }
         }
 
-        public async Task<bool> RemovePlayerOrganiserRelationAsync(int organizerId, int playerId)
-        {
-            try
-            {
-                var friendRequest = await _context.FriendRequests
-                    .FirstOrDefaultAsync(fr =>
-                        (fr.SenderId == organizerId && fr.ReceiverId == playerId) ||
-                        (fr.SenderId == playerId && fr.ReceiverId == organizerId));
-
-                if (friendRequest != null)
-                {
-                    _context.FriendRequests.Remove(friendRequest);
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
-
-                return false;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        // Organizer delegation functionality
         public async Task<OrganizerDelegate> CreateDelegationAsync(OrganizerDelegate delegation)
         {
             _context.OrganizerDelegates.Add(delegation);
@@ -314,7 +276,6 @@ namespace FootballAPI.Repository
         {
             try
             {
-                // Get all accepted friend requests where fromOrganizerId is involved with players
                 var existingFriendRequests = await _context.FriendRequests
                     .Where(fr => fr.Status == FriendRequestStatus.Accepted &&
                                ((fr.SenderId == fromOrganizerId && fr.Receiver.Role == UserRole.PLAYER) ||
@@ -324,15 +285,16 @@ namespace FootballAPI.Repository
                     .ToListAsync();
 
                 var friendRequestsToTransfer = existingFriendRequests
-                    .Where(fr => {
+                    .Where(fr =>
+                    {
                         var playerId = fr.SenderId == fromOrganizerId ? fr.ReceiverId : fr.SenderId;
                         return playerId != fromOrganizerId && (!excludePlayerId.HasValue || playerId != excludePlayerId.Value);
                     })
                     .ToList();
 
-                // Remove the old friend requests
                 var friendRequestsToRemove = excludePlayerId.HasValue
-                    ? existingFriendRequests.Where(fr => {
+                    ? existingFriendRequests.Where(fr =>
+                    {
                         var playerId = fr.SenderId == fromOrganizerId ? fr.ReceiverId : fr.SenderId;
                         return playerId != excludePlayerId.Value;
                     }).ToList()
@@ -340,8 +302,8 @@ namespace FootballAPI.Repository
 
                 _context.FriendRequests.RemoveRange(friendRequestsToRemove);
 
-                // Create new friend requests with the new organizer
-                var newFriendRequests = friendRequestsToTransfer.Select(fr => {
+                var newFriendRequests = friendRequestsToTransfer.Select(fr =>
+                {
                     var playerId = fr.SenderId == fromOrganizerId ? fr.ReceiverId : fr.SenderId;
                     return new FriendRequest
                     {
@@ -394,21 +356,6 @@ namespace FootballAPI.Repository
                     await _context.SaveChangesAsync();
                 }
 
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public async Task<bool> RestoreOrganizerPlayerRelationAsync(int organizerId)
-        {
-            try
-            {
-                // This method was creating self-relationships which don't make sense in FriendRequest context
-                // In the new system, we don't need self-friend relationships
-                // This method can be left empty or removed as it's not needed
                 return true;
             }
             catch
