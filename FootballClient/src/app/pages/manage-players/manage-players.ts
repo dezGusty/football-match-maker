@@ -259,20 +259,29 @@ export class ManagePlayersComponent {
 
     try {
       const userId = this.authService.getUserId()!;
-      await this.UserService.delegateOrganizerRole(
+      const result = await this.UserService.delegateOrganizerRole(
         userId,
         this.selectedPlayerForDelegation.id!,
         this.delegationNotes || undefined
       );
 
-      this.delegationSuccessMessage = `Successfully delegated organizer role to ${this.selectedPlayerForDelegation.firstName} ${this.selectedPlayerForDelegation.lastName}. Redirecting...`;
+      this.delegationSuccessMessage = `Successfully delegated organizer role to ${this.selectedPlayerForDelegation.firstName} ${this.selectedPlayerForDelegation.lastName}. You will be logged out automatically to refresh your role.`;
 
-      await this.loadDelegationStatus();
-
-      setTimeout(() => {
-        this.closeDelegateModal();
-        this.router.navigate(['/delegated-organizer']);
-      }, 1500);
+      // If backend indicates logout is required, do it automatically
+      if (result.requiresLogout) {
+        setTimeout(() => {
+          this.closeDelegateModal();
+          // Force logout to ensure role changes take effect
+          this.authService.logout();
+        }, 2000);
+      } else {
+        // Fallback to old behavior if backend doesn't indicate logout requirement
+        await this.loadDelegationStatus();
+        setTimeout(() => {
+          this.closeDelegateModal();
+          this.router.navigate(['/player-dashboard']);
+        }, 1500);
+      }
     } catch (error: any) {
       this.delegationErrorMessage =
         error.message || 'Failed to delegate organizer role';

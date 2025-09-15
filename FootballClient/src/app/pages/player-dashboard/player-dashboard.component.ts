@@ -416,21 +416,27 @@ export class PlayerDashboardComponent implements OnInit {
 
     try {
       const userId = this.authService.getUserId()!;
-      await this.userService.reclaimOrganizerRole(
+      const result = await this.userService.reclaimOrganizerRole(
         userId,
         this.delegationStatus.currentDelegation.id
       );
 
       this.notificationService.showSuccess(
-        'Organizer role reclaimed successfully! Redirecting to organizer dashboard...'
+        'Organizer role reclaimed successfully! You will be logged out automatically to refresh your role.'
       );
 
       this.isDelegatedOrganizer = false;
       this.delegationStatus = null;
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      if (result.requiresLogout) {
+        setTimeout(() => {
+          this.authService.logout();
+        }, 2000);
+      } else {
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
     } catch (error: any) {
       this.notificationService.showError(
         error.message || 'Failed to reclaim organizer role'
