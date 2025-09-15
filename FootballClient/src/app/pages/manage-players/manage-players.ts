@@ -140,7 +140,7 @@ export class ManagePlayersComponent {
 
     try {
       const addedPlayer = await this.UserService.addPlayer(this.newPlayer);
-      // Player relation is now managed through friend requests - no separate relation needed
+      await this.UserService.addPlayerOrganiserRelation(addedPlayer.id!);
 
       this.players.push(addedPlayer);
 

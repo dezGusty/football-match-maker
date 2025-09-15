@@ -266,6 +266,28 @@ export class UserService {
     }
   }
 
+  async addPlayerOrganiserRelation(userId: number): Promise<void> {
+    const organiserId = this.authService.getUserId();
+    if (!organiserId) {
+      throw new Error('User not authenticated or organiser ID not available');
+    }
+
+    const body = { userId, organiserId };
+
+    const response = await fetch(`${this.url}/player-organiser`, {
+      method: 'POST',
+      headers: getAuthHeaders(this.authService),
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Response error:', response.status, errorText);
+      throw new Error(
+        `Failed to add player-organiser relation: ${response.status} ${errorText}`
+      );
+    }
+  }
 
   async delegateOrganizerRole(
     userId: number,
