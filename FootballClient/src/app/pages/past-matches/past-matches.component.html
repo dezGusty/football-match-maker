@@ -12,7 +12,8 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let match of matches; let i = index">
+    @for (match of matches; track match; let i = $index) {
+    <tr>
       <td>{{ i + 1 }}</td>
       <td>{{ match.matchDate | date : "MMM d, y, HH:mm" }}</td>
       <td>{{ match.teamAName }}</td>
@@ -26,10 +27,12 @@
         </button>
       </td>
     </tr>
+    }
   </tbody>
 </table>
 
-<div class="modal-overlay" *ngIf="modalOpen" (click)="closeModal()">
+@if (modalOpen) {
+<div class="modal-overlay" (click)="closeModal()">
   <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h2 class="modal-title">Match Details</h2>
@@ -39,26 +42,24 @@
       <div class="team-section">
         <h3>{{ selectedMatch?.teamAName }}</h3>
         <ul>
-          <li
-            *ngFor="
-              let player of getPlayers(selectedMatch, selectedMatch?.teamAId)
-            "
-          >
+          @for ( player of getPlayers(selectedMatch, selectedMatch?.teamAId);
+          track player ) {
+          <li>
             {{ player }}
           </li>
+          }
         </ul>
       </div>
 
       <div class="team-section">
         <h3>{{ selectedMatch?.teamBName }}</h3>
         <ul>
-          <li
-            *ngFor="
-              let player of getPlayers(selectedMatch, selectedMatch?.teamBId)
-            "
-          >
+          @for ( player of getPlayers(selectedMatch, selectedMatch?.teamBId);
+          track player ) {
+          <li>
             {{ player }}
           </li>
+          }
         </ul>
       </div>
     </div>
@@ -68,3 +69,4 @@
     </div>
   </div>
 </div>
+}
