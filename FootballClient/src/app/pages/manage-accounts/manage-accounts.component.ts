@@ -8,6 +8,8 @@ import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
 import { NotificationService } from '../../services/notification.service';
 import { StatSelector } from '../../components/stat-selector/stat-selector';
+import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-manage-accounts',
@@ -20,7 +22,8 @@ export class ManageAccountsComponent {
   constructor(
     private UserService: UserService,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private http: HttpClient,
   ) {}
 
   users: User[] = [];
@@ -59,6 +62,15 @@ export class ManageAccountsComponent {
     const role = this.authService.getUserRole();
 
     if (role === UserRole.ADMIN) {
+      this.http.get<any[]>(`${environment.apiUrl}/User`).subscribe(
+        (data) => {
+          this.users = data;
+          this.applyFilters();
+        },
+        (error) => {
+          console.error('Error loading users:', error);
+        }
+      );
       this.users = await this.UserService.getAllUsers();
       const id = this.authService.getUserId();
       this.users = this.users.filter((user) => user.id !== id);
