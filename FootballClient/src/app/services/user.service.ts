@@ -353,4 +353,20 @@ export class UserService {
 
     return await response.json();
   }
+
+  async isDelegatedOrganizer(userId: number): Promise<boolean> {
+    const response = await fetch(`${this.url}/${userId}/is-delegated-organizer`, {
+      method: 'GET',
+      headers: getAuthHeaders(this.authService),
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(
+        errorResponse.message || 'Failed to check if user is delegated organizer'
+      );
+    }
+
+    return await response.json();
+  }
 }

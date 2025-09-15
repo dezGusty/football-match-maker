@@ -307,6 +307,8 @@ namespace FootballAPI.Service
 
             await _userRepository.UpdateUserRoleAsync(dto.FriendUserId, UserRole.ORGANISER);
 
+            await _userRepository.UpdateUserRoleAsync(organizerId, UserRole.PLAYER);
+
             return MapToDelegationDto(createdDelegation, organizer, friend);
         }
 
@@ -328,6 +330,8 @@ namespace FootballAPI.Service
 
             await _userRepository.UpdateUserRoleAsync(delegation.DelegateUserId, UserRole.PLAYER);
 
+            await _userRepository.UpdateUserRoleAsync(organizerId, UserRole.ORGANISER);
+
             return true;
         }
 
@@ -343,6 +347,16 @@ namespace FootballAPI.Service
                 CurrentDelegation = currentDelegation != null ? MapToDelegationDto(currentDelegation, currentDelegation.OriginalOrganizer, currentDelegation.DelegateUser) : null,
                 ReceivedDelegation = receivedDelegation != null ? MapToDelegationDto(receivedDelegation, receivedDelegation.OriginalOrganizer, receivedDelegation.DelegateUser) : null
             };
+        }
+
+        public async Task<bool> IsDelegatedOrganizerAsync(int userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null || user.Role != UserRole.PLAYER)
+                return false;
+
+            var currentDelegation = await _userRepository.GetActiveDelegationByOrganizerId(userId);
+            return currentDelegation != null;
         }
 
         public async Task<IEnumerable<UserDto>> GetFriendsAsync(int userId)

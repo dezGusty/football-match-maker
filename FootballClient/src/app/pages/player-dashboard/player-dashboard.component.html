@@ -2,13 +2,84 @@
 <app-header (tabChange)="setActiveTab($event)"></app-header>
 <app-friend-requests></app-friend-requests>
 
+<div
+  class="delegation-status-banner"
+  *ngIf="isDelegatedOrganizer && delegationStatus"
+>
+  <div class="banner-content">
+    <div class="delegation-info">
+      <h3>🔄 Delegated Organizer Mode</h3>
+      <p>
+        You have delegated your organizer role to
+        <strong>{{ getDelegateName() }}</strong> on {{ getDelegationDate() }}
+      </p>
+      <p class="notes" *ngIf="getDelegationNotes() !== 'No notes provided'">
+        <em>Notes: {{ getDelegationNotes() }}</em>
+      </p>
+    </div>
+    <div class="reclaim-section">
+      <button
+        class="reclaim-btn"
+        (click)="showReclaimConfirmation()"
+        [disabled]="isReclaimingRole"
+      >
+        <span *ngIf="isReclaimingRole" class="spinner"></span>
+        {{ isReclaimingRole ? "Reclaiming..." : "Reclaim My Organizer Role" }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Reclaim Confirmation Dialog -->
+<div
+  class="confirmation-dialog-overlay"
+  *ngIf="showReclaimConfirmDialog"
+  (click)="cancelReclaim()"
+>
+  <div class="confirmation-dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h3>Reclaim Organizer Role</h3>
+    </div>
+    <div class="dialog-body">
+      <p>Are you sure you want to reclaim your organizer role?</p>
+      <p>
+        This will remove delegation from
+        <strong>{{ getDelegateName() }}</strong> and they will no longer have
+        organizer access.
+      </p>
+    </div>
+    <div class="dialog-actions">
+      <button
+        class="btn-cancel"
+        (click)="cancelReclaim()"
+        [disabled]="isReclaimingRole"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn-confirm"
+        (click)="reclaimOrganizerRole()"
+        [disabled]="isReclaimingRole"
+      >
+        <span *ngIf="isReclaimingRole">Processing...</span>
+        <span *ngIf="!isReclaimingRole">Yes, Reclaim Role</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Main Container -->
 <div class="dashboard-container">
   <!-- Main Content Area -->
   <div class="main-content">
     <!-- My Matches Section - Always visible -->
     <div class="content-section">
-      <h2>My Upcoming Matches</h2>
+      <h2>
+        My Upcoming Matches
+        <span *ngIf="isDelegatedOrganizer" class="player-mode-indicator"
+          >(Currently in Player Mode)</span
+        >
+      </h2>
       <p class="subtitle">Matches you are enrolled in</p>
       <div *ngIf="upcomingMatches.length === 0" class="empty-state">
         You are not enrolled in any upcoming matches.

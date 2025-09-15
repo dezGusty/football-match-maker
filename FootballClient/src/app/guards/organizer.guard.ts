@@ -15,23 +15,21 @@ export const organizerGuard = async () => {
     return false;
   }
 
-  // If player role, redirect to player dashboard
+  // If player role, check if they are actually a delegated organizer
   if (userRole === UserRole.PLAYER) {
+    const isDelegatedOrganizer = await authService.isDelegatedOrganizer();
+    if (isDelegatedOrganizer) {
+      // Delegated organizers should go to player dashboard, not organizer dashboard
+      router.navigate(['/player-dashboard']);
+      return false;
+    }
+    // Regular players should go to player dashboard
     router.navigate(['/player-dashboard']);
     return false;
   }
 
-  // For ORGANISER and ADMIN roles, check delegation status
+  // For ORGANISER and ADMIN roles, allow access (no more delegation check needed since delegated organizers are now PLAYER role)
   if (userRole === UserRole.ORGANISER || userRole === UserRole.ADMIN) {
-    // Check if organizer is delegated
-    const isDelegated = await authService.isDelegatedOrganizer();
-    if (isDelegated) {
-      // Redirect delegated organizers to special page
-      router.navigate(['/delegated-organizer']);
-      return false;
-    }
-    
-    // Allow access for non-delegated organizers and admins
     return true;
   }
 

@@ -35,14 +35,13 @@ export class Header implements OnInit {
       this.username = user.username;
       this.userRole = this.authService.getUserRole();
 
-      if (this.isOrganizer()) {
-        try {
-          this.delegationStatus = await this.userService.getDelegationStatus(
-            userId
-          );
-        } catch (error) {
-          console.error('Error loading delegation status in header:', error);
-        }
+      // Load delegation status for both organizers and players (in case player is a delegated organizer)
+      try {
+        this.delegationStatus = await this.userService.getDelegationStatus(
+          userId
+        );
+      } catch (error) {
+        console.error('Error loading delegation status in header:', error);
       }
     }
   }

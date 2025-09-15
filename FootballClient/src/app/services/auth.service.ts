@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LoginRequest } from '../models/auth.interface';
 import { UserRole } from '../models/user-role.enum';
 import { HttpClient } from '@angular/common/http';
-import { PlayerUser } from '../models/player-user.interface'; 
+import { PlayerUser } from '../models/player-user.interface';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { getAuthHeaders } from '../utils/http-helpers';
@@ -19,20 +19,20 @@ export class AuthService {
   private userRole: UserRole | null = null;
   errorMessage: string = '';
   email: string = '';
-  
+
   private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {
     this.LoadAuthState();
-    
+
     // Initialize the current user behavior subject
     const userId = this.getUserId();
     const userRole = this.getUserRole();
     if (userId && userRole !== null) {
-      this.currentUserSubject.next({ 
-        id: userId, 
-        role: userRole 
+      this.currentUserSubject.next({
+        id: userId,
+        role: userRole,
       });
     }
   }
@@ -152,7 +152,7 @@ export class AuthService {
       this.isAuthenticated = true;
       this.userId = loginResponse.user.id;
       this.userRole = loginResponse.user.role;
-      
+
       // Update the current user subject
       this.currentUserSubject.next(loginResponse.user);
 
@@ -211,24 +211,24 @@ export class AuthService {
     const userId = this.getUserId();
     const userRole = this.getUserRole();
 
-    if (!userId || userRole !== UserRole.ORGANISER) {
+    if (!userId) {
       return false;
     }
 
     try {
       const response = await fetch(
-        `${this.apiUrl}/user/${userId}/delegation-status`,
+        `${this.apiUrl}/user/${userId}/is-delegated-organizer`,
         {
           headers: getAuthHeaders(this),
         }
       );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch delegation status');
+        throw new Error('Failed to check if user is delegated organizer');
       }
 
-      const delegationStatus = await response.json();
-      return delegationStatus.isDelegating === true;
+      const isDelegated = await response.json();
+      return isDelegated === true;
     } catch (error) {
       console.error('Error checking delegation status:', error);
       return false;
@@ -271,7 +271,7 @@ export class AuthService {
     localStorage.removeItem('authExpiresAt');
     this.currentUserSubject.next(null);
   }
-  
+
   /**
    * Update user data after impersonation
    */
@@ -285,7 +285,7 @@ export class AuthService {
       this.isAuthenticated = true;
       this.userId = userData.id;
       this.userRole = userData.role;
-      
+
       // Update the current user subject
       this.currentUserSubject.next(userData);
     }
@@ -309,10 +309,10 @@ export class AuthService {
       localStorage.removeItem('isImpersonating');
       localStorage.removeItem('originalAdminId');
       localStorage.removeItem('impersonatedUser');
-      
+
       // Need to dispatch an event to update the UI for impersonation status
       window.dispatchEvent(new CustomEvent('impersonation-ended'));
-      
+
       this.clearAuthState();
       if (redirect) {
         this.router.navigate(['/login']);

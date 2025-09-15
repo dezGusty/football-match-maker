@@ -16,6 +16,17 @@
   color: var(--text);
 }
 
+.player-mode-indicator {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #ffc107;
+  background: rgba(255, 193, 7, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-left: 8px;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
 /* Subtitle */
 .subtitle {
   margin: 0 0 16px;
@@ -673,5 +684,247 @@
   .vs-divider-join {
     align-self: center;
     padding: 12px 0;
+  }
+}
+
+/* ==== Delegation Status Banner Styling ==== */
+.delegation-status-banner {
+  margin: 16px 24px;
+  background: linear-gradient(135deg, 
+    rgba(255, 193, 7, 0.15) 0%, 
+    rgba(255, 193, 7, 0.08) 100%);
+  border: 2px solid rgba(255, 193, 7, 0.4);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(255, 193, 7, 0.2);
+  position: relative;
+  animation: subtle-pulse 3s ease-in-out infinite;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% { 
+    border-color: rgba(255, 193, 7, 0.4);
+    box-shadow: 0 4px 20px rgba(255, 193, 7, 0.2);
+  }
+  50% { 
+    border-color: rgba(255, 193, 7, 0.6);
+    box-shadow: 0 6px 25px rgba(255, 193, 7, 0.3);
+  }
+}
+
+.banner-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.delegation-info h3 {
+  margin: 0 0 8px 0;
+  color: #ffc107;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.delegation-info p {
+  margin: 4px 0;
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.delegation-info .notes {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.reclaim-section {
+  flex-shrink: 0;
+}
+
+.reclaim-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reclaim-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.reclaim-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.reclaim-btn .spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==== Confirmation Dialog Styling ==== */
+.confirmation-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.confirmation-dialog {
+  background: var(--background-card);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(124, 242, 208, 0.1);
+  animation: slideIn 0.3s ease;
+}
+
+.dialog-header h3 {
+  margin: 0 0 16px 0;
+  color: var(--text);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.dialog-body p {
+  margin: 0 0 12px 0;
+  color: var(--text);
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.dialog-body p:last-child {
+  margin-bottom: 0;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.btn-cancel,
+.btn-confirm {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-cancel {
+  background: rgba(108, 117, 125, 0.1);
+  color: var(--muted);
+  border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background: rgba(108, 117, 125, 0.2);
+}
+
+.btn-confirm {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-confirm:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+}
+
+.btn-cancel:disabled,
+.btn-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive delegation banner */
+@media (max-width: 768px) {
+  .delegation-status-banner {
+    margin: 16px;
+  }
+  
+  .banner-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .reclaim-section {
+    width: 100%;
+  }
+  
+  .reclaim-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .confirmation-dialog {
+    margin: 20px;
+    width: calc(100% - 40px);
+  }
+  
+  .dialog-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .btn-cancel,
+  .btn-confirm {
+    width: 100%;
+    justify-content: center;
   }
 }

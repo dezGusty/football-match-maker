@@ -360,7 +360,7 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "ORGANISER")]
+        [Authorize(Roles = "PLAYER")]
         [HttpPost("{id}/reclaim-organizer-role")]
         public async Task<ActionResult> ReclaimOrganizerRole(int id, [FromBody] ReclaimOrganizerRoleDto dto)
         {
@@ -379,7 +379,7 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "ADMIN, ORGANISER")]
+        [Authorize(Roles = "ADMIN, ORGANISER, PLAYER")]
         [HttpGet("{id}/delegation-status")]
         public async Task<ActionResult<DelegationStatusDto>> GetDelegationStatus(int id)
         {
@@ -407,6 +407,22 @@ namespace FootballAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting user friends");
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+
+        [Authorize]
+        [HttpGet("{id}/is-delegated-organizer")]
+        public async Task<ActionResult<bool>> IsDelegatedOrganizer(int id)
+        {
+            try
+            {
+                var isDelegated = await _userService.IsDelegatedOrganizerAsync(id);
+                return Ok(isDelegated);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking if user is delegated organizer");
                 return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
             }
         }

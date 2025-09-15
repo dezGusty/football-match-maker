@@ -97,14 +97,6 @@ export const routes: Routes = [
   },
 
   {
-    path: 'delegated-organizer',
-    loadComponent: () =>
-      import('./pages/delegated-organizer/delegated-organizer.component').then(
-        (m) => m.DelegatedOrganizerComponent
-      ),
-    canActivate: [authGuard],
-  },
-  {
     path: 'user-impersonation',
     loadComponent: () =>
       import('./components/user-impersonation/user-impersonation.component').then(
