@@ -59,3 +59,7 @@ FootballAPI/appsettings.json
 .claude/
 FootballAPI/sqlite3.exe
 FootballAPI/footballdb.sqlite
+FootballAPI/footballdb.sqlite-shm
+FootballAPI/footballdb.sqlite-wal
+FootballAPI/footballdb.sqlite-wal
+FootballAPI/footballdb.sqlite-shm
