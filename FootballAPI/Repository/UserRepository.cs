@@ -3,7 +3,6 @@ using FootballAPI.Data;
 using FootballAPI.Models;
 using FootballAPI.Models.Enums;
 using FootballAPI.DTOs;
-using Microsoft.AspNetCore.Http;
 
 namespace FootballAPI.Repository
 {
@@ -86,11 +85,6 @@ namespace FootballAPI.Repository
             return true;
         }
 
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await _context.Set<User>().AnyAsync(u => u.Id == id);
-        }
-
         public async Task<bool> UsernameExistsAsync(string username)
         {
             return await _context.Set<User>()
@@ -138,11 +132,13 @@ namespace FootballAPI.Repository
 
         public async Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id)
         {
-            var users = await _context.PlayerOrganisers
-            .Where(po => po.OrganiserId == id)
-            .Include(po => po.Player)
-            .Select(po => po.Player)
-            .ToListAsync();
+            var users = await _context.FriendRequests
+                .Where(fr => fr.Status == FriendRequestStatus.Accepted &&
+                           (fr.SenderId == id || fr.ReceiverId == id))
+                .Include(fr => fr.Sender)
+                .Include(fr => fr.Receiver)
+                .Select(fr => fr.SenderId == id ? fr.Receiver : fr.Sender)
+                .ToListAsync();
 
             return users;
         }
@@ -156,7 +152,6 @@ namespace FootballAPI.Repository
             return await query.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        // Player functionality integrated
         public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange)
         {
             var user = await GetByIdAsync(userId);
@@ -175,8 +170,6 @@ namespace FootballAPI.Repository
             if (user == null)
                 throw new ArgumentException("User not found");
 
-            // This would typically involve file storage logic
-            // For now, just updating the path
             var imagePath = $"/images/players/{userId}_{DateTime.UtcNow:yyyyMMddHHmmss}.jpg";
             user.ProfileImagePath = imagePath;
             user.UpdatedAt = DateTime.UtcNow;
@@ -201,35 +194,34 @@ namespace FootballAPI.Repository
             }
         }
 
-        public async Task AddPlayerOrganiserRelationAsync(PlayerOrganiser relation)
+        public async Task AddPlayerOrganiserRelationAsync(int organizerId, int playerId)
         {
-            _context.PlayerOrganisers.Add(relation);
-            await _context.SaveChangesAsync();
-        }
+            var existingRequest = await _context.FriendRequests
+                .FirstOrDefaultAsync(fr =>
+                    (fr.SenderId == organizerId && fr.ReceiverId == playerId) ||
+                    (fr.SenderId == playerId && fr.ReceiverId == organizerId));
 
-        public async Task<bool> RemovePlayerOrganiserRelationAsync(int organizerId, int playerId)
-        {
-            try
+            if (existingRequest == null)
             {
-                var relation = await _context.PlayerOrganisers
-                    .FirstOrDefaultAsync(po => po.OrganiserId == organizerId && po.PlayerId == playerId);
-
-                if (relation != null)
+                var friendRequest = new FriendRequest
                 {
-                    _context.PlayerOrganisers.Remove(relation);
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
-
-                return false;
+                    SenderId = organizerId,
+                    ReceiverId = playerId,
+                    Status = FriendRequestStatus.Accepted,
+                    CreatedAt = DateTime.UtcNow,
+                    ResponsedAt = DateTime.UtcNow
+                };
+                _context.FriendRequests.Add(friendRequest);
+                await _context.SaveChangesAsync();
             }
-            catch
+            else if (existingRequest.Status != FriendRequestStatus.Accepted)
             {
-                return false;
+                existingRequest.Status = FriendRequestStatus.Accepted;
+                existingRequest.ResponsedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
             }
         }
 
-        // Organizer delegation functionality
         public async Task<OrganizerDelegate> CreateDelegationAsync(OrganizerDelegate delegation)
         {
             _context.OrganizerDelegates.Add(delegation);
@@ -269,9 +261,10 @@ namespace FootballAPI.Repository
 
         public async Task<bool> AreFriends(int userId1, int userId2)
         {
-            return await _context.PlayerOrganisers.AnyAsync(po =>
-                (po.OrganiserId == userId1 && po.PlayerId == userId2) ||
-                 (po.PlayerId == userId2 && po.OrganiserId == userId1));
+            return await _context.FriendRequests.AnyAsync(fr =>
+                fr.Status == FriendRequestStatus.Accepted &&
+                ((fr.SenderId == userId1 && fr.ReceiverId == userId2) ||
+                 (fr.SenderId == userId2 && fr.ReceiverId == userId1)));
         }
 
         public async Task<bool> TransferPlayerOrganiserRelationsAsync(int fromOrganizerId, int toOrganizerId)
@@ -283,40 +276,46 @@ namespace FootballAPI.Repository
         {
             try
             {
-
-                var existingRelations = await _context.PlayerOrganisers
-                    .Where(po => po.OrganiserId == fromOrganizerId)
+                var existingFriendRequests = await _context.FriendRequests
+                    .Where(fr => fr.Status == FriendRequestStatus.Accepted &&
+                               ((fr.SenderId == fromOrganizerId && fr.Receiver.Role == UserRole.PLAYER) ||
+                                (fr.ReceiverId == fromOrganizerId && fr.Sender.Role == UserRole.PLAYER)))
+                    .Include(fr => fr.Sender)
+                    .Include(fr => fr.Receiver)
                     .ToListAsync();
 
-                var relationsToTransfer = existingRelations
-                    .Where(po => po.PlayerId != fromOrganizerId)
+                var friendRequestsToTransfer = existingFriendRequests
+                    .Where(fr =>
+                    {
+                        var playerId = fr.SenderId == fromOrganizerId ? fr.ReceiverId : fr.SenderId;
+                        return playerId != fromOrganizerId && (!excludePlayerId.HasValue || playerId != excludePlayerId.Value);
+                    })
                     .ToList();
 
-                if (excludePlayerId.HasValue)
-                {
-                    relationsToTransfer = relationsToTransfer
-                        .Where(po => po.PlayerId != excludePlayerId.Value)
-                        .ToList();
+                var friendRequestsToRemove = excludePlayerId.HasValue
+                    ? existingFriendRequests.Where(fr =>
+                    {
+                        var playerId = fr.SenderId == fromOrganizerId ? fr.ReceiverId : fr.SenderId;
+                        return playerId != excludePlayerId.Value;
+                    }).ToList()
+                    : existingFriendRequests;
 
-                    var relationsToRemove = existingRelations
-                        .Where(po => po.PlayerId != excludePlayerId.Value)
-                        .ToList();
-                    _context.PlayerOrganisers.RemoveRange(relationsToRemove);
-                }
-                else
-                {
-                    _context.PlayerOrganisers.RemoveRange(existingRelations);
-                }
+                _context.FriendRequests.RemoveRange(friendRequestsToRemove);
 
-                var newRelations = relationsToTransfer.Select(relation => new PlayerOrganiser
+                var newFriendRequests = friendRequestsToTransfer.Select(fr =>
                 {
-                    OrganiserId = toOrganizerId,
-                    PlayerId = relation.PlayerId,
-                    CreatedAt = DateTime.Now
+                    var playerId = fr.SenderId == fromOrganizerId ? fr.ReceiverId : fr.SenderId;
+                    return new FriendRequest
+                    {
+                        SenderId = toOrganizerId,
+                        ReceiverId = playerId,
+                        Status = FriendRequestStatus.Accepted,
+                        CreatedAt = DateTime.UtcNow,
+                        ResponsedAt = DateTime.UtcNow
+                    };
                 }).ToList();
 
-                await _context.PlayerOrganisers.AddRangeAsync(newRelations);
-
+                await _context.FriendRequests.AddRangeAsync(newFriendRequests);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -335,49 +334,25 @@ namespace FootballAPI.Repository
         {
             try
             {
-                var existingRelation = await _context.PlayerOrganisers
-                    .FirstOrDefaultAsync(po => po.OrganiserId == originalOrganizerId && po.PlayerId == delegatePlayerId);
+                var existingFriendRequest = await _context.FriendRequests
+                    .FirstOrDefaultAsync(fr => fr.Status == FriendRequestStatus.Accepted &&
+                                             ((fr.SenderId == originalOrganizerId && fr.ReceiverId == delegatePlayerId) ||
+                                              (fr.SenderId == delegatePlayerId && fr.ReceiverId == originalOrganizerId)));
 
-                if (existingRelation != null)
+                if (existingFriendRequest != null)
                 {
-                    _context.PlayerOrganisers.Remove(existingRelation);
+                    _context.FriendRequests.Remove(existingFriendRequest);
 
-                    var switchedRelation = new PlayerOrganiser
+                    var switchedFriendRequest = new FriendRequest
                     {
-                        OrganiserId = delegatePlayerId,
-                        PlayerId = originalOrganizerId,
-                        CreatedAt = DateTime.UtcNow
+                        SenderId = delegatePlayerId,
+                        ReceiverId = originalOrganizerId,
+                        Status = FriendRequestStatus.Accepted,
+                        CreatedAt = DateTime.UtcNow,
+                        ResponsedAt = DateTime.UtcNow
                     };
 
-                    await _context.PlayerOrganisers.AddAsync(switchedRelation);
-                    await _context.SaveChangesAsync();
-                }
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public async Task<bool> RestoreOrganizerPlayerRelationAsync(int organizerId)
-        {
-            try
-            {
-                var existingRelation = await _context.PlayerOrganisers
-                    .FirstOrDefaultAsync(po => po.OrganiserId == organizerId && po.PlayerId == organizerId);
-
-                if (existingRelation == null)
-                {
-                    var newRelation = new PlayerOrganiser
-                    {
-                        OrganiserId = organizerId,
-                        PlayerId = organizerId,
-                        CreatedAt = DateTime.Now
-                    };
-
-                    await _context.PlayerOrganisers.AddAsync(newRelation);
+                    await _context.FriendRequests.AddAsync(switchedFriendRequest);
                     await _context.SaveChangesAsync();
                 }
 
@@ -424,17 +399,17 @@ namespace FootballAPI.Repository
             return true;
         }
 
-        public async Task<PlayerOrganiser?> GetPlayerOrganiserRelationAsync(int userId, int friendId)
+        public async Task<FriendRequest?> GetFriendRequestRelationAsync(int userId, int friendId)
         {
-            return await _context.PlayerOrganisers
-                .FirstOrDefaultAsync(po =>
-                (po.OrganiserId == userId && po.PlayerId == friendId) || 
-                (po.OrganiserId == friendId && po.PlayerId == userId));
+            return await _context.FriendRequests
+                .FirstOrDefaultAsync(fr => fr.Status == FriendRequestStatus.Accepted &&
+                    ((fr.SenderId == userId && fr.ReceiverId == friendId) ||
+                     (fr.SenderId == friendId && fr.ReceiverId == userId)));
         }
 
-        public async Task DeletePlayerOrganiserRelationAsync(PlayerOrganiser relation)
+        public async Task DeleteFriendRequestRelationAsync(FriendRequest relation)
         {
-            _context.PlayerOrganisers.Remove(relation);
+            _context.FriendRequests.Remove(relation);
             await _context.SaveChangesAsync();
         }
     }

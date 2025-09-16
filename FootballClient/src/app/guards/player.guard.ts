@@ -9,7 +9,7 @@ export const playerGuard = () => {
 
   const userRole = authService.getUserRole();
   
-  // Allow only PLAYER role to access player dashboard
+  // Allow PLAYER role to access player dashboard (including delegated organizers who now have PLAYER role)
   if (userRole === UserRole.PLAYER) {
     return true;
   }

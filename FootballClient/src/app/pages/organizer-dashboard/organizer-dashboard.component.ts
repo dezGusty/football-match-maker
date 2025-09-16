@@ -16,7 +16,11 @@ import {
   MatchDisplay,
 } from '../../models/create-match.interface';
 import { MatchStatus } from '../../models/match-status.enum';
-import { MatchTemplate, CreateMatchTemplateRequest, UpdateMatchTemplateRequest } from '../../models/match-template.interface';
+import {
+  MatchTemplate,
+  CreateMatchTemplateRequest,
+  UpdateMatchTemplateRequest,
+} from '../../models/match-template.interface';
 
 @Component({
   selector: 'app-organizer-dashboard',
@@ -74,7 +78,7 @@ export class OrganizerDashboardComponent {
   playerSuccessMessage = '';
   manualRatings: { [key: number]: number } = {};
   ratingMultiplier: number = 1.0;
-  
+
   // Template variables
   templates: MatchTemplate[] = [];
   showTemplateManagementModal = false;
@@ -85,14 +89,14 @@ export class OrganizerDashboardComponent {
     location: '',
     cost: null,
     teamAName: '',
-    teamBName: ''
+    teamBName: '',
   };
   editingTemplate: UpdateMatchTemplateRequest = {
     name: '',
     location: '',
     cost: null,
     teamAName: '',
-    teamBName: ''
+    teamBName: '',
   };
 
   private async loadAvailablePlayers() {
@@ -121,10 +125,8 @@ export class OrganizerDashboardComponent {
   }
 
   private async LoadMyMatches() {
-    console.log('Loading my matches...');
     try {
       const playerMatches = await this.matchService.getPlayerMatches();
-      console.log('Fetched player msatches:', playerMatches);
       const myId = this.authService.getUserId();
       const processedMatches = await Promise.all(
         playerMatches.map(async (match: any) => {
@@ -172,8 +174,6 @@ export class OrganizerDashboardComponent {
   }
   async init() {
     const role = this.authService.getUserRole();
-    console.log('User role:', role);
-
     if (role === UserRole.ADMIN) {
       this.players = await this.UserService.getPlayers();
       this.loadMatches();
@@ -193,7 +193,6 @@ export class OrganizerDashboardComponent {
   async loadMatches() {
     try {
       const allMatches = await this.matchService.getMatchesByOrganiser();
-      console.log('Loaded matches:', allMatches); // Log matches to inspect team names
       this.matches = await Promise.all(
         allMatches.map(async (match) => {
           let teamAPlayerCount = 0;
@@ -240,7 +239,7 @@ export class OrganizerDashboardComponent {
     this.loadMatches();
     this.loadTemplates();
   }
-  
+
   async loadTemplates() {
     try {
       this.templates = await this.matchTemplateService.getTemplates();
@@ -447,8 +446,6 @@ export class OrganizerDashboardComponent {
         teamAName: this.newMatch.teamAName || undefined,
         teamBName: this.newMatch.teamBName || undefined,
       };
-      
-      console.log('Creating match with request:', createMatchRequest);
 
       const createdMatch = await this.matchService.createNewMatch(
         createMatchRequest
@@ -1278,7 +1275,7 @@ export class OrganizerDashboardComponent {
       location: '',
       cost: null,
       teamAName: '',
-      teamBName: ''
+      teamBName: '',
     };
   }
 
@@ -1289,7 +1286,7 @@ export class OrganizerDashboardComponent {
       location: template.location,
       cost: template.cost,
       teamAName: template.teamAName || '',
-      teamBName: template.teamBName || ''
+      teamBName: template.teamBName || '',
     };
     this.showEditTemplateModal = true;
   }
@@ -1345,23 +1342,17 @@ export class OrganizerDashboardComponent {
   }
 
   applyTemplate(template: MatchTemplate) {
-    console.log('Applying template:', template); // Log the template being applied
-    
     this.newMatch.location = template.location;
     this.newMatch.cost = template.cost;
-    
-    // Apply team names if they exist in the template
+
     if (template.teamAName) {
-      console.log('Setting teamAName:', template.teamAName);
       this.newMatch.teamAName = template.teamAName;
     }
-    
+
     if (template.teamBName) {
-      console.log('Setting teamBName:', template.teamBName);
       this.newMatch.teamBName = template.teamBName;
     }
-    
-    console.log('New match after applying template:', this.newMatch);
+
     this.notificationService.showSuccess('Template applied successfully');
   }
 }

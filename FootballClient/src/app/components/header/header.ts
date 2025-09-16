@@ -5,12 +5,11 @@ import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { UserRole } from '../../models/user-role.enum';
 import { DelegationStatusDto } from '../../models/organizer-delegation.interface';
-import { ImpersonationStatusComponent } from '../impersonation-status/impersonation-status.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, ImpersonationStatusComponent],
+  imports: [CommonModule],
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
 })
@@ -35,14 +34,13 @@ export class Header implements OnInit {
       this.username = user.username;
       this.userRole = this.authService.getUserRole();
 
-      if (this.isOrganizer()) {
-        try {
-          this.delegationStatus = await this.userService.getDelegationStatus(
-            userId
-          );
-        } catch (error) {
-          console.error('Error loading delegation status in header:', error);
-        }
+      // Load delegation status for both organizers and players (in case player is a delegated organizer)
+      try {
+        this.delegationStatus = await this.userService.getDelegationStatus(
+          userId
+        );
+      } catch (error) {
+        console.error('Error loading delegation status in header:', error);
       }
     }
   }

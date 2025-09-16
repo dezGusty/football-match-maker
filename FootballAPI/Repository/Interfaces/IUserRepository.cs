@@ -15,7 +15,6 @@ namespace FootballAPI.Repository
         Task<User> UpdateAsync(User user);
         Task<bool> DeleteAsync(int id);
         Task<bool> ReactivateAsync(int id);
-        Task<bool> ExistsAsync(int id);
         Task<bool> UsernameExistsAsync(string username);
         Task<bool> UsernameExistsAsync(string username, int excludeUserId);
         Task<User> AuthenticateAsync(string email, string password);
@@ -25,14 +24,10 @@ namespace FootballAPI.Repository
         Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id);
         Task<User?> GetUserByEmail(string email, bool includeDeleted = false, bool tracking = false);
 
-        // Player functionality integrated
         Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange);
         Task<string> UpdatePlayerProfileImageAsync(int userId, IFormFile imageFile);
         Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates);
-        Task AddPlayerOrganiserRelationAsync(PlayerOrganiser relation);
-        Task<bool> RemovePlayerOrganiserRelationAsync(int organizerId, int playerId);
-
-        // Organizer delegation functionality
+        Task AddPlayerOrganiserRelationAsync(int organizerId, int playerId);
         Task<OrganizerDelegate> CreateDelegationAsync(OrganizerDelegate delegation);
         Task<OrganizerDelegate?> GetActiveDelegationByOrganizerId(int organizerId);
         Task<OrganizerDelegate?> GetActiveDelegationByDelegateId(int delegateId);
@@ -41,11 +36,10 @@ namespace FootballAPI.Repository
         Task<bool> TransferPlayerOrganiserRelationsAsync(int fromOrganizerId, int toOrganizerId);
         Task<bool> TransferPlayerOrganiserRelationsExcludingAsync(int fromOrganizerId, int toOrganizerId, int excludePlayerId);
         Task<bool> SwitchOrganizerPlayerRelationAsync(int originalOrganizerId, int delegatePlayerId);
-        Task<bool> RestoreOrganizerPlayerRelationAsync(int organizerId);
         Task<bool> TransferMatchesAsync(int fromOrganizerId, int toOrganizerId);
         Task<bool> UpdateUserRoleAsync(int userId, UserRole newRole);
-        Task<PlayerOrganiser?> GetPlayerOrganiserRelationAsync(int userId, int friendId);
-        Task DeletePlayerOrganiserRelationAsync(PlayerOrganiser relation);
+        Task<FriendRequest?> GetFriendRequestRelationAsync(int userId, int friendId);
+        Task DeleteFriendRequestRelationAsync(FriendRequest relation);
 
 
     }

@@ -92,7 +92,9 @@ export class UserService {
   }
 
   async getAllUsers(): Promise<User[]> {
-    const response = await fetch(`${this.url}`);
+    const response = await fetch(`${this.url}`, {
+      headers: getAuthHeaders(this.authService),
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch users');
     }
@@ -293,7 +295,11 @@ export class UserService {
     userId: number,
     friendUserId: number,
     notes?: string
-  ): Promise<OrganizerDelegateDto> {
+  ): Promise<{
+    delegation: OrganizerDelegateDto;
+    requiresLogout?: boolean;
+    message?: string;
+  }> {
     const body: DelegateOrganizerRoleDto = { friendUserId, notes };
     const response = await fetch(
       `${this.url}/${userId}/delegate-organizer-role`,
@@ -316,7 +322,7 @@ export class UserService {
   async reclaimOrganizerRole(
     userId: number,
     delegationId: number
-  ): Promise<boolean> {
+  ): Promise<{ message: string; requiresLogout?: boolean }> {
     const body: ReclaimOrganizerRoleDto = { delegationId };
 
     const response = await fetch(
@@ -335,7 +341,7 @@ export class UserService {
       );
     }
 
-    return true;
+    return await response.json();
   }
 
   async getDelegationStatus(userId: number): Promise<DelegationStatusDto> {
@@ -348,6 +354,26 @@ export class UserService {
       const errorResponse = await response.json();
       throw new Error(
         errorResponse.message || 'Failed to get delegation status'
+      );
+    }
+
+    return await response.json();
+  }
+
+  async isDelegatedOrganizer(userId: number): Promise<boolean> {
+    const response = await fetch(
+      `${this.url}/${userId}/is-delegated-organizer`,
+      {
+        method: 'GET',
+        headers: getAuthHeaders(this.authService),
+      }
+    );
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(
+        errorResponse.message ||
+          'Failed to check if user is delegated organizer'
       );
     }
 

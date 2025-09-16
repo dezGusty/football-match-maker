@@ -7,7 +7,6 @@ import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
 import { getAuthHeaders } from '../utils/http-helpers';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -15,7 +14,6 @@ export class FriendRequestService {
   private baseUrl = `${environment.apiUrl}/friendrequest`;
 
   constructor(private authService: AuthService) {}
-
 
   async sendFriendRequest(receiverEmail: string): Promise<FriendRequest> {
     const response = await fetch(this.baseUrl, {
@@ -114,15 +112,14 @@ export class FriendRequestService {
   }
 
   async unfriend(friendId: number): Promise<void> {
-  const response = await fetch(`${this.baseUrl}/unfriend/${friendId}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders(this.authService),
-  });
+    const response = await fetch(`${this.baseUrl}/unfriend/${friendId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(this.authService),
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || 'Failed to unfriend user');
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || 'Failed to unfriend user');
+    }
   }
-}
-
 }

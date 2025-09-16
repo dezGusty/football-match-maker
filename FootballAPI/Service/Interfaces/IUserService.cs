@@ -34,6 +34,7 @@ namespace FootballAPI.Service
         Task<OrganizerDelegateDto> DelegateOrganizerRoleAsync(int organizerId, DelegateOrganizerRoleDto dto);
         Task<bool> ReclaimOrganizerRoleAsync(int organizerId, ReclaimOrganizerRoleDto dto);
         Task<DelegationStatusDto> GetDelegationStatusAsync(int userId);
+        Task<bool> IsDelegatedOrganizerAsync(int userId);
         Task<IEnumerable<UserDto>> GetFriendsAsync(int userId);
 
     }

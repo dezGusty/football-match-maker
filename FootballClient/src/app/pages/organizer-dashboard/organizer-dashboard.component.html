@@ -23,8 +23,8 @@
 
   <!-- Floating Actions - Organizer Only -->
   <div class="fab-stack">
+    @if (activeTab === 'matches') {
     <button
-      *ngIf="activeTab === 'matches'"
       class="fab primary"
       (click)="showCreateMatchModal = true"
       aria-label="Create new match"
@@ -38,6 +38,7 @@
         />
       </svg>
     </button>
+    }
 
     <button
       class="fab primary"
@@ -82,8 +83,8 @@
   </div>
 
   <!-- Organizer Matches Table -->
+  @if (activeTab === 'matches') {
   <div
-    *ngIf="activeTab === 'matches'"
     class="table-wrapper"
     role="region"
     aria-label="Matches table"
@@ -103,11 +104,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          *ngFor="let match of matches; let i = index"
-          class="row-anim"
-          [style.animationDelay]="i * 40 + 'ms'"
-        >
+        @for (match of matches; track match; let i = $index) {
+        <tr class="row-anim" [style.animationDelay]="i * 40 + 'ms'">
           <td>{{ i + 1 }}</td>
           <td>{{ match.matchDate | date : "short" }}</td>
           <td class="teams-cell">
@@ -125,8 +123,8 @@
             </span>
           </td>
           <td>
+            @if (match.status == 0) {
             <button
-              *ngIf="match.status == 0"
               class="action-btn"
               [class.make-public-btn]="!match.isPublic"
               [class.make-private-btn]="match.isPublic"
@@ -139,63 +137,67 @@
             >
               {{ match.isPublic ? "Make Private" : "Make Public" }}
             </button>
-            <span *ngIf="match.status != 0" class="status-text">
+            } @else {
+            <span class="status-text">
               {{ match.isPublic ? "Public" : "Private" }}
             </span>
+            }
           </td>
           <td class="actions">
-            <span *ngIf="match.status == 3" class="status-text">
-              No actions available
-            </span>
+            @if (match.status == 3) {
+            <span class="status-text"> No actions available </span>
+            } @else {
             <button
-              *ngIf="match.status !== 3"
               class="action-btn add-players-btn"
               [title]="getAddPlayersButtonText(match)"
               (click)="openAddPlayersModal(match)"
             >
               {{ getAddPlayersButtonText(match) }}
             </button>
+            } @if (match.status === 0) {
             <button
               class="action-btn edit-btn"
               title="Edit Match"
               (click)="openEditMatchModal(match)"
-              *ngIf="match.status === 0"
             >
               Edit
             </button>
+            } @if (canShowCloseButton(match)) {
             <button
               class="action-btn close-btn"
               title="Close Match"
               (click)="closeMatch(match)"
-              *ngIf="canShowCloseButton(match)"
             >
               Close
             </button>
+            } @if (match.status === 0) {
             <button
               class="action-btn cancel-btn"
               title="Cancel Match"
               (click)="cancelMatch(match)"
-              *ngIf="match.status === 0"
             >
               Cancel
             </button>
+            } @if (canShowFinalizeButton(match)) {
             <button
               class="action-btn finalize-btn"
               title="Finalize Match"
               (click)="openFinalizeMatchModal(match)"
-              *ngIf="canShowFinalizeButton(match)"
             >
               Finalize
             </button>
+            }
           </td>
         </tr>
+        }
       </tbody>
     </table>
   </div>
+  }
 
   <!--My matches section-->
+  @if (activeTab === 'myMatches') {
   <div
-    *ngIf="activeTab === 'myMatches'"
     class="table-wrapper"
     role="region"
     aria-label="Matches table"
@@ -212,8 +214,8 @@
         </tr>
       </thead>
       <tbody>
+        @for (match of myMatches; track match; let i = $index) {
         <tr
-          *ngFor="let match of myMatches; let i = index"
           class="row-anim my-match-row"
           [style.animationDelay]="i * 40 + 'ms'"
         >
@@ -236,30 +238,38 @@
           </td>
           <td>{{ match.location || "TBD" }}</td>
           <td>
-            <div *ngIf="match.cost && match.cost > 0; else noCost" class="price-breakdown">
+            @if (match.cost && match.cost > 0) {
+            <div class="price-breakdown">
               <!-- Show exact price for closed matches -->
-              <div *ngIf="match.status === 1 && getPriceInfo(match).exactPrice; else showEstimatedPrices" class="exact-price">
+              @if (match.status === 1 && getPriceInfo(match).exactPrice) {
+              <div class="exact-price">
                 <div class="price-option exact">
                   <strong>{{ getPriceInfo(match).exactPrice }} lei</strong>
                 </div>
               </div>
+              } @else {
               <!-- Show estimated prices for open matches -->
-              <ng-template #showEstimatedPrices>
-                <div class="price-option">10 players: <strong>{{ getPriceInfo(match).for10 }} lei</strong></div>
-                <div class="price-option">11 players: <strong>{{ getPriceInfo(match).for11 }} lei</strong></div>
-                <div class="price-option">12 players: <strong>{{ getPriceInfo(match).for12 }} lei</strong></div>
-              </ng-template>
+              <div class="price-option">
+                10 players: <strong>{{ getPriceInfo(match).for10 }} lei</strong>
+              </div>
+              <div class="price-option">
+                11 players: <strong>{{ getPriceInfo(match).for11 }} lei</strong>
+              </div>
+              <div class="price-option">
+                12 players: <strong>{{ getPriceInfo(match).for12 }} lei</strong>
+              </div>
+              }
             </div>
-            <ng-template #noCost>
-              <span class="free-match">FREE</span>
-            </ng-template>
+            } @else {
+            <span class="free-match">FREE</span>
+            }
           </td>
         </tr>
+        }
       </tbody>
     </table>
   </div>
-
-  @if (showFinalizeMatchModal) {
+  } @if (showFinalizeMatchModal) {
   <div class="modal-backdrop" (click)="closeFinalizeMatchModal()">
     <div
       class="modal-content glass add-players-modal"
@@ -288,22 +298,24 @@
           </p>
         </div>
         <!-- Rating Multiplier Slider -->
-          <div class="rating-multiplier" *ngIf="selectedRatingSystem.startsWith('Custom')">
-            <label>Rating Multiplier: {{ratingMultiplier}}x</label>
-            <input 
-              type="range" 
-              [(ngModel)]="ratingMultiplier" 
-              (input)="updateRatingPreview()"
-              min="0.5" 
-              max="2" 
-              step="0.1"
-              class="slider"
-            />
-            <div class="slider-marks">
-              <span>0.5x</span>
-              <span>2x</span>
-            </div>
+        @if (selectedRatingSystem.startsWith('Custom')) {
+        <div class="rating-multiplier">
+          <label>Rating Multiplier: {{ ratingMultiplier }}x</label>
+          <input
+            type="range"
+            [(ngModel)]="ratingMultiplier"
+            (input)="updateRatingPreview()"
+            min="0.5"
+            max="2"
+            step="0.1"
+            class="slider"
+          />
+          <div class="slider-marks">
+            <span>0.5x</span>
+            <span>2x</span>
           </div>
+        </div>
+        }
         <div>
           <select
             [(ngModel)]="selectedRatingSystem"
@@ -315,9 +327,7 @@
             <option value="Custom Performance">Custom Performance</option>
             <!-- <option value="Vote">Vote</option> -->
           </select>
-          
         </div>
-        
       </div>
       <div class="teams-panel-fin">
         <div class="teams-container-fin">
@@ -339,11 +349,8 @@
             </div>
 
             <div class="team-players-simple">
-              <div
-                *ngFor="let player of teamAPlayers; let i = index"
-                class="simple-player-row"
-              >
-                
+              @for (player of teamAPlayers; track player; let i = $index) {
+              <div class="simple-player-row">
                 <span class="player-name"
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
@@ -353,36 +360,33 @@
                     <span [class]="getRatingChangeClass(player.id)">{{
                       getRatingPreviewForPlayer(player.id)
                     }}</span>
-                    
                   </span>
                   <!-- Manual rating input -->
                   <div class="manual-rating">
-                      <div class="manual-rating">
-                        <input
-                          class="manual-rating-input"
-                          type="number"
-                          [(ngModel)]="manualRatings[player.id]"
-                          (ngModelChange)="updateManualRating(player.id)"
-                          min="-10"
-                          max="10"
-                          step="0.1"
-                          placeholder="0.0"
-                        />
-                      </div>
+                    <div class="manual-rating">
+                      <input
+                        class="manual-rating-input"
+                        type="number"
+                        [(ngModel)]="manualRatings[player.id]"
+                        (ngModelChange)="updateManualRating(player.id)"
+                        min="-10"
+                        max="10"
+                        step="0.1"
+                        placeholder="0.0"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
+              }
 
               <!-- Empty slots -->
-              <div
-                *ngFor="
-                  let slot of getEmptySlots(teamAPlayers.length);
-                  let i = index
-                "
-                class="empty-slot-simple"
-              >
+              @for ( slot of getEmptySlots(teamAPlayers.length); track slot; let
+              i = $index ) {
+              <div class="empty-slot-simple">
                 <span class="empty-text">Empty slot</span>
               </div>
+              }
             </div>
           </div>
 
@@ -404,10 +408,8 @@
             </div>
 
             <div class="team-players-simple">
-              <div
-                *ngFor="let player of teamBPlayers; let i = index"
-                class="simple-player-row"
-              >
+              @for (player of teamBPlayers; track player; let i = $index) {
+              <div class="simple-player-row">
                 <span class="player-name"
                   >{{ player.firstName }} {{ player.lastName }}
                 </span>
@@ -420,44 +422,44 @@
                   </span>
                   <!-- Manual rating input -->
                   <div class="manual-rating">
-                      <div class="manual-rating">
-                        <input
-                          class="manual-rating-input"
-                          type="number"
-                          [(ngModel)]="manualRatings[player.id]"
-                          (ngModelChange)="updateManualRating(player.id)"
-                          min="-10"
-                          max="10"
-                          step="0.1"
-                          placeholder="0.0"
-                        />
-                      </div>
+                    <div class="manual-rating">
+                      <input
+                        class="manual-rating-input"
+                        type="number"
+                        [(ngModel)]="manualRatings[player.id]"
+                        (ngModelChange)="updateManualRating(player.id)"
+                        min="-10"
+                        max="10"
+                        step="0.1"
+                        placeholder="0.0"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
+              }
 
               <!-- Empty slots -->
-              <div
-                *ngFor="
-                  let slot of getEmptySlots(teamBPlayers.length);
-                  let i = index
-                "
-                class="empty-slot-simple"
-              >
+              @for ( slot of getEmptySlots(teamBPlayers.length); track slot; let
+              i = $index ) {
+              <div class="empty-slot-simple">
                 <span class="empty-text">Empty slot</span>
               </div>
+              }
             </div>
           </div>
         </div>
       </div>
       <!-- Messages -->
-      <div *ngIf="addPlayersErrorMessage" class="error-message">
+      @if (addPlayersErrorMessage) {
+      <div class="error-message">
         {{ addPlayersErrorMessage }}
       </div>
-
-      <div *ngIf="addPlayersSuccessMessage" class="success-message">
+      } @if (addPlayersSuccessMessage) {
+      <div class="success-message">
         {{ addPlayersSuccessMessage }}
       </div>
+      }
 
       <!-- Actions -->
       <div class="modal-actions">
@@ -524,21 +526,26 @@
         (errorsChange)="newPlayer.errors = $event"
       ></app-stat-selector>
       <!-- Messages -->
-      <div *ngIf="playerErrorMessage" class="error-message">
+      @if (playerErrorMessage) {
+      <div class="error-message">
         {{ playerErrorMessage }}
       </div>
-
-      <div *ngIf="playerSuccessMessage" class="success-message">
+      } @if (playerSuccessMessage) {
+      <div class="success-message">
         {{ playerSuccessMessage }}
       </div>
+      }
 
       <button
         class="primary-cta"
         (click)="addPlayer()"
         [disabled]="playerLoading"
       >
-        <span *ngIf="playerLoading">Adding Player...</span>
-        <span *ngIf="!playerLoading">Add Player</span>
+        @if (playerLoading) {
+        <span>Adding Player...</span>
+        } @else {
+        <span>Add Player</span>
+        }
       </button>
     </div>
   </div>
@@ -547,7 +554,10 @@
   <!-- Create Match Modal -->
   @if (showCreateMatchModal) {
   <div class="modal-backdrop" (click)="showCreateMatchModal = false">
-    <div class="modal-content glass create-match-modal" (click)="$event.stopPropagation()">
+    <div
+      class="modal-content glass create-match-modal"
+      (click)="$event.stopPropagation()"
+    >
       <button
         class="close-modal-btn"
         (click)="showCreateMatchModal = false"
@@ -620,7 +630,10 @@
 
         <div class="templates-section">
           <h4>Match Templates</h4>
-          <p class="template-info">Save frequently used locations, costs, and team names for quick access</p>
+          <p class="template-info">
+            Save frequently used locations, costs, and team names for quick
+            access
+          </p>
 
           <div class="template-list-container">
             <div class="template-list">
@@ -632,32 +645,56 @@
                 <span class="template-team-b-header">Team B</span>
                 <span class="template-actions-header">Actions</span>
               </div>
-              
-              <div *ngIf="templates.length === 0" class="empty-templates">
+
+              @if (templates.length === 0) {
+              <div class="empty-templates">
                 <p>No templates saved yet</p>
               </div>
-              
-              <div *ngFor="let template of templates" class="template-item">
-                <span class="template-name">{{template.name}}</span>
-                <span class="template-location">{{template.location}}</span>
-                <span class="template-cost">{{template.cost ? template.cost + ' Lei' : 'Free'}}</span>
-                <span class="template-team-a" [class.empty-value]="!template.teamAName">{{template.teamAName || '-'}}</span>
-                <span class="template-team-b" [class.empty-value]="!template.teamBName">{{template.teamBName || '-'}}</span>
+              } @for (template of templates; track template) {
+              <div class="template-item">
+                <span class="template-name">{{ template.name }}</span>
+                <span class="template-location">{{ template.location }}</span>
+                <span class="template-cost">{{
+                  template.cost ? template.cost + " Lei" : "Free"
+                }}</span>
+                <span
+                  class="template-team-a"
+                  [class.empty-value]="!template.teamAName"
+                  >{{ template.teamAName || "-" }}</span
+                >
+                <span
+                  class="template-team-b"
+                  [class.empty-value]="!template.teamBName"
+                  >{{ template.teamBName || "-" }}</span
+                >
                 <div class="template-actions">
-                  <button class="template-action-btn apply-btn" (click)="applyTemplate(template)" title="Apply template">
+                  <button
+                    class="template-action-btn apply-btn"
+                    (click)="applyTemplate(template)"
+                    title="Apply template"
+                  >
                     Apply
                   </button>
-                  <button class="template-action-btn edit-btn" (click)="openEditTemplateModal(template)" title="Edit template">
+                  <button
+                    class="template-action-btn edit-btn"
+                    (click)="openEditTemplateModal(template)"
+                    title="Edit template"
+                  >
                     Edit
                   </button>
-                  <button class="template-action-btn delete-btn" (click)="deleteTemplate(template.id!)" title="Delete template">
+                  <button
+                    class="template-action-btn delete-btn"
+                    (click)="deleteTemplate(template.id!)"
+                    title="Delete template"
+                  >
                     Delete
                   </button>
                 </div>
               </div>
+              }
             </div>
           </div>
-          
+
           <div class="create-template-section">
             <h5>Save Current Settings as Template</h5>
             <div class="create-template-form">
@@ -685,10 +722,17 @@
                   />
                 </div>
               </div> -->
-              <button 
+              <button
                 class="save-template-btn"
-                (click)="newTemplate.location = newMatch.location; newTemplate.cost = newMatch.cost; newTemplate.teamAName = newMatch.teamAName; newTemplate.teamBName = newMatch.teamBName; createTemplate()"
-                [disabled]="!newTemplate.name || !newMatch.location">
+                (click)="
+                  newTemplate.location = newMatch.location;
+                  newTemplate.cost = newMatch.cost;
+                  newTemplate.teamAName = newMatch.teamAName;
+                  newTemplate.teamBName = newMatch.teamBName;
+                  createTemplate()
+                "
+                [disabled]="!newTemplate.name || !newMatch.location"
+              >
                 Save Template
               </button>
             </div>
@@ -697,13 +741,15 @@
       </div>
 
       <!-- Messages -->
-      <div *ngIf="matchErrorMessage" class="error-message">
+      @if (matchErrorMessage) {
+      <div class="error-message">
         {{ matchErrorMessage }}
       </div>
-
-      <div *ngIf="matchSuccessMessage" class="success-message">
+      } @if (matchSuccessMessage) {
+      <div class="success-message">
         {{ matchSuccessMessage }}
       </div>
+      }
 
       <div class="modal-actions">
         <button
@@ -711,14 +757,17 @@
           (click)="createMatch()"
           [disabled]="matchLoading"
         >
-          <span *ngIf="matchLoading">Creating...</span>
-          <span *ngIf="!matchLoading">Create Match</span>
+          @if (matchLoading) {
+          <span>Creating...</span>
+          } @else {
+          <span>Create Match</span>
+          }
         </button>
       </div>
     </div>
   </div>
   }
-  
+
   <!-- Edit Template Modal -->
   @if (showEditTemplateModal) {
   <div class="modal-backdrop" (click)="closeEditTemplateModal()">
@@ -731,7 +780,7 @@
         &times;
       </button>
       <h3>Edit Template</h3>
-      
+
       <!-- Name -->
       <div class="form-group">
         <label for="templateName">Template Name *</label>
@@ -772,7 +821,7 @@
         />
         <small class="hint-text">Leave empty for free matches</small>
       </div>
-      
+
       <!-- Team Names -->
       <div class="template-team-fields">
         <h4>Team Names</h4>
@@ -787,7 +836,7 @@
               class="modern-input"
             />
           </div>
-          
+
           <div class="form-group">
             <label for="templateTeamB">Team B Name</label>
             <input
@@ -799,9 +848,11 @@
             />
           </div>
         </div>
-        <small class="hint-text">These names will be suggested when creating a match</small>
+        <small class="hint-text"
+          >These names will be suggested when creating a match</small
+        >
       </div>
-      
+
       <div class="modal-actions">
         <button
           class="primary-cta template-update-btn"
@@ -886,17 +937,22 @@
       </div>
 
       <!-- Messages -->
-      <div *ngIf="editMatchErrorMessage" class="error-message">
+      @if (editMatchErrorMessage) {
+      <div class="error-message">
         {{ editMatchErrorMessage }}
       </div>
+      }
 
       <button
         class="primary-cta"
         (click)="updateMatch()"
         [disabled]="editMatchLoading"
       >
-        <span *ngIf="editMatchLoading">Updating...</span>
-        <span *ngIf="!editMatchLoading">Update Match</span>
+        @if (editMatchLoading) {
+        <span>Updating...</span>
+        } @else {
+        <span>Update Match</span>
+        }
       </button>
     </div>
   </div>
@@ -993,7 +1049,8 @@
             <button class="action-btn" title="Shuffle" (click)="shuffleTeams()">
               Shuffle Teams
             </button>
-            <select class="balance-mode-select"
+            <select
+              class="balance-mode-select"
               (ngModelChange)="balanceTeams()"
             >
               <option value="rating">Balance by Rating</option>
@@ -1005,9 +1062,15 @@
             <div class="team-table">
               <div class="team-header">
                 <div class="team-title">
-                  <h4>{{selectedMatch?.teamAName || 'Team A'}}</h4>
-                  <div class="team-avg-rating" [ngClass]="getTeamRatingClass(getTeamAverageRating(teamAPlayers))">
-                    Average Rating: {{getTeamAverageRatingDisplay(teamAPlayers)}}
+                  <h4>{{ selectedMatch?.teamAName || "Team A" }}</h4>
+                  <div
+                    class="team-avg-rating"
+                    [ngClass]="
+                      getTeamRatingClass(getTeamAverageRating(teamAPlayers))
+                    "
+                  >
+                    Average Rating:
+                    {{ getTeamAverageRatingDisplay(teamAPlayers) }}
                   </div>
                 </div>
               </div>
@@ -1058,13 +1121,19 @@
             <!-- Team 2 -->
             <div class="team-table">
               <div class="team-header">
-              <div class="team-title">
-                <h4>{{selectedMatch?.teamBName || 'Team B'}}</h4>
-                <div class="team-avg-rating" [ngClass]="getTeamRatingClass(getTeamAverageRating(teamBPlayers))">
-                  Average Rating: {{getTeamAverageRatingDisplay(teamBPlayers)}}
+                <div class="team-title">
+                  <h4>{{ selectedMatch?.teamBName || "Team B" }}</h4>
+                  <div
+                    class="team-avg-rating"
+                    [ngClass]="
+                      getTeamRatingClass(getTeamAverageRating(teamBPlayers))
+                    "
+                  >
+                    Average Rating:
+                    {{ getTeamAverageRatingDisplay(teamBPlayers) }}
+                  </div>
                 </div>
               </div>
-            </div>
 
               <div class="team-players-simple">
                 <div

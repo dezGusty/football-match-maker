@@ -17,8 +17,6 @@ export class MatchService {
 
   constructor(private authService: AuthService) {}
 
-  
-
   async getPublicMatches(): Promise<any[]> {
     const response = await fetch(`${this.baseUrl}/matches/public`, {
       headers: getAuthHeaders(this.authService),
@@ -369,9 +367,8 @@ export class MatchService {
     if (!response.ok) {
       throw new Error('Failed to fetch matches by organiser');
     }
-    
+
     const matches = await response.json();
-    console.log('Matches from API:', matches); // Log matches from API
     return matches;
   }
 
@@ -581,6 +578,4 @@ export class MatchService {
       return fallbackName;
     }
   }
-
-  
 }

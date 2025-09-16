@@ -2,19 +2,94 @@
 <app-header (tabChange)="setActiveTab($event)"></app-header>
 <app-friend-requests></app-friend-requests>
 
+@if (isDelegatedOrganizer && delegationStatus) {
+<div class="delegation-status-banner">
+  <div class="banner-content">
+    <div class="delegation-info">
+      <h3>🔄 Delegated Organizer Mode</h3>
+      <p>
+        You have delegated your organizer role to
+        <strong>{{ getDelegateName() }}</strong> on {{ getDelegationDate() }}
+      </p>
+      @if (getDelegationNotes() !== 'No notes provided') {
+      <p class="notes">
+        <em>Notes: {{ getDelegationNotes() }}</em>
+      </p>
+      }
+    </div>
+    <div class="reclaim-section">
+      <button
+        class="reclaim-btn"
+        (click)="showReclaimConfirmation()"
+        [disabled]="isReclaimingRole"
+      >
+        @if (isReclaimingRole) {
+        <span class="spinner"></span>
+        }
+        {{ isReclaimingRole ? "Reclaiming..." : "Reclaim My Organizer Role" }}
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Reclaim Confirmation Dialog -->
+@if (showReclaimConfirmDialog) {
+<div class="confirmation-dialog-overlay" (click)="cancelReclaim()">
+  <div class="confirmation-dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h3>Reclaim Organizer Role</h3>
+    </div>
+    <div class="dialog-body">
+      <p>Are you sure you want to reclaim your organizer role?</p>
+      <p>
+        This will remove delegation from
+        <strong>{{ getDelegateName() }}</strong> and they will no longer have
+        organizer access.
+      </p>
+    </div>
+    <div class="dialog-actions">
+      <button
+        class="btn-cancel"
+        (click)="cancelReclaim()"
+        [disabled]="isReclaimingRole"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn-confirm"
+        (click)="reclaimOrganizerRole()"
+        [disabled]="isReclaimingRole"
+      >
+        @if (isReclaimingRole) {
+        <span>Processing...</span>
+        } @else {
+        <span>Yes, Reclaim Role</span>
+        }
+      </button>
+    </div>
+  </div>
+</div>
+}
+
 <!-- Main Container -->
 <div class="dashboard-container">
   <!-- Main Content Area -->
   <div class="main-content">
     <!-- My Matches Section - Always visible -->
     <div class="content-section">
-      <h2>My Upcoming Matches</h2>
+      <h2>
+        My Upcoming Matches @if (isDelegatedOrganizer) {
+        <span class="player-mode-indicator">(Currently in Player Mode)</span>
+        }
+      </h2>
       <p class="subtitle">Matches you are enrolled in</p>
-      <div *ngIf="upcomingMatches.length === 0" class="empty-state">
+      @if (upcomingMatches.length === 0) {
+      <div class="empty-state">
         You are not enrolled in any upcoming matches.
       </div>
-
-      <div class="matches-table" *ngIf="upcomingMatches.length > 0">
+      } @if (upcomingMatches.length > 0) {
+      <div class="matches-table">
         <div class="table-header">
           <div class="col-team">Teams</div>
           <div class="col-date">Date</div>
@@ -23,7 +98,8 @@
           <div class="col-action">Action</div>
         </div>
 
-        <div class="table-row" *ngFor="let match of upcomingMatches">
+        @for (match of upcomingMatches; track match.id) {
+        <div class="table-row">
           <div class="col-team">
             {{ match.teamAName }} vs {{ match.teamBName }}
           </div>
@@ -32,40 +108,32 @@
           </div>
           <div class="col-your-team">{{ getPlayerTeamName(match) }}</div>
           <div class="col-price">
-            <div
-              class="price-breakdown"
-              *ngIf="match.cost && match.cost > 0; else noCost"
-            >
-              <div
-                *ngIf="
-                  match.status === 1 && getPriceInfo(match).exactPrice;
-                  else showEstimatedPrices
-                "
-                class="exact-price"
-              >
+            @if (match.cost && match.cost > 0) {
+            <div class="price-breakdown">
+              @if (match.status === 1 && getPriceInfo(match).exactPrice) {
+              <div class="exact-price">
                 <div class="price-option exact">
                   <strong>{{ getPriceInfo(match).exactPrice }} lei</strong>
                 </div>
               </div>
-
-              <ng-template #showEstimatedPrices>
-                <div class="price-option">
-                  10 players:
-                  <strong>{{ getPriceInfo(match).for10 }} lei</strong>
-                </div>
-                <div class="price-option">
-                  11 players:
-                  <strong>{{ getPriceInfo(match).for11 }} lei</strong>
-                </div>
-                <div class="price-option">
-                  12 players:
-                  <strong>{{ getPriceInfo(match).for12 }} lei</strong>
-                </div>
-              </ng-template>
+              } @else {
+              <div class="price-option">
+                10 players:
+                <strong>{{ getPriceInfo(match).for10 }} lei</strong>
+              </div>
+              <div class="price-option">
+                11 players:
+                <strong>{{ getPriceInfo(match).for11 }} lei</strong>
+              </div>
+              <div class="price-option">
+                12 players:
+                <strong>{{ getPriceInfo(match).for12 }} lei</strong>
+              </div>
+              }
             </div>
-            <ng-template #noCost>
-              <span class="free-match">FREE</span>
-            </ng-template>
+            } @else {
+            <span class="free-match">FREE</span>
+            }
           </div>
           <div class="col-action">
             <button class="action-btn" (click)="openPlayersModal(match)">
@@ -86,15 +154,14 @@
             </button>
           </div>
         </div>
+        }
       </div>
+      }
     </div>
 
     <!-- Regular Modal (View Teams) -->
-    <div
-      *ngIf="modalOpen && modalType === 'view'"
-      class="modal-backdrop"
-      (click)="closeModal()"
-    >
+    @if (modalOpen && modalType === 'view') {
+    <div class="modal-backdrop" (click)="closeModal()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <button class="close-modal-btn" (click)="closeModal()">×</button>
         <h3>{{ selectedTeamAName }} vs {{ selectedTeamBName }}</h3>
@@ -103,26 +170,28 @@
           <div class="team-list">
             <h4>{{ selectedTeamAName }}</h4>
             <ul>
-              <li *ngFor="let player of selectedTeamAPlayers">{{ player }}</li>
+              @for (player of selectedTeamAPlayers; track player) {
+              <li>{{ player }}</li>
+              }
             </ul>
           </div>
           <div class="vs-divider">VS</div>
           <div class="team-list">
             <h4>{{ selectedTeamBName }}</h4>
             <ul>
-              <li *ngFor="let player of selectedTeamBPlayers">{{ player }}</li>
+              @for (player of selectedTeamBPlayers; track player) {
+              <li>{{ player }}</li>
+              }
             </ul>
           </div>
         </div>
       </div>
     </div>
+    }
 
     <!-- Join Match Modal -->
-    <div
-      *ngIf="modalOpen && modalType === 'join'"
-      class="modal-backdrop"
-      (click)="closeModal()"
-    >
+    @if (modalOpen && modalType === 'join') {
+    <div class="modal-backdrop" (click)="closeModal()">
       <div class="modal-content join-modal" (click)="$event.stopPropagation()">
         <button class="close-modal-btn" (click)="closeModal()">×</button>
         <h3>Join Match: {{ selectedTeamAName }} vs {{ selectedTeamBName }}</h3>
@@ -140,15 +209,13 @@
               >
             </div>
             <div class="team-players">
-              <div
-                *ngFor="let player of selectedTeamAPlayers"
-                class="player-item"
-              >
+              @for (player of selectedTeamAPlayers; track player) {
+              <div class="player-item">
                 {{ player }}
               </div>
-              <div *ngIf="selectedTeamAPlayers.length === 0" class="no-players">
-                No players yet
-              </div>
+              } @if (selectedTeamAPlayers.length === 0) {
+              <div class="no-players">No players yet</div>
+              }
             </div>
             <button class="join-team-btn">Join {{ selectedTeamAName }}</button>
           </div>
@@ -166,20 +233,19 @@
               >
             </div>
             <div class="team-players">
-              <div
-                *ngFor="let player of selectedTeamBPlayers"
-                class="player-item"
-              >
+              @for (player of selectedTeamBPlayers; track player) {
+              <div class="player-item">
                 {{ player }}
               </div>
-              <div *ngIf="selectedTeamBPlayers.length === 0" class="no-players">
-                No players yet
-              </div>
+              } @if (selectedTeamBPlayers.length === 0) {
+              <div class="no-players">No players yet</div>
+              }
             </div>
             <button class="join-team-btn">Join {{ selectedTeamBName }}</button>
           </div>
         </div>
       </div>
     </div>
+    }
   </div>
 </div>

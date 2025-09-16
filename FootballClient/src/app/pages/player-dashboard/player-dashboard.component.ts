@@ -11,6 +11,7 @@ import { FriendRequestsComponent } from '../../components/friend-requests/friend
 import { Match } from '../../models/match.interface';
 import { User } from '../../models/user.interface';
 import { environment } from '../../../environments/environment';
+import { DelegationStatusDto } from '../../models/organizer-delegation.interface';
 
 @Component({
   selector: 'app-player-dashboard',
@@ -40,6 +41,11 @@ export class PlayerDashboardComponent implements OnInit {
   selectedTeamAPlayers: string[] = [];
   selectedTeamBPlayers: string[] = [];
 
+  isDelegatedOrganizer: boolean = false;
+  delegationStatus: DelegationStatusDto | null = null;
+  showReclaimConfirmDialog: boolean = false;
+  isReclaimingRole: boolean = false;
+
   constructor(
     private authService: AuthService,
     private matchService: MatchService,
@@ -50,6 +56,7 @@ export class PlayerDashboardComponent implements OnInit {
 
   async ngOnInit() {
     await this.loadPlayerData();
+    await this.checkDelegationStatus();
 
     await this.loadMatches();
     await this.loadAvailableMatches();
@@ -57,7 +64,7 @@ export class PlayerDashboardComponent implements OnInit {
     await this.loadPlayerSpecificMatches();
   }
 
-   private getAuthHeaders(): HeadersInit {
+  private getAuthHeaders(): HeadersInit {
     const token = this.authService.getToken();
     return {
       'Content-Type': 'application/json',
@@ -65,15 +72,17 @@ export class PlayerDashboardComponent implements OnInit {
     };
   }
 
-
   async loadPlayerData() {
     const userId = this.authService.getUserId();
 
     if (userId) {
       try {
-         const userResponse = await fetch(`${environment.apiUrl}/user/${userId}`, {
-        headers: this.getAuthHeaders(), 
-      });
+        const userResponse = await fetch(
+          `${environment.apiUrl}/user/${userId}`,
+          {
+            headers: this.getAuthHeaders(),
+          }
+        );
         if (userResponse.ok) {
           const user = await userResponse.json();
           const players = await this.userService.getPlayers();
@@ -366,5 +375,94 @@ export class PlayerDashboardComponent implements OnInit {
       for11: this.calculatePricePerPlayer(totalCost, 11),
       for12: this.calculatePricePerPlayer(totalCost, 12),
     };
+  }
+
+  async checkDelegationStatus() {
+    try {
+      const userId = this.authService.getUserId();
+      if (!userId) {
+        return;
+      }
+
+      this.isDelegatedOrganizer = await this.userService.isDelegatedOrganizer(
+        userId
+      );
+
+      if (this.isDelegatedOrganizer) {
+        this.delegationStatus = await this.userService.getDelegationStatus(
+          userId
+        );
+      }
+    } catch (error) {
+      console.error('Error checking delegation status:', error);
+    }
+  }
+
+  showReclaimConfirmation() {
+    this.showReclaimConfirmDialog = true;
+  }
+
+  cancelReclaim() {
+    this.showReclaimConfirmDialog = false;
+  }
+
+  async reclaimOrganizerRole() {
+    if (!this.delegationStatus?.currentDelegation) {
+      return;
+    }
+
+    this.showReclaimConfirmDialog = false;
+    this.isReclaimingRole = true;
+
+    try {
+      const userId = this.authService.getUserId()!;
+      const result = await this.userService.reclaimOrganizerRole(
+        userId,
+        this.delegationStatus.currentDelegation.id
+      );
+
+      this.notificationService.showSuccess(
+        'Organizer role reclaimed successfully! You will be logged out automatically to refresh your role.'
+      );
+
+      this.isDelegatedOrganizer = false;
+      this.delegationStatus = null;
+
+      if (result.requiresLogout) {
+        setTimeout(() => {
+          this.authService.logout();
+        }, 2000);
+      } else {
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
+    } catch (error: any) {
+      this.notificationService.showError(
+        error.message || 'Failed to reclaim organizer role'
+      );
+      console.error('Error reclaiming organizer role:', error);
+    } finally {
+      this.isReclaimingRole = false;
+    }
+  }
+
+  getDelegateName(): string {
+    return (
+      this.delegationStatus?.currentDelegation?.delegateUserName || 'Unknown'
+    );
+  }
+
+  getDelegationDate(): string {
+    if (!this.delegationStatus?.currentDelegation?.createdAt) return 'Unknown';
+    return new Date(
+      this.delegationStatus.currentDelegation.createdAt
+    ).toLocaleDateString();
+  }
+
+  getDelegationNotes(): string {
+    return (
+      this.delegationStatus?.currentDelegation?.notes || 'No notes provided'
+    );
   }
 }

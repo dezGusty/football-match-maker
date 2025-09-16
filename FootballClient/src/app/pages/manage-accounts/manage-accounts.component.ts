@@ -10,11 +10,18 @@ import { NotificationService } from '../../services/notification.service';
 import { StatSelector } from '../../components/stat-selector/stat-selector';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
 
 @Component({
   selector: 'app-manage-accounts',
   standalone: true,
-  imports: [Header, FormsModule, CommonModule, StatSelector],
+  imports: [
+    Header,
+    FormsModule,
+    CommonModule,
+    StatSelector,
+    PlayerStatsComponent,
+  ],
   templateUrl: './manage-accounts.component.html',
   styleUrls: ['./manage-accounts.component.css'],
 })
@@ -23,7 +30,7 @@ export class ManageAccountsComponent {
     private UserService: UserService,
     private authService: AuthService,
     private notificationService: NotificationService,
-    private http: HttpClient,
+    private http: HttpClient
   ) {}
 
   users: User[] = [];
@@ -74,7 +81,7 @@ export class ManageAccountsComponent {
       this.users = await this.UserService.getAllUsers();
       const id = this.authService.getUserId();
       this.users = this.users.filter((user) => user.id !== id);
-      this.filteredUsers = [...this.users];
+      this.applyFilters();
     }
   }
 
@@ -102,12 +109,6 @@ export class ManageAccountsComponent {
   }
 
   onRoleFilterChange() {
-    console.log(
-      'Selected role:',
-      this.selectedRole,
-      'Type:',
-      typeof this.selectedRole
-    );
     this.applyFilters();
   }
 
@@ -134,6 +135,15 @@ export class ManageAccountsComponent {
       const roleFilter = Number(this.selectedRole);
       filtered = filtered.filter((user) => user.role === roleFilter);
     }
+
+    filtered.sort((a, b) => {
+      const aActive = this.isUserEnabled(a);
+      const bActive = this.isUserEnabled(b);
+
+      if (aActive && !bActive) return -1;
+      if (!aActive && bActive) return 1;
+      return 0;
+    });
 
     this.filteredUsers = filtered;
   }
@@ -213,6 +223,7 @@ export class ManageAccountsComponent {
         if (filteredIndex !== -1) {
           this.filteredUsers[filteredIndex].isDeleted = true;
         }
+        this.applyFilters();
         this.notificationService.showSuccess('User deleted successfully!');
       }
     } catch (error) {
@@ -241,6 +252,7 @@ export class ManageAccountsComponent {
         if (filteredIndex !== -1) {
           this.filteredUsers[filteredIndex].isDeleted = false;
         }
+        this.applyFilters();
         this.notificationService.showSuccess('User reactivated successfully!');
       }
     } catch (error) {

@@ -1,7 +1,7 @@
 /* Page Container */
 .manage-all-players-container {
   padding: 20px;
-  max-width: 1400px;
+  max-width: 1500px;
   margin: 0 auto;
   min-height: 100vh;
   background: var(--background-color);
@@ -207,8 +207,12 @@ tbody tr:hover:not(.disabled-row) {
 }
 
 .disabled-row {
-  opacity: 0.6;
-  filter: grayscale(0.2);
+  filter: grayscale(100%);
+  
+}
+
+.disabled-row td div{
+  color: gray;
 }
 
 td {
@@ -1048,6 +1052,63 @@ tbody tr {
 }
 
 /* Responsive pentru modal */
+/* Stats Editing Styles */
+.edit-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 200px;
+}
+
+.stat-edit-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: rgba(164, 196, 168, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(124, 242, 208, 0.15);
+}
+
+.stat-icons.editable {
+  display: flex;
+  gap: 2px;
+}
+
+.stat-icons.editable .stat-icon {
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  opacity: 0.3;
+  filter: grayscale(1);
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.stat-icons.editable .stat-icon:hover {
+  background: rgba(124, 242, 208, 0.1);
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.stat-icons.editable .stat-icon.active {
+  opacity: 1;
+  filter: grayscale(0);
+  transform: scale(1.05);
+}
+
+.stat-icons.editable .stat-icon.speed.active {
+  text-shadow: 0 0 6px #ff6b00;
+}
+
+.stat-icons.editable .stat-icon.stamina.active {
+  text-shadow: 0 0 6px #e91e63;
+}
+
+.stat-icons.editable .stat-icon.errors.active {
+  text-shadow: 0 0 6px #f44336;
+}
+
 @media (max-width: 768px) {
   .fab-stack {
     bottom: 20px;
@@ -1085,5 +1146,13 @@ tbody tr {
   .btn-cancel,
   .btn-primary {
     width: 100%;
+  }
+
+  .edit-stats {
+    min-width: unset;
+  }
+
+  .stat-edit-group {
+    justify-content: center;
   }
 }

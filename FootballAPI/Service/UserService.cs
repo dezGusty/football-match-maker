@@ -255,14 +255,7 @@ namespace FootballAPI.Service
 
             if (organizer != null && user != null)
             {
-                var relation = new PlayerOrganiser
-                {
-                    OrganiserId = organiserId,
-                    PlayerId = userId,
-                    CreatedAt = DateTime.Now
-                };
-
-                await _userRepository.AddPlayerOrganiserRelationAsync(relation);
+                await _userRepository.AddPlayerOrganiserRelationAsync(organiserId, userId);
             }
         }
 
@@ -277,8 +270,8 @@ namespace FootballAPI.Service
                 throw new InvalidOperationException("User already has an active delegation");
 
             var friend = await _userRepository.GetByIdAsync(dto.FriendUserId);
-            if (friend == null || friend.Role != UserRole.PLAYER)
-                throw new ArgumentException("Friend must be a player");
+            if (friend == null)
+                throw new ArgumentException("Friend not found");
 
             var areFriends = await _userRepository.AreFriends(organizerId, dto.FriendUserId);
             if (!areFriends)
@@ -307,6 +300,8 @@ namespace FootballAPI.Service
 
             await _userRepository.UpdateUserRoleAsync(dto.FriendUserId, UserRole.ORGANISER);
 
+            await _userRepository.UpdateUserRoleAsync(organizerId, UserRole.PLAYER);
+
             return MapToDelegationDto(createdDelegation, organizer, friend);
         }
 
@@ -328,6 +323,8 @@ namespace FootballAPI.Service
 
             await _userRepository.UpdateUserRoleAsync(delegation.DelegateUserId, UserRole.PLAYER);
 
+            await _userRepository.UpdateUserRoleAsync(organizerId, UserRole.ORGANISER);
+
             return true;
         }
 
@@ -343,6 +340,16 @@ namespace FootballAPI.Service
                 CurrentDelegation = currentDelegation != null ? MapToDelegationDto(currentDelegation, currentDelegation.OriginalOrganizer, currentDelegation.DelegateUser) : null,
                 ReceivedDelegation = receivedDelegation != null ? MapToDelegationDto(receivedDelegation, receivedDelegation.OriginalOrganizer, receivedDelegation.DelegateUser) : null
             };
+        }
+
+        public async Task<bool> IsDelegatedOrganizerAsync(int userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null || user.Role != UserRole.PLAYER)
+                return false;
+
+            var currentDelegation = await _userRepository.GetActiveDelegationByOrganizerId(userId);
+            return currentDelegation != null;
         }
 
         public async Task<IEnumerable<UserDto>> GetFriendsAsync(int userId)

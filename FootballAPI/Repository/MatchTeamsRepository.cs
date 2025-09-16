@@ -56,10 +56,6 @@ namespace FootballAPI.Repository
             return true;
         }
 
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await _context.MatchTeams.AnyAsync(mt => mt.Id == id);
-        }
 
         public async Task<IEnumerable<MatchTeams>> GetByMatchIdAsync(int matchId)
         {
