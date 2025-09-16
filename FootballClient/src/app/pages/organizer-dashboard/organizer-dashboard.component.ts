@@ -36,6 +36,9 @@ import {
   styleUrls: ['./organizer-dashboard.component.css'],
 })
 export class OrganizerDashboardComponent {
+  showSaveAsTemplatePopup = false;
+  pendingMatchCreation = false;
+  matchTemplateExists = false;
   constructor(
     private UserService: UserService,
     private authService: AuthService,
@@ -433,10 +436,28 @@ export class OrganizerDashboardComponent {
       return;
     }
 
+    // Check if match details match an existing template
+    this.matchTemplateExists = this.templates.some(t =>
+      t.teamAName === this.newMatch.teamAName &&
+      t.teamBName === this.newMatch.teamBName &&
+      t.location === this.newMatch.location &&
+      t.cost === this.newMatch.cost
+    );
+
+    if (!this.matchTemplateExists) {
+      this.showCreateMatchModal = false;
+      this.showSaveAsTemplatePopup = true;
+      this.pendingMatchCreation = true;
+      return;
+    }
+
+    await this.performMatchCreation();
+  }
+
+  async performMatchCreation() {
     this.matchLoading = true;
     this.matchErrorMessage = '';
     this.matchSuccessMessage = '';
-
     try {
       const createMatchRequest: CreateMatchRequest = {
         matchDate: new Date(this.newMatch.matchDate).toISOString(),
@@ -468,6 +489,33 @@ export class OrganizerDashboardComponent {
       console.error('Error creating match:', error);
     } finally {
       this.matchLoading = false;
+      this.pendingMatchCreation = false;
+    }
+  }
+
+  async handleSaveAsTemplateChoice(saveAsTemplate: boolean) {
+    this.showSaveAsTemplatePopup = false;
+    this.showCreateMatchModal = false;
+    if (saveAsTemplate) {
+      await this.createTemplateFromMatch();
+    }
+    await this.performMatchCreation();
+  }
+
+  async createTemplateFromMatch() {
+    // Create a template from current match details
+    const templateReq: CreateMatchTemplateRequest = {
+      name: `${this.newMatch.teamAName} vs ${this.newMatch.teamBName}`,
+      location: this.newMatch.location,
+      cost: this.newMatch.cost,
+      teamAName: this.newMatch.teamAName,
+      teamBName: this.newMatch.teamBName,
+    };
+    try {
+      await this.matchTemplateService.createTemplate(templateReq);
+      await this.loadTemplates();
+    } catch (error) {
+      // Optionally show error
     }
   }
 
