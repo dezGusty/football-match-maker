@@ -207,8 +207,12 @@ tbody tr:hover:not(.disabled-row) {
 }
 
 .disabled-row {
-  opacity: 0.6;
-  filter: grayscale(0.2);
+  filter: grayscale(100%);
+  
+}
+
+.disabled-row td div{
+  color: gray;
 }
 
 td {

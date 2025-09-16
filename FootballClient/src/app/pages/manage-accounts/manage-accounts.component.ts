@@ -69,7 +69,7 @@ export class ManageAccountsComponent {
       this.users = await this.UserService.getAllUsers();
       const id = this.authService.getUserId();
       this.users = this.users.filter((user) => user.id !== id);
-      this.filteredUsers = [...this.users];
+      this.applyFilters();
     }
   }
 
@@ -129,6 +129,15 @@ export class ManageAccountsComponent {
       const roleFilter = Number(this.selectedRole);
       filtered = filtered.filter((user) => user.role === roleFilter);
     }
+
+    filtered.sort((a, b) => {
+      const aActive = this.isUserEnabled(a);
+      const bActive = this.isUserEnabled(b);
+
+      if (aActive && !bActive) return -1;
+      if (!aActive && bActive) return 1;
+      return 0;
+    });
 
     this.filteredUsers = filtered;
   }
@@ -208,6 +217,7 @@ export class ManageAccountsComponent {
         if (filteredIndex !== -1) {
           this.filteredUsers[filteredIndex].isDeleted = true;
         }
+        this.applyFilters();
         this.notificationService.showSuccess('User deleted successfully!');
       }
     } catch (error) {
@@ -236,6 +246,7 @@ export class ManageAccountsComponent {
         if (filteredIndex !== -1) {
           this.filteredUsers[filteredIndex].isDeleted = false;
         }
+        this.applyFilters();
         this.notificationService.showSuccess('User reactivated successfully!');
       }
     } catch (error) {

@@ -165,15 +165,20 @@
               </select>
             </td>
 
-            <!-- Status -->
+            <!-- Rating -->
             <td>
-              <span
-                class="status-badge"
-                [class.active]="isUserEnabled(user)"
-                [class.inactive]="!isUserEnabled(user)"
-              >
-                {{ isUserEnabled(user) ? "Active" : "Inactive" }}
-              </span>
+              <div *ngIf="editIndex !== i">
+                {{ user.rating || "N/A" }}
+              </div>
+              <input
+                *ngIf="editIndex === i"
+                type="number"
+                [(ngModel)]="editedUser!.rating"
+                min="0"
+                max="10"
+                step="0.1"
+                class="edit-input"
+              />
             </td>
             <td>
               <div *ngIf="editIndex !== i">
