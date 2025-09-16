@@ -97,12 +97,6 @@ export class ManageAccountsComponent {
   }
 
   onRoleFilterChange() {
-    console.log(
-      'Selected role:',
-      this.selectedRole,
-      'Type:',
-      typeof this.selectedRole
-    );
     this.applyFilters();
   }
 
