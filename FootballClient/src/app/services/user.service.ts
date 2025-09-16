@@ -92,7 +92,9 @@ export class UserService {
   }
 
   async getAllUsers(): Promise<User[]> {
-    const response = await fetch(`${this.url}`);
+    const response = await fetch(`${this.url}`, {
+      headers: getAuthHeaders(this.authService),
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch users');
     }

@@ -22,7 +22,7 @@ namespace FootballAPI.Controllers
             _logger = logger;
         }
 
-        [Authorize]
+        [Authorize(Roles = "ADMIN")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
         {

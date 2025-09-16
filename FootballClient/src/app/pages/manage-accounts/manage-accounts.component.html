@@ -96,7 +96,8 @@
             <th>Username</th>
             <th>Email</th>
             <th>Role</th>
-            <th>Status</th>
+            <th>Rating</th>
+            <th>Individual Stats</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -174,7 +175,56 @@
                 {{ isUserEnabled(user) ? "Active" : "Inactive" }}
               </span>
             </td>
-
+            <td>
+              <div *ngIf="editIndex !== i">
+                <app-player-stats
+                  [speed]="user.speed || 2"
+                  [stamina]="user.stamina || 2"
+                  [errors]="user.errors || 2"
+                ></app-player-stats>
+              </div>
+              <div *ngIf="editIndex === i" class="edit-stats">
+                <div class="stat-edit-group">
+                  <div class="stat-icons editable">
+                    <span
+                      *ngFor="let j of [1, 2, 3, 4]"
+                      class="stat-icon"
+                      [class.active]="j <= editedUser!.speed"
+                      [class.speed]="true"
+                      (click)="editedUser!.speed = j"
+                    >
+                      ⚡
+                    </span>
+                  </div>
+                </div>
+                <div class="stat-edit-group">
+                  <div class="stat-icons editable">
+                    <span
+                      *ngFor="let j of [1, 2, 3, 4]"
+                      class="stat-icon"
+                      [class.active]="j <= editedUser!.stamina"
+                      [class.stamina]="true"
+                      (click)="editedUser!.stamina = j"
+                    >
+                      💪
+                    </span>
+                  </div>
+                </div>
+                <div class="stat-edit-group">
+                  <div class="stat-icons editable">
+                    <span
+                      *ngFor="let j of [1, 2, 3, 4]"
+                      class="stat-icon"
+                      [class.active]="j <= editedUser!.errors"
+                      [class.errors]="true"
+                      (click)="editedUser!.errors = j"
+                    >
+                      ❌
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </td>
             <!-- Actions -->
             <td>
               <div class="action-buttons">

@@ -8,11 +8,18 @@ import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role.enum';
 import { NotificationService } from '../../services/notification.service';
 import { StatSelector } from '../../components/stat-selector/stat-selector';
+import { PlayerStatsComponent } from '../../components/player-stats.component/player-stats.component';
 
 @Component({
   selector: 'app-manage-accounts',
   standalone: true,
-  imports: [Header, FormsModule, CommonModule, StatSelector],
+  imports: [
+    Header,
+    FormsModule,
+    CommonModule,
+    StatSelector,
+    PlayerStatsComponent,
+  ],
   templateUrl: './manage-accounts.component.html',
   styleUrls: ['./manage-accounts.component.css'],
 })
