@@ -45,7 +45,7 @@ Make sure you have the following installed:
 - [Node.js](https://nodejs.org/) (v16 or higher)
 - [Angular CLI](https://cli.angular.io/) (`npm install -g @angular/cli`)
 - [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install/)
-- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (for local development)
+- [SQLite](https://www.sqlite.org/index.html) (included, no separate installation needed)
 - IDE of choice ([Visual Studio](https://visualstudio.microsoft.com/) or [VS Code](https://code.visualstudio.com/))
 
 ### Development Setup
@@ -87,7 +87,8 @@ football-match-maker/
 │   ├── DTOs/                
 │   ├── Services/            
 │   ├── Repository/          
-│   └── AppDbContext/       
+│   ├── AppDbContext/       
+│   └── footballdb.sqlite     # SQLite database file
 │
 ├── FootballClient/           # Angular Frontend
 │   ├── src/
@@ -100,7 +101,12 @@ football-match-maker/
 │   │
 │   └── nginx.conf           # Nginx configuration
 │
+├── Tests/                    # Test projects
+│   ├── FootballAPI.Tests/    # Backend unit tests
+│   └── performance/          # Load testing scripts
+│
 ├── docker-compose.yml        # Docker configuration
+├── prod.env                  # Production environment config
 └── README.md                # Documentation
 
 ```
@@ -133,10 +139,11 @@ football-match-maker/
 Create a `prod.env` file in the root directory:
 ```env
 ASPNETCORE_ENVIRONMENT=Production
-ConnectionStrings__DefaultConnection=Server=db;Database=FootballDB;User=sa;Password=YourStrongPassword!
 JWT_SECRET=your_jwt_secret_key
 CORS_ORIGINS=https://yourdomain.com
 ```
+
+Note: The application uses SQLite by default, so no separate database configuration is needed.
 
 2. **Build and Run Docker Containers**
 ```bash
@@ -144,7 +151,7 @@ docker compose up --build -d
 ```
 
 This will start:
-- SQL Server database
+- .NET API backend (with embedded SQLite database)
 - .NET API backend
 - Angular frontend with Nginx
 - Prometheus monitoring (optional)
@@ -259,27 +266,61 @@ The application includes Prometheus metrics for monitoring:
    - Check if the API container is running: `docker ps`
    - Verify API logs: `docker logs football-api`
    - Ensure correct environment variables in `prod.env`
+   - Verify the API health endpoint: `curl http://localhost:5145/health`
 
-2. **Database Connection Issues**
-   - Verify SQL Server is running: `docker ps | grep db`
-   - Check connection string in environment variables
-   - Review database logs: `docker logs football-db`
+2. **Database Access Issues**
+   - Check if SQLite database file exists: `footballdb.sqlite` in the API directory
+   - Verify file permissions for the SQLite database
+   - Check API logs for database-related errors: `docker logs football-api`
+   - Ensure the application has write permissions to the database directory
 
 3. **Frontend Loading Problems**
-   - Clear browser cache
+   - Clear browser cache and reload
    - Check browser console for errors
-   - Verify Nginx configuration
+   - Verify Nginx configuration and logs
    - Review frontend logs: `docker logs football-client`
+
+4. **Authentication Issues**
+   - Verify JWT token expiration settings
+   - Check if cookies are enabled in the browser
+   - Clear browser storage and try again
+   - Ensure correct CORS settings in `appsettings.json`
+
+### Development Troubleshooting
+
+1. **Entity Framework Migrations**
+   ```bash
+   dotnet ef migrations add YourMigrationName
+   dotnet ef database update
+   ```
+
+2. **Reset Database**
+   - Delete the `footballdb.sqlite` file
+   - Run `dotnet ef database update` to recreate it
+
+3. **Angular Development Server**
+   - Clear npm cache: `npm cache clean --force`
+   - Delete `node_modules` and run `npm install`
+   - Run `ng serve` with verbose logging: `ng serve --verbose`
 
 ### Security Checks
 
 - Regular security updates: `docker-compose pull`
 - SSL certificate status: `certbot certificates`
 - Nginx configuration test: `nginx -t`
+- Review API logs for unauthorized access attempts
+- Check CORS settings in both API and client configurations
 
 
+### Getting Started
 
-## 🙏 Acknowledgments
+1. Fork the repository
+2. Create a new branch for your feature: `git checkout -b feature/your-feature-name`
+3. Make your changes
+4. Submit a pull request
+
+
+## �🙏 Acknowledgments
 
 - [ASP.NET Core Team](https://github.com/dotnet/aspnetcore)
 - [Angular Team](https://angular.io/docs/ts/latest/)
