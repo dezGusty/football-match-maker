@@ -25,13 +25,6 @@ namespace FootballAPI.Service
             var templates = await _matchTemplateRepository.GetAllByUserIdAsync(userId);
             return templates.Select(MapToDto);
         }
-        
-        public async Task<IEnumerable<MatchTemplateDto>> GetAllAsync()
-        {
-            // Get all templates for admins
-            var templates = await _matchTemplateRepository.GetAllAsync();
-            return templates.Select(MapToDto);
-        }
 
         public async Task<MatchTemplateDto> GetByIdAsync(int id, int userId)
         {

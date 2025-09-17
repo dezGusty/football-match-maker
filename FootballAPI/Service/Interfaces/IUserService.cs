@@ -16,16 +16,10 @@ namespace FootballAPI.Service
         Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updateUserDto);
         Task<bool> DeleteUserAsync(int id);
         Task<bool> ReactivateUserAsync(int id);
-        Task<UserResponseDto> AuthenticateAsync(LoginDto loginDto);
-        Task<bool> ChangePasswordAsync(int userId, ChangePasswordDto changePasswordDto);
         Task<IEnumerable<UserDto>> GetUsersByRoleAsync(UserRole role);
-        Task<bool> UsernameExistsAsync(string username);
-        Task<bool> UsernameExistsAsync(string username, int excludeUserId);
-        Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto changeUsernameDto);
         Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id);
 
         Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange);
-        Task<string> UpdatePlayerProfileImageAsync(int userId, IFormFile imageFile);
         Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates);
         Task<IEnumerable<UserDto>> GetPlayersAsync();
         Task AddPlayerOrganiserRelationAsync(int userId, int organiserId);

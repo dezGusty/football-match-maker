@@ -38,16 +38,6 @@ namespace FootballAPI.Service
             };
         }
 
-        private UserResponseDto MapToResponseDto(User user, string token = null!)
-        {
-            return new UserResponseDto
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Role = user.Role,
-
-            };
-        }
 
         public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
         {
@@ -174,54 +164,6 @@ namespace FootballAPI.Service
             return await _userRepository.ReactivateAsync(id);
         }
 
-        public async Task<UserResponseDto> AuthenticateAsync(LoginDto loginDto)
-        {
-            var user = await _userRepository.AuthenticateAsync(loginDto.Email, loginDto.Password);
-
-            if (user == null)
-                return null!;
-
-            return MapToResponseDto(user);
-        }
-
-        public async Task<bool> ChangePasswordAsync(int userId, ChangePasswordDto changePasswordDto)
-        {
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
-                return false;
-
-            if (user.Password != changePasswordDto.CurrentPassword)
-                throw new ArgumentException("Current password is incorrect.");
-
-            return await _userRepository.ChangePasswordAsync(userId, changePasswordDto.NewPassword);
-        }
-
-        public async Task<bool> UsernameExistsAsync(string username)
-        {
-            return await _userRepository.UsernameExistsAsync(username);
-        }
-
-        public async Task<bool> UsernameExistsAsync(string username, int excludeUserId)
-        {
-            return await _userRepository.UsernameExistsAsync(username, excludeUserId);
-        }
-
-
-        public async Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto changeUsernameDto)
-        {
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
-                return false;
-
-            if (user.Password != changeUsernameDto.Password)
-                throw new ArgumentException("Password is incorrect.");
-
-            if (await _userRepository.UsernameExistsAsync(changeUsernameDto.NewUsername, userId))
-                throw new ArgumentException($"Username '{changeUsernameDto.NewUsername}' already exists.");
-
-            return await _userRepository.ChangeUsernameAsync(userId, changeUsernameDto.NewUsername);
-        }
-
         public async Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id)
         {
             return await _userRepository.GetPlayersByOrganiserAsync(id);
@@ -230,11 +172,6 @@ namespace FootballAPI.Service
         public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange)
         {
             return await _userRepository.UpdatePlayerRatingAsync(userId, ratingChange);
-        }
-
-        public async Task<string> UpdatePlayerProfileImageAsync(int userId, IFormFile imageFile)
-        {
-            return await _userRepository.UpdatePlayerProfileImageAsync(userId, imageFile);
         }
 
         public async Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates)

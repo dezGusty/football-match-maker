@@ -7,7 +7,6 @@ namespace FootballAPI.Service.Interfaces
     Task<string> GeneratePasswordResetTokenAsync(int userId);
     Task<bool> ValidateAndResetPasswordAsync(string token, string newPassword);
     Task<User?> GetUserByResetTokenAsync(string token);
-    Task CleanupExpiredTokensAsync();
     Task<bool> HasActiveTokenAsync(int userId);
 
   }

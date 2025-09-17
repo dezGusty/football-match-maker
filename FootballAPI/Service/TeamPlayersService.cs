@@ -20,18 +20,6 @@ namespace FootballAPI.Service
             _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<TeamPlayersDto>> GetAllTeamPlayersAsync()
-        {
-            var teamPlayers = await _teamPlayersRepository.GetAllAsync();
-            return teamPlayers.Select(MapToDto);
-        }
-
-        public async Task<TeamPlayersDto> GetTeamPlayerByIdAsync(int id)
-        {
-            var teamPlayer = await _teamPlayersRepository.GetByIdAsync(id);
-            return teamPlayer == null ? null : MapToDto(teamPlayer);
-        }
-
         public async Task<TeamPlayersDto> CreateTeamPlayerAsync(CreateTeamPlayersDto createTeamPlayersDto)
         {
             var teamPlayer = new TeamPlayers
@@ -45,22 +33,6 @@ namespace FootballAPI.Service
             return MapToDto(createdTeamPlayer);
         }
 
-        public async Task<TeamPlayersDto> UpdateTeamPlayerAsync(int id, UpdateTeamPlayersDto updateTeamPlayersDto)
-        {
-            var existingTeamPlayer = await _teamPlayersRepository.GetByIdAsync(id);
-            if (existingTeamPlayer == null)
-            {
-                return null;
-            }
-
-            existingTeamPlayer.MatchTeamId = updateTeamPlayersDto.MatchTeamId;
-            existingTeamPlayer.UserId = updateTeamPlayersDto.UserId;
-            existingTeamPlayer.Status = updateTeamPlayersDto.Status;
-
-            var updatedTeamPlayer = await _teamPlayersRepository.UpdateAsync(existingTeamPlayer);
-            return MapToDto(updatedTeamPlayer);
-        }
-
         public async Task<bool> DeleteTeamPlayerAsync(int id)
         {
             return await _teamPlayersRepository.DeleteAsync(id);
@@ -72,22 +44,10 @@ namespace FootballAPI.Service
             return teamPlayers.Select(MapToDto);
         }
 
-        public async Task<IEnumerable<TeamPlayersDto>> GetTeamPlayersByUserIdAsync(int userId)
-        {
-            var teamPlayers = await _teamPlayersRepository.GetByUserIdAsync(userId);
-            return teamPlayers.Select(MapToDto);
-        }
-
         public async Task<TeamPlayersDto> GetTeamPlayerByMatchTeamIdAndUserIdAsync(int matchTeamId, int userId)
         {
             var teamPlayer = await _teamPlayersRepository.GetByMatchTeamIdAndUserIdAsync(matchTeamId, userId);
             return teamPlayer == null ? null : MapToDto(teamPlayer);
-        }
-
-        public async Task<IEnumerable<TeamPlayersDto>> GetTeamPlayersByStatusAsync(PlayerStatus status)
-        {
-            var teamPlayers = await _teamPlayersRepository.GetByStatusAsync(status);
-            return teamPlayers.Select(MapToDto);
         }
 
         private TeamPlayersDto MapToDto(TeamPlayers teamPlayer)

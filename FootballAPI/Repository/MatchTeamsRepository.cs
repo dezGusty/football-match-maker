@@ -43,35 +43,12 @@ namespace FootballAPI.Repository
             return matchTeam;
         }
 
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var matchTeam = await _context.MatchTeams.FindAsync(id);
-            if (matchTeam == null)
-            {
-                return false;
-            }
-
-            _context.MatchTeams.Remove(matchTeam);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-
         public async Task<IEnumerable<MatchTeams>> GetByMatchIdAsync(int matchId)
         {
             return await _context.MatchTeams
                 .Include(mt => mt.Team)
                 .Include(mt => mt.Match)
                 .Where(mt => mt.MatchId == matchId)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<MatchTeams>> GetByTeamIdAsync(int teamId)
-        {
-            return await _context.MatchTeams
-                .Include(mt => mt.Match)
-                .Include(mt => mt.Team)
-                .Where(mt => mt.TeamId == teamId)
                 .ToListAsync();
         }
 

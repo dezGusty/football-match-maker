@@ -9,9 +9,7 @@ namespace FootballAPI.Repository
         Task<MatchTeams> GetByIdAsync(int id);
         Task<MatchTeams> CreateAsync(MatchTeams matchTeam);
         Task<MatchTeams> UpdateAsync(MatchTeams matchTeam);
-        Task<bool> DeleteAsync(int id);
         Task<IEnumerable<MatchTeams>> GetByMatchIdAsync(int matchId);
-        Task<IEnumerable<MatchTeams>> GetByTeamIdAsync(int teamId);
         Task<MatchTeams> GetByMatchIdAndTeamIdAsync(int matchId, int teamId);
     }
 }

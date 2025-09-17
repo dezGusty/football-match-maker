@@ -116,18 +116,7 @@ namespace FootballAPI.Service
         return null;
       }
     }
-    public async Task CleanupExpiredTokensAsync()
-    {
-      try
-      {
-        await _tokenRepository.CleanupExpiredTokensAsync();
-        _logger.LogInformation("Expired password reset tokens cleaned up");
-      }
-      catch (Exception ex)
-      {
-        _logger.LogError(ex, "Error cleaning up expired tokens");
-      }
-    }
+
     private string HashToken(string token)
     {
       using (var sha256 = SHA256.Create())

@@ -71,22 +71,12 @@ namespace FootballAPI.Repository
             }
         }
 
-        public async Task CleanupExpiredTokensAsync()
-        {
-            var expiredTokens = await _context.ResetPasswordTokens
-                .Where(t => t.ExpiresAt < DateTime.UtcNow)
-                .ToListAsync();
-
-            _context.ResetPasswordTokens.RemoveRange(expiredTokens);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task<bool> HasActiveTokenAsync(int userId)
         {
             return await _context.ResetPasswordTokens
                 .AnyAsync(t =>
                      t.UserId == userId &&
-                     t.UsedAt == null && 
+                     t.UsedAt == null &&
                      t.ExpiresAt > DateTime.UtcNow);
         }
     }

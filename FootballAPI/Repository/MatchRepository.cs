@@ -26,18 +26,10 @@ namespace FootballAPI.Repository
             return await _context.Matches.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<IEnumerable<Match>> GetMatchesByDateRangeAsync(DateTime startDate, DateTime endDate)
-        {
-            return await _context.Matches
-                .Where(m => m.MatchDate >= startDate && m.MatchDate <= endDate)
-                .OrderByDescending(m => m.MatchDate)
-                .ToListAsync();
-        }
-
         public async Task<IEnumerable<Match>> GetMyPublicMatchesAsync(int id)
         {
             return await _context.Matches
-                .Where(m => m.IsPublic && 
+                .Where(m => m.IsPublic &&
                            m.Status == Status.Open &&
                            m.OrganiserId != id &&
                            !m.MatchTeams.Any(mt => mt.TeamPlayers.Any(tp => tp.UserId == id)))
@@ -48,14 +40,6 @@ namespace FootballAPI.Repository
         {
             return await _context.Matches
                 .Where(m => m.IsPublic && m.Status == Status.Open)
-                .OrderByDescending(m => m.MatchDate)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Match>> GetMatchesByStatusAsync(Status status)
-        {
-            return await _context.Matches
-                .Where(m => m.Status == status)
                 .OrderByDescending(m => m.MatchDate)
                 .ToListAsync();
         }
@@ -83,11 +67,6 @@ namespace FootballAPI.Repository
             _context.Matches.Remove(match);
             await _context.SaveChangesAsync();
             return true;
-        }
-
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await _context.Matches.AnyAsync(m => m.Id == id);
         }
 
         public async Task<IEnumerable<Match>> GetPastMatchesAsync(int id)
@@ -124,28 +103,7 @@ namespace FootballAPI.Repository
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Match>> GetMatchesByLocationAsync(string location)
-        {
-            return await _context.Matches
-                .Where(m => m.Location != null && m.Location.Contains(location))
-                .OrderByDescending(m => m.MatchDate)
-                .ToListAsync();
-        }
 
-        public async Task<IEnumerable<Match>> GetMatchesByCostRangeAsync(decimal? minCost, decimal? maxCost)
-        {
-            var query = _context.Matches.AsQueryable();
-
-            if (minCost.HasValue)
-                query = query.Where(m => m.Cost >= minCost.Value);
-
-            if (maxCost.HasValue)
-                query = query.Where(m => m.Cost <= maxCost.Value);
-
-            return await query
-                .OrderByDescending(m => m.MatchDate)
-                .ToListAsync();
-        }
 
     }
 }

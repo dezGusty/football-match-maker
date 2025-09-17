@@ -8,7 +8,6 @@ namespace FootballAPI.Service.Interfaces
     public interface IMatchTemplateService
     {
         Task<IEnumerable<MatchTemplateDto>> GetAllByUserIdAsync(int userId);
-        Task<IEnumerable<MatchTemplateDto>> GetAllAsync();
         Task<MatchTemplateDto> GetByIdAsync(int id, int userId);
         Task<MatchTemplateDto> CreateAsync(CreateMatchTemplateDto dto, int userId);
         Task<MatchTemplateDto> UpdateAsync(int id, UpdateMatchTemplateDto dto, int userId);

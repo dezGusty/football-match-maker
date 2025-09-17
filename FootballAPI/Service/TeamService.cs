@@ -22,28 +22,10 @@ namespace FootballAPI.Service
             };
         }
 
-        public async Task<IEnumerable<TeamDto>> GetAllTeamsAsync()
-        {
-            var teams = await _teamRepository.GetAllAsync();
-            return teams.Select(MapToDto);
-        }
-
         public async Task<TeamDto> GetTeamByIdAsync(int id)
         {
             var team = await _teamRepository.GetByIdAsync(id);
             return team == null ? null : MapToDto(team);
-        }
-
-        public async Task<TeamDto> GetTeamByNameAsync(string name)
-        {
-            var team = await _teamRepository.GetByNameAsync(name);
-            return team == null ? null : MapToDto(team);
-        }
-
-        public async Task<IEnumerable<TeamDto>> SearchTeamsByNameAsync(string searchTerm)
-        {
-            var teams = await _teamRepository.SearchByNameAsync(searchTerm);
-            return teams.Select(MapToDto);
         }
 
         public async Task<TeamDto> CreateTeamAsync(CreateTeamDto createTeamDto)
@@ -69,9 +51,5 @@ namespace FootballAPI.Service
             return MapToDto(updatedTeam);
         }
 
-        public async Task<bool> DeleteTeamAsync(int id)
-        {
-            return await _teamRepository.DeleteAsync(id);
-        }
     }
 }

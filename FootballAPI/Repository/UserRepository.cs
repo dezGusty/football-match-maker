@@ -97,39 +97,6 @@ namespace FootballAPI.Repository
                 .AnyAsync(u => u.Username.ToLower() == username.ToLower() && u.Id != excludeUserId);
         }
 
-        public async Task<User> AuthenticateAsync(string email, string password)
-        {
-            var user = await GetByEmailAsync(email);
-
-            if (user == null || user.Password != password)
-                return null;
-
-            return user;
-        }
-
-        public async Task<bool> ChangePasswordAsync(int userId, string newPassword)
-        {
-            var user = await GetByIdAsync(userId);
-            if (user == null)
-                return false;
-
-            user.Password = newPassword;
-            await UpdateAsync(user);
-            return true;
-        }
-
-
-        public async Task<bool> ChangeUsernameAsync(int userId, string newUsername)
-        {
-            var user = await GetByIdAsync(userId);
-            if (user == null)
-                return false;
-
-            user.Username = newUsername;
-            await UpdateAsync(user);
-            return true;
-        }
-
         public async Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id)
         {
             var users = await _context.FriendRequests
@@ -162,20 +129,6 @@ namespace FootballAPI.Repository
             user.UpdatedAt = DateTime.UtcNow;
             await UpdateAsync(user);
             return true;
-        }
-
-        public async Task<string> UpdatePlayerProfileImageAsync(int userId, IFormFile imageFile)
-        {
-            var user = await GetByIdAsync(userId);
-            if (user == null)
-                throw new ArgumentException("User not found");
-
-            var imagePath = $"/images/players/{userId}_{DateTime.UtcNow:yyyyMMddHHmmss}.jpg";
-            user.ProfileImagePath = imagePath;
-            user.UpdatedAt = DateTime.UtcNow;
-            await UpdateAsync(user);
-
-            return imagePath;
         }
 
         public async Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates)

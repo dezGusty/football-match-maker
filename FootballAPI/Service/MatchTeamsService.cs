@@ -60,20 +60,9 @@ namespace FootballAPI.Service
             return MapToDto(updatedMatchTeam);
         }
 
-        public async Task<bool> DeleteMatchTeamAsync(int id)
-        {
-            return await _matchTeamsRepository.DeleteAsync(id);
-        }
-
         public async Task<IEnumerable<MatchTeamsDto>> GetMatchTeamsByMatchIdAsync(int matchId)
         {
             var matchTeams = await _matchTeamsRepository.GetByMatchIdAsync(matchId);
-            return matchTeams.Select(MapToDto);
-        }
-
-        public async Task<IEnumerable<MatchTeamsDto>> GetMatchTeamsByTeamIdAsync(int teamId)
-        {
-            var matchTeams = await _matchTeamsRepository.GetByTeamIdAsync(teamId);
             return matchTeams.Select(MapToDto);
         }
 
