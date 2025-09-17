@@ -12,6 +12,7 @@ import { MatchService } from '../../services/match.service';
 import { Match } from '../../models/match.interface';
 import { UserRole } from '../../models/user-role.enum';
 import { PlayerProfileImageService } from '../../services/player-profile-image.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-account',

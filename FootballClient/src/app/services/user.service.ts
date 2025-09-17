@@ -129,7 +129,7 @@ export class UserService {
     };
 
     const response = await fetch(
-      'http://localhost:5145/api/Auth/create-player-account',
+      `${environment.apiUrl}/Auth/create-player-account`,
       {
         method: 'POST',
         headers: getAuthHeaders(this.authService),
