@@ -1,0 +1,188 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test-api:
+    runs-on: ubuntu-latest
+    name: Build and Test .NET API
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore FootballAPI/FootballAPI.csproj
+      
+    - name: Build API
+      run: dotnet build FootballAPI/FootballAPI.csproj --no-restore --configuration Release
+      
+    - name: Run API tests
+      run: dotnet test FootballAPI.Tests/FootballAPI.Tests.csproj --no-build --configuration Release --verbosity normal
+      
+    - name: Publish API
+      run: dotnet publish FootballAPI/FootballAPI.csproj --configuration Release --output ./api-publish
+      
+    - name: Upload API artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-artifacts
+        path: ./api-publish/
+
+  build-and-test-client:
+    runs-on: ubuntu-latest
+    name: Build and Test Angular Client
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: FootballClient/package-lock.json
+        
+    - name: Install dependencies
+      run: npm ci
+      working-directory: ./FootballClient
+      
+    - name: Build client
+      run: npm run build
+      working-directory: ./FootballClient
+      
+    - name: Test client
+      run: npm run test -- --watch=false --browsers=ChromeHeadless
+      working-directory: ./FootballClient
+      
+    - name: Upload client artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: client-artifacts
+        path: ./FootballClient/dist/
+
+  docker-build:
+    runs-on: ubuntu-latest
+    name: Build Docker Images
+    needs: [build-and-test-api, build-and-test-client]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Log in to Docker Hub (optional)
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+      if: ${{ secrets.DOCKER_USERNAME && secrets.DOCKER_PASSWORD }}
+      
+    - name: Build API Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./FootballAPI
+        file: ./FootballAPI/Dockerfile
+        push: false
+        tags: football-api:latest
+        
+    - name: Build Client Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./FootballClient
+        file: ./FootballClient/Dockerfile
+        push: false
+        tags: football-client:latest
+
+  security-scan:
+    runs-on: ubuntu-latest
+    name: Security Scan
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-results.sarif'
+      if: always()
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    name: Deploy to Staging
+    needs: [build-and-test-api, build-and-test-client, docker-build]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download API artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: api-artifacts
+        path: ./api-artifacts/
+        
+    - name: Download Client artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: client-artifacts
+        path: ./client-artifacts/
+        
+    - name: Deploy to staging
+      run: |
+        echo "Deploying to staging environment..."
+        echo "This is where you would deploy to your staging server"
+        # Add your staging deployment commands here
+        
+  deploy-production:
+    runs-on: ubuntu-latest
+    name: Deploy to Production
+    needs: [build-and-test-api, build-and-test-client, docker-build]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download API artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: api-artifacts
+        path: ./api-artifacts/
+        
+    - name: Download Client artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: client-artifacts
+        path: ./client-artifacts/
+        
+    - name: Deploy to production
+      run: |
+        echo "Deploying to production environment..."
+        echo "This is where you would deploy to your production server"
+        # Add your production deployment commands here
