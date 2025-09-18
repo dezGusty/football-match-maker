@@ -50,7 +50,8 @@ export class UserImpersonationComponent implements OnInit {
   loadUsers(): void {
     this.http.get<any[]>(`${environment.apiUrl}/User`).subscribe(
       (data) => {
-        this.users = data;
+        // Filter out admin users - only show players and organizers
+        this.users = data.filter(user => user.role !== UserRole.ADMIN);
         this.applyFilters();
       },
       (error) => {
