@@ -721,7 +721,7 @@ namespace FootballAPI.Migrations
                             Id = 1,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "ion.popescu@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 1
                         },
@@ -730,7 +730,7 @@ namespace FootballAPI.Migrations
                             Id = 2,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "marius.ionescu@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 2
                         },
@@ -739,7 +739,7 @@ namespace FootballAPI.Migrations
                             Id = 3,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 3
                         },
@@ -748,7 +748,7 @@ namespace FootballAPI.Migrations
                             Id = 4,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "organiser@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 4
                         },
@@ -757,7 +757,7 @@ namespace FootballAPI.Migrations
                             Id = 5,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "alex.georgescu@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 5
                         },
@@ -766,7 +766,7 @@ namespace FootballAPI.Migrations
                             Id = 6,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "razvan.moldovan@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 6
                         },
@@ -775,7 +775,7 @@ namespace FootballAPI.Migrations
                             Id = 7,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "cristian.stancu@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 7
                         },
@@ -784,7 +784,7 @@ namespace FootballAPI.Migrations
                             Id = 8,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "andrei.vasilescu@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 8
                         },
@@ -793,7 +793,7 @@ namespace FootballAPI.Migrations
                             Id = 9,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "florin.dumitru@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 9
                         },
@@ -802,7 +802,7 @@ namespace FootballAPI.Migrations
                             Id = 10,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "gabriel.ciobanu@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 10
                         },
@@ -811,7 +811,7 @@ namespace FootballAPI.Migrations
                             Id = 11,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "lucian.matei@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 11
                         },
@@ -820,7 +820,7 @@ namespace FootballAPI.Migrations
                             Id = 12,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "daniel.radu@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 12
                         },
@@ -829,7 +829,7 @@ namespace FootballAPI.Migrations
                             Id = 13,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "mihai.popa@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 13
                         },
@@ -838,7 +838,7 @@ namespace FootballAPI.Migrations
                             Id = 14,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "stefan.nicolae@gmail.com",
-                            Password = "$2a$11$D1fPpYRZVJWF85NktRQKY.lQMRaD4y3UfOOQ9jRV7CfK7.c4Q1ZqK",
+                            Password = "default123",
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 14
                         });
