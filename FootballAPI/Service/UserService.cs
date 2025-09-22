@@ -2,6 +2,7 @@ using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Models.Enums;
 using FootballAPI.Repository;
+using FootballAPI.Repository.Interfaces;
 
 namespace FootballAPI.Service
 {
@@ -9,11 +10,13 @@ namespace FootballAPI.Service
     {
         private readonly IUserRepository _userRepository;
         private readonly IFriendRequestRepository _friendRequestRepository;
+        private readonly IUserCredentialsRepository _userCredentialsRepository;
 
-        public UserService(IUserRepository userRepository, IFriendRequestRepository friendRequestRepository)
+        public UserService(IUserRepository userRepository, IFriendRequestRepository friendRequestRepository, IUserCredentialsRepository userCredentialsRepository)
         {
             _userRepository = userRepository;
             _friendRequestRepository = friendRequestRepository;
+            _userCredentialsRepository = userCredentialsRepository;
         }
 
         private UserDto MapToDto(User user)
@@ -23,7 +26,7 @@ namespace FootballAPI.Service
                 Id = user.Id,
                 Username = user.Username,
                 Role = user.Role,
-                Email = user.Email,
+                Email = user.Credentials?.Email ?? string.Empty,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Rating = user.Rating,
@@ -73,9 +76,7 @@ namespace FootballAPI.Service
             Console.WriteLine(dto);
             var user = new User
             {
-                Email = dto.Email,
                 Username = dto.Username,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10),
                 Role = dto.Role,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
@@ -88,6 +89,18 @@ namespace FootballAPI.Service
             };
 
             var createdUser = await _userRepository.CreateAsync(user);
+
+            // Create credentials separately
+            var credentials = new UserCredentials
+            {
+                UserId = createdUser.Id,
+                Email = dto.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _userCredentialsRepository.CreateAsync(credentials);
 
             return MapToDto(createdUser);
         }
@@ -111,9 +124,7 @@ namespace FootballAPI.Service
 
             var user = new User
             {
-                Email = dto.Email,
                 Username = dto.Username,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10),
                 Role = dto.Role,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
@@ -126,6 +137,24 @@ namespace FootballAPI.Service
             };
 
             var createdUser = await _userRepository.CreateAsync(user);
+
+            // Create credentials separately
+            var credentials = new UserCredentials
+            {
+                UserId = createdUser.Id,
+                Email = dto.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _userCredentialsRepository.CreateAsync(credentials);
+
+            // Add organizer-player relation if organizerId is provided
+            if (organizerId.HasValue)
+            {
+                await _userRepository.AddPlayerOrganiserRelationAsync(organizerId.Value, createdUser.Id);
+            }
 
             return MapToDto(createdUser);
         }
@@ -142,13 +171,26 @@ namespace FootballAPI.Service
 
             existingUser.Username = updateUserDto.Username;
             existingUser.Role = updateUserDto.Role;
-            existingUser.Email = updateUserDto.Email;
             existingUser.Rating = updateUserDto.Rating;
             existingUser.FirstName = updateUserDto.FirstName;
             existingUser.LastName = updateUserDto.LastName;
             existingUser.Speed = updateUserDto.Speed;
             existingUser.Errors = updateUserDto.Errors;
             existingUser.Stamina = updateUserDto.Stamina;
+            existingUser.UpdatedAt = DateTime.UtcNow;
+
+            // Update credentials if email is provided
+            if (existingUser.Credentials != null)
+            {
+                if (await _userCredentialsRepository.EmailExistsAsync(updateUserDto.Email, existingUser.Id))
+                {
+                    throw new ArgumentException($"Email '{updateUserDto.Email}' already exists.");
+                }
+
+                existingUser.Credentials.Email = updateUserDto.Email;
+                existingUser.Credentials.UpdatedAt = DateTime.UtcNow;
+                await _userCredentialsRepository.UpdateAsync(existingUser.Credentials);
+            }
 
             var updatedUser = await _userRepository.UpdateAsync(existingUser);
             return MapToDto(updatedUser);

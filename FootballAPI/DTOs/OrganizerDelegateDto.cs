@@ -17,9 +17,9 @@ namespace FootballAPI.DTOs
     {
         public int Id { get; set; }
         public int OriginalOrganizerId { get; set; }
-        public string OriginalOrganizerName { get; set; }
+        public required string OriginalOrganizerName { get; set; }
         public int DelegateUserId { get; set; }
-        public string DelegateUserName { get; set; }
+        public required string DelegateUserName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? ReclaimedAt { get; set; }
         public bool IsActive { get; set; }

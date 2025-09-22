@@ -25,6 +25,7 @@ namespace FootballAPI.Repository
         public async Task<User> GetByIdAsync(int id)
         {
             return await _context.Set<User>()
+                .Include(u => u.Credentials)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
@@ -36,7 +37,9 @@ namespace FootballAPI.Repository
 
         public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.Users
+                .Include(u => u.Credentials)
+                .FirstOrDefaultAsync(u => u.Credentials != null && u.Credentials.Email == email);
         }
 
         public async Task<IEnumerable<User>> GetUsersByRoleAsync(UserRole role)
@@ -111,12 +114,12 @@ namespace FootballAPI.Repository
         }
         public async Task<User?> GetUserByEmail(string email, bool includeDeleted = false, bool tracking = false)
         {
-            IQueryable<User> query = _context.Users;
+            IQueryable<User> query = _context.Users.Include(u => u.Credentials);
 
             if (!tracking)
                 query = query.AsNoTracking();
 
-            return await query.FirstOrDefaultAsync(u => u.Email == email);
+            return await query.FirstOrDefaultAsync(u => u.Credentials != null && u.Credentials.Email == email);
         }
 
         public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange)

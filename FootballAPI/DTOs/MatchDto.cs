@@ -30,7 +30,7 @@ namespace FootballAPI.DTOs
 
     public class CreateMatchDto
     {
-        public string MatchDate { get; set; }
+        public required string MatchDate { get; set; }
         public Status Status { get; set; } = Status.Open;
         public string? Location { get; set; }
         public decimal? Cost { get; set; }

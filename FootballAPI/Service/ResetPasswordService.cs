@@ -5,6 +5,7 @@ using FootballAPI.Data;
 using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Repository;
+using FootballAPI.Repository.Interfaces;
 using FootballAPI.Service.Interfaces;
 namespace FootballAPI.Service
 {
@@ -12,17 +13,20 @@ namespace FootballAPI.Service
   {
     private readonly IResetPasswordTokenRepository _tokenRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IUserCredentialsRepository _userCredentialsRepository;
     private readonly ILogger<ResetPasswordService> _logger;
     private readonly IConfiguration _configuration;
 
     public ResetPasswordService(
         IResetPasswordTokenRepository tokenRepository,
         IUserRepository userRepository,
+        IUserCredentialsRepository userCredentialsRepository,
         ILogger<ResetPasswordService> logger,
         IConfiguration configuration)
     {
       _tokenRepository = tokenRepository;
       _userRepository = userRepository;
+      _userCredentialsRepository = userCredentialsRepository;
       _logger = logger;
       _configuration = configuration;
     }
@@ -88,8 +92,12 @@ namespace FootballAPI.Service
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(newPassword, workFactor: 11);
 
         var user = resetToken.User;
-        user.Password = hashedPassword;
-        await _userRepository.UpdateAsync(user);
+        if (user.Credentials != null)
+        {
+          user.Credentials.Password = hashedPassword;
+          user.Credentials.UpdatedAt = DateTime.UtcNow;
+          await _userCredentialsRepository.UpdateAsync(user.Credentials);
+        }
 
         await _tokenRepository.MarkTokenAsUsedAsync(resetToken.Id);
         _logger.LogInformation("Password successfully reset for user {UserId}", user.Id);

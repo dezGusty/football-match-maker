@@ -1,4 +1,5 @@
 ﻿using FootballAPI.Repository;
+using FootballAPI.Repository.Interfaces;
 using FootballAPI.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -13,33 +14,38 @@ namespace FootballAPI.Service
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IUserCredentialsRepository _userCredentialsRepository;
         private readonly IConfiguration _configuration;
 
 
-        public AuthService(IUserRepository userRepository, IConfiguration configuration)
+        public AuthService(IUserRepository userRepository, IUserCredentialsRepository userCredentialsRepository, IConfiguration configuration)
         {
             _userRepository = userRepository;
+            _userCredentialsRepository = userCredentialsRepository;
             _configuration = configuration;
         }
 
         public async Task<string?> LoginAsync(string email, string password)
         {
-            var user = await _userRepository.GetUserByEmail(email);
+            var credentials = await _userCredentialsRepository.GetByEmailAsync(email);
+            if (credentials == null) return null;
+
+            var user = credentials.User;
             if (user == null) return null;
 
             bool ok = false;
             try
             {
-                ok = BCrypt.Net.BCrypt.Verify(password, user.Password);
+                ok = BCrypt.Net.BCrypt.Verify(password, credentials.Password);
             }
             catch (BCrypt.Net.SaltParseException)
             {
-                
-                if (user.Password == password)
+
+                if (credentials.Password == password)
                 {
-                
-                    user.Password = BCrypt.Net.BCrypt.HashPassword(password, workFactor: 11);
-                    await _userRepository.UpdateAsync(user);
+
+                    credentials.Password = BCrypt.Net.BCrypt.HashPassword(password, workFactor: 11);
+                    await _userCredentialsRepository.UpdateAsync(credentials);
                     ok = true;
                 }
                 else
@@ -50,11 +56,11 @@ namespace FootballAPI.Service
 
             if (!ok) return null;
 
-            return GenerateJwtToken(user);
+            return GenerateJwtToken(user, credentials.Email);
         }
 
 
-        private string GenerateJwtToken(dynamic user)
+        private string GenerateJwtToken(dynamic user, string email)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"] ?? "your_super_secret_key_at_least_32_characters_long");
@@ -63,7 +69,7 @@ namespace FootballAPI.Service
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Email, email),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
                 new Claim(ClaimTypes.Name, user.Username)
             };
@@ -93,7 +99,7 @@ namespace FootballAPI.Service
                     // This is an impersonation session, get the impersonationLogId
                     var impersonationLogIdClaim = httpContext.User.FindFirst("ImpersonationLogId")?.Value;
                     var originalAdminIdClaim = httpContext.User.FindFirst("OriginalAdminId")?.Value;
-                    
+
                     // If we have an ImpersonationLogService instance, use it to end the impersonation
                     var impersonationLogService = httpContext.RequestServices.GetService<IImpersonationLogService>();
                     if (impersonationLogService != null)
@@ -111,7 +117,7 @@ namespace FootballAPI.Service
                     }
                 }
             }
-            
+
             await Task.CompletedTask;
         }
     }

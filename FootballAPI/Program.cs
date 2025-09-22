@@ -65,6 +65,7 @@ builder.Services.AddDbContext<FootballDbContext>(options =>
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserCredentialsRepository, UserCredentialsRepository>();
 builder.Services.AddScoped<IResetPasswordTokenRepository, ResetPasswordTokenRepository>();
 
 builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
