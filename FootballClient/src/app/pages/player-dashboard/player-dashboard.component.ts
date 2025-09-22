@@ -85,9 +85,7 @@ export class PlayerDashboardComponent implements OnInit {
         );
         if (userResponse.ok) {
           const user = await userResponse.json();
-          const players = await this.userService.getPlayers();
-          this.currentPlayer =
-            players.find((p) => p.email === user.email) || null;
+          this.currentPlayer = user;
         } else {
           console.error('Failed to fetch user data:', userResponse.status);
         }
@@ -120,6 +118,15 @@ export class PlayerDashboardComponent implements OnInit {
       this.upcomingMatches = playerMatches.filter(
         (match: any) => new Date(match.matchDate) > new Date()
       );
+
+      for (const match of this.upcomingMatches) {
+        if (!match.teamAName || match.teamAName === 'Team A') {
+          match.teamAName = await this.matchService.getTeamById(match.teamAId);
+        }
+        if (!match.teamBName || match.teamBName === 'Team B') {
+          match.teamBName = await this.matchService.getTeamById(match.teamBId);
+        }
+      }
     } catch (error) {}
   }
 
@@ -135,11 +142,11 @@ export class PlayerDashboardComponent implements OnInit {
       });
 
       for (const match of this.upcomingMatches) {
-        if (!match.teamAName) {
-          match.teamAName = match.teamAName || 'Team A';
+        if (!match.teamAName || match.teamAName === 'Team A') {
+          match.teamAName = await this.matchService.getTeamById(match.teamAId);
         }
-        if (!match.teamBName) {
-          match.teamBName = match.teamBName || 'Team B';
+        if (!match.teamBName || match.teamBName === 'Team B') {
+          match.teamBName = await this.matchService.getTeamById(match.teamBId);
         }
       }
     } catch (error) {
@@ -170,6 +177,15 @@ export class PlayerDashboardComponent implements OnInit {
           new Date(match.matchDate) > new Date() &&
           !this.upcomingMatches.some((up) => up.id === match.id)
       );
+
+      for (const match of this.availableMatches) {
+        if (!match.teamAName || match.teamAName === 'Team A') {
+          match.teamAName = await this.matchService.getTeamById(match.teamAId);
+        }
+        if (!match.teamBName || match.teamBName === 'Team B') {
+          match.teamBName = await this.matchService.getTeamById(match.teamBId);
+        }
+      }
     } catch (error) {
       console.error('Error loading public matches:', error);
     }
@@ -244,18 +260,30 @@ export class PlayerDashboardComponent implements OnInit {
 
   getPlayerTeamName(match: Match): string {
     const playerHistory = match.playerHistory?.find(
-      (ph) => ph.user && ph.user.id === this.currentPlayer?.id
+      (ph) => ph.user && (
+        ph.user.id === this.currentPlayer?.id ||
+        ph.user.email === this.currentPlayer?.email
+      )
     );
-    if (!playerHistory) return '';
 
-    return playerHistory.teamId === match.teamAId
-      ? match.teamAName || 'Team A'
-      : match.teamBName || 'Team B';
+    if (!playerHistory) {
+      return '';
+    }
+
+    const teamName =
+      playerHistory.teamId === match.teamAId
+        ? match.teamAName || 'Team A'
+        : match.teamBName || 'Team B';
+
+    return teamName;
   }
 
   canLeaveMatch(match: Match): boolean {
     const playerHistory = match.playerHistory?.find(
-      (ph) => ph.user && ph.user.id === this.currentPlayer?.id
+      (ph) => ph.user && (
+        ph.user.id === this.currentPlayer?.id ||
+        ph.user.email === this.currentPlayer?.email
+      )
     );
     return playerHistory?.status === 2;
   }
