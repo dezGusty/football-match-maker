@@ -99,9 +99,9 @@ export const routes: Routes = [
   {
     path: 'user-impersonation',
     loadComponent: () =>
-      import('./components/user-impersonation/user-impersonation.component').then(
-        (m) => m.UserImpersonationComponent
-      ),
+      import(
+        './components/user-impersonation/user-impersonation.component'
+      ).then((m) => m.UserImpersonationComponent),
     canActivate: [authGuard, adminGuard],
   },
 ];

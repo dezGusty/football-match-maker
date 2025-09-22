@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
+import { FirebaseService } from '../../services/firebase.service';
 import { UserRole } from '../../models/user-role.enum';
 
 @Component({
@@ -21,7 +22,8 @@ export class Login {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private firebaseService: FirebaseService
   ) {
     if (this.authService.isLoggedIn()) {
       this.redirectBasedOnRole();
@@ -29,7 +31,8 @@ export class Login {
   }
   ngOnInit(): void {
     let index = 0;
-    const slides = document.querySelectorAll<HTMLImageElement>('.slideshow .slide');
+    const slides =
+      document.querySelectorAll<HTMLImageElement>('.slideshow .slide');
 
     setInterval(() => {
       slides.forEach((slide, i) => {
@@ -37,6 +40,24 @@ export class Login {
       });
       index = (index + 1) % slides.length;
     }, 4000);
+
+    this.loadFirebaseData();
+  }
+
+  async loadFirebaseData(): Promise<void> {
+    try {
+      console.log('Încărcare date din Firebase...');
+
+      const matches = await this.firebaseService.getAllMatches();
+      console.log('Toate match-urile din Firebase:', matches);
+
+      const ratings = await this.firebaseService.getAllRatings();
+      console.log('Toate rating-urile din Firebase:', ratings);
+
+      console.log('Datele Firebase au fost încărcate cu succes!');
+    } catch (error) {
+      console.error('Eroare la încărcarea datelor din Firebase:', error);
+    }
   }
 
   showForgotPasswordModal = false;
@@ -87,7 +108,10 @@ export class Login {
   forgotPassword() {
     this.email = this.forgotEmail;
     this.authService.forgotPassword(this.email).subscribe({
-      next: () => this.notificationService.showSuccess('Email trimis cu succes! Verifică inbox-ul.'),
+      next: () =>
+        this.notificationService.showSuccess(
+          'Email trimis cu succes! Verifică inbox-ul.'
+        ),
       error: (err) => {
         console.error(err);
         this.errorMessage = 'A apărut o eroare la trimiterea email-ului.';
