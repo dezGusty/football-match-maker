@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
+import { VersionService } from '../../services/version.service';
 import { UserRole } from '../../models/user-role.enum';
 import { DelegationStatusDto } from '../../models/organizer-delegation.interface';
 
@@ -18,13 +19,15 @@ export class Header implements OnInit {
   isMenuOpen = false;
   userRole: UserRole | null = null;
   delegationStatus: DelegationStatusDto | null = null;
+  version: string = '';
 
   @Output() tabChange = new EventEmitter<string>();
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private versionService: VersionService
   ) {}
 
   async ngOnInit() {
@@ -43,6 +46,17 @@ export class Header implements OnInit {
         console.error('Error loading delegation status in header:', error);
       }
     }
+
+    // Load version information
+    this.versionService.getVersion().subscribe({
+      next: (response) => {
+        this.version = response.version;
+      },
+      error: (error) => {
+        console.error('Error loading version:', error);
+        this.version = '';
+      }
+    });
   }
 
   toggleMenu() {

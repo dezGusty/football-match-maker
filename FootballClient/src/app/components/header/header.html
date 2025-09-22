@@ -24,6 +24,9 @@
     </div>
   </div>
   <div class="header-right">
+    <div class="version-display" *ngIf="version" title="Application Version">
+      <span class="version-text">v{{ version }}</span>
+    </div>
     <button
       class="hamburger"
       (click)="toggleMenu()"

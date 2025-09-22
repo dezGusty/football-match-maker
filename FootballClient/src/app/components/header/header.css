@@ -297,4 +297,31 @@
   .delegation-icon {
     font-size: 12px;
   }
+
+  .version-display {
+    display: none; /* Hide on mobile to save space */
+  }
+}
+
+/* Version display styles */
+.version-display {
+  display: flex;
+  margin-left: 15px;
+  align-items: center;
+  margin-right: 15px;
+  padding: 4px 8px;
+  background: rgba(106, 134, 110, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(106, 134, 110, 0.2);
+}
+
+.version-text {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  user-select: none;
+}
+
+.header-right {
+  justify-content: flex-end;
 }
