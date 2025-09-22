@@ -18,6 +18,7 @@ namespace FootballAPI.Repository
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.Set<User>()
+                .Include(u => u.Credentials)
                 .OrderBy(u => u.Username)
                 .ToListAsync();
         }
@@ -45,6 +46,7 @@ namespace FootballAPI.Repository
         public async Task<IEnumerable<User>> GetUsersByRoleAsync(UserRole role)
         {
             return await _context.Set<User>()
+                .Include(u => u.Credentials)
                 .Where(u => u.Role == role)
                 .OrderBy(u => u.Username)
                 .ToListAsync();
@@ -106,7 +108,9 @@ namespace FootballAPI.Repository
                 .Where(fr => fr.Status == FriendRequestStatus.Accepted &&
                            (fr.SenderId == id || fr.ReceiverId == id))
                 .Include(fr => fr.Sender)
+                    .ThenInclude(s => s.Credentials)
                 .Include(fr => fr.Receiver)
+                    .ThenInclude(r => r.Credentials)
                 .Select(fr => fr.SenderId == id ? fr.Receiver : fr.Sender)
                 .ToListAsync();
 
