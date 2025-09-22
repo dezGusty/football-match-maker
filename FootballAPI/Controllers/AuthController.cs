@@ -238,7 +238,7 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpPost("set-password")]
         public async Task<IActionResult> SetPassword([FromBody] SetPasswordDto dto)
         {

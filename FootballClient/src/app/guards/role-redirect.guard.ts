@@ -7,6 +7,11 @@ export const roleRedirectGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
+  const currentUrl = router.url;
+  if (currentUrl.includes('/reset-password')) {
+    return true;
+  }
+
   // Check if user is authenticated
   if (!authService.isLoggedIn(false)) {
     router.navigate(['/login']);
@@ -14,7 +19,7 @@ export const roleRedirectGuard = () => {
   }
 
   const userRole = authService.getUserRole();
-  
+
   // Redirect based on user role
   if (userRole === UserRole.PLAYER) {
     router.navigate(['/player-dashboard']);

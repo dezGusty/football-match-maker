@@ -156,7 +156,6 @@ export class SetPasswordComponent implements OnInit {
 
     const headers = {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.auth.getToken()}`,
     };
 
     try {
