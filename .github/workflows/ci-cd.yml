@@ -110,34 +110,17 @@ jobs:
       run: |
         echo "${{ steps.new_version.outputs.new }}" > VERSION
         
-    - name: Update Angular package.json version
-      run: |
-        cd FootballClient
-        npm version ${{ steps.new_version.outputs.new }} --no-git-tag-version
-        
-    - name: Create version update summary
-      run: |
-        mkdir -p version-update
-        echo "Version updated from ${{ steps.current_version.outputs.current }} to ${{ steps.new_version.outputs.new }}" > version-update/summary.txt
-        echo "Files updated:" >> version-update/summary.txt
-        echo "- VERSION" >> version-update/summary.txt
-        echo "- FootballClient/package.json" >> version-update/summary.txt
-        echo "- FootballClient/package-lock.json" >> version-update/summary.txt
-        cp VERSION version-update/
-        cp FootballClient/package.json version-update/package.json
-        cp FootballClient/package-lock.json version-update/package-lock.json
-        
     - name: Upload version update artifacts
       uses: actions/upload-artifact@v4
       with:
         name: version-update
         path: ./version-update/
         
-    - name: Commit version update
-      run: |
-        git add VERSION FootballClient/package.json FootballClient/package-lock.json
-        git commit -m "chore: bump version to ${{ steps.new_version.outputs.new }} [skip ci]"
-        git push
+    # - name: Commit version update
+    #   run: |
+    #     git add VERSION FootballClient/package.json FootballClient/package-lock.json
+    #     git commit -m "chore: bump version to ${{ steps.new_version.outputs.new }} [skip ci]"
+    #     git push
     
         
   deploy-production:
