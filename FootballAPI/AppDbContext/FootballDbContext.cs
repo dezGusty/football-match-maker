@@ -19,6 +19,7 @@ namespace FootballAPI.Data
         public DbSet<OrganizerDelegate> OrganizerDelegates { get; set; }
         public DbSet<MatchTemplate> MatchTemplates { get; set; }
         public DbSet<ImpersonationLog> ImpersonationLogs { get; set; }
+        public DbSet<RatingHistory> RatingHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -191,6 +192,26 @@ namespace FootballAPI.Data
                     .WithMany()
                     .HasForeignKey(e => e.ImpersonatedUserId)
                     .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<RatingHistory>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.NewRating).IsRequired();
+                entity.Property(e => e.ChangeReason).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.RatingSystem).HasMaxLength(50);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+
+                // Configure relationships
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Match)
+                    .WithMany()
+                    .HasForeignKey(e => e.MatchId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             SeedData(modelBuilder);

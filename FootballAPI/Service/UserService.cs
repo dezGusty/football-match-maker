@@ -90,6 +90,9 @@ namespace FootballAPI.Service
 
             var createdUser = await _userRepository.CreateAsync(user);
 
+            // Create initial rating history entry
+            await _userRepository.UpdatePlayerRatingAsync(createdUser.Id, dto.Rating, "Initial Rating", null, null);
+
             // Create credentials separately
             var credentials = new UserCredentials
             {
@@ -138,6 +141,9 @@ namespace FootballAPI.Service
 
             var createdUser = await _userRepository.CreateAsync(user);
 
+            // Create initial rating history entry
+            await _userRepository.UpdatePlayerRatingAsync(createdUser.Id, dto.Rating, "Initial Rating", null, null);
+
             // Create credentials separately
             var credentials = new UserCredentials
             {
@@ -169,6 +175,9 @@ namespace FootballAPI.Service
                 throw new ArgumentException($"Username '{updateUserDto.Username}' already exists.");
             }
 
+            var oldRating = existingUser.Rating;
+            var newRating = updateUserDto.Rating;
+
             existingUser.Username = updateUserDto.Username;
             existingUser.Role = updateUserDto.Role;
             existingUser.Rating = updateUserDto.Rating;
@@ -179,8 +188,7 @@ namespace FootballAPI.Service
             existingUser.Stamina = updateUserDto.Stamina;
             existingUser.UpdatedAt = DateTime.UtcNow;
 
-            // Update credentials if email is provided
-            if (existingUser.Credentials != null)
+            if (existingUser.Credentials != null && !string.IsNullOrEmpty(updateUserDto.Email))
             {
                 if (await _userCredentialsRepository.EmailExistsAsync(updateUserDto.Email, existingUser.Id))
                 {
@@ -193,6 +201,41 @@ namespace FootballAPI.Service
             }
 
             var updatedUser = await _userRepository.UpdateAsync(existingUser);
+
+            if (Math.Abs(oldRating - newRating) > 0.001f)
+            {
+                await _userRepository.UpdatePlayerRatingAsync(id, newRating, "Manual Update", null, null);
+            }
+
+            return MapToDto(updatedUser);
+        }
+
+        public async Task<UserDto?> UpdatePlayerAsync(int id, UpdatePlayerDto updatePlayerDto)
+        {
+            var existingUser = await _userRepository.GetByIdAsync(id);
+            if (existingUser == null)
+            {
+                return null;
+            }
+
+            var oldRating = existingUser.Rating;
+            var newRating = updatePlayerDto.Rating;
+
+            existingUser.FirstName = updatePlayerDto.FirstName;
+            existingUser.LastName = updatePlayerDto.LastName;
+            existingUser.Rating = updatePlayerDto.Rating;
+            existingUser.Speed = updatePlayerDto.Speed;
+            existingUser.Stamina = updatePlayerDto.Stamina;
+            existingUser.Errors = updatePlayerDto.Errors;
+            existingUser.UpdatedAt = DateTime.UtcNow;
+
+            var updatedUser = await _userRepository.UpdateAsync(existingUser);
+
+            if (Math.Abs(oldRating - newRating) > 0.001f)
+            {
+                await _userRepository.UpdatePlayerRatingAsync(id, newRating, "Manual Update", null, null);
+            }
+
             return MapToDto(updatedUser);
         }
 
@@ -211,9 +254,10 @@ namespace FootballAPI.Service
             return await _userRepository.GetPlayersByOrganiserAsync(id);
         }
 
-        public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange)
+        public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange,
+            string changeReason = "Manual", int? matchId = null, string? ratingSystem = null)
         {
-            return await _userRepository.UpdatePlayerRatingAsync(userId, ratingChange);
+            return await _userRepository.UpdatePlayerRatingAsync(userId, ratingChange, changeReason, matchId, ratingSystem);
         }
 
         public async Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates)
@@ -347,7 +391,7 @@ namespace FootballAPI.Service
             return friends.Select(MapToDto);
         }
 
-        public async Task<UserDto?> UpdateUserProfileImageAsync(int id, string imageUrl)
+        public async Task<UserDto?> UpdateUserProfileImageAsync(int id, string? imageUrl)
         {
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null)

@@ -295,7 +295,7 @@ namespace FootballAPI.Controllers
         {
             try
             {
-                var success = await _userService.UpdatePlayerRatingAsync(userId, request.RatingChange);
+                var success = await _userService.UpdatePlayerRatingAsync(userId, request.RatingChange, "Manual");
                 if (success)
                     return Ok(new { message = "User rating updated successfully" });
                 else
@@ -317,7 +317,7 @@ namespace FootballAPI.Controllers
                 var playerRatingUpdates = request.PlayerRatingUpdates.Select(x => new PlayerRatingUpdateDto
                 {
                     UserId = x.UserId,
-                    RatingChange = x.RatingChange
+                    NewRating = x.NewRating
                 }).ToList();
 
                 var success = await _userService.UpdateMultiplePlayerRatingsAsync(playerRatingUpdates);
@@ -518,6 +518,6 @@ namespace FootballAPI.Controllers
     public class UserRatingUpdate
     {
         public int UserId { get; set; }
-        public float RatingChange { get; set; }
+        public float NewRating { get; set; }
     }
 }

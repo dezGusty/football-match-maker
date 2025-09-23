@@ -43,6 +43,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'rating-evolution',
+    loadComponent: () =>
+      import('./pages/rating-evolution/rating-evolution.component').then(
+        (m) => m.RatingEvolutionComponent
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: 'manage-accounts',
     loadComponent: () =>
       import('./pages/manage-accounts/manage-accounts.component').then(

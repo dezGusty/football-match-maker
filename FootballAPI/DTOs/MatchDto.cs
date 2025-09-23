@@ -19,7 +19,7 @@ namespace FootballAPI.DTOs
         public int? ScoreB { get; set; }
         public List<PlayerHistoryDto> PlayerHistory { get; set; } = new List<PlayerHistoryDto>();
     }
-    
+
     public class PlayerHistoryDto
     {
         public int UserId { get; set; }
@@ -124,6 +124,7 @@ namespace FootballAPI.DTOs
         public string PlayerName { get; set; } = string.Empty;
         public float CurrentRating { get; set; }
         public string RatingChange { get; set; } = string.Empty;
+        public float NewRating { get; set; }
         public int TeamId { get; set; }
     }
 }

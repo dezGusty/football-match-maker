@@ -126,15 +126,31 @@ namespace FootballAPI.Repository
             return await query.FirstOrDefaultAsync(u => u.Credentials != null && u.Credentials.Email == email);
         }
 
-        public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange)
+        public async Task<bool> UpdatePlayerRatingAsync(int userId, float newRating,
+            string changeReason = "Manual", int? matchId = null, string? ratingSystem = null)
         {
             var user = await GetByIdAsync(userId);
             if (user == null)
                 return false;
 
-            user.Rating = Math.Max(0f, user.Rating + ratingChange);
+            newRating = Math.Max(0f, newRating); // Ensure rating is not negative
+
+            var ratingHistory = new RatingHistory
+            {
+                UserId = userId,
+                NewRating = newRating,
+                ChangeReason = changeReason,
+                MatchId = matchId,
+                RatingSystem = ratingSystem,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.RatingHistories.Add(ratingHistory);
+
+            user.Rating = newRating;
             user.UpdatedAt = DateTime.UtcNow;
             await UpdateAsync(user);
+
             return true;
         }
 
@@ -144,7 +160,7 @@ namespace FootballAPI.Repository
             {
                 foreach (var update in playerRatingUpdates)
                 {
-                    await UpdatePlayerRatingAsync(update.UserId, update.RatingChange);
+                    await UpdatePlayerRatingAsync(update.UserId, update.NewRating, "Batch Update");
                 }
                 return true;
             }

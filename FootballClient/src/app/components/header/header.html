@@ -50,7 +50,14 @@
         <button (click)="navigateTo('/manage-accounts')">Manage Users</button>
       </li>
       <li *ngIf="isAdmin()">
-        <button (click)="navigateTo('/user-impersonation')">User Impersonation</button>
+        <button (click)="navigateTo('/rating-evolution')">
+          Rating Evolution
+        </button>
+      </li>
+      <li *ngIf="isAdmin()">
+        <button (click)="navigateTo('/user-impersonation')">
+          User Impersonation
+        </button>
       </li>
 
       <!-- Organizer Menu Items (non-admin organizers) -->
@@ -59,6 +66,11 @@
       </li>
       <li *ngIf="isOrganizer() && !isAdmin()">
         <button (click)="navigateTo('/manage-players')">Players</button>
+      </li>
+      <li *ngIf="isOrganizer() && !isAdmin()">
+        <button (click)="navigateTo('/rating-evolution')">
+          Rating Evolution
+        </button>
       </li>
 
       <!-- Player Menu Items -->
@@ -72,6 +84,11 @@
       </li>
       <li *ngIf="isPlayer()">
         <button (click)="navigateTo('/past-matches')">Past Matches</button>
+      </li>
+      <li *ngIf="isPlayer()">
+        <button (click)="navigateTo('/rating-evolution')">
+          Rating Evolution
+        </button>
       </li>
 
       <!-- Admin Menu Items (continued) -->
