@@ -71,36 +71,51 @@ jobs:
       with:
         name: client-artifacts
         path: ./FootballClient/dist/
-
-
-  deploy-staging:
+  
+  update-versions:
     runs-on: ubuntu-latest
-    name: Deploy to Staging
+    name: Update Version Numbers
     needs: [build-and-test-api, build-and-test-client]
-    if: github.ref == 'refs/heads/develop'
-    environment: staging
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
-    - name: Download API artifacts
-      uses: actions/download-artifact@v4
       with:
-        name: api-artifacts
-        path: ./api-artifacts/
+        token: ${{ secrets.GITHUB_TOKEN }}
         
-    - name: Download Client artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: client-artifacts
-        path: ./client-artifacts/
-        
-    - name: Deploy to staging
+    - name: Configure Git
       run: |
-        echo "Deploying to staging environment..."
-        echo "This is where you would deploy to your staging server"
-        # Add your staging deployment commands here
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+    - name: Read current version
+      id: current_version
+      run: |
+        CURRENT_VERSION=$(cat VERSION)
+        echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+        echo "Current version: $CURRENT_VERSION"
+        
+    - name: Calculate new version
+      id: new_version
+      run: |
+        CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
+        IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
+        NEW_PATCH=$((patch + 1))
+        NEW_VERSION="$major.$minor.$NEW_PATCH"
+        echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "New version: $NEW_VERSION"
+        
+    - name: Update VERSION file
+      run: |
+        echo "${{ steps.new_version.outputs.new }}" > VERSION
+        
+    - name: Commit version update
+      run: |
+        git add VERSION FootballClient/package.json FootballClient/package-lock.json FootballAPI/FootballAPI.csproj
+        git commit -m "chore: bump version to ${{ steps.new_version.outputs.new }} [skip ci]"
+        git push
+    
         
   deploy-production:
     runs-on: ubuntu-latest
