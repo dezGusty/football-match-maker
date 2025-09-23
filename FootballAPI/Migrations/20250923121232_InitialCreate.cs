@@ -267,7 +267,8 @@ namespace FootballAPI.Migrations
                     ChangeReason = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     MatchId = table.Column<int>(type: "INTEGER", nullable: true),
                     RatingSystem = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UserId1 = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -284,6 +285,11 @@ namespace FootballAPI.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RatingHistories_Users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -444,6 +450,11 @@ namespace FootballAPI.Migrations
                 name: "IX_RatingHistories_UserId",
                 table: "RatingHistories",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RatingHistories_UserId1",
+                table: "RatingHistories",
+                column: "UserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ResetPasswordTokens_UserId",

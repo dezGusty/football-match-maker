@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using FootballAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
+using FootballAPI.DTOs;
 
 namespace FootballAPI.Controllers
 {
@@ -12,7 +13,9 @@ namespace FootballAPI.Controllers
         private readonly IFirebaseService _firebaseService;
         private readonly ILogger<ImportController> _logger;
 
-        public ImportController(IFirebaseService firebaseService, ILogger<ImportController> logger)
+        public ImportController(
+            IFirebaseService firebaseService,
+            ILogger<ImportController> logger)
         {
             _firebaseService = firebaseService;
             _logger = logger;
@@ -206,7 +209,9 @@ namespace FootballAPI.Controllers
             }
         }
 
-        //GET http://localhost:5145/api/import/populate-test-data?count=100&collectionName=ratings
+        /// <summary>
+        /// Populate test data in Firebase
+        /// </summary>
         [HttpGet("populate-test-data")]
         [HttpPost("populate-test-data")]
         public async Task<IActionResult> PopulateTestData([FromQuery] string collectionName = "ratings", [FromQuery] int count = 100)
@@ -229,5 +234,31 @@ namespace FootballAPI.Controllers
                 return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Import users and rating history from Firebase 'ratings' collection
+        /// </summary>
+        [HttpPost("ratings")]
+        public async Task<IActionResult> ImportRatingsFromFirebase([FromQuery] string collectionName = "ratings")
+        {
+            try
+            {
+                var result = await _firebaseService.ImportRatingsFromFirebaseAsync(collectionName);
+
+                return Ok(new
+                {
+                    message = "Import completed",
+                    result = result
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during ratings import from collection: {CollectionName}", collectionName);
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
     }
 }
+
+
