@@ -95,6 +95,9 @@ builder.Services.AddScoped<ITeamPlayersService, TeamPlayersService>();
 builder.Services.AddScoped<IMatchTemplateService, MatchTemplateService>();
 builder.Services.AddScoped<IRatingHistoryService, RatingHistoryService>();
 
+// Firebase Service Registration
+builder.Services.AddScoped<FootballAPI.Services.IFirebaseService, FootballAPI.Services.FirebaseService>();
+
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();
 
