@@ -335,6 +335,44 @@ namespace FootballAPI.Migrations
                     b.ToTable("OrganizerDelegates");
                 });
 
+            modelBuilder.Entity("FootballAPI.Models.RatingHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ChangeReason")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int?>("MatchId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float>("NewRating")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("RatingSystem")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RatingHistories");
+                });
+
             modelBuilder.Entity("FootballAPI.Models.ResetPasswordToken", b =>
                 {
                     b.Property<int>("Id")
@@ -940,6 +978,24 @@ namespace FootballAPI.Migrations
                     b.Navigation("DelegateUser");
 
                     b.Navigation("OriginalOrganizer");
+                });
+
+            modelBuilder.Entity("FootballAPI.Models.RatingHistory", b =>
+                {
+                    b.HasOne("FootballAPI.Models.Match", "Match")
+                        .WithMany()
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("FootballAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Match");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.ResetPasswordToken", b =>
