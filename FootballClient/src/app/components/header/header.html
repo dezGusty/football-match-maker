@@ -72,6 +72,11 @@
           Rating Evolution
         </button>
       </li>
+      <li *ngIf="isOrganizer() || isAdmin()">
+        <button (click)="navigateTo('/player-dashboard-availableMatches')">
+          Public Matches
+        </button>
+      </li>
 
       <!-- Player Menu Items -->
       <li *ngIf="isPlayer()">
@@ -79,7 +84,7 @@
       </li>
       <li *ngIf="isPlayer()">
         <button (click)="navigateTo('/player-dashboard-availableMatches')">
-          Available Matches
+          Public Matches
         </button>
       </li>
       <li *ngIf="isPlayer()">

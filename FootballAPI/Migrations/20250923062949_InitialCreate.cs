@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FootballAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class InitalCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -257,6 +257,36 @@ namespace FootballAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RatingHistories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NewRating = table.Column<float>(type: "REAL", nullable: false),
+                    ChangeReason = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    MatchId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RatingSystem = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "GETUTCDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RatingHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RatingHistories_Matches_MatchId",
+                        column: x => x.MatchId,
+                        principalTable: "Matches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_RatingHistories_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TeamPlayers",
                 columns: table => new
                 {
@@ -406,6 +436,16 @@ namespace FootballAPI.Migrations
                 filter: "[IsActive] = 1");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RatingHistories_MatchId",
+                table: "RatingHistories",
+                column: "MatchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RatingHistories_UserId",
+                table: "RatingHistories",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ResetPasswordTokens_UserId",
                 table: "ResetPasswordTokens",
                 column: "UserId");
@@ -453,6 +493,9 @@ namespace FootballAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrganizerDelegates");
+
+            migrationBuilder.DropTable(
+                name: "RatingHistories");
 
             migrationBuilder.DropTable(
                 name: "ResetPasswordTokens");

@@ -72,7 +72,7 @@ export const routes: Routes = [
       import(
         './pages/player-dashboard-availableMatches/player-dashboard-availableMatches.component'
       ).then((m) => m.PlayerDashboardAvailableMatchesComponent),
-    canActivate: [authGuard, playerGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'past-matches',
