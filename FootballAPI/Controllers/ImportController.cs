@@ -258,6 +258,87 @@ namespace FootballAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Import users and rating history from Firebase 'ratings' collection with date filtering
+        /// </summary>
+        [HttpPost("ratings/filtered")]
+        public async Task<IActionResult> ImportRatingsFromFirebaseFiltered(
+            [FromQuery] string collectionName = "ratings",
+            [FromQuery] DateTime? fromDate = null,
+            [FromQuery] DateTime? toDate = null)
+        {
+            try
+            {
+                var result = await _firebaseService.ImportRatingsFromFirebaseAsync(collectionName, fromDate, toDate);
+
+                return Ok(new
+                {
+                    message = "Filtered import completed",
+                    fromDate = fromDate?.ToString("yyyy-MM-dd"),
+                    toDate = toDate?.ToString("yyyy-MM-dd"),
+                    result = result
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during filtered ratings import from collection: {CollectionName}", collectionName);
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Preview users and rating history that would be imported from Firebase 'ratings' collection
+        /// </summary>
+        [HttpGet("preview/ratings")]
+        public async Task<IActionResult> PreviewRatingsImport([FromQuery] string collectionName = "ratings")
+        {
+            try
+            {
+                var result = await _firebaseService.PreviewRatingsImportAsync(collectionName);
+
+                return Ok(new
+                {
+                    message = "Preview data retrieved",
+                    collectionName = collectionName,
+                    previewData = result
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error previewing ratings import from collection: {CollectionName}", collectionName);
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Preview users and rating history that would be imported from Firebase 'ratings' collection with date filtering
+        /// </summary>
+        [HttpGet("preview/ratings/filtered")]
+        public async Task<IActionResult> PreviewRatingsImportFiltered(
+            [FromQuery] string collectionName = "ratings",
+            [FromQuery] DateTime? fromDate = null,
+            [FromQuery] DateTime? toDate = null)
+        {
+            try
+            {
+                var result = await _firebaseService.PreviewRatingsImportAsync(collectionName, fromDate, toDate);
+
+                return Ok(new
+                {
+                    message = "Filtered preview data retrieved",
+                    collectionName = collectionName,
+                    fromDate = fromDate?.ToString("yyyy-MM-dd"),
+                    toDate = toDate?.ToString("yyyy-MM-dd"),
+                    previewData = result
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error previewing filtered ratings import from collection: {CollectionName}", collectionName);
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
     }
 }
 

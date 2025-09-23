@@ -59,6 +59,11 @@
           User Impersonation
         </button>
       </li>
+      <li *ngIf="isAdmin()">
+        <button (click)="navigateTo('/admin-import')">
+          Firebase Import
+        </button>
+      </li>
 
       <!-- Organizer Menu Items (non-admin organizers) -->
       <li *ngIf="isOrganizer() && !isAdmin()">

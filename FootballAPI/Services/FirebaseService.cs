@@ -20,6 +20,9 @@ namespace FootballAPI.Services
 
         Task<ImportRatingsResultDto> ImportRatingsFromFirebaseAsync(string collectionName = "ratings");
         Task<IEnumerable<object>> PreviewRatingsImportAsync(string collectionName = "ratings");
+
+        Task<ImportRatingsResultDto> ImportRatingsFromFirebaseAsync(string collectionName, DateTime? fromDate, DateTime? toDate);
+        Task<IEnumerable<object>> PreviewRatingsImportAsync(string collectionName, DateTime? fromDate, DateTime? toDate);
     }
 
     public class FirebaseService : IFirebaseService
@@ -291,6 +294,83 @@ namespace FootballAPI.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error previewing ratings import from collection: {CollectionName}", collectionName);
+                throw;
+            }
+        }
+
+        public async Task<ImportRatingsResultDto> ImportRatingsFromFirebaseAsync(string collectionName, DateTime? fromDate, DateTime? toDate)
+        {
+            try
+            {
+                _logger.LogInformation("Starting filtered import from Firebase collection: {CollectionName}, FromDate: {FromDate}, ToDate: {ToDate}",
+                    collectionName, fromDate, toDate);
+
+                var firebaseData = await GetCollectionDataAsync(collectionName);
+                var result = new ImportRatingsResultDto();
+
+                foreach (var document in firebaseData)
+                {
+                    var documentId = document.GetValueOrDefault("_documentId", "").ToString();
+                    var documentDate = ExtractDateFromDocumentId(documentId);
+
+                    // Apply date filtering
+                    if (fromDate.HasValue && documentDate.HasValue && documentDate.Value < fromDate.Value)
+                        continue;
+                    if (toDate.HasValue && documentDate.HasValue && documentDate.Value > toDate.Value)
+                        continue;
+
+                    try
+                    {
+                        await ProcessRatingDocument(document, result);
+                    }
+                    catch (Exception ex)
+                    {
+                        var error = $"Error processing document {documentId}: {ex.Message}";
+                        _logger.LogError(ex, "Error processing document {DocumentId}", documentId);
+                        result.Errors.Add(error);
+                    }
+                }
+
+                _logger.LogInformation("Filtered import completed. Users: {UsersImported}, RatingHistory: {RatingHistoryImported}, Updated: {UsersUpdated}, Errors: {ErrorCount}",
+                    result.UsersImported, result.RatingHistoryEntriesImported, result.ExistingUsersUpdated, result.Errors.Count);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during filtered ratings import from collection: {CollectionName}", collectionName);
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<object>> PreviewRatingsImportAsync(string collectionName, DateTime? fromDate, DateTime? toDate)
+        {
+            try
+            {
+                var firebaseData = await GetCollectionDataAsync(collectionName);
+                var previewData = new List<object>();
+
+                foreach (var document in firebaseData)
+                {
+                    var documentId = document.GetValueOrDefault("_documentId", "").ToString();
+                    var documentDate = ExtractDateFromDocumentId(documentId);
+
+                    // Apply date filtering
+                    if (fromDate.HasValue && documentDate.HasValue && documentDate.Value < fromDate.Value)
+                        continue;
+                    if (toDate.HasValue && documentDate.HasValue && documentDate.Value > toDate.Value)
+                        continue;
+
+                    var preview = CreateRatingPreview(document);
+                    if (preview != null)
+                        previewData.Add(preview);
+                }
+
+                return previewData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error previewing filtered ratings import from collection: {CollectionName}", collectionName);
                 throw;
             }
         }

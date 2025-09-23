@@ -112,4 +112,12 @@ export const routes: Routes = [
       ).then((m) => m.UserImpersonationComponent),
     canActivate: [authGuard, adminGuard],
   },
+  {
+    path: 'admin-import',
+    loadComponent: () =>
+      import('./pages/admin-import/admin-import.component').then(
+        (m) => m.AdminImportComponent
+      ),
+    canActivate: [authGuard, adminGuard],
+  },
 ];
