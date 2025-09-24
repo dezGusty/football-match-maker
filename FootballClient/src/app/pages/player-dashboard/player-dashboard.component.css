@@ -238,7 +238,7 @@
   flex-direction: column;
   gap: 2px;
   width: 100%;
-  align-items: center;
+  align-items: start;
   margin-right: 50%;
 }
 
