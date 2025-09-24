@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
-import { FirebaseService } from '../../services/firebase.service';
 import { UserRole } from '../../models/user-role.enum';
 
 @Component({
@@ -22,8 +21,7 @@ export class Login {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private notificationService: NotificationService,
-    private firebaseService: FirebaseService
+    private notificationService: NotificationService
   ) {
     if (this.authService.isLoggedIn()) {
       this.redirectBasedOnRole();
@@ -40,24 +38,6 @@ export class Login {
       });
       index = (index + 1) % slides.length;
     }, 4000);
-
-    this.loadFirebaseData();
-  }
-
-  async loadFirebaseData(): Promise<void> {
-    try {
-      console.log('Încărcare date din Firebase...');
-
-      const matches = await this.firebaseService.getAllMatches();
-      console.log('Toate match-urile din Firebase:', matches);
-
-      const ratings = await this.firebaseService.getAllRatings();
-      console.log('Toate rating-urile din Firebase:', ratings);
-
-      console.log('Datele Firebase au fost încărcate cu succes!');
-    } catch (error) {
-      console.error('Eroare la încărcarea datelor din Firebase:', error);
-    }
   }
 
   showForgotPasswordModal = false;
