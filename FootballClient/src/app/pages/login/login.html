@@ -19,7 +19,13 @@
     <div class="page-title">
       <h1>Football Match Maker</h1>
     </div>
-    <div class="football-ball"></div>
+    <div class="football-ball" 
+         [style.left.px]="ballPosition.x" 
+         [style.top.px]="ballPosition.y"
+         (mousedown)="startDrag($event)"
+         (touchstart)="startDrag($event)"
+         [class.dragging]="isDragging"
+         [class.bouncing]="isBouncing"></div>
   </div>
 
   <!-- Right Side - Login Form -->

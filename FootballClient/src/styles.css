@@ -23,7 +23,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Inter', sans-serif;
-  padding-bottom: 32px; /* Add padding to prevent content from being hidden behind the impersonation bar */
+
 }
 
 .page{
