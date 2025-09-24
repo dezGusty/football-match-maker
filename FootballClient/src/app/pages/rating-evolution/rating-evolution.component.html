@@ -2,8 +2,8 @@
 
 <div class="rating-evolution-container">
   <div class="controls-section">
-    <!-- User selection for admin -->
-    <div class="user-selector" *ngIf="isAdmin">
+    <!-- User selection for admin and organizer -->
+    <div class="user-selector" *ngIf="isAdmin || isOrganizer">
       <label for="userSelect">Select User:</label>
       <select
         id="userSelect"

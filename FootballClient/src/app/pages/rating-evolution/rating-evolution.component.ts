@@ -42,6 +42,7 @@ export class RatingEvolutionComponent implements OnInit {
   selectedUserId: number | null = null;
   allUsers: User[] = [];
   isAdmin = false;
+  isOrganizer = false;
   currentUserId: number | null = null;
 
   constructor(
@@ -53,9 +54,12 @@ export class RatingEvolutionComponent implements OnInit {
   async ngOnInit() {
     this.currentUserId = this.authService.getUserId();
     this.isAdmin = this.authService.getUserRole() === UserRole.ADMIN;
+    this.isOrganizer = this.authService.getUserRole() === UserRole.ORGANISER;
 
     if (this.isAdmin) {
       await this.loadAllUsers();
+    } else if (this.isOrganizer) {
+      await this.loadUserFriends();
     } else {
       this.selectedUserId = this.currentUserId;
     }
@@ -73,9 +77,35 @@ export class RatingEvolutionComponent implements OnInit {
   async loadAllUsers() {
     try {
       this.allUsers = await this.userService.getAllUsers();
+      if (this.currentUserId) {
+        this.selectedUserId = this.currentUserId;
+      }
     } catch (error) {
       console.error('Error loading users:', error);
       this.error = 'Failed to load users';
+    }
+  }
+
+  async loadUserFriends() {
+    try {
+      if (this.currentUserId) {
+        this.allUsers = await this.userService.getUserFriends(
+          this.currentUserId
+        );
+        const currentUser = await this.userService.getUserById(
+          this.currentUserId
+        );
+        if (
+          currentUser &&
+          !this.allUsers.find((u) => u.id === currentUser.id)
+        ) {
+          this.allUsers.unshift(currentUser);
+        }
+        this.selectedUserId = this.currentUserId;
+      }
+    } catch (error) {
+      console.error('Error loading user friends:', error);
+      this.error = 'Failed to load friends';
     }
   }
 
