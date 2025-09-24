@@ -33,6 +33,9 @@ namespace FootballAPI.Service
         Task<bool> IsDelegatedOrganizerAsync(int userId);
         Task<IEnumerable<UserDto>> GetFriendsAsync(int userId);
 
+        Task<bool> ChangePasswordAsync(int userId, ChangePasswordDto dto);
+        Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto dto);
+
     }
 
 }

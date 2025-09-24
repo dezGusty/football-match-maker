@@ -419,5 +419,43 @@ namespace FootballAPI.Service
             };
         }
 
+        public async Task<bool> ChangePasswordAsync(int userId, ChangePasswordDto dto)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user?.Credentials == null)
+                return false;
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.Credentials.Password))
+                return false;
+
+            var hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword, workFactor: 10);
+
+            user.Credentials.Password = hashedNewPassword;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.UpdateAsync(user);
+            return true;
+        }
+
+        public async Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto dto)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user?.Credentials == null)
+                return false;
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Credentials.Password))
+                return false;
+
+            var existingUser = await _userRepository.GetByUsernameAsync(dto.NewUsername);
+            if (existingUser != null && existingUser.Id != userId)
+                return false;
+
+            user.Username = dto.NewUsername;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.UpdateAsync(user);
+            return true;
+        }
+
     }
 }
