@@ -247,5 +247,16 @@
       </div>
     </div>
     }
+
+    <!-- Leave Match Confirmation Modal -->
+    <app-confirmation-modal
+      [isVisible]="showLeaveMatchConfirmDialog"
+      title="Leave Match Confirmation"
+      [message]="getLeaveMatchMessage()"
+      confirmText="Yes, Leave Match"
+      (confirmed)="onLeaveMatchConfirm()"
+      (cancelled)="onLeaveMatchCancel()"
+    >
+    </app-confirmation-modal>
   </div>
 </div>

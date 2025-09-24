@@ -8,6 +8,7 @@ import { UserService } from '../../services/user.service';
 import { NotificationService } from '../../services/notification.service';
 import { Header } from '../../components/header/header';
 import { FriendRequestsComponent } from '../../components/friend-requests/friend-requests.component';
+import { ConfirmationModal } from '../../components/confirmation-modal/confirmation-modal';
 import { Match } from '../../models/match.interface';
 import { User } from '../../models/user.interface';
 import { environment } from '../../../environments/environment';
@@ -22,6 +23,7 @@ import { DelegationStatusDto } from '../../models/organizer-delegation.interface
     DatePipe,
     Header,
     FriendRequestsComponent,
+    ConfirmationModal,
   ],
   templateUrl: './player-dashboard.component.html',
   styleUrls: ['./player-dashboard.component.css'],
@@ -40,6 +42,9 @@ export class PlayerDashboardComponent implements OnInit {
   selectedTeamBName: string = '';
   selectedTeamAPlayers: string[] = [];
   selectedTeamBPlayers: string[] = [];
+
+  showLeaveMatchConfirmDialog: boolean = false;
+  matchToLeave: Match | null = null;
 
   isDelegatedOrganizer: boolean = false;
   delegationStatus: DelegationStatusDto | null = null;
@@ -260,10 +265,10 @@ export class PlayerDashboardComponent implements OnInit {
 
   getPlayerTeamName(match: Match): string {
     const playerHistory = match.playerHistory?.find(
-      (ph) => ph.user && (
-        ph.user.id === this.currentPlayer?.id ||
-        ph.user.email === this.currentPlayer?.email
-      )
+      (ph) =>
+        ph.user &&
+        (ph.user.id === this.currentPlayer?.id ||
+          ph.user.email === this.currentPlayer?.email)
     );
 
     if (!playerHistory) {
@@ -280,10 +285,10 @@ export class PlayerDashboardComponent implements OnInit {
 
   canLeaveMatch(match: Match): boolean {
     const playerHistory = match.playerHistory?.find(
-      (ph) => ph.user && (
-        ph.user.id === this.currentPlayer?.id ||
-        ph.user.email === this.currentPlayer?.email
-      )
+      (ph) =>
+        ph.user &&
+        (ph.user.id === this.currentPlayer?.id ||
+          ph.user.email === this.currentPlayer?.email)
     );
     return playerHistory?.status === 2;
   }
@@ -354,16 +359,12 @@ export class PlayerDashboardComponent implements OnInit {
         return;
       }
 
-      if (confirm('Are you sure you want to leave this match?')) {
-        await this.matchService.leaveMatch(match.id);
-        await this.loadMatches();
-        await this.loadAvailableMatches();
-        this.notificationService.showSuccess('Successfully left the match!');
-      }
+      this.matchToLeave = match;
+      this.showLeaveMatchConfirmDialog = true;
     } catch (error) {
-      console.error('Error leaving match:', error);
+      console.error('Error preparing to leave match:', error);
       this.notificationService.showError(
-        'Failed to leave match. Please try again.'
+        'Failed to prepare leave match action. Please try again.'
       );
     }
   }
@@ -492,5 +493,41 @@ export class PlayerDashboardComponent implements OnInit {
     return (
       this.delegationStatus?.currentDelegation?.notes || 'No notes provided'
     );
+  }
+
+  // Leave match modal methods
+  onLeaveMatchCancel() {
+    this.showLeaveMatchConfirmDialog = false;
+    this.matchToLeave = null;
+  }
+
+  async onLeaveMatchConfirm() {
+    if (!this.matchToLeave) {
+      return;
+    }
+
+    try {
+      await this.matchService.leaveMatch(this.matchToLeave.id!);
+      await this.loadMatches();
+      await this.loadAvailableMatches();
+      this.notificationService.showSuccess('Successfully left the match!');
+
+      this.showLeaveMatchConfirmDialog = false;
+      this.matchToLeave = null;
+    } catch (error) {
+      console.error('Error leaving match:', error);
+      this.notificationService.showError(
+        'Failed to leave match. Please try again.'
+      );
+    }
+  }
+
+  getLeaveMatchMessage(): string {
+    if (!this.matchToLeave) return '';
+
+    const matchDate = this.matchToLeave.matchDate
+      ? new Date(this.matchToLeave.matchDate).toLocaleDateString()
+      : 'Unknown date';
+    return `Are you sure you want to leave the match "${this.matchToLeave.teamAName} vs ${this.matchToLeave.teamBName}" scheduled for ${matchDate}?`;
   }
 }
