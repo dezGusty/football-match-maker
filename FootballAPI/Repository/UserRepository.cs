@@ -18,6 +18,16 @@ namespace FootballAPI.Repository
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.Set<User>()
+                .Include(u => u.Credentials)
+                .OrderBy(u => u.Username)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<User>> GetUsersWithCredentialsAsync()
+        {
+            return await _context.Set<User>()
+                .Include(u => u.Credentials)
+                .Where(u => u.Credentials != null)
                 .OrderBy(u => u.Username)
                 .ToListAsync();
         }
@@ -25,6 +35,7 @@ namespace FootballAPI.Repository
         public async Task<User> GetByIdAsync(int id)
         {
             return await _context.Set<User>()
+                .Include(u => u.Credentials)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
@@ -36,12 +47,15 @@ namespace FootballAPI.Repository
 
         public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.Users
+                .Include(u => u.Credentials)
+                .FirstOrDefaultAsync(u => u.Credentials != null && u.Credentials.Email == email);
         }
 
         public async Task<IEnumerable<User>> GetUsersByRoleAsync(UserRole role)
         {
             return await _context.Set<User>()
+                .Include(u => u.Credentials)
                 .Where(u => u.Role == role)
                 .OrderBy(u => u.Username)
                 .ToListAsync();
@@ -103,7 +117,9 @@ namespace FootballAPI.Repository
                 .Where(fr => fr.Status == FriendRequestStatus.Accepted &&
                            (fr.SenderId == id || fr.ReceiverId == id))
                 .Include(fr => fr.Sender)
+                    .ThenInclude(s => s.Credentials)
                 .Include(fr => fr.Receiver)
+                    .ThenInclude(r => r.Credentials)
                 .Select(fr => fr.SenderId == id ? fr.Receiver : fr.Sender)
                 .ToListAsync();
 
@@ -111,23 +127,39 @@ namespace FootballAPI.Repository
         }
         public async Task<User?> GetUserByEmail(string email, bool includeDeleted = false, bool tracking = false)
         {
-            IQueryable<User> query = _context.Users;
+            IQueryable<User> query = _context.Users.Include(u => u.Credentials);
 
             if (!tracking)
                 query = query.AsNoTracking();
 
-            return await query.FirstOrDefaultAsync(u => u.Email == email);
+            return await query.FirstOrDefaultAsync(u => u.Credentials != null && u.Credentials.Email == email);
         }
 
-        public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange)
+        public async Task<bool> UpdatePlayerRatingAsync(int userId, float newRating,
+            string changeReason = "Manual", int? matchId = null, string? ratingSystem = null)
         {
             var user = await GetByIdAsync(userId);
             if (user == null)
                 return false;
 
-            user.Rating = Math.Max(0f, user.Rating + ratingChange);
+            newRating = Math.Max(0f, newRating); // Ensure rating is not negative
+
+            var ratingHistory = new RatingHistory
+            {
+                UserId = userId,
+                NewRating = newRating,
+                ChangeReason = changeReason,
+                MatchId = matchId,
+                RatingSystem = ratingSystem,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.RatingHistories.Add(ratingHistory);
+
+            user.Rating = newRating;
             user.UpdatedAt = DateTime.UtcNow;
             await UpdateAsync(user);
+
             return true;
         }
 
@@ -137,7 +169,7 @@ namespace FootballAPI.Repository
             {
                 foreach (var update in playerRatingUpdates)
                 {
-                    await UpdatePlayerRatingAsync(update.UserId, update.RatingChange);
+                    await UpdatePlayerRatingAsync(update.UserId, update.NewRating, "Batch Update");
                 }
                 return true;
             }

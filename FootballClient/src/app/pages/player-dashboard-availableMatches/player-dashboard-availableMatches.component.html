@@ -4,12 +4,10 @@
 <div class="dashboard-container">
   <div class="main-content">
     <div class="content-section" style="margin-top: 30px">
-      <h2>Available Matches</h2>
-      <p class="subtitle">
-        Public matches and private matches from friends you can join
-      </p>
+      <h2>Public Matches</h2>
+      <p class="subtitle">Public matches from friends you can join</p>
       @if (availableMatches.length === 0) {
-      <div class="empty-state">No available matches to join.</div>
+      <div class="empty-state">No public matches to join.</div>
       } @if (availableMatches.length > 0) {
       <div class="matches-table">
         <div class="table-header">

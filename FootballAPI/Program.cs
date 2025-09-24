@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
 using Prometheus;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,13 @@ var logger = Log.ForContext<Program>();
 logger.Information("Starting Football API application");
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -65,12 +72,14 @@ builder.Services.AddDbContext<FootballDbContext>(options =>
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserCredentialsRepository, UserCredentialsRepository>();
 builder.Services.AddScoped<IResetPasswordTokenRepository, ResetPasswordTokenRepository>();
 
 builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
 builder.Services.AddScoped<IMatchTeamsRepository, MatchTeamsRepository>();
 builder.Services.AddScoped<ITeamPlayersRepository, TeamPlayersRepository>();
 builder.Services.AddScoped<IMatchTemplateRepository, MatchTemplateRepository>();
+builder.Services.AddScoped<IRatingHistoryRepository, RatingHistoryRepository>();
 
 // Service Registration
 builder.Services.AddScoped<ITeamService, TeamService>();
@@ -84,6 +93,10 @@ builder.Services.AddScoped<IMatchTeamsService, MatchTeamsService>();
 builder.Services.AddScoped<IImpersonationLogService, ImpersonationLogService>();
 builder.Services.AddScoped<ITeamPlayersService, TeamPlayersService>();
 builder.Services.AddScoped<IMatchTemplateService, MatchTemplateService>();
+builder.Services.AddScoped<IRatingHistoryService, RatingHistoryService>();
+
+// Firebase Service Registration
+builder.Services.AddScoped<FootballAPI.Services.IFirebaseService, FootballAPI.Services.FirebaseService>();
 
 // Email Service Registration
 builder.Services.AddScoped<EmailService>();

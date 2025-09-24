@@ -436,12 +436,12 @@ export class OrganizerDashboardComponent {
       return;
     }
 
-    // Check if match details match an existing template
-    this.matchTemplateExists = this.templates.some(t =>
-      t.teamAName === this.newMatch.teamAName &&
-      t.teamBName === this.newMatch.teamBName &&
-      t.location === this.newMatch.location &&
-      t.cost === this.newMatch.cost
+    this.matchTemplateExists = this.templates.some(
+      (t) =>
+        t.teamAName === this.newMatch.teamAName &&
+        t.teamBName === this.newMatch.teamBName &&
+        t.location === this.newMatch.location &&
+        t.cost === this.newMatch.cost
     );
 
     if (!this.matchTemplateExists) {

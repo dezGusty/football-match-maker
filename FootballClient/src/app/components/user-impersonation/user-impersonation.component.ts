@@ -12,7 +12,7 @@ import { Header } from '../header/header';
   templateUrl: './user-impersonation.component.html',
   styleUrls: ['./user-impersonation.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, Header]
+  imports: [CommonModule, FormsModule, Header],
 })
 export class UserImpersonationComponent implements OnInit {
   users: any[] = [];
@@ -26,15 +26,15 @@ export class UserImpersonationComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private impersonationService: ImpersonationService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     // Check if user is already impersonating
-    this.impersonationService.isImpersonating$.subscribe(isImpersonating => {
+    this.impersonationService.isImpersonating$.subscribe((isImpersonating) => {
       this.isImpersonating = isImpersonating;
     });
 
-    this.impersonationService.impersonatedUser$.subscribe(user => {
+    this.impersonationService.impersonatedUser$.subscribe((user) => {
       this.impersonatedUser = user;
     });
 
@@ -48,10 +48,10 @@ export class UserImpersonationComponent implements OnInit {
   }
 
   loadUsers(): void {
-    this.http.get<any[]>(`${environment.apiUrl}/User`).subscribe(
+    this.http.get<any[]>(`${environment.apiUrl}/User/with-accounts`).subscribe(
       (data) => {
         // Filter out admin users - only show players and organizers
-        this.users = data.filter(user => user.role !== UserRole.ADMIN);
+        this.users = data.filter((user) => user.role !== UserRole.ADMIN);
         this.applyFilters();
       },
       (error) => {
@@ -65,19 +65,20 @@ export class UserImpersonationComponent implements OnInit {
 
     // Apply role filter
     if (this.roleFilter !== 'all') {
-      filtered = filtered.filter(user => 
-        user.role.toString() === this.roleFilter
+      filtered = filtered.filter(
+        (user) => user.role.toString() === this.roleFilter
       );
     }
 
     // Apply search filter
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(user =>
-        user.username.toLowerCase().includes(term) ||
-        user.email.toLowerCase().includes(term) ||
-        (user.firstName && user.firstName.toLowerCase().includes(term)) ||
-        (user.lastName && user.lastName.toLowerCase().includes(term))
+      filtered = filtered.filter(
+        (user) =>
+          user.username.toLowerCase().includes(term) ||
+          user.email.toLowerCase().includes(term) ||
+          (user.firstName && user.firstName.toLowerCase().includes(term)) ||
+          (user.lastName && user.lastName.toLowerCase().includes(term))
       );
     }
 

@@ -1,41 +1,69 @@
-
-
 <!-- Create Match Modal -->
 @if (showCreateMatchModal) {
-  <div class="modal-backdrop" style="z-index: 100;" (click)="showCreateMatchModal = false">
-    <div
-      class="modal-content glass create-match-modal"
-      (click)="$event.stopPropagation()"
-      style="z-index: 101;"
+<div
+  class="modal-backdrop"
+  style="z-index: 100"
+  (click)="showCreateMatchModal = false"
+>
+  <div
+    class="modal-content glass create-match-modal"
+    (click)="$event.stopPropagation()"
+    style="z-index: 101"
+  >
+    <button
+      class="close-modal-btn"
+      (click)="showCreateMatchModal = false"
+      title="Close"
     >
-      <button
-        class="close-modal-btn"
-        (click)="showCreateMatchModal = false"
-        title="Close"
-      >
-        &times;
-      </button>
-      <h3>Create New Match</h3>
-      <!-- ...existing create match modal content... -->
-    </div>
+      &times;
+    </button>
+    <h3>Create New Match</h3>
+    <!-- ...existing create match modal content... -->
   </div>
+</div>
 }
 
 <!-- Save as Template Popup (overlays Create Match Modal) -->
 @if (showSaveAsTemplatePopup) {
-  <div class="modal-backdrop" style="z-index: 200; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;" (click)="showSaveAsTemplatePopup = false">
-    <div class="modal-content glass" (click)="$event.stopPropagation()" style="z-index: 201; position: fixed; ">
-      <button class="close-modal-btn" (click)="showSaveAsTemplatePopup = false" title="Close">&times;</button>
-      <h3>Save Match as Template?</h3>
-      <p>
-        Would you like to save this match setup as a template for future use?
-      </p>
-      <div class="modal-actions">
-        <button class="primary-cta" (click)="handleSaveAsTemplateChoice(true)">Yes, Save as Template</button>
-        <button class="btn btn-secondary" (click)="handleSaveAsTemplateChoice(false)">No, Just Create Match</button>
-      </div>
+<div
+  class="modal-backdrop"
+  style="
+    z-index: 200;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+  "
+  (click)="showSaveAsTemplatePopup = false"
+>
+  <div
+    class="modal-content glass"
+    (click)="$event.stopPropagation()"
+    style="z-index: 201; position: fixed"
+  >
+    <button
+      class="close-modal-btn"
+      (click)="showSaveAsTemplatePopup = false"
+      title="Close"
+    >
+      &times;
+    </button>
+    <h3>Save Match as Template?</h3>
+    <p>Would you like to save this match setup as a template for future use?</p>
+    <div class="modal-actions">
+      <button class="primary-cta" (click)="handleSaveAsTemplateChoice(true)">
+        Yes, Save as Template
+      </button>
+      <button
+        class="btn btn-secondary"
+        (click)="handleSaveAsTemplateChoice(false)"
+      >
+        No, Just Create Match
+      </button>
     </div>
   </div>
+</div>
 }
 <app-header></app-header>
 <app-friend-requests></app-friend-requests>
@@ -395,7 +423,7 @@
                 </span>
                 <div class="rating-info">
                   <span class="player-rating">
-                    Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                    Rating: {{ (player.rating | number : "1.0-2") || "N/A" }}
                     <span [class]="getRatingChangeClass(player.id)">{{
                       getRatingPreviewForPlayer(player.id)
                     }}</span>
@@ -454,7 +482,7 @@
                 </span>
                 <div class="rating-info">
                   <span class="player-rating">
-                    Rating: {{ (player.rating | number : "1.0-1") || "N/A" }}
+                    Rating: {{ (player.rating | number : "1.0-2") || "N/A" }}
                     <span [class]="getRatingChangeClass(player.id)">{{
                       getRatingPreviewForPlayer(player.id)
                     }}</span>

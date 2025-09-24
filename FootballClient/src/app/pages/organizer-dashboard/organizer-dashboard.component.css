@@ -844,7 +844,7 @@
 .add-players-modal {
   max-width: 1400px;
   max-height: 90vh;
-  overflow: hidden;
+  overflow-y: auto;
 }
 .match-info-fin {
   margin-bottom: 20px;

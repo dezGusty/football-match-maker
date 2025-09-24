@@ -694,12 +694,15 @@ namespace FootballAPI.Service
                     $"+{ratingChange:F2}" :
                     $"{ratingChange:F2}";
 
+                float newRating = player.User.Rating + ratingChange;
+
                 result.Add(new RatingPreviewDto
                 {
                     PlayerId = player.UserId,
                     PlayerName = $"{player.User.FirstName} {player.User.LastName}",
                     CurrentRating = player.User.Rating,
                     RatingChange = ratingChangeStr,
+                    NewRating = newRating,
                     TeamId = isTeamA ? teamA.TeamId : teamB.TeamId
                 });
             }
@@ -750,13 +753,19 @@ namespace FootballAPI.Service
             foreach (var ratingChange in ratingChanges)
             {
                 float change = float.Parse(ratingChange.RatingChange);
-                await _userService.UpdatePlayerRatingAsync(ratingChange.PlayerId, change);
+                float newRating = ratingChange.CurrentRating + change;
+                await _userService.UpdatePlayerRatingAsync(ratingChange.PlayerId, newRating, "Match", matchId, finalizeMatchDto.RatingSystem);
             }
 
             foreach (var adjustment in finalizeMatchDto.ManualAdjustments)
             {
                 Console.WriteLine($"Adjusting rating for UserId: {adjustment.UserId}, Change: {adjustment.RatingChange}");
-                await _userService.UpdatePlayerRatingAsync(adjustment.UserId, adjustment.RatingChange);
+                var user = await _userService.GetUserByIdAsync(adjustment.UserId);
+                if (user != null)
+                {
+                    float newRating = user.Rating + adjustment.RatingChange;
+                    await _userService.UpdatePlayerRatingAsync(adjustment.UserId, newRating, "Manual", matchId);
+                }
             }
 
             match.Status = Status.Finalized;

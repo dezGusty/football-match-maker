@@ -29,7 +29,8 @@ export class Login {
   }
   ngOnInit(): void {
     let index = 0;
-    const slides = document.querySelectorAll<HTMLImageElement>('.slideshow .slide');
+    const slides =
+      document.querySelectorAll<HTMLImageElement>('.slideshow .slide');
 
     setInterval(() => {
       slides.forEach((slide, i) => {
@@ -87,7 +88,10 @@ export class Login {
   forgotPassword() {
     this.email = this.forgotEmail;
     this.authService.forgotPassword(this.email).subscribe({
-      next: () => this.notificationService.showSuccess('Email trimis cu succes! Verifică inbox-ul.'),
+      next: () =>
+        this.notificationService.showSuccess(
+          'Email trimis cu succes! Verifică inbox-ul.'
+        ),
       error: (err) => {
         console.error(err);
         this.errorMessage = 'A apărut o eroare la trimiterea email-ului.';

@@ -38,6 +38,22 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN")]
+        [HttpGet("with-accounts")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersWithAccounts()
+        {
+            try
+            {
+                var users = await _userService.GetUsersWithCredentialsAsync();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting users with accounts");
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
+
         [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUserById(int id)
@@ -295,7 +311,7 @@ namespace FootballAPI.Controllers
         {
             try
             {
-                var success = await _userService.UpdatePlayerRatingAsync(userId, request.RatingChange);
+                var success = await _userService.UpdatePlayerRatingAsync(userId, request.RatingChange, "Manual");
                 if (success)
                     return Ok(new { message = "User rating updated successfully" });
                 else
@@ -317,7 +333,7 @@ namespace FootballAPI.Controllers
                 var playerRatingUpdates = request.PlayerRatingUpdates.Select(x => new PlayerRatingUpdateDto
                 {
                     UserId = x.UserId,
-                    RatingChange = x.RatingChange
+                    NewRating = x.NewRating
                 }).ToList();
 
                 var success = await _userService.UpdateMultiplePlayerRatingsAsync(playerRatingUpdates);
@@ -440,6 +456,82 @@ namespace FootballAPI.Controllers
         }
 
         [Authorize]
+        [HttpPost("{id}/change-password")]
+        public async Task<ActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto dto)
+        {
+            try
+            {
+                var currentUserId = UserUtils.GetCurrentUserId(User, Request.Headers);
+
+                if (currentUserId != id && !User.IsInRole("ADMIN"))
+                {
+                    return Forbid("You can only change your own password.");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var success = await _userService.ChangePasswordAsync(id, dto);
+
+                if (!success)
+                {
+                    return BadRequest(new { message = "Failed to change password. Current password is incorrect or user not found." });
+                }
+
+                return Ok(new { message = "Password changed successfully." });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing password for user {UserId}", id);
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+
+        [Authorize]
+        [HttpPost("{id}/change-username")]
+        public async Task<ActionResult> ChangeUsername(int id, [FromBody] ChangeUsernameDto dto)
+        {
+            try
+            {
+                var currentUserId = UserUtils.GetCurrentUserId(User, Request.Headers);
+
+                if (currentUserId != id && !User.IsInRole("ADMIN"))
+                {
+                    return Forbid("You can only change your own username.");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var success = await _userService.ChangeUsernameAsync(id, dto);
+
+                if (!success)
+                {
+                    return BadRequest(new { message = "Failed to change username. Password is incorrect, user not found, or username already exists." });
+                }
+
+                return Ok(new { message = "Username changed successfully." });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing username for user {UserId}", id);
+                return StatusCode(500, new { message = $"Internal error: {ex.Message}" });
+            }
+        }
+
+        [Authorize]
         [HttpPut("{id}/profile-image")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> UpdateProfileImage(int id, [FromForm] IFormFile imageFile)
@@ -518,6 +610,6 @@ namespace FootballAPI.Controllers
     public class UserRatingUpdate
     {
         public int UserId { get; set; }
-        public float RatingChange { get; set; }
+        public float NewRating { get; set; }
     }
 }

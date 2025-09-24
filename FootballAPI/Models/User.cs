@@ -11,15 +11,7 @@ namespace FootballAPI.Models
 
         [Required]
         [StringLength(100)]
-        public string Email { get; set; }
-
-        [Required]
-        [StringLength(100)]
         public string Username { get; set; }
-
-        [Required]
-        [StringLength(255)]
-        public string Password { get; set; }
 
         [Required]
         public UserRole Role { get; set; }
@@ -55,6 +47,7 @@ namespace FootballAPI.Models
         public string? ProfileImagePath { get; set; }
 
         // Navigation properties
+        public virtual UserCredentials? Credentials { get; set; }
         public virtual ICollection<FriendRequest> SentFriendRequests { get; set; } = new List<FriendRequest>();
         public virtual ICollection<FriendRequest> ReceivedFriendRequests { get; set; } = new List<FriendRequest>();
         public virtual ICollection<ResetPasswordToken> ResetPasswordTokens { get; set; } = new List<ResetPasswordToken>();

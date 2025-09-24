@@ -2,6 +2,7 @@ using FootballAPI.DTOs;
 using FootballAPI.Models;
 using FootballAPI.Models.Enums;
 using FootballAPI.Repository;
+using FootballAPI.Repository.Interfaces;
 
 namespace FootballAPI.Service
 {
@@ -9,11 +10,13 @@ namespace FootballAPI.Service
     {
         private readonly IUserRepository _userRepository;
         private readonly IFriendRequestRepository _friendRequestRepository;
+        private readonly IUserCredentialsRepository _userCredentialsRepository;
 
-        public UserService(IUserRepository userRepository, IFriendRequestRepository friendRequestRepository)
+        public UserService(IUserRepository userRepository, IFriendRequestRepository friendRequestRepository, IUserCredentialsRepository userCredentialsRepository)
         {
             _userRepository = userRepository;
             _friendRequestRepository = friendRequestRepository;
+            _userCredentialsRepository = userCredentialsRepository;
         }
 
         private UserDto MapToDto(User user)
@@ -23,7 +26,7 @@ namespace FootballAPI.Service
                 Id = user.Id,
                 Username = user.Username,
                 Role = user.Role,
-                Email = user.Email,
+                Email = user.Credentials?.Email ?? string.Empty,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Rating = user.Rating,
@@ -42,6 +45,12 @@ namespace FootballAPI.Service
         public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
         {
             var users = await _userRepository.GetAllAsync();
+            return users.Select(MapToDto);
+        }
+
+        public async Task<IEnumerable<UserDto>> GetUsersWithCredentialsAsync()
+        {
+            var users = await _userRepository.GetUsersWithCredentialsAsync();
             return users.Select(MapToDto);
         }
 
@@ -73,9 +82,7 @@ namespace FootballAPI.Service
             Console.WriteLine(dto);
             var user = new User
             {
-                Email = dto.Email,
                 Username = dto.Username,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10),
                 Role = dto.Role,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
@@ -88,6 +95,21 @@ namespace FootballAPI.Service
             };
 
             var createdUser = await _userRepository.CreateAsync(user);
+
+            // Create initial rating history entry
+            await _userRepository.UpdatePlayerRatingAsync(createdUser.Id, dto.Rating, "Initial Rating", null, null);
+
+            // Create credentials separately
+            var credentials = new UserCredentials
+            {
+                UserId = createdUser.Id,
+                Email = dto.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _userCredentialsRepository.CreateAsync(credentials);
 
             return MapToDto(createdUser);
         }
@@ -111,9 +133,7 @@ namespace FootballAPI.Service
 
             var user = new User
             {
-                Email = dto.Email,
                 Username = dto.Username,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10),
                 Role = dto.Role,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
@@ -126,6 +146,27 @@ namespace FootballAPI.Service
             };
 
             var createdUser = await _userRepository.CreateAsync(user);
+
+            // Create initial rating history entry
+            await _userRepository.UpdatePlayerRatingAsync(createdUser.Id, dto.Rating, "Initial Rating", null, null);
+
+            // Create credentials separately
+            var credentials = new UserCredentials
+            {
+                UserId = createdUser.Id,
+                Email = dto.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _userCredentialsRepository.CreateAsync(credentials);
+
+            // Add organizer-player relation if organizerId is provided
+            if (organizerId.HasValue)
+            {
+                await _userRepository.AddPlayerOrganiserRelationAsync(organizerId.Value, createdUser.Id);
+            }
 
             return MapToDto(createdUser);
         }
@@ -140,17 +181,67 @@ namespace FootballAPI.Service
                 throw new ArgumentException($"Username '{updateUserDto.Username}' already exists.");
             }
 
+            var oldRating = existingUser.Rating;
+            var newRating = updateUserDto.Rating;
+
             existingUser.Username = updateUserDto.Username;
             existingUser.Role = updateUserDto.Role;
-            existingUser.Email = updateUserDto.Email;
             existingUser.Rating = updateUserDto.Rating;
             existingUser.FirstName = updateUserDto.FirstName;
             existingUser.LastName = updateUserDto.LastName;
             existingUser.Speed = updateUserDto.Speed;
             existingUser.Errors = updateUserDto.Errors;
             existingUser.Stamina = updateUserDto.Stamina;
+            existingUser.UpdatedAt = DateTime.UtcNow;
+
+            if (existingUser.Credentials != null && !string.IsNullOrEmpty(updateUserDto.Email))
+            {
+                if (await _userCredentialsRepository.EmailExistsAsync(updateUserDto.Email, existingUser.Id))
+                {
+                    throw new ArgumentException($"Email '{updateUserDto.Email}' already exists.");
+                }
+
+                existingUser.Credentials.Email = updateUserDto.Email;
+                existingUser.Credentials.UpdatedAt = DateTime.UtcNow;
+                await _userCredentialsRepository.UpdateAsync(existingUser.Credentials);
+            }
 
             var updatedUser = await _userRepository.UpdateAsync(existingUser);
+
+            if (Math.Abs(oldRating - newRating) > 0.001f)
+            {
+                await _userRepository.UpdatePlayerRatingAsync(id, newRating, "Manual Update", null, null);
+            }
+
+            return MapToDto(updatedUser);
+        }
+
+        public async Task<UserDto?> UpdatePlayerAsync(int id, UpdatePlayerDto updatePlayerDto)
+        {
+            var existingUser = await _userRepository.GetByIdAsync(id);
+            if (existingUser == null)
+            {
+                return null;
+            }
+
+            var oldRating = existingUser.Rating;
+            var newRating = updatePlayerDto.Rating;
+
+            existingUser.FirstName = updatePlayerDto.FirstName;
+            existingUser.LastName = updatePlayerDto.LastName;
+            existingUser.Rating = updatePlayerDto.Rating;
+            existingUser.Speed = updatePlayerDto.Speed;
+            existingUser.Stamina = updatePlayerDto.Stamina;
+            existingUser.Errors = updatePlayerDto.Errors;
+            existingUser.UpdatedAt = DateTime.UtcNow;
+
+            var updatedUser = await _userRepository.UpdateAsync(existingUser);
+
+            if (Math.Abs(oldRating - newRating) > 0.001f)
+            {
+                await _userRepository.UpdatePlayerRatingAsync(id, newRating, "Manual Update", null, null);
+            }
+
             return MapToDto(updatedUser);
         }
 
@@ -169,9 +260,10 @@ namespace FootballAPI.Service
             return await _userRepository.GetPlayersByOrganiserAsync(id);
         }
 
-        public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange)
+        public async Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange,
+            string changeReason = "Manual", int? matchId = null, string? ratingSystem = null)
         {
-            return await _userRepository.UpdatePlayerRatingAsync(userId, ratingChange);
+            return await _userRepository.UpdatePlayerRatingAsync(userId, ratingChange, changeReason, matchId, ratingSystem);
         }
 
         public async Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates)
@@ -305,7 +397,7 @@ namespace FootballAPI.Service
             return friends.Select(MapToDto);
         }
 
-        public async Task<UserDto?> UpdateUserProfileImageAsync(int id, string imageUrl)
+        public async Task<UserDto?> UpdateUserProfileImageAsync(int id, string? imageUrl)
         {
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null)
@@ -331,6 +423,77 @@ namespace FootballAPI.Service
                 IsActive = delegation.IsActive,
                 Notes = delegation.Notes
             };
+        }
+
+        public async Task<bool> ChangePasswordAsync(int userId, ChangePasswordDto dto)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user?.Credentials == null)
+                return false;
+
+            try
+            {
+                if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.Credentials.Password))
+                    return false;
+            }
+            catch (BCrypt.Net.SaltParseException)
+            {
+
+                if (user.Credentials.Password == dto.CurrentPassword)
+                {
+
+                    user.Credentials.Password = BCrypt.Net.BCrypt.HashPassword(dto.CurrentPassword, workFactor: 10);
+                    await _userRepository.UpdateAsync(user);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            var hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword, workFactor: 10);
+
+            user.Credentials.Password = hashedNewPassword;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.UpdateAsync(user);
+            return true;
+        }
+
+        public async Task<bool> ChangeUsernameAsync(int userId, ChangeUsernameDto dto)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user?.Credentials == null)
+                return false;
+
+            try
+            {
+                if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Credentials.Password))
+                    return false;
+            }
+            catch (BCrypt.Net.SaltParseException)
+            {
+
+                if (user.Credentials.Password == dto.Password)
+                {
+                    user.Credentials.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10);
+                    await _userRepository.UpdateAsync(user);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            var existingUser = await _userRepository.GetByUsernameAsync(dto.NewUsername);
+            if (existingUser != null && existingUser.Id != userId)
+                return false;
+
+            user.Username = dto.NewUsername;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.UpdateAsync(user);
+            return true;
         }
 
     }

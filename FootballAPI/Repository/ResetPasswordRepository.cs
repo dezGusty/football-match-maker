@@ -38,6 +38,7 @@ namespace FootballAPI.Repository
             Console.WriteLine($"Caut token cu hash: {tokenHash}");
             return await _context.ResetPasswordTokens
                 .Include(t => t.User)
+                .ThenInclude(u => u.Credentials)
                 .FirstOrDefaultAsync(t =>
                     t.TokenHash == tokenHash &&
                     t.UsedAt == null &&
