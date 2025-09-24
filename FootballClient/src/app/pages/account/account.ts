@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
+import { ConfirmationModal } from '../../components/confirmation-modal/confirmation-modal';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
@@ -16,7 +17,7 @@ import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-account',
-  imports: [Header, CommonModule, FormsModule],
+  imports: [Header, CommonModule, FormsModule, ConfirmationModal],
   templateUrl: './account.html',
   styleUrl: './account.css',
 })
@@ -35,6 +36,8 @@ export class Account {
   selectedFile: File | null = null;
   isUploadingImage = false;
   uploadError = '';
+
+  showDeleteConfirmModal = false;
 
   constructor(
     private userService: UserService,
@@ -184,9 +187,13 @@ export class Account {
   async deleteProfileImage() {
     if (!this.user || !this.user.id) return;
 
-    if (!confirm('Are you sure you want to delete your profile image?')) {
-      return;
-    }
+    this.showDeleteConfirmModal = true;
+  }
+
+  async confirmDeleteProfileImage() {
+    if (!this.user || !this.user.id) return;
+
+    this.showDeleteConfirmModal = false;
 
     try {
       await this.playerProfileImageService
@@ -203,6 +210,10 @@ export class Account {
       );
       console.error('Delete error:', error);
     }
+  }
+
+  cancelDeleteProfileImage() {
+    this.showDeleteConfirmModal = false;
   }
 
   triggerFileInput() {

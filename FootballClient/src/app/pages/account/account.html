@@ -113,3 +113,13 @@
     }
   </div>
 </div>
+
+<app-confirmation-modal
+  [isVisible]="showDeleteConfirmModal"
+  title="Delete Profile Image"
+  message="Are you sure you want to delete your profile image? This action cannot be undone."
+  confirmText="Delete"
+  (confirmed)="confirmDeleteProfileImage()"
+  (cancelled)="cancelDeleteProfileImage()"
+>
+</app-confirmation-modal>
