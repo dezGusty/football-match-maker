@@ -1,5 +1,16 @@
 <app-header></app-header>
 
+<!-- No matches message -->
+<div class="no-matches-message" *ngIf="!matches || matches.length === 0">
+  <div class="no-matches-icon">
+    <span class="material-icons">sports_soccer</span>
+  </div>
+  <h2 class="no-matches-title">No Past Matches</h2>
+  <p class="no-matches-subtitle">
+    There are no completed matches to display yet. Once matches are finished, they'll appear in the table below.
+  </p>
+</div>
+
 <table class="matches-table">
   <thead>
     <tr>

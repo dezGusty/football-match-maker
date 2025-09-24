@@ -1,3 +1,107 @@
+/* No matches message */
+.no-matches-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 30px;
+  background: var(--glass-medium, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border, rgba(124, 242, 208, 0.15));
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.25));
+  max-width: 500px;
+  margin: 40px auto 20px auto;
+  animation: fadeInUp 0.8s ease both;
+  position: relative;
+}
+
+.no-matches-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary-400, #2dd4bf), transparent);
+  border-radius: 20px 20px 0 0;
+}
+
+.no-matches-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-500, #14b8a6), var(--primary-600, #0d9488));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 16px rgba(20, 184, 166, 0.3);
+  animation: scaleIn 0.6s ease both 0.3s;
+  transform: scale(0.8);
+}
+
+.no-matches-icon .material-icons {
+  font-size: 1.8rem;
+  color: white;
+}
+
+.no-matches-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-100, #ccfbf1);
+  margin: 0 0 12px 0;
+  background: linear-gradient(135deg, var(--primary-300, #5eead4), var(--primary-100, #ccfbf1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeIn 0.8s ease both 0.5s;
+  opacity: 0;
+}
+
+.no-matches-subtitle {
+  font-size: 0.95rem;
+  color: var(--primary-200, #99f6e4);
+  line-height: 1.5;
+  margin: 0;
+  opacity: 0.8;
+  animation: fadeIn 0.8s ease both 0.7s;
+  opacity: 0;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .matches-table {
   width: 80%;
   margin: 40px auto;
@@ -170,4 +274,30 @@ button:hover {
   padding: 4px 0;
   font-size: 14px;
   text-align: center;
+}
+
+/* Responsive design for no matches message */
+@media (max-width: 768px) {
+  .no-matches-message {
+    padding: 30px 20px;
+    margin: 20px 15px;
+  }
+  
+  .no-matches-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 16px;
+  }
+  
+  .no-matches-icon .material-icons {
+    font-size: 1.5rem;
+  }
+  
+  .no-matches-title {
+    font-size: 1.25rem;
+  }
+  
+  .no-matches-subtitle {
+    font-size: 0.85rem;
+  }
 }
