@@ -256,7 +256,7 @@ namespace FootballAPI.Data
                     Role = UserRole.ADMIN,
                     FirstName = "Admin",
                     LastName = "User",
-                    Rating = 0.0f,
+                    Rating = 5.0f,
                     CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                     UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
@@ -267,7 +267,7 @@ namespace FootballAPI.Data
                     Role = UserRole.ORGANISER,
                     FirstName = "Organiser",
                     LastName = "User",
-                    Rating = 0.0f,
+                    Rating = 5.0f,
                     CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                     UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
@@ -414,6 +414,23 @@ namespace FootballAPI.Data
                 new FriendRequest { Id = 10, SenderId = 4, ReceiverId = 12, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
                 new FriendRequest { Id = 11, SenderId = 4, ReceiverId = 13, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
                 new FriendRequest { Id = 12, SenderId = 4, ReceiverId = 14, Status = FriendRequestStatus.Accepted, CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), ResponsedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) }
+            );
+
+            modelBuilder.Entity<RatingHistory>().HasData(
+                new RatingHistory { Id = 1, UserId = 1, NewRating = 8.5f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 2, UserId = 2, NewRating = 7.8f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 3, UserId = 3, NewRating = 0.0f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 4, UserId = 4, NewRating = 0.0f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 5, UserId = 5, NewRating = 7.2f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 6, UserId = 6, NewRating = 8.1f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 7, UserId = 7, NewRating = 6.9f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 8, UserId = 8, NewRating = 7.7f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 9, UserId = 9, NewRating = 8.3f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 10, UserId = 10, NewRating = 7.4f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 11, UserId = 11, NewRating = 6.8f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 12, UserId = 12, NewRating = 7.9f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 13, UserId = 13, NewRating = 8.0f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new RatingHistory { Id = 14, UserId = 14, NewRating = 7.6f, ChangeReason = "Initial Rating", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) }
             );
         }
 
