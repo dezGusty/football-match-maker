@@ -431,8 +431,25 @@ namespace FootballAPI.Service
             if (user?.Credentials == null)
                 return false;
 
-            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.Credentials.Password))
-                return false;
+            try
+            {
+                if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.Credentials.Password))
+                    return false;
+            }
+            catch (BCrypt.Net.SaltParseException)
+            {
+
+                if (user.Credentials.Password == dto.CurrentPassword)
+                {
+
+                    user.Credentials.Password = BCrypt.Net.BCrypt.HashPassword(dto.CurrentPassword, workFactor: 10);
+                    await _userRepository.UpdateAsync(user);
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
             var hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword, workFactor: 10);
 
@@ -449,8 +466,24 @@ namespace FootballAPI.Service
             if (user?.Credentials == null)
                 return false;
 
-            if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Credentials.Password))
-                return false;
+            try
+            {
+                if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Credentials.Password))
+                    return false;
+            }
+            catch (BCrypt.Net.SaltParseException)
+            {
+
+                if (user.Credentials.Password == dto.Password)
+                {
+                    user.Credentials.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password, workFactor: 10);
+                    await _userRepository.UpdateAsync(user);
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
             var existingUser = await _userRepository.GetByUsernameAsync(dto.NewUsername);
             if (existingUser != null && existingUser.Id != userId)
