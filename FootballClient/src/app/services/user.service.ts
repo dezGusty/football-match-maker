@@ -111,6 +111,16 @@ export class UserService {
     return await response.json();
   }
 
+  async getUserFriends(userId: number): Promise<User[]> {
+    const response = await fetch(`${this.url}/${userId}/friends`, {
+      headers: getAuthHeaders(this.authService),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch user friends');
+    }
+    return await response.json();
+  }
+
   async addPlayer(player: {
     firstName: string;
     lastName: string;

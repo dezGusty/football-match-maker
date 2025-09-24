@@ -1,0 +1,139 @@
+<!-- Admin Header -->
+<app-header (tabChange)="setActiveTab($event)"></app-header>
+
+<div class="admin-import-container">
+  <div class="header">
+    <h1>Firebase Import Administration</h1>
+  </div>
+
+  <!-- Import Configuration -->
+  <div class="card import-config">
+    <h3>Import Configuration</h3>
+    <form class="config-form">
+      <div class="form-group">
+        <label for="collectionName">Firebase Collection Name:</label>
+        <input
+          type="text"
+          id="collectionName"
+          [(ngModel)]="collectionName"
+          name="collectionName"
+          placeholder="e.g., ratings"
+          class="form-control"
+        />
+      </div>
+
+      <div class="date-filters">
+        <h4>Date Filtering (Optional)</h4>
+        <p class="date-help">
+          Filter by document creation dates extracted from document IDs (format:
+          YYYY-MM-DD_player_XX)
+        </p>
+
+        <div class="date-row">
+          <div class="form-group">
+            <label for="fromDate">From Date:</label>
+            <input
+              type="date"
+              id="fromDate"
+              [(ngModel)]="fromDate"
+              name="fromDate"
+              class="form-control"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="toDate">To Date:</label>
+            <input
+              type="date"
+              id="toDate"
+              [(ngModel)]="toDate"
+              name="toDate"
+              class="form-control"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="previewImport()"
+          [disabled]="isLoadingPreview"
+        >
+          <span class="spinner" *ngIf="isLoadingPreview"></span>
+          Preview Import
+        </button>
+
+        <button type="button" class="btn btn-secondary" (click)="clearAll()">
+          Clear All
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Preview Results -->
+  <div class="card preview-results" *ngIf="showPreview">
+    <h3>Import Preview</h3>
+
+    <!-- Summary -->
+    <div class="summary" *ngIf="getPreviewSummary() as summary">
+      <div class="summary-stats">
+        <div class="stat">
+          <span class="stat-number">{{ summary.totalUsers }}</span>
+          <span class="stat-label">Total Users</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Table -->
+    <div class="table-container">
+      <table class="preview-table">
+        <thead>
+          <tr>
+            <th>Document ID</th>
+            <th>Username</th>
+            <th>Full Name</th>
+            <th>Firebase ID</th>
+            <th>Current Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let user of previewData; let i = index"
+            [ngClass]="{ archived: user.isArchived }"
+          >
+            <td class="document-id">{{ user.firebaseDocumentId }}</td>
+            <td class="username">{{ user.username }}</td>
+            <td class="full-name">{{ user.firstName }} {{ user.lastName }}</td>
+            <td class="firebase-id">{{ user.firebasePlayerId }}</td>
+            <td class="rating-value">
+              <span
+                class="rating"
+                *ngIf="user.ratingData !== null; else noRating"
+              >
+                {{ user.ratingData }}
+              </span>
+              <ng-template #noRating>
+                <span class="no-rating">N/A</span>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Import Action -->
+    <div class="import-action">
+      <button
+        type="button"
+        class="btn btn-success btn-large"
+        (click)="executeImport()"
+        [disabled]="isLoadingImport || previewData.length === 0"
+      >
+        <span class="spinner" *ngIf="isLoadingImport"></span>
+        Execute Import ({{ previewData.length }} users)
+      </button>
+    </div>
+  </div>
+</div>

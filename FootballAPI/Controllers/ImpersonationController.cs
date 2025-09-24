@@ -53,7 +53,7 @@ namespace FootballAPI.Controllers
 
                 // Log the impersonation
                 int impersonationLogId = await _impersonationLogService.StartImpersonation(
-                    int.Parse(adminId), 
+                    int.Parse(adminId),
                     userToImpersonate.Id);
 
                 // Generate impersonation token
@@ -96,13 +96,13 @@ namespace FootballAPI.Controllers
             {
                 // Try to get admin ID from request body first, then from claims
                 var originalAdminId = request?.OriginalAdminId;
-                
+
                 if (string.IsNullOrEmpty(originalAdminId))
                 {
                     // Fallback to claim if not in request body
                     originalAdminId = User.FindFirst("OriginalAdminId")?.Value;
                 }
-                
+
                 if (string.IsNullOrEmpty(originalAdminId))
                 {
                     return BadRequest(new { message = "No active impersonation session found." });
@@ -199,7 +199,7 @@ namespace FootballAPI.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
                 new Claim(ClaimTypes.Name, user.Username)
             };

@@ -1,0 +1,213 @@
+<app-header></app-header>
+
+<div class="rating-evolution-container">
+  <div class="controls-section">
+    <!-- User selection for admin and organizer -->
+    <div class="user-selector" *ngIf="isAdmin || isOrganizer">
+      <label for="userSelect">Select User:</label>
+      <select
+        id="userSelect"
+        [(ngModel)]="selectedUserId"
+        (change)="onUserChange()"
+        class="form-control"
+      >
+        <option value="">Select a user...</option>
+        <option *ngFor="let user of allUsers" [value]="user.id">
+          {{ user.firstName }} {{ user.lastName }} ({{ user.email }})
+        </option>
+      </select>
+    </div>
+
+    <!-- Date range selectors -->
+    <div class="date-filters">
+      <div class="date-input-group">
+        <label for="fromDate">From Date:</label>
+        <input
+          type="date"
+          id="fromDate"
+          [(ngModel)]="fromDate"
+          (change)="onDateChange()"
+          class="form-control"
+        />
+      </div>
+
+      <div class="date-input-group">
+        <label for="toDate">To Date:</label>
+        <input
+          type="date"
+          id="toDate"
+          [(ngModel)]="toDate"
+          (change)="onDateChange()"
+          class="form-control"
+        />
+      </div>
+
+      <button
+        class="btn btn-primary"
+        (click)="loadRatingData()"
+        [disabled]="loading || !selectedUserId"
+      >
+        <span *ngIf="loading" class="spinner"></span>
+        {{ loading ? "Loading..." : "Refresh" }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div class="error-message" *ngIf="error">
+    <i class="icon-error">⚠️</i>
+    {{ error }}
+  </div>
+
+  <!-- Main content -->
+  <div class="content-section" *ngIf="!error && selectedUserId">
+    <!-- Rating statistics -->
+    <div class="stats-cards" *ngIf="ratingTrend">
+      <div class="stat-card">
+        <div class="stat-label">Current Rating</div>
+        <div
+          class="stat-value"
+          [ngClass]="getRatingClass(ratingTrend.currentRating)"
+        >
+          {{ ratingTrend.currentRating.toFixed(2) }}
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Highest Rating</div>
+        <div class="stat-value rating-high">
+          {{ ratingTrend.highestRating.toFixed(2) }}
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Lowest Rating</div>
+        <div class="stat-value rating-low">
+          {{ ratingTrend.lowestRating.toFixed(2) }}
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Average Rating</div>
+        <div
+          class="stat-value"
+          [ngClass]="getRatingClass(ratingTrend.averageRating)"
+        >
+          {{ ratingTrend.averageRating.toFixed(2) }}
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Total Matches</div>
+        <div class="stat-value">
+          {{ ratingTrend.totalMatches }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart section -->
+    <div class="chart-section">
+      <div class="chart-container">
+        <canvas id="ratingChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Rating history table -->
+    <div class="history-section">
+      <h2>Rating History</h2>
+
+      <div
+        class="table-container"
+        *ngIf="ratingHistory.length > 0; else noHistory"
+      >
+        <table class="rating-history-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Rating</th>
+              <th>Change</th>
+              <th>Reason</th>
+              <th>System</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let entry of ratingHistory; let i = index">
+              <td>{{ formatDateTime(entry.createdAt) }}</td>
+              <td>
+                <span
+                  class="rating-badge"
+                  [ngClass]="getRatingClass(entry.newRating)"
+                >
+                  {{ entry.newRating.toFixed(2) }}
+                </span>
+              </td>
+              <td>
+                <span
+                  *ngIf="i < ratingHistory.length - 1"
+                  class="rating-change"
+                  [ngClass]="
+                    getRatingChangeClass(
+                      entry.newRating,
+                      ratingHistory[i + 1].newRating
+                    )
+                  "
+                >
+                  {{
+                    getRatingChangeIcon(
+                      entry.newRating,
+                      ratingHistory[i + 1].newRating
+                    )
+                  }}
+                  {{
+                    (entry.newRating - ratingHistory[i + 1].newRating).toFixed(
+                      2
+                    )
+                  }}
+                </span>
+                <span
+                  *ngIf="i === ratingHistory.length - 1"
+                  class="rating-change rating-neutral"
+                >
+                  Initial
+                </span>
+              </td>
+              <td>
+                <span class="change-reason">{{ entry.changeReason }}</span>
+              </td>
+
+              <td>
+                <span class="rating-system" *ngIf="entry.ratingSystem">
+                  {{ entry.ratingSystem }}
+                </span>
+                <span *ngIf="!entry.ratingSystem" class="no-system">-</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #noHistory>
+        <div class="no-history">
+          <i class="icon-info">ℹ️</i>
+          <p>No rating history found for the selected date range.</p>
+          <p>
+            Try adjusting the date filters or check back after playing some
+            matches.
+          </p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- No user selected message -->
+  <div class="no-user-selected" *ngIf="!selectedUserId && !loading">
+    <i class="icon-info">👤</i>
+    <p>Please select a user to view their rating evolution.</p>
+  </div>
+
+  <!-- Loading state -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner-large"></div>
+    <p>Loading rating data...</p>
+  </div>
+</div>

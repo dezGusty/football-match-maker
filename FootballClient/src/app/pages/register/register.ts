@@ -16,7 +16,7 @@ export class Register {
   username: string = '';
   firstName: string = '';
   lastName: string = '';
-  rating: number = 1000;
+  rating: number = 10;
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
@@ -76,6 +76,12 @@ export class Register {
       return;
     }
 
+    if (this.rating < 0 || this.rating > 10) {
+      this.errorMessage = 'Rating must be between 0 and 10!';
+      this.successMessage = '';
+      return;
+    }
+
     try {
       await this.authService.register(
         this.email,
@@ -117,7 +123,7 @@ export class Register {
     this.username = '';
     this.firstName = '';
     this.lastName = '';
-    this.rating = 1000;
+    this.rating = 10;
     this.email = '';
     this.password = '';
     this.confirmPassword = '';

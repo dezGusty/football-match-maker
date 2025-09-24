@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballAPI.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    [Migration("20250908094215_Init")]
-    partial class Init
+    [Migration("20250923124214_AddImportFields")]
+    partial class AddImportFields
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,7 +29,7 @@ namespace FootballAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("ReceiverId")
                         .HasColumnType("INTEGER");
@@ -164,6 +164,33 @@ namespace FootballAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("FootballAPI.Models.ImpersonationLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AdminId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ImpersonatedUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
+
+                    b.HasIndex("ImpersonatedUserId");
+
+                    b.ToTable("ImpersonationLogs");
+                });
+
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
                 {
                     b.Property<int>("Id")
@@ -224,6 +251,55 @@ namespace FootballAPI.Migrations
                     b.ToTable("MatchTeams");
                 });
 
+            modelBuilder.Entity("FootballAPI.Models.MatchTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TeamAName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TeamBName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MatchTemplates");
+                });
+
             modelBuilder.Entity("FootballAPI.Models.OrganizerDelegate", b =>
                 {
                     b.Property<int>("Id")
@@ -262,98 +338,42 @@ namespace FootballAPI.Migrations
                     b.ToTable("OrganizerDelegates");
                 });
 
-            modelBuilder.Entity("FootballAPI.Models.PlayerOrganiser", b =>
+            modelBuilder.Entity("FootballAPI.Models.RatingHistory", b =>
                 {
-                    b.Property<int>("OrganiserId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ChangeReason")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.HasKey("OrganiserId", "PlayerId");
+                    b.Property<int?>("MatchId")
+                        .HasColumnType("INTEGER");
 
-                    b.HasIndex("PlayerId");
+                    b.Property<float>("NewRating")
+                        .HasColumnType("REAL");
 
-                    b.ToTable("PlayerOrganisers");
+                    b.Property<string>("RatingSystem")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
 
-                    b.HasData(
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 5,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 6,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 7,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 8,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 9,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 10,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 11,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 12,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 13,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            OrganiserId = 4,
-                            PlayerId = 14,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RatingHistories");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.ResetPasswordToken", b =>
@@ -452,11 +472,6 @@ namespace FootballAPI.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Errors")
                         .HasColumnType("INTEGER");
 
@@ -468,11 +483,6 @@ namespace FootballAPI.Migrations
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProfileImagePath")
@@ -503,9 +513,6 @@ namespace FootballAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.HasIndex("Username")
                         .IsUnique();
 
@@ -516,11 +523,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 1,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "ion.popescu@gmail.com",
                             Errors = 2,
                             FirstName = "Ion",
                             LastName = "Popescu",
-                            Password = "default123",
                             Rating = 8.5f,
                             Role = 2,
                             Speed = 2,
@@ -532,11 +537,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 2,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "marius.ionescu@gmail.com",
                             Errors = 2,
                             FirstName = "Marius",
                             LastName = "Ionescu",
-                            Password = "default123",
                             Rating = 7.8f,
                             Role = 2,
                             Speed = 2,
@@ -548,11 +551,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 3,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "admin@gmail.com",
                             Errors = 2,
                             FirstName = "Admin",
                             LastName = "User",
-                            Password = "default123",
                             Rating = 0f,
                             Role = 0,
                             Speed = 2,
@@ -564,11 +565,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 4,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "organiser@gmail.com",
                             Errors = 2,
                             FirstName = "Organiser",
                             LastName = "User",
-                            Password = "default123",
                             Rating = 0f,
                             Role = 1,
                             Speed = 2,
@@ -580,11 +579,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 5,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "alex.georgescu@gmail.com",
                             Errors = 2,
                             FirstName = "Alex",
                             LastName = "Georgescu",
-                            Password = "default123",
                             Rating = 7.2f,
                             Role = 2,
                             Speed = 2,
@@ -596,11 +593,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 6,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "razvan.moldovan@gmail.com",
                             Errors = 2,
                             FirstName = "Razvan",
                             LastName = "Moldovan",
-                            Password = "default123",
                             Rating = 8.1f,
                             Role = 2,
                             Speed = 2,
@@ -612,11 +607,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 7,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "cristian.stancu@gmail.com",
                             Errors = 2,
                             FirstName = "Cristian",
                             LastName = "Stancu",
-                            Password = "default123",
                             Rating = 6.9f,
                             Role = 2,
                             Speed = 2,
@@ -628,11 +621,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 8,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "andrei.vasilescu@gmail.com",
                             Errors = 2,
                             FirstName = "Andrei",
                             LastName = "Vasilescu",
-                            Password = "default123",
                             Rating = 7.7f,
                             Role = 2,
                             Speed = 2,
@@ -644,11 +635,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 9,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "florin.dumitru@gmail.com",
                             Errors = 2,
                             FirstName = "Florin",
                             LastName = "Dumitru",
-                            Password = "default123",
                             Rating = 8.3f,
                             Role = 2,
                             Speed = 2,
@@ -660,11 +649,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 10,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "gabriel.ciobanu@gmail.com",
                             Errors = 2,
                             FirstName = "Gabriel",
                             LastName = "Ciobanu",
-                            Password = "default123",
                             Rating = 7.4f,
                             Role = 2,
                             Speed = 2,
@@ -676,11 +663,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 11,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "lucian.matei@gmail.com",
                             Errors = 2,
                             FirstName = "Lucian",
                             LastName = "Matei",
-                            Password = "default123",
                             Rating = 6.8f,
                             Role = 2,
                             Speed = 2,
@@ -692,11 +677,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 12,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "daniel.radu@gmail.com",
                             Errors = 2,
                             FirstName = "Daniel",
                             LastName = "Radu",
-                            Password = "default123",
                             Rating = 7.9f,
                             Role = 2,
                             Speed = 2,
@@ -708,11 +691,9 @@ namespace FootballAPI.Migrations
                         {
                             Id = 13,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "mihai.popa@gmail.com",
                             Errors = 2,
                             FirstName = "Mihai",
                             LastName = "Popa",
-                            Password = "default123",
                             Rating = 8f,
                             Role = 2,
                             Speed = 2,
@@ -724,17 +705,183 @@ namespace FootballAPI.Migrations
                         {
                             Id = 14,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "stefan.nicolae@gmail.com",
                             Errors = 2,
                             FirstName = "Stefan",
                             LastName = "Nicolae",
-                            Password = "default123",
                             Rating = 7.6f,
                             Role = 2,
                             Speed = 2,
                             Stamina = 2,
                             UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Username = "StefanNicolae"
+                        });
+                });
+
+            modelBuilder.Entity("FootballAPI.Models.UserCredentials", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserCredentials");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "ion.popescu@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "marius.ionescu@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "organiser@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "alex.georgescu@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "razvan.moldovan@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 6
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "cristian.stancu@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 7
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "andrei.vasilescu@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 8
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "florin.dumitru@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 9
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "gabriel.ciobanu@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 10
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "lucian.matei@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 11
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "daniel.radu@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 12
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "mihai.popa@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 13
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "stefan.nicolae@gmail.com",
+                            Password = "default123",
+                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UserId = 14
                         });
                 });
 
@@ -755,6 +902,25 @@ namespace FootballAPI.Migrations
                     b.Navigation("Receiver");
 
                     b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("FootballAPI.Models.ImpersonationLog", b =>
+                {
+                    b.HasOne("FootballAPI.Models.User", "Admin")
+                        .WithMany()
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("FootballAPI.Models.User", "ImpersonatedUser")
+                        .WithMany()
+                        .HasForeignKey("ImpersonatedUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Admin");
+
+                    b.Navigation("ImpersonatedUser");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
@@ -787,6 +953,17 @@ namespace FootballAPI.Migrations
                     b.Navigation("Team");
                 });
 
+            modelBuilder.Entity("FootballAPI.Models.MatchTemplate", b =>
+                {
+                    b.HasOne("FootballAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FootballAPI.Models.OrganizerDelegate", b =>
                 {
                     b.HasOne("FootballAPI.Models.User", "DelegateUser")
@@ -806,23 +983,22 @@ namespace FootballAPI.Migrations
                     b.Navigation("OriginalOrganizer");
                 });
 
-            modelBuilder.Entity("FootballAPI.Models.PlayerOrganiser", b =>
+            modelBuilder.Entity("FootballAPI.Models.RatingHistory", b =>
                 {
-                    b.HasOne("FootballAPI.Models.User", "Organiser")
-                        .WithMany("OrganisedPlayers")
-                        .HasForeignKey("OrganiserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                    b.HasOne("FootballAPI.Models.Match", "Match")
+                        .WithMany()
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("FootballAPI.Models.User", "Player")
-                        .WithMany("PlayerRelations")
-                        .HasForeignKey("PlayerId")
+                    b.HasOne("FootballAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Organiser");
+                    b.Navigation("Match");
 
-                    b.Navigation("Player");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FootballAPI.Models.ResetPasswordToken", b =>
@@ -855,6 +1031,17 @@ namespace FootballAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FootballAPI.Models.UserCredentials", b =>
+                {
+                    b.HasOne("FootballAPI.Models.User", "User")
+                        .WithOne("Credentials")
+                        .HasForeignKey("FootballAPI.Models.UserCredentials", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FootballAPI.Models.Match", b =>
                 {
                     b.Navigation("MatchTeams");
@@ -872,13 +1059,11 @@ namespace FootballAPI.Migrations
 
             modelBuilder.Entity("FootballAPI.Models.User", b =>
                 {
+                    b.Navigation("Credentials");
+
                     b.Navigation("OrganisedMatches");
 
-                    b.Navigation("OrganisedPlayers");
-
                     b.Navigation("OriginalDelegations");
-
-                    b.Navigation("PlayerRelations");
 
                     b.Navigation("ReceivedDelegations");
 

@@ -43,6 +43,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'rating-evolution',
+    loadComponent: () =>
+      import('./pages/rating-evolution/rating-evolution.component').then(
+        (m) => m.RatingEvolutionComponent
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: 'manage-accounts',
     loadComponent: () =>
       import('./pages/manage-accounts/manage-accounts.component').then(
@@ -64,7 +72,7 @@ export const routes: Routes = [
       import(
         './pages/player-dashboard-availableMatches/player-dashboard-availableMatches.component'
       ).then((m) => m.PlayerDashboardAvailableMatchesComponent),
-    canActivate: [authGuard, playerGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'past-matches',
@@ -99,8 +107,16 @@ export const routes: Routes = [
   {
     path: 'user-impersonation',
     loadComponent: () =>
-      import('./components/user-impersonation/user-impersonation.component').then(
-        (m) => m.UserImpersonationComponent
+      import(
+        './components/user-impersonation/user-impersonation.component'
+      ).then((m) => m.UserImpersonationComponent),
+    canActivate: [authGuard, adminGuard],
+  },
+  {
+    path: 'admin-import',
+    loadComponent: () =>
+      import('./pages/admin-import/admin-import.component').then(
+        (m) => m.AdminImportComponent
       ),
     canActivate: [authGuard, adminGuard],
   },

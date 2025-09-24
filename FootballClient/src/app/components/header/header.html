@@ -53,7 +53,17 @@
         <button (click)="navigateTo('/manage-accounts')">Manage Users</button>
       </li>
       <li *ngIf="isAdmin()">
-        <button (click)="navigateTo('/user-impersonation')">User Impersonation</button>
+        <button (click)="navigateTo('/rating-evolution')">
+          Rating Evolution
+        </button>
+      </li>
+      <li *ngIf="isAdmin()">
+        <button (click)="navigateTo('/user-impersonation')">
+          User Impersonation
+        </button>
+      </li>
+      <li *ngIf="isAdmin()">
+        <button (click)="navigateTo('/admin-import')">Firebase Import</button>
       </li>
 
       <!-- Organizer Menu Items (non-admin organizers) -->
@@ -63,6 +73,16 @@
       <li *ngIf="isOrganizer() && !isAdmin()">
         <button (click)="navigateTo('/manage-players')">Players</button>
       </li>
+      <li *ngIf="isOrganizer() && !isAdmin()">
+        <button (click)="navigateTo('/rating-evolution')">
+          Rating Evolution
+        </button>
+      </li>
+      <li *ngIf="isOrganizer() || isAdmin()">
+        <button (click)="navigateTo('/player-dashboard-availableMatches')">
+          Public Matches
+        </button>
+      </li>
 
       <!-- Player Menu Items -->
       <li *ngIf="isPlayer()">
@@ -70,11 +90,16 @@
       </li>
       <li *ngIf="isPlayer()">
         <button (click)="navigateTo('/player-dashboard-availableMatches')">
-          Available Matches
+          Public Matches
         </button>
       </li>
       <li *ngIf="isPlayer()">
         <button (click)="navigateTo('/past-matches')">Past Matches</button>
+      </li>
+      <li *ngIf="isPlayer()">
+        <button (click)="navigateTo('/rating-evolution')">
+          Rating Evolution
+        </button>
       </li>
 
       <!-- Admin Menu Items (continued) -->

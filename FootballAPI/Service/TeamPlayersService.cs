@@ -86,7 +86,7 @@ namespace FootballAPI.Service
                     Speed = teamPlayer.User.Speed,
                     Stamina = teamPlayer.User.Stamina,
                     Errors = teamPlayer.User.Errors,
-                    Email = teamPlayer.User?.Email,
+                    Email = teamPlayer.User?.Credentials?.Email ?? string.Empty,
                     Username = teamPlayer.User?.Username,
                     IsDeleted = teamPlayer.User.DeletedAt != null,
                     CreatedAt = teamPlayer.User.CreatedAt,
