@@ -8,6 +8,7 @@ namespace FootballAPI.Service
     public interface IUserService
     {
         Task<IEnumerable<UserDto>> GetAllUsersAsync();
+        Task<IEnumerable<UserDto>> GetUsersWithCredentialsAsync();
         Task<UserDto> GetUserByIdAsync(int id);
         Task<UserDto> GetUserByUsernameAsync(string username);
         Task<UserDto?> GetUserByEmailAsync(string email);

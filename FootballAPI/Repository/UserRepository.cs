@@ -23,6 +23,15 @@ namespace FootballAPI.Repository
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<User>> GetUsersWithCredentialsAsync()
+        {
+            return await _context.Set<User>()
+                .Include(u => u.Credentials)
+                .Where(u => u.Credentials != null)
+                .OrderBy(u => u.Username)
+                .ToListAsync();
+        }
+
         public async Task<User> GetByIdAsync(int id)
         {
             return await _context.Set<User>()

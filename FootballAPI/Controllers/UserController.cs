@@ -38,6 +38,22 @@ namespace FootballAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN")]
+        [HttpGet("with-accounts")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersWithAccounts()
+        {
+            try
+            {
+                var users = await _userService.GetUsersWithCredentialsAsync();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting users with accounts");
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
+
         [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUserById(int id)

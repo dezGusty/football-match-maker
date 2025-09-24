@@ -48,6 +48,12 @@ namespace FootballAPI.Service
             return users.Select(MapToDto);
         }
 
+        public async Task<IEnumerable<UserDto>> GetUsersWithCredentialsAsync()
+        {
+            var users = await _userRepository.GetUsersWithCredentialsAsync();
+            return users.Select(MapToDto);
+        }
+
         public async Task<UserDto> GetUserByIdAsync(int id)
         {
             var user = await _userRepository.GetByIdAsync(id);
