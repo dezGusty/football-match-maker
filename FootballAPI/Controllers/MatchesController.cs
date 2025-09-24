@@ -134,14 +134,15 @@ namespace FootballAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "ADMIN, ORGANISER")] 
+        [Authorize(Roles = "ADMIN, ORGANISER")]
         [HttpPost("{id}/players")]
         public async Task<ActionResult> AddPlayerToMatch(int id, AddPlayerToMatchDto addPlayerDto)
         {
             try
             {
                 Console.WriteLine($"Adding player {addPlayerDto.UserId} to team {addPlayerDto.TeamId} in match {id}");
-                var result = await _matchService.AddPlayerToTeamAsync(id, addPlayerDto.UserId, addPlayerDto.TeamId);
+                var currentUserId = UserUtils.GetCurrentUserId(User, Request.Headers);
+                var result = await _matchService.AddPlayerToTeamAsync(id, addPlayerDto.UserId, addPlayerDto.TeamId, currentUserId);
                 if (!result)
                     return BadRequest("Could not add player to team. Team might be full or player already exists.");
 

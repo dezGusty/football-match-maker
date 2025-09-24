@@ -270,14 +270,12 @@ namespace FootballAPI.Service
 
 
 
-        public async Task<bool> AddPlayerToTeamAsync(int matchId, int userId, int teamId)
+        public async Task<bool> AddPlayerToTeamAsync(int matchId, int userId, int teamId, int currentUserId)
         {
             var match = await _matchRepository.GetByIdAsync(matchId);
             if (match == null) return false;
 
-            var organiserPlayers = await _userService.GetPlayersByOrganiserAsync(match.OrganiserId);
-
-            if (!organiserPlayers.Any(p => p.Id == userId) && userId != match.OrganiserId)
+            if (currentUserId != match.OrganiserId)
                 return false;
 
             var matchTeam = await _matchTeamsService.GetMatchTeamByMatchIdAndTeamIdAsync(matchId, teamId);
@@ -288,6 +286,14 @@ namespace FootballAPI.Service
 
             var existingPlayer = await _teamPlayersService.GetTeamPlayerByMatchTeamIdAndUserIdAsync(matchTeam.Id, userId);
             if (existingPlayer != null) return false;
+
+            var allMatchTeams = await _matchTeamsService.GetMatchTeamsByMatchIdAsync(matchId);
+            foreach (var mt in allMatchTeams)
+            {
+                var playersInTeam = await _teamPlayersService.GetTeamPlayersByMatchTeamIdAsync(mt.Id);
+                if (playersInTeam.Any(p => p.UserId == userId))
+                    return false;
+            }
 
             var createTeamUserDto = new CreateTeamPlayersDto
             {

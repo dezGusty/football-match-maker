@@ -18,7 +18,7 @@ namespace FootballAPI.Service
         Task<IEnumerable<MatchDto>> GetPastMatchesAsync(int id);
         Task<IEnumerable<MatchDto>> GetMatchesByOrganiserAsync(int organiserId);
         Task<MatchDto> MakeMatchPrivateAsync(int matchId);
-        Task<bool> AddPlayerToTeamAsync(int matchId, int userId, int teamId);
+        Task<bool> AddPlayerToTeamAsync(int matchId, int userId, int teamId, int currentUserId);
         Task<bool> JoinSpecificTeamAsync(int matchId, int userId, int teamId);
         Task<bool> JoinPublicMatchAsync(int matchId, int userId);
         Task<MatchDto> PublishMatchAsync(int matchId);
