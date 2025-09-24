@@ -8,6 +8,7 @@ namespace FootballAPI.Repository
     public interface IUserRepository
     {
         Task<IEnumerable<User>> GetAllAsync();
+        Task<IEnumerable<User>> GetUsersWithCredentialsAsync();
         Task<User> GetByIdAsync(int id);
         Task<User> GetByUsernameAsync(string username);
         Task<User?> GetByEmailAsync(string email);
@@ -21,7 +22,8 @@ namespace FootballAPI.Repository
         Task<IEnumerable<User>> GetPlayersByOrganiserAsync(int id);
         Task<User?> GetUserByEmail(string email, bool includeDeleted = false, bool tracking = false);
 
-        Task<bool> UpdatePlayerRatingAsync(int userId, float ratingChange);
+        Task<bool> UpdatePlayerRatingAsync(int userId, float newRating,
+            string changeReason = "Manual", int? matchId = null, string? ratingSystem = null);
         Task<bool> UpdateMultiplePlayerRatingsAsync(List<PlayerRatingUpdateDto> playerRatingUpdates);
         Task AddPlayerOrganiserRelationAsync(int organizerId, int playerId);
         Task<OrganizerDelegate> CreateDelegationAsync(OrganizerDelegate delegation);

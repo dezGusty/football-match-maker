@@ -38,6 +38,7 @@ namespace FootballAPI.Repository
         {
             return await _context.TeamPlayers
                 .Include(tp => tp.User)
+                    .ThenInclude(u => u.Credentials)
                 .Where(tp => tp.MatchTeamId == matchTeamId)
                 .ToListAsync();
         }
@@ -50,6 +51,7 @@ namespace FootballAPI.Repository
                 .Include(tp => tp.MatchTeam)
                     .ThenInclude(mt => mt.Team)
                 .Include(tp => tp.User)
+                    .ThenInclude(u => u.Credentials)
                 .FirstOrDefaultAsync(tp => tp.MatchTeamId == matchTeamId && tp.UserId == userId);
         }
     }

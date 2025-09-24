@@ -172,3 +172,17 @@ button:hover {
   font-size: 14px;
   text-align: center;
 }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 28px;
+  border-radius: 14px;
+  background: rgba(124, 242, 208, 0.05);
+  border: 1px dashed rgba(124, 242, 208, 0.25);
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 1200px;
+}

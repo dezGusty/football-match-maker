@@ -25,10 +25,10 @@ namespace FootballAPI.Service
                 Id = friendRequest.Id,
                 SenderId = friendRequest.SenderId,
                 SenderUsername = friendRequest.Sender?.Username ?? "",
-                SenderEmail = friendRequest.Sender?.Email ?? "",
+                SenderEmail = friendRequest.Sender?.Credentials?.Email ?? "",
                 ReceiverId = friendRequest.ReceiverId,
                 ReceiverUsername = friendRequest.Receiver?.Username ?? "",
-                ReceiverEmail = friendRequest.Receiver?.Email ?? "",
+                ReceiverEmail = friendRequest.Receiver?.Credentials?.Email ?? "",
                 Status = friendRequest.Status.ToString(),
                 CreatedAt = friendRequest.CreatedAt,
                 ResponsedAt = friendRequest.ResponsedAt
@@ -43,7 +43,7 @@ namespace FootballAPI.Service
             if (sender == null || receiver == null)
                 throw new ArgumentException("Sender or receiver not found");
 
-            if (sender.Email == dto.ReceiverEmail)
+            if (sender.Credentials?.Email == dto.ReceiverEmail)
                 throw new ArgumentException("Cannot send friend request to yourself");
 
             var existingRequests = await _friendRequestRepository.GetPendingRequestsBetweenUsersAsync(senderId, receiver.Id);
@@ -112,7 +112,7 @@ namespace FootballAPI.Service
                 SenderEmail = "",
                 ReceiverId = user.Id,
                 ReceiverUsername = user.Username,
-                ReceiverEmail = user.Email,
+                ReceiverEmail = user.Credentials?.Email ?? string.Empty,
                 Status = "Connected",
                 CreatedAt = DateTime.Now,
                 ResponsedAt = DateTime.Now

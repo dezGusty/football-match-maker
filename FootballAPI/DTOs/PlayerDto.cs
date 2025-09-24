@@ -8,10 +8,10 @@ namespace FootballAPI.DTOs
         public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        
+
         [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10000.0")]
         public float Rating { get; set; }
-        
+
         public bool IsDeleted { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
@@ -106,11 +106,11 @@ namespace FootballAPI.DTOs
         [Required]
         [StringLength(50)]
         public string FirstName { get; set; } = null!;
-        
+
         [Required]
         [StringLength(50)]
         public string LastName { get; set; } = null!;
-        
+
         [Range(0.0f, 10000.0f, ErrorMessage = "Rating must be between 0.0 and 10.0")]
         public float Rating { get; set; }
 
@@ -126,8 +126,8 @@ namespace FootballAPI.DTOs
 
     public class UpdatePlayerRatingDto
     {
-        [Range(0.0f, 10.0f, ErrorMessage = "Rating change must be between 0.0 and 10.0")]
-        public float RatingChange { get; set; }
+        [Range(0.0f, 10.0f, ErrorMessage = "New rating must be between 0.0 and 10.0")]
+        public float NewRating { get; set; }
     }
 
     public class PlayerRatingUpdateDto
@@ -135,9 +135,9 @@ namespace FootballAPI.DTOs
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "UserId must be greater than 0")]
         public int UserId { get; set; }
-        
-        [Range(0.0f, 0.0f, ErrorMessage = "Rating change must be between 0.0 and 0.0")]
-        public float RatingChange { get; set; }
+
+        [Range(0.0f, 10.0f, ErrorMessage = "New rating must be between 0.0 and 10.0")]
+        public float NewRating { get; set; }
     }
 
     public class UpdateMultipleRatingsDto
@@ -150,7 +150,7 @@ namespace FootballAPI.DTOs
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "UserId must be greater than 0")]
         public int UserId { get; set; }
-        
+
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "OrganiserId must be greater than 0")]
         public int OrganiserId { get; set; }
